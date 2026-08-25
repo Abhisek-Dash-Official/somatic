@@ -8,20 +8,12 @@ export async function POST(req: Request) {
     await dbConnect();
     const body = await req.json();
 
-    const {
-      username,
-      email,
-      password,
-      role,
-      contact_no,
-      address,
-      doctor_info,
-      patient_info,
-    } = body;
+    const { username, email, password, contact_no, address, patient_info } =
+      body;
 
-    if (!username || !email || !password || !role) {
+    if (!username || !email || !password || !contact_no) {
       return NextResponse.json(
-        { error: "Missing required fields (username, email, password, role)" },
+        { error: "Missing required core fields" },
         { status: 400 },
       );
     }
@@ -43,15 +35,14 @@ export async function POST(req: Request) {
       username,
       email,
       password_hash: hashedPassword,
-      role,
+      role: "patient",
       contact_no,
       address,
-      doctor_info: role === "doctor" ? doctor_info : undefined,
-      patient_info: role === "patient" ? patient_info : undefined,
+      patient_info,
     });
 
     return NextResponse.json(
-      { message: "User registered successfully!", userId: newUser._id },
+      { message: "Patient registered successfully!", userId: newUser._id },
       { status: 201 },
     );
   } catch (error: any) {
