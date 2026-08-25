@@ -20,14 +20,17 @@ export const useUserStore = create<UserState>((set, get) => ({
 
     try {
       const res = await fetch("/api/users/me");
+
       if (res.ok) {
         const data = await res.json();
         set({ user: data.user, isFetched: true });
+      } else if (res.status === 401) {
+        set({ user: null, isFetched: true });
       } else {
-        console.error("Failed to fetch user data");
+        set({ isFetched: true });
       }
     } catch (error) {
-      console.error("API error:", error);
+      set({ isFetched: true });
     } finally {
       set({ isLoading: false });
     }

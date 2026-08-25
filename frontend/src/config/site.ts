@@ -1,6 +1,7 @@
 export const siteConfig = {
   name: "Somatic",
   shortName: "Somatic",
+  logo: "./android-chrome-512x512.png",
   description:
     "A smart patient case-taking platform that helps Ayush healthcare professionals record, organize, and manage patient information efficiently. Simplify clinical documentation and make Rog Pariksha faster and more structured.",
   url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
