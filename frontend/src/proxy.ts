@@ -1,15 +1,44 @@
 import { withAuth } from "next-auth/middleware";
-
 import { NextResponse } from "next/server";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, "30 s"),
+  analytics: true,
+});
 
 export default withAuth(
-  function proxy(req) {
+  async function proxy(req) {
     const token = req.nextauth.token;
     const path = req.nextUrl.pathname;
     const isApi = path.startsWith("/api/");
 
     if (path.startsWith("/api/auth")) {
       return NextResponse.next();
+    }
+
+    const forwardedFor = req.headers.get("x-forwarded-for");
+    const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : "127.0.0.1";
+
+    const { success, limit, reset, remaining } = await ratelimit.limit(ip);
+
+    if (!success) {
+      if (isApi) {
+        return NextResponse.json(
+          { error: "Too many requests" },
+          {
+            status: 429,
+            headers: {
+              "X-RateLimit-Limit": limit.toString(),
+              "X-RateLimit-Remaining": remaining.toString(),
+              "X-RateLimit-Reset": reset.toString(),
+            },
+          },
+        );
+      }
+      return new NextResponse("Too Many Requests", { status: 429 });
     }
 
     const rejectAccess = (status: number, message: string) => {
