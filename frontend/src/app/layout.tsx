@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import { siteConfig } from "@/config/site";
 import type { Metadata, Viewport } from "next";
+import MaintenanceGuard from "@/components/MaintenanceGuard";
 import "./globals.css";
 
 const inter = Inter({
@@ -77,7 +78,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`}>
       <body className="font-sans bg-background text-foreground antialiased">
-        {children}
+        <MaintenanceGuard>
+          {children}
+        </MaintenanceGuard>
       </body>
     </html>
   );

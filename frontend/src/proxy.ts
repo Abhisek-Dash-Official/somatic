@@ -5,7 +5,7 @@ import { Redis } from "@upstash/redis";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(10, "30 s"),
+  limiter: Ratelimit.slidingWindow(10, "10 s"),
   analytics: true,
 });
 
@@ -15,7 +15,10 @@ export default withAuth(
     const path = req.nextUrl.pathname;
     const isApi = path.startsWith("/api/");
 
-    if (path.startsWith("/api/auth")) {
+    if (
+      path.startsWith("/api/auth") ||
+      path.startsWith("/api/system/settings")
+    ) {
       return NextResponse.next();
     }
 
