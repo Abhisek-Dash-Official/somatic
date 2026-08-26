@@ -79,7 +79,7 @@ export default function PatientDashboard() {
 
                 {/* Main CTA */}
                 <Link
-                    href="/consultations/new"
+                    href="/patient/consultations/new"
                     className="group flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 font-bold text-white shadow-lg transition-all hover:bg-blue-500 hover:shadow-blue-500/25"
                 >
                     <PlusCircle className="h-5 w-5 transition-transform group-hover:rotate-90" />
@@ -115,13 +115,13 @@ export default function PatientDashboard() {
                         <h2 className="text-xl font-bold text-white flex items-center gap-2">
                             <Stethoscope className="h-5 w-5 text-blue-400" /> Recent Consultations
                         </h2>
-                        <Link href="/consultations" className="text-sm font-medium text-blue-400 hover:text-blue-300">View All</Link>
+                        <Link href="/patient/consultations" className="text-sm font-medium text-blue-400 hover:text-blue-300">View All</Link>
                     </div>
 
                     <div className="space-y-4">
                         {data?.consultations && data.consultations.length > 0 ? (
                             data.consultations.map((consult) => (
-                                <Link key={consult._id} href={`/consultations/${consult._id}`} className="block rounded-2xl border border-white/5 bg-black/20 p-5 transition-all hover:bg-white/5 hover:border-blue-500/30">
+                                <Link key={consult._id} href={`/patient/consultations/${consult._id}`} className="block rounded-2xl border border-white/5 bg-black/20 p-5 transition-all hover:bg-white/5 hover:border-blue-500/30">
                                     <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                                         <div>
                                             <p className="text-sm text-slate-400 mb-1">{formatDate(consult.created_at)}</p>
@@ -134,7 +134,7 @@ export default function PatientDashboard() {
                         ) : (
                             <div className="text-center py-10 rounded-2xl border border-dashed border-white/10">
                                 <p className="text-slate-400">No consultations found.</p>
-                                <Link href="/consultations/new" className="mt-2 inline-block text-blue-400 hover:underline">Start your first case</Link>
+                                <Link href="/patient/consultations/new" className="mt-2 inline-block text-blue-400 hover:underline">Start your first case</Link>
                             </div>
                         )}
                     </div>

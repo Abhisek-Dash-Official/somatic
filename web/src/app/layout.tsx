@@ -2,6 +2,8 @@ import { Inter } from "next/font/google";
 import { siteConfig } from "@/config/site";
 import type { Metadata, Viewport } from "next";
 import MaintenanceGuard from "@/components/MaintenanceGuard";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 const inter = Inter({
@@ -81,6 +83,25 @@ export default function RootLayout({
         <MaintenanceGuard>
           {children}
         </MaintenanceGuard>
+        <ToastContainer
+          position="bottom-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+          toastStyle={{
+            backgroundColor: "#131C31",
+            color: "#f8fafc",
+            border: "1px solid #1e293b",
+            borderRadius: "0.5rem",
+            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)",
+          }}
+        />
       </body>
     </html>
   );
