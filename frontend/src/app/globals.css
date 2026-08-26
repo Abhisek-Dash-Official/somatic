@@ -26,3 +26,29 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Custom Scrollbar Globally */
+* {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #334155 transparent;
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #334155;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #475569;
+}

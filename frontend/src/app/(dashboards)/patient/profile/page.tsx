@@ -209,7 +209,7 @@ export default function ProfilePage() {
                                 {/* Allergies */}
                                 <div className="space-y-3">
                                     <label className="text-sm font-medium text-slate-300">Known Allergies</label>
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-2 flex-wrap">
                                         <input
                                             type="text"
                                             value={allergyInput}
@@ -240,7 +240,7 @@ export default function ProfilePage() {
                                 {/* Chronic Diseases */}
                                 <div className="space-y-3">
                                     <label className="text-sm font-medium text-slate-300">Chronic Diseases</label>
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-2 flex-wrap">
                                         <input
                                             type="text"
                                             value={diseaseInput}

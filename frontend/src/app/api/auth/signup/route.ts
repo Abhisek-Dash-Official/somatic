@@ -2,10 +2,22 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
+import SystemSetting from "@/models/SystemSetting";
 
 export async function POST(req: Request) {
   try {
     await dbConnect();
+
+    const settings = await SystemSetting.findOne().lean();
+
+    if (settings && settings.allow_new_signups === false) {
+      return NextResponse.json(
+        { error: "New signups are currently disabled." },
+
+        { status: 403 },
+      );
+    }
+
     const body = await req.json();
 
     const { username, email, password, contact_no, address, patient_info } =

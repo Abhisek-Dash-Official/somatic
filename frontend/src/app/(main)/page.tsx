@@ -21,7 +21,7 @@ export default function HomePage() {
 
             <div className="z-10 flex flex-col sm:flex-row gap-4 w-full sm:w-auto px-4 sm:px-0">
                 <Link
-                    href="/register"
+                    href="/patient"
                     className="group flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-blue-600 px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)]"
                 >
                     Get Started <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
