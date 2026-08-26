@@ -1,5 +1,12 @@
 import { pageContent } from "@/config/content";
 import { Stethoscope, Database, Zap, BriefcaseMedical } from "lucide-react";
+import { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+
+export const metadata: Metadata = {
+    title: `Our Services | ${siteConfig.name}`,
+    description: "Discover how Somatic delivers clinical value through AI-assisted case taking and secure health records management.",
+};
 
 const IconMap: Record<string, any> = { Stethoscope, Database, Zap };
 

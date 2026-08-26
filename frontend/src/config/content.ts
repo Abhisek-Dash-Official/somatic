@@ -36,6 +36,13 @@ export const pageContent = {
       },
     ],
   },
+  contact: {
+    email: "botlab.7acc@gmail.com",
+    responseTime:
+      "Our standard SLA for support tickets is 24-48 hours. Urgent clinical workflow issues are prioritized.",
+    description:
+      "Facing an issue or have a suggestion? Create a support ticket and our team will get back to you.",
+  },
   faq: [
     {
       question: "What exactly is Somatic?",

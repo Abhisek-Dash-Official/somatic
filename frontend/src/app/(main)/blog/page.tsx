@@ -1,5 +1,12 @@
 import { pageContent } from "@/config/content";
 import { BookOpen } from "lucide-react";
+import { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+
+export const metadata: Metadata = {
+    title: `Blog & Insights | ${siteConfig.name}`,
+    description: "Read the latest updates, technical deep-dives, and insights on how AI is transforming Ayush healthcare.",
+};
 
 export default function BlogPage() {
     return (

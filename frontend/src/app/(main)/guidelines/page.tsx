@@ -1,5 +1,12 @@
 import { pageContent } from "@/config/content";
 import { FileHeart } from "lucide-react";
+import { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+
+export const metadata: Metadata = {
+    title: `Community Guidelines | ${siteConfig.name}`,
+    description: "Rules and ethical protocols for medical professionals utilizing the Somatic collaborative platform.",
+};
 
 export default function GuidelinesPage() {
     return (

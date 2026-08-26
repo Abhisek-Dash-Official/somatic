@@ -1,5 +1,12 @@
 import { pageContent } from "@/config/content";
 import { Scale } from "lucide-react";
+import { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+
+export const metadata: Metadata = {
+    title: `Terms of Service | ${siteConfig.name}`,
+    description: "Read the terms and conditions for using the Somatic platform as a healthcare professional or patient.",
+};
 
 export default function TermsPage() {
     return (

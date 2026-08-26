@@ -1,5 +1,12 @@
 import { pageContent } from "@/config/content";
 import { ShieldCheck } from "lucide-react";
+import { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+
+export const metadata: Metadata = {
+    title: `Privacy Policy | ${siteConfig.name}`,
+    description: "Learn how we collect, store, and protect your clinical data and Electronic Health Records with bank-grade encryption.",
+};
 
 export default function PrivacyPage() {
     return (

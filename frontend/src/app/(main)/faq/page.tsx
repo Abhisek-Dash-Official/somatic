@@ -1,5 +1,12 @@
 import { pageContent } from "@/config/content";
 import { HelpCircle } from "lucide-react";
+import { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+
+export const metadata: Metadata = {
+    title: `FAQ & Support | ${siteConfig.name}`,
+    description: "Find answers to frequently asked questions about Somatic, data security, AI Dosha analysis, and platform capabilities.",
+};
 
 export default function FAQPage() {
     return (

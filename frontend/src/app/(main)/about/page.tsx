@@ -2,6 +2,13 @@ import { pageContent } from "@/config/content";
 import { Activity } from "lucide-react";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import Link from "next/link";
+import { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+
+export const metadata: Metadata = {
+  title: `About Us | ${siteConfig.name}`,
+  description: "Learn about our mission to revolutionize Ayush healthcare by combining traditional Ayurvedic wisdom with advanced AI technology.",
+};
 
 export default function AboutPage() {
   const { about } = pageContent;
