@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import dbConnect from "./db";
 import User from "@/models/User";
+import { createSystemLog } from "@/lib/logger";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -37,6 +38,14 @@ export const authOptions: NextAuthOptions = {
         if (!isPasswordMatch) {
           throw new Error("Invalid password");
         }
+
+        await createSystemLog({
+          actor_id: user._id.toString(),
+          actor_role: user.role,
+          action_type: "USER_LOGIN",
+          target_id: user._id.toString(),
+          details: { email: user.email, role: user.role },
+        });
 
         return {
           id: user._id.toString(),

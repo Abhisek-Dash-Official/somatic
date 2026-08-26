@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import SystemSetting from "@/models/SystemSetting";
+import { createSystemLog } from "@/lib/logger";
 
 export async function POST(req: Request) {
   try {
@@ -51,6 +52,14 @@ export async function POST(req: Request) {
       contact_no,
       address,
       patient_info,
+    });
+
+    await createSystemLog({
+      actor_id: newUser._id.toString(),
+      actor_role: "patient",
+      action_type: "USER_SIGNUP",
+      target_id: newUser._id.toString(),
+      details: { email: newUser.email, username: newUser.username },
     });
 
     return NextResponse.json(

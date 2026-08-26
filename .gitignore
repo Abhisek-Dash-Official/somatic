@@ -24,6 +24,7 @@ pyBackend/__pycache__/
 pyBackend/.venv/
 pyBackend/venv/
 pyBackend/*.pyc
+pyBackend/chroma_db/
 
 # Environment files
 .env
