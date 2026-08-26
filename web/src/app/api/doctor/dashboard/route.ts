@@ -1,0 +1,71 @@
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import dbConnect from "@/lib/db";
+import Consultation from "@/models/Consultation";
+import User from "@/models/User";
+
+export async function GET(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id || session.user.role !== "doctor") {
+      return NextResponse.json(
+        { error: "Unauthorized access" },
+        { status: 403 },
+      );
+    }
+
+    await dbConnect();
+    const doctorId = session.user.id;
+
+    const doctor = await User.findById(doctorId).select("doctor_info").lean();
+    const doctorDeptId = doctor?.doctor_info?.department_id;
+
+    const totalMyCases = await Consultation.countDocuments({
+      claimed_by_doctor_id: doctorId,
+    });
+    const myCompleted = await Consultation.countDocuments({
+      claimed_by_doctor_id: doctorId,
+      status: "completed",
+    });
+
+    const pendingQuery = doctorDeptId
+      ? { status: "pending_review", assigned_department_id: doctorDeptId }
+      : { status: "pending_review" };
+
+    const deptPending = await Consultation.countDocuments(pendingQuery);
+
+    const activeCases = await Consultation.find({
+      $or: [
+        pendingQuery,
+        { status: "in_review", claimed_by_doctor_id: doctorId },
+      ],
+    })
+      .select(
+        "_id status created_at ai_draft.is_emergency ai_draft.chief_complaints patient_input.age claimed_by_doctor_id assigned_department_id",
+      )
+      .sort({ "ai_draft.is_emergency": -1, created_at: -1 })
+      .limit(10)
+      .lean();
+
+    return NextResponse.json(
+      {
+        stats: {
+          total: totalMyCases,
+          pending: deptPending,
+          completed: myCompleted,
+        },
+        activeCases,
+        isAcceptingCases: doctor?.doctor_info?.is_accepting_cases ?? false,
+      },
+      { status: 200 },
+    );
+  } catch (error: any) {
+    console.error("Doctor Dashboard API Error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
