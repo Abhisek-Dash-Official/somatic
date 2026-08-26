@@ -1,0 +1,75 @@
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import dbConnect from "@/lib/db";
+import User from "@/models/User";
+import bcrypt from "bcryptjs";
+
+export async function PATCH(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await req.json();
+    await dbConnect();
+    const user = await User.findById(session.user.id);
+
+    if (!user)
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+    if (body.username) user.username = body.username.trim();
+    if (body.contact_no) user.contact_no = body.contact_no.trim();
+    if (body.address) user.address = body.address.trim();
+
+    if (user.role === "doctor" && body.doctor_info) {
+      user.doctor_info = {
+        ...user.doctor_info,
+        ...body.doctor_info,
+      };
+    }
+
+    if (user.role === "patient" && body.patient_info) {
+      user.patient_info = {
+        ...user.patient_info,
+        ...body.patient_info,
+      };
+    }
+
+    if (body.newPassword) {
+      if (!body.currentPassword) {
+        return NextResponse.json(
+          { error: "Current password required." },
+          { status: 400 },
+        );
+      }
+      const isMatch = await bcrypt.compare(
+        body.currentPassword,
+        user.password_hash,
+      );
+      if (!isMatch) {
+        return NextResponse.json(
+          { error: "Incorrect current password." },
+          { status: 400 },
+        );
+      }
+      user.password_hash = await bcrypt.hash(body.newPassword, 10);
+    }
+
+    await user.save();
+
+    const updatedUser = await User.findById(session.user.id)
+      .select("-password_hash")
+      .lean();
+    return NextResponse.json(
+      { message: "Profile updated successfully", user: updatedUser },
+      { status: 200 },
+    );
+  } catch (error: any) {
+    console.error("Profile API Error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error", details: error.message },
+      { status: 500 },
+    );
+  }
+}

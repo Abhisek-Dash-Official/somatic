@@ -4,7 +4,7 @@ interface UserState {
   user: any | null;
   isLoading: boolean;
   isFetched: boolean;
-  fetchUser: () => Promise<void>;
+  fetchUser: (force?: boolean) => Promise<void>;
   clearUser: () => void;
 }
 
@@ -13,8 +13,8 @@ export const useUserStore = create<UserState>((set, get) => ({
   isLoading: false,
   isFetched: false,
 
-  fetchUser: async () => {
-    if (get().isFetched || get().isLoading) return;
+  fetchUser: async (force = false) => {
+    if (!force && (get().isFetched || get().isLoading)) return;
 
     set({ isLoading: true });
 
