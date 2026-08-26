@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./frontend/public/android-chrome-192x192.png" alt="Somatic Logo" />
+  <img src="./web/public/android-chrome-192x192.png" alt="Somatic Logo" />
   
   # Somatic
 

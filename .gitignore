@@ -1,35 +1,38 @@
-# Frontend dependencies
-frontend/node_modules/
+web/node_modules/
 
 # Next.js
-frontend/.next/
-frontend/out/
+web/.next/
+web/out/
 
 # Production
-frontend/build/
+web/build/
 
 # Testing
-frontend/coverage/
+web/coverage/
 
 # Yarn
-frontend/.pnp
-frontend/.pnp.*
-frontend/.yarn/*
-!frontend/.yarn/patches
-!frontend/.yarn/plugins
-!frontend/.yarn/releases
-!frontend/.yarn/versions
+web/.pnp
+web/.pnp.*
+web/.yarn/*
+!web/.yarn/patches
+!web/.yarn/plugins
+!web/.yarn/releases
+!web/.yarn/versions
 
 # Python
-pybackend/__pycache__/
-pybackend/.venv/
-pybackend/venv/
-pybackend/*.pyc
+pyBackend/__pycache__/
+pyBackend/.venv/
+pyBackend/venv/
+pyBackend/*.pyc
 
 # Environment files
-**/.env
+.env
 **/.env.*
 !**/.env.example
+.venv/
+venv/
+ENV/
+env/
 
 # Debug
 **/npm-debug.log*
@@ -38,12 +41,25 @@ pybackend/*.pyc
 **/.pnpm-debug.log*
 
 # Vercel
-frontend/.vercel/
+web/.vercel/
 
 # TypeScript
-frontend/*.tsbuildinfo
-frontend/next-env.d.ts
+web/*.tsbuildinfo
+web/next-env.d.ts
 
 # Misc
 .DS_Store
 *.pem
+
+# Compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+*.log
+
+# Type checking and testing
+.mypy_cache/
+.pytest_cache/
