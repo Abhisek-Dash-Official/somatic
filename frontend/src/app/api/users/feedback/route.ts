@@ -4,6 +4,32 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Feedback from "@/models/Feedback";
 
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await dbConnect();
+
+    const feedbacks = await Feedback.find({
+      reported_by_user_id: session.user.id,
+    })
+      .sort({ created_at: -1 })
+      .lean();
+
+    return NextResponse.json({ feedbacks }, { status: 200 });
+  } catch (error: any) {
+    console.error("Feedback API Error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error", details: error.message },
+      { status: 500 },
+    );
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);

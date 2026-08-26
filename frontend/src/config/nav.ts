@@ -48,6 +48,7 @@ export const navLinks = {
         href: "/doctor/consultations",
         icon: "Stethoscope",
       },
+      { title: "Tickets", href: "/tickets", icon: "Ticket" },
       { title: "Profile", href: "/doctor/profile", icon: "User" },
     ],
     patient: [
@@ -62,6 +63,7 @@ export const navLinks = {
         href: "/patient/consultations",
         icon: "ClipboardList",
       },
+      { title: "Tickets", href: "/tickets", icon: "Ticket" },
       { title: "Profile", href: "/patient/profile", icon: "User" },
     ],
   },
