@@ -116,7 +116,7 @@ export default function DoctorProfileClient() {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
 
-            {/* PROFESSIONAL DETAILS SECTION */}
+            {/* DETAILS SECTION */}
             <div className="bg-[#131C31] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
                 <div className="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
                     <BriefcaseMedical className="w-6 h-6 text-blue-400" />

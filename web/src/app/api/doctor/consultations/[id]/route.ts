@@ -106,6 +106,32 @@ export async function PATCH(req: Request, { params }: Props) {
       );
     }
 
+    // ACTION: RELEASE / CANCEL CLAIM
+    if (
+      action === "release" &&
+      isClaimedByMe &&
+      consultation.status === "in_review"
+    ) {
+      consultation.status = "pending_review";
+      consultation.claimed_by_doctor_id = null;
+      await consultation.save();
+
+      await createSystemLog({
+        actor_id: session.user.id,
+        actor_role: "doctor",
+        action_type: "RELEASE_CONSULTATION",
+        target_id: id,
+        details: {
+          message:
+            "Doctor cancelled claim and released case back to department queue.",
+        },
+      });
+      return NextResponse.json(
+        { message: "Case released successfully", status: "pending_review" },
+        { status: 200 },
+      );
+    }
+
     // ACTION: COMPLETE
     if (action === "complete" && isClaimedByMe) {
       consultation.ai_draft = ai_draft;

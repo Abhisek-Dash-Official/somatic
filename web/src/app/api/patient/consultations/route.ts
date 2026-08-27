@@ -85,7 +85,7 @@ export async function POST(req: Request) {
 
     const newConsultation = await Consultation.create({
       patient_id: session.user.id,
-      assigned_department_id: aiDraft.assigned_department_id || null, // Seedha ID save hoga
+      assigned_department_id: aiDraft.assigned_department_id || null,
       status: "pending_review",
       patient_input: {
         age: parsedAge,
@@ -111,6 +111,10 @@ export async function POST(req: Request) {
       details: {
         is_emergency: aiDraft.is_emergency,
         assigned_dept_id: aiDraft.assigned_department_id,
+        tokens_prompt: aiDraft.tokens_prompt,
+        tokens_completion: aiDraft.tokens_completion,
+        response_time_sec: aiDraft.response_time_sec,
+        status: aiDraft.ai_status,
       },
     });
 

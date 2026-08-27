@@ -2,13 +2,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { Loader2, Plus, X, Stethoscope, Save, User, BrainCircuit, Building2 } from "lucide-react";
+import { Loader2, Plus, X, Stethoscope, Save, User, BrainCircuit, Building2, RotateCcw } from "lucide-react";
 
 export default function DoctorConsultationActionClient({ id }: { id: string }) {
     const router = useRouter();
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [releasing, setReleasing] = useState(false);
 
     const [aiDraft, setAiDraft] = useState({ chief_complaints: "", ai_summary_and_advice: "", ayurvedic_hints: "", is_emergency: false });
 
@@ -33,12 +34,16 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
                 });
 
                 if (json.status === "pending_review") {
-                    await fetch(`/api/doctor/consultations/${id}`, {
+                    const claimRes = await fetch(`/api/doctor/consultations/${id}`, {
                         method: "PATCH",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ action: "claim" })
                     });
-                    toast.success("Case claimed automatically!");
+
+                    if (claimRes.ok) {
+                        setData((prev: any) => ({ ...prev, status: "in_review" }));
+                        toast.success("Case claimed!");
+                    }
                 }
 
             } catch (e) {
@@ -50,6 +55,28 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
         };
         initData();
     }, [id, router]);
+
+    const handleReleaseCase = async () => {
+        setReleasing(true);
+        try {
+            const res = await fetch(`/api/doctor/consultations/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "release" })
+            });
+
+            if (res.ok) {
+                toast.success("Case released back to department queue.");
+                router.push("/doctor");
+            } else {
+                toast.error("Failed to release case.");
+            }
+        } catch (e) {
+            toast.error("Network error.");
+        } finally {
+            setReleasing(false);
+        }
+    };
 
     const submitPrescription = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -93,9 +120,8 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
         <div className="min-h-screen bg-[#0B1120] text-slate-300 py-10">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-8">
 
-                {/* Assigned Department Header Tag */}
                 {data?.assigned_department_id && (
-                    <div className="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl flex items-center justify-between">
+                    <div className="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
                                 <Building2 className="w-5 h-5" />
@@ -105,13 +131,26 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
                                 <p className="text-white font-bold text-lg">{data.assigned_department_id.name || "Specialty Department"}</p>
                             </div>
                         </div>
-                        <span className="text-xs px-3 py-1 bg-blue-500/10 text-blue-300 rounded-full border border-blue-500/20 capitalize font-medium">
-                            {data.status?.replace("_", " ")}
-                        </span>
+
+                        <div className="flex items-center gap-3">
+                            {data.status === "in_review" && (
+                                <button
+                                    type="button"
+                                    onClick={handleReleaseCase}
+                                    disabled={releasing}
+                                    className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-semibold rounded-lg transition disabled:opacity-50"
+                                >
+                                    {releasing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+                                    Release Case Back to Queue
+                                </button>
+                            )}
+                            <span className="text-xs px-3 py-1 bg-blue-500/10 text-blue-300 rounded-full border border-blue-500/20 capitalize font-medium">
+                                {data.status?.replace("_", " ")}
+                            </span>
+                        </div>
                     </div>
                 )}
 
-                {/* Patient Details Panel (Read Only) */}
                 <div className="bg-[#131C31] border border-slate-800 p-6 rounded-2xl flex gap-6 items-start">
                     <div className="w-16 h-16 bg-blue-500/10 rounded-full flex shrink-0 items-center justify-center text-blue-400">
                         <User className="w-8 h-8" />
@@ -138,9 +177,7 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
                     </div>
                 </div>
 
-                {/* Form Container */}
                 <form onSubmit={submitPrescription} className="grid md:grid-cols-2 gap-8">
-                    {/* LEFT: Edit AI Draft */}
                     <div className="bg-[#131C31] border border-blue-500/20 p-6 rounded-2xl shadow-lg space-y-5">
                         <h3 className="flex items-center gap-2 text-lg font-bold text-blue-400 border-b border-slate-800 pb-3"><BrainCircuit className="w-5 h-5" /> Modify AI Draft</h3>
 
@@ -165,7 +202,6 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
                         </label>
                     </div>
 
-                    {/* RIGHT: Doctor's Prescription Form */}
                     <div className="bg-[#131C31] border border-green-500/20 p-6 rounded-2xl shadow-lg flex flex-col">
                         <h3 className="flex items-center gap-2 text-lg font-bold text-green-400 border-b border-slate-800 pb-3 mb-5"><Stethoscope className="w-5 h-5" /> Final Prescription</h3>
 

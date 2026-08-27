@@ -36,9 +36,17 @@ export async function GET(req: Request) {
       status: "completed",
     });
 
-    const pendingQuery = doctorDeptId
-      ? { status: "pending_review", assigned_department_id: doctorDeptId }
-      : { status: "pending_review" };
+    const pendingQuery = {
+      $or: [
+        {
+          assigned_department_id: doctorDeptId,
+          status: "pending_review",
+        },
+        {
+          claimed_by_doctor_id: session.user.id,
+        },
+      ],
+    };
 
     const deptPending = await Consultation.countDocuments(pendingQuery);
 

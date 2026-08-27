@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
@@ -50,13 +51,16 @@ class AIDraftResponse(BaseModel):
     ayurvedic_hints: str = ""
     ai_summary_and_advice: str
     assigned_department_id: str | None = None
+    tokens_prompt: int | None = 0
+    tokens_completion: int | None = 0
+    response_time_sec: float | None = 0.0
+    ai_status: str = "success"
 
 @app.post("/api/analyze-symptoms", response_model=AIDraftResponse)
 async def analyze_symptoms(
     payload: PatientInput,
     x_internal_secret: str = Header(None)
 ):
-    # Security Check
     if x_internal_secret != INTERNAL_API_SECRET:
         raise HTTPException(
             status_code=403,
@@ -66,7 +70,6 @@ async def analyze_symptoms(
     if not GEMINI_API_KEY:
         raise HTTPException(status_code=500, detail="Gemini API Key is missing.")
 
-    # RAG Context Retrieval
     retrieved_context = retrieve_relevant_context(payload.symptoms_raw_text)
 
     default_base_prompt = "You are an expert AI medical assistant trained in both Allopathic triage and Ayurvedic principles (Doshas). Analyze the patient's symptoms carefully using the provided reference context."
@@ -82,6 +85,7 @@ async def analyze_symptoms(
         available_departments=payload.available_departments
     )
     
+    start_time = time.time()
     try:
         model_name = payload.ai_model_override if payload.ai_model_override else "gemini-1.5-flash"
         model = genai.GenerativeModel(model_name)
@@ -93,11 +97,25 @@ async def analyze_symptoms(
             )
         )
         
-        return json.loads(response.text)
+        end_time = time.time()
+        response_time_sec = round(end_time - start_time, 2)
+
+        usage = getattr(response, "usage_metadata", None)
+        tokens_prompt = getattr(usage, "prompt_token_count", 0) if usage else 0
+        tokens_completion = getattr(usage, "candidates_token_count", 0) if usage else 0
+
+        parsed_data = json.loads(response.text)
+        
+        parsed_data["tokens_prompt"] = tokens_prompt
+        parsed_data["tokens_completion"] = tokens_completion
+        parsed_data["response_time_sec"] = response_time_sec
+        parsed_data["ai_status"] = "success"
+
+        return parsed_data
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-        
+
 @app.get("/")
 def read_root():
     return {"status": "ok", "message": "Secure Somatic AI Microservice is active"}
