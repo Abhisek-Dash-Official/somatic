@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import ContactClient from "@/components/client/ContactClient";
+import ContactClient from "@/components/contact/ContactClient";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {

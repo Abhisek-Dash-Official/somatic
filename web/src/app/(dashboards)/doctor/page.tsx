@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import DoctorDashboardClient from "@/components/client/DoctorDashboardClient";
+import DoctorDashboardClient from "@/components/doctor/DoctorDashboardClient";
 
 export const metadata: Metadata = {
     title: "Doctor Dashboard | Somatic",

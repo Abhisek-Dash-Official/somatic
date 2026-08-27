@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import NewConsultationForm from "@/components/consultations/NewConsultationForm";
+import NewConsultationForm from "@/components/patient/NewConsultationForm";
 
 export const metadata: Metadata = {
     title: "New Consultation | Somatic AI",

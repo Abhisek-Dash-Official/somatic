@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import TicketsClient from "@/components/client/TicketsClient";
+import TicketsClient from "@/components/contact/TicketsClient";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {

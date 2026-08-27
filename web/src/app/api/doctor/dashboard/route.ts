@@ -19,8 +19,14 @@ export async function GET(req: Request) {
     await dbConnect();
     const doctorId = session.user.id;
 
-    const doctor = await User.findById(doctorId).select("doctor_info").lean();
-    const doctorDeptId = doctor?.doctor_info?.department_id;
+    const doctor = await User.findById(doctorId)
+      .populate("doctor_info.department_id", "name")
+      .select("doctor_info")
+      .lean();
+
+    const doctorDeptId = doctor?.doctor_info?.department_id?._id;
+    const departmentName =
+      (doctor?.doctor_info?.department_id as any)?.name || "General";
 
     const totalMyCases = await Consultation.countDocuments({
       claimed_by_doctor_id: doctorId,
@@ -45,7 +51,7 @@ export async function GET(req: Request) {
       .select(
         "_id status created_at ai_draft.is_emergency ai_draft.chief_complaints patient_input.age claimed_by_doctor_id assigned_department_id",
       )
-      .sort({ "ai_draft.is_emergency": -1, created_at: -1 })
+      .sort({ "ai_draft.is_emergency": -1, status: -1, created_at: -1 })
       .limit(10)
       .lean();
 
@@ -58,6 +64,7 @@ export async function GET(req: Request) {
         },
         activeCases,
         isAcceptingCases: doctor?.doctor_info?.is_accepting_cases ?? false,
+        departmentName,
       },
       { status: 200 },
     );

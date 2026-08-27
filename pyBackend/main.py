@@ -6,7 +6,6 @@ from pydantic import BaseModel
 import google.generativeai as genai
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-
 from prompts import get_medical_prompt
 from rag import initialize_knowledge_base, retrieve_relevant_context
 
@@ -26,15 +25,15 @@ async def lifespan(app: FastAPI):
     print("Shutting down AI Microservice...")
 
 app = FastAPI(title="Somatic Secure RAG AI Microservice", lifespan=lifespan)
-
 app_url = os.getenv("NEXT_PUBLIC_APP_URL", "http://localhost:3000")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[app_url, "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-),
+)
 
 class PatientInput(BaseModel):
     symptoms_raw_text: str
@@ -43,22 +42,24 @@ class PatientInput(BaseModel):
     preferred_prescription_language: str | None = "English"
     ai_model_override: str | None = "gemini-3.6-flash"
     custom_system_prompt: str | None = None
+    available_departments: list[dict] = []
 
 class AIDraftResponse(BaseModel):
     is_emergency: bool
     chief_complaints: list[str]
     ayurvedic_hints: str = ""
     ai_summary_and_advice: str
+    assigned_department_id: str | None = None
 
 @app.post("/api/analyze-symptoms", response_model=AIDraftResponse)
 async def analyze_symptoms(
-    payload: PatientInput, 
+    payload: PatientInput,
     x_internal_secret: str = Header(None)
 ):
     # Security Check
     if x_internal_secret != INTERNAL_API_SECRET:
         raise HTTPException(
-            status_code=403, 
+            status_code=403,
             detail="Forbidden: Invalid or missing internal secret token."
         )
 
@@ -77,11 +78,12 @@ async def analyze_symptoms(
         weight_kg=payload.weight_kg,
         symptoms_raw_text=payload.symptoms_raw_text,
         language=payload.preferred_prescription_language,
-        retrieved_context=retrieved_context
+        retrieved_context=retrieved_context,
+        available_departments=payload.available_departments
     )
     
     try:
-        model_name = payload.ai_model_override if payload.ai_model_override else "gemini-3.6-pro"
+        model_name = payload.ai_model_override if payload.ai_model_override else "gemini-1.5-flash"
         model = genai.GenerativeModel(model_name)
         
         response = model.generate_content(

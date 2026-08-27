@@ -1,8 +1,13 @@
+"use client"
 import { siteConfig } from "@/config/site";
 import Link from "next/link";
 import { ArrowRight, Activity } from "lucide-react";
+import { useUserStore } from "@/store/useUserStore";
 
 export default function HomePage() {
+    const { user } = useUserStore();
+    const getStartedHref = user && user.role ? `/${user.role}` : "/login";
+
     return (
         <div className="flex flex-col items-center justify-center py-20 px-4 sm:px-6 md:py-32 text-center relative overflow-hidden">
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-75 w-75 md:h-125 md:w-125 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-600/10 blur-[80px] md:blur-[120px]" />
@@ -21,7 +26,7 @@ export default function HomePage() {
 
             <div className="z-10 flex flex-col sm:flex-row gap-4 w-full sm:w-auto px-4 sm:px-0">
                 <Link
-                    href="/patient"
+                    href={getStartedHref}
                     className="group flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-blue-600 px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)]"
                 >
                     Get Started <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />

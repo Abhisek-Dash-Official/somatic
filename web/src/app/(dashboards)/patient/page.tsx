@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import PatientDashboardClient from "@/components/client/PatientDashboardClient";
+import PatientDashboardClient from "@/components/patient/PatientDashboardClient";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Consultation from "@/models/Consultation";
+import Department from "@/models/Department";
 import { createSystemLog } from "@/lib/logger";
 
 const PYTHON_BACKEND_URL =
@@ -22,6 +23,7 @@ export async function POST(req: Request) {
       weight_kg,
       symptoms_raw_text,
       preferred_prescription_language,
+      attachments,
     } = body;
 
     const parsedAge = Number(age);
@@ -47,6 +49,16 @@ export async function POST(req: Request) {
       );
     }
 
+    await dbConnect();
+    const activeDepartments = await Department.find({ is_active: true })
+      .select("_id name")
+      .lean();
+
+    const deptListForAI = activeDepartments.map((d) => ({
+      id: d._id.toString(),
+      name: d.name,
+    }));
+
     const pyResponse = await fetch(
       `${PYTHON_BACKEND_URL}/api/analyze-symptoms`,
       {
@@ -61,6 +73,7 @@ export async function POST(req: Request) {
           symptoms_raw_text,
           preferred_prescription_language:
             preferred_prescription_language || "English",
+          available_departments: deptListForAI,
         }),
       },
     );
@@ -68,13 +81,11 @@ export async function POST(req: Request) {
     if (!pyResponse.ok) {
       throw new Error("Failed to generate AI draft from Python backend");
     }
-
     const aiDraft = await pyResponse.json();
-
-    await dbConnect();
 
     const newConsultation = await Consultation.create({
       patient_id: session.user.id,
+      assigned_department_id: aiDraft.assigned_department_id || null, // Seedha ID save hoga
       status: "pending_review",
       patient_input: {
         age: parsedAge,
@@ -82,6 +93,7 @@ export async function POST(req: Request) {
         symptoms_raw_text,
         preferred_prescription_language:
           preferred_prescription_language || "English",
+        attachments: Array.isArray(attachments) ? attachments : [],
       },
       ai_draft: {
         is_emergency: aiDraft.is_emergency,
@@ -96,7 +108,10 @@ export async function POST(req: Request) {
       actor_role: session.user.role,
       action_type: "CREATE_CONSULTATION",
       target_id: newConsultation._id.toString(),
-      details: { is_emergency: aiDraft.is_emergency },
+      details: {
+        is_emergency: aiDraft.is_emergency,
+        assigned_dept_id: aiDraft.assigned_department_id,
+      },
     });
 
     return NextResponse.json(

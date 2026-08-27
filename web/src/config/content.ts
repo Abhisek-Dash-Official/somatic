@@ -34,6 +34,22 @@ export const pageContent = {
         linkedin: "#",
         github: "#",
       },
+      {
+        name: "Jyotirmayee Behera",
+        role: "Product Manager",
+        bio: "Drives the strategic roadmap and cross-functional execution of the platform. Synthesizes feedback from clinical advisory boards, developers, and patient advocacy groups to deliver high-utility, regulatory-compliant medical software solutions.",
+        image: "/members/Jyotirmayee.png",
+        linkedin: "#",
+        github: "#",
+      },
+      {
+        name: "Shireen Fatima",
+        role: "Data Privacy Officer",
+        bio: "Oversees information security frameworks and data governance protocols. Audits platform architecture to guarantee absolute compliance with HIPAA, GDPR, and medical data retention laws, ensuring strict safeguarding of sensitive patient information.",
+        image: "/members/Shireen.png",
+        linkedin: "#",
+        github: "#",
+      },
     ],
   },
   contact: {
