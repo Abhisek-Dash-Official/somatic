@@ -1,5 +1,9 @@
 import { pageContent } from "@/config/content";
-import { Stethoscope, Database, Zap, BriefcaseMedical } from "lucide-react";
+import {
+    Stethoscope, Database, Zap, BriefcaseMedical,
+    UserPlus, GitMerge, Shield, Leaf, FileBarChart,
+    Siren, MessageSquare, BrainCircuit, Cloud, PieChart, Users
+} from "lucide-react";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 
@@ -8,7 +12,11 @@ export const metadata: Metadata = {
     description: "Discover how Somatic delivers clinical value through AI-assisted case taking and secure health records management.",
 };
 
-const IconMap: Record<string, any> = { Stethoscope, Database, Zap };
+const IconMap: Record<string, any> = {
+    Stethoscope, Database, Zap, BriefcaseMedical,
+    UserPlus, GitMerge, Shield, Leaf, FileBarChart,
+    Siren, MessageSquare, BrainCircuit, Cloud, PieChart, Users
+};
 
 export default function ServicesPage() {
     return (

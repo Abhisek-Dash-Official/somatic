@@ -1,5 +1,9 @@
 import { pageContent } from "@/config/content";
-import { Cpu, Activity, FileText, ShieldCheck, Database, Zap, Layers } from "lucide-react";
+import {
+    Cpu, Activity, FileText, ShieldCheck, Database, Zap, Layers,
+    Mic, Network, AlertTriangle, ListChecks, DownloadCloud,
+    Languages, Paperclip, Lock
+} from "lucide-react";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 
@@ -8,7 +12,11 @@ export const metadata: Metadata = {
     description: "Explore the technical capabilities powering Somatic, including Smart Symptom Mapping, EHR, and automated prescriptions.",
 };
 
-const IconMap: Record<string, any> = { Cpu, Activity, FileText, ShieldCheck, Database, Zap };
+const IconMap: Record<string, any> = {
+    Cpu, Activity, FileText, ShieldCheck, Database, Zap, Layers,
+    Mic, Network, AlertTriangle, ListChecks, DownloadCloud,
+    Languages, Paperclip, Lock
+};
 
 export default function FeaturesPage() {
     return (

@@ -28,7 +28,11 @@ export const navLinks = {
         href: "https://github.com/Abhisek-Dash-Official/",
         icon: "github",
       },
-      { title: "LinkedIn", href: "#", icon: "linkedin" },
+      {
+        title: "LinkedIn",
+        href: "https://www.linkedin.com/in/abhisek-dash-49904a371/",
+        icon: "linkedin",
+      },
       { title: "Instagram", href: "#", icon: "instagram" },
       { title: "YouTube", href: "#", icon: "youtube" },
     ],
@@ -40,6 +44,8 @@ export const navLinks = {
       { title: "Users", href: "/admin/users", icon: "Users" },
       { title: "Tickets", href: "/admin/tickets", icon: "Ticket" },
       { title: "Settings", href: "/admin/settings", icon: "Settings" },
+      { title: "System Logs", href: "/admin/logs", icon: "Logs" },
+      { title: "Profile", href: "/admin/profile", icon: "UserShield" },
     ],
     doctor: [
       { title: "Dashboard", href: "/doctor", icon: "LayoutDashboard" },

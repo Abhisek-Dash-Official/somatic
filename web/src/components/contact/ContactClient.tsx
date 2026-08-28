@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
 import { pageContent } from "@/config/content";
-import { Mail, MessageSquare, AlertCircle, Loader2, Send, CheckCircle2 } from "lucide-react";
+import { Mail, MessageSquare, AlertCircle, Loader2, Send, CheckCircle2, Phone } from "lucide-react";
 
 export default function ContactClient() {
     const { user, isFetched } = useUserStore();
@@ -57,16 +57,32 @@ export default function ContactClient() {
 
                 {/* Contact Information Side */}
                 <div className="md:col-span-1 space-y-6">
-                    <div className="rounded-3xl border border-white/10 bg-[#0f172a]/60 p-8 shadow-xl">
-                        <h3 className="mb-6 text-xl font-bold text-white border-b border-white/10 pb-4">Direct Contact</h3>
+                    <div className="rounded-3xl border border-white/10 bg-[#0f172a]/60 p-8 shadow-xl space-y-6">
+                        <h3 className="text-xl font-bold text-white border-b border-white/10 pb-4">Direct Contact</h3>
 
-                        <div className="flex items-start gap-4 mb-6">
+                        {/* Email */}
+                        <div className="flex items-start gap-4">
                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
                                 <Mail className="h-5 w-5" />
                             </div>
                             <div>
                                 <p className="text-sm font-semibold text-white">Email Us</p>
-                                <a href={`mailto:${pageContent.contact.email}`} className="text-slate-400 text-sm hover:text-blue-400 transition-colors">{pageContent.contact.email}</a>
+                                <a href={`mailto:${pageContent.contact.email}`} className="text-slate-400 text-sm hover:text-blue-400 transition-colors">
+                                    {pageContent.contact.email}
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Helpline */}
+                        <div className="flex items-start gap-4">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-500/10 text-green-400">
+                                <Phone className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-white">24/7 Helpline</p>
+                                <a href={`tel:${pageContent.contact.helpline}`} className="text-slate-400 text-sm hover:text-green-400 transition-colors">
+                                    {pageContent.contact.helpline}
+                                </a>
                             </div>
                         </div>
 
@@ -76,6 +92,16 @@ export default function ContactClient() {
                                 {pageContent.contact.responseTime}
                             </p>
                         </div>
+
+                        {/* Emergency Notice */}
+                        {pageContent.contact.emergencyNotice && (
+                            <div className="rounded-xl bg-red-500/10 p-4 border border-red-500/20 flex items-start gap-3">
+                                <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                                <p className="text-xs text-red-300 leading-relaxed">
+                                    {pageContent.contact.emergencyNotice}
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
 

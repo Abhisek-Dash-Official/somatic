@@ -1,3 +1,268 @@
-[Vata Dosha]: Characterized by dry skin, joint pain, anxiety, irregular digestion. Balanced by warm, grounding foods, sesame oil massage, and routine.
-[Pitta Dosha]: Characterized by acidity, inflammation, anger, heat intolerance, sharp appetite. Balanced by cooling foods, sweet fruits, avoiding spicy/fried items.
-[Kapha Dosha]: Characterized by lethargy, congestion, weight gain, slow digestion, oily skin. Balanced by light, warm, spicy foods, regular vigorous exercise, and waking up early.
+SOMATIC — AYURVEDIC REFERENCE CORPUS v1.0 (PROTOTYPE BUILD)
+Purpose: source-traceable Ayurvedic knowledge corpus for Vector DB development.
+Status: HACKATHON PROTOTYPE DRAFT — Validated against Ayurvedic Pharmacopoeia of India (API) and Charaka Samhita.
+
+DATA PROVENANCE POLICY
+1. Official AYUSH/API material is preferred for identity, drug dossiers, standardization and research.
+2. Classical properties are retained as Ayurvedic/traditional knowledge and must not be represented as modern clinical efficacy.
+3. Secondary academic sources may be used for gap-filling only when a primary source is not yet retrieved; they are marked as such.
+4. Dosage and patient-specific treatment recommendations are excluded from this corpus unless separately verified from an authoritative source.
+5. Every production chunk must retain its source, evidence type and review status.
+
+============================================================
+VERIFIED DRAVYA (HERB) RECORDS
+============================================================
+
+[DRAVYA-001] Ashwagandha
+Entity type: dravya
+Botanical name: Withania somnifera (L.) Dunal
+Part used: Root
+Rasa: Tikta, Kashaya, Madhura
+Guna: Laghu, Snigdha
+Virya: Ushna
+Vipaka: Madhura
+Dosha action: Kapha-Vata Shamaka
+Traditional karma: Balya, Rasayana, Vedanasthapana, Shothahara, Nidrajanana
+Source: Ayurvedic Pharmacopoeia of India (API); Charaka Samhita
+Review status: VERIFIED
+
+[DRAVYA-002] Guduchi
+Entity type: dravya
+Botanical name: Tinospora cordifolia
+Part used: Stem
+Rasa: Tikta, Kashaya
+Guna: Guru, Snigdha
+Virya: Ushna
+Vipaka: Madhura
+Dosha action: Tridosha Shamaka
+Traditional karma: Rasayana, Balya, Jwarahara, Dipana, Raktashodhaka
+Source: API; Bhava Prakash Nighantu
+Review status: VERIFIED
+
+[DRAVYA-003] Arjuna
+Entity type: dravya
+Botanical name: Terminalia arjuna
+Part used: Bark
+Rasa: Kashaya
+Guna: Laghu, Ruksha
+Virya: Sheeta
+Vipaka: Katu
+Dosha action: Kapha-Pitta Shamaka
+Traditional karma: Hridya, Sandhaneeya, Vranaropana, Raktastambhana
+Source: API; Charak Samhita
+Review status: VERIFIED
+
+[DRAVYA-004] Haritaki
+Entity type: dravya
+Botanical name: Terminalia chebula Retz.
+Part used: Fruit
+Rasa: Pancharasa (Amla, Katu, Tikta, Kashaya, Madhura - Lavana varjita), Kashaya-pradhana
+Guna: Laghu, Ruksha
+Virya: Ushna
+Vipaka: Madhura
+Dosha action: Tridosha Shamaka
+Traditional karma: Rasayana, Anulomana, Lekhana, Shothahara, Chakshushya
+Source: API; Bhava Prakash Nighantu
+Review status: VERIFIED
+
+[DRAVYA-005] Bibhitaka
+Entity type: dravya
+Botanical name: Terminalia bellirica
+Part used: Fruit
+Rasa: Kashaya
+Guna: Laghu, Ruksha
+Virya: Ushna
+Vipaka: Madhura
+Dosha action: Tridosha Shamaka, specifically Kapha-Pitta hara
+Traditional karma: Shothahara, Keshya, Kasa-hara, Grahi
+Source: API
+Review status: VERIFIED
+
+[DRAVYA-006] Amalaki
+Entity type: dravya
+Botanical name: Phyllanthus emblica (syn. Emblica officinalis)
+Part used: Fruit
+Rasa: Pancharasa (Amla-pradhana, Lavana-varjita)
+Guna: Guru, Ruksha, Sheeta
+Virya: Sheeta
+Vipaka: Madhura
+Dosha action: Tridosha Shamaka (mainly Pitta hara)
+Traditional karma: Rasayana, Chakshushya, Keshya, Vayasthapana
+Source: API
+Review status: VERIFIED
+
+[DRAVYA-007] Haridra
+Entity type: dravya
+Botanical name: Curcuma longa
+Part used: Rhizome
+Rasa: Tikta, Katu
+Guna: Ruksha, Laghu
+Virya: Ushna
+Vipaka: Katu
+Dosha action: Kapha-Pitta Shamaka
+Traditional karma: Vishaghna, Varnya, Kushtaghna, Pramehaghna, Krimighna, Shothahara
+Source: API; Charaka Samhita Sutrasthana
+Review status: VERIFIED
+
+[DRAVYA-008] Yashtimadhu
+Entity type: dravya
+Botanical name: Glycyrrhiza glabra
+Part used: Root
+Rasa: Madhura
+Guna: Guru, Snigdha
+Virya: Sheeta
+Vipaka: Madhura
+Dosha action: Vata-Pitta Shamaka
+Traditional karma: Medhya, Chakshushya, Varnya, Keshya, Balya, Rasayana, Kanthya
+Source: API
+Review status: VERIFIED
+
+[DRAVYA-009] Shunthi
+Entity type: dravya
+Botanical name: Zingiber officinale
+Part used: Dried Rhizome
+Rasa: Katu
+Guna: Laghu, Snigdha
+Virya: Ushna
+Vipaka: Madhura
+Dosha action: Kapha-Vata Shamaka
+Traditional karma: Shothahara, Shulaprashamana, Deepana, Pachana, Grahi
+Source: API
+Review status: VERIFIED
+
+[DRAVYA-010] Lasuna
+Entity type: dravya
+Botanical name: Allium sativum L.
+Part used: Bulb
+Rasa: Pancharasa (Amla-varjita; primarily Katu)
+Guna: Snigdha, Tikshna, Guru, Picchila
+Virya: Ushna
+Vipaka: Katu
+Dosha action: Kapha-Vata Shamaka
+Traditional karma: Vrishya, Rasayana, Hridya, Asthisandhana, Deepana
+Source: API; Ashtanga Hridaya
+Review status: VERIFIED
+
+[DRAVYA-011] Vasa
+Entity type: dravya
+Botanical name: Adhatoda vasica
+Part used: Leaf, Root
+Rasa: Tikta, Kashaya
+Guna: Laghu, Ruksha
+Virya: Sheeta
+Vipaka: Katu
+Dosha action: Kapha-Pitta Shamaka
+Traditional karma: Kasahara, Shwasahara, Raktapittahara, Hridya
+Source: API; Charaka Samhita
+Review status: VERIFIED
+
+[DRAVYA-012] Brahmi
+Entity type: dravya
+Botanical name: Bacopa monnieri
+Part used: Whole plant
+Rasa: Tikta, Kashaya
+Guna: Laghu
+Virya: Sheeta
+Vipaka: Madhura
+Dosha action: Vata-Pitta Shamaka
+Traditional karma: Medhya, Rasayana, Ayushya, Smritiprada, Unmadahara
+Source: API
+Review status: VERIFIED
+
+[DRAVYA-013] Mandukaparni
+Entity type: dravya
+Botanical name: Centella asiatica
+Part used: Whole plant
+Rasa: Tikta
+Guna: Laghu
+Virya: Sheeta
+Vipaka: Madhura
+Dosha action: Pitta-Kapha Shamaka
+Traditional karma: Medhya, Rasayana, Hridya, Ayushya, Swarya
+Source: API; Charaka Samhita Chikitsa Sthana
+Review status: VERIFIED
+
+[DRAVYA-014] Shatavari
+Entity type: dravya
+Botanical name: Asparagus racemosus
+Part used: Tuberous Root
+Rasa: Madhura, Tikta
+Guna: Guru, Snigdha
+Virya: Sheeta
+Vipaka: Madhura
+Dosha action: Vata-Pitta Shamaka
+Traditional karma: Stanyajanana, Rasayana, Balya, Shukrala, Medhya, Pittasruk-hara
+Source: API
+Review status: VERIFIED
+
+[DRAVYA-015] Punarnava
+Entity type: dravya
+Botanical name: Boerhavia diffusa
+Part used: Root, Whole plant
+Rasa: Tikta, Kashaya, Madhura
+Guna: Laghu, Ruksha
+Virya: Ushna
+Vipaka: Katu
+Dosha action: Tridosha Shamaka (primarily Kapha-Vata hara)
+Traditional karma: Shothahara, Mutrala, Rasayana, Kasahara, Panduhara
+Source: API
+Review status: VERIFIED
+
+============================================================
+ROGA (DISEASE) CORPUS EXTRACTS FOR VECTOR DB
+============================================================
+*Note: Extracted from Charaka Samhita and Sushruta Samhita for accurate RAG retrieval*
+
+[ROGA-001] Jvara
+Ayurvedic name: Jvara
+English crosswalk: Fever syndrome / Pyrexia
+Nidana (Causes): Mithya Ahara Vihara (improper diet/lifestyle), Ritu Viparyaya (seasonal variations), Abhighata (trauma).
+Purvarupa (Prodromal): Shrama (fatigue), Aruchi (anorexia), Gatra Gaurava (heaviness of body), Klama (exhaustion without exertion).
+Rupa (Symptoms): Santapa (elevated body temperature), Aruchi, Trishna (excessive thirst), Angamarda (body ache), Svedavarodha (obstruction of sweat).
+Samprapti (Pathogenesis): Aggravated Doshas (mainly Pitta) enter the Amashaya, displace the Jatharagni (digestive fire) to the exterior (Shakha), causing Santapa (heat) and obstructing sweat channels.
+Dosha: Tridosha (Pitta predominance).
+Dushya: Rasa Dhatu.
+Srotas: Rasavaha, Swedavaha.
+
+[ROGA-002] Kasa
+Ayurvedic name: Kasa
+English crosswalk: Cough syndrome
+Nidana (Causes): Dhuma (smoke exposure), Raja (dust), Vyayama (excessive exertion), Ruksha anna (dry food consumption), Vegadharana (suppression of natural urges).
+Purvarupa (Prodromal): Kantha kandu (itching in the throat), Bhojyana aushadha arodha (difficulty in swallowing food).
+Rupa (Symptoms): Shushka or Ardra Kasa (dry or productive cough), Uras shula (chest pain), Swarabheda (hoarseness of voice).
+Samprapti (Pathogenesis): Prana and Udana Vayu get obstructed by Kapha, moving in an upward direction, producing a sound like a broken bronze vessel.
+Dosha: Vata (Prana, Udana) and Kapha.
+Dushya: Rasa, Prana.
+Srotas: Pranavaha.
+
+[ROGA-003] Shwasa
+Ayurvedic name: Śvāsa
+English crosswalk: Dyspnea / Asthma syndrome
+Nidana (Causes): Exposure to dust and smoke, cold water intake, Marmaghata (injury to vital organs), Ama accumulation, secondary to Kasa or Jvara.
+Purvarupa (Prodromal): Anaha (abdominal distension), Parshva shula (flank pain), Prana vilomata (upward movement of breath).
+Rupa (Symptoms): Breathing difficulty, rapid respiration, wheezing, orthopnea, chest tightness.
+Samprapti (Pathogenesis): Kapha obstructs the Pranavaha Srotas, causing Vata (Prana Vayu) to move in a reverse/upward direction (Viloma), leading to breathlessness.
+Dosha: Vata and Kapha.
+Dushya: Rasa, Prana.
+Srotas: Pranavaha, Udakavaha, Annavaha.
+
+[ROGA-007] Prameha
+Ayurvedic name: Prameha
+English crosswalk: Metabolic / Urinary disorders (includes Diabetes crosswalk)
+Nidana (Causes): Asyasukhayam (sedentary lifestyle), Svapnasukhayam (excessive sleep), consuming Dadhi (curd), Gramya-audaka mamsa (meats of domestic/aquatic animals), Navanna (new grains), Guda (jaggery).
+Purvarupa (Prodromal): Sweda (excessive sweating), Angagandha (foul body odor), Mutra avilata (turbid urine), Pipasa (thirst), Madhurya of asya (sweet taste in mouth).
+Rupa (Symptoms): Prabhuta avila mutrata (frequent and turbid urination).
+Samprapti (Pathogenesis): Aggravated Kapha and Pitta mix with Meda (fat) and Kleda, moving downwards to the Mutravaha srotas (urinary tract), corrupting urine.
+Dosha: Tridosha (Kapha predominance initially).
+Dushya: Meda (fat), Mamsa (muscle), Kleda (body fluids), Rakta, Vasā, Majjā, Lasikā, Rasa, Ojas.
+Srotas: Mutravaha, Medovaha.
+
+============================================================
+SAFETY RED-FLAG LAYER (FOR AI SYSTEM PROMPT)
+============================================================
+1. JVARA (Fever): Escalate to biomedical triage if severe systemic illness, altered mental status, breathing difficulty, or shock is detected.
+2. KASA (Cough): Escalate if hemoptysis (coughing blood), chest pain, cyanosis, or severe weight loss is present.
+3. SHWASA (Breathlessness): Treat rapidly worsening breathlessness as an acute emergency. Do NOT delay biomedical assessment.
+4. PRAMEHA (Diabetes): Do NOT advise stopping insulin or prescribed allopathic hypoglycemic agents.
+
+END V1.0 (PROTOTYPE)
