@@ -2,7 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useUserStore } from "@/store/useUserStore";
-import { Loader2, Save, User as UserIcon, Lock, ShieldCheck, AlertCircle, Stethoscope, Activity, Plus, X } from "lucide-react";
+import {
+    Loader2, Save, User as UserIcon, Lock, ShieldCheck,
+    AlertCircle, Activity, Plus, X
+} from "lucide-react";
+import AvatarSelector from "@/components/profile/AvatarSelector";
 
 export default function ProfilePage() {
     const { user, fetchUser, isLoading, isFetched } = useUserStore();
@@ -18,10 +22,7 @@ export default function ProfilePage() {
         currentPassword: "",
         newPassword: "",
         blood_grp: "",
-        reg_no: "",
-        qualification: "",
-        experience: 0,
-        is_accepting_cases: true,
+        avatar_id: "1",
     });
 
     const [allergies, setAllergies] = useState<string[]>([]);
@@ -39,10 +40,7 @@ export default function ProfilePage() {
                 currentPassword: "",
                 newPassword: "",
                 blood_grp: user.patient_info?.blood_grp || "",
-                reg_no: user.doctor_info?.reg_no || "",
-                qualification: user.doctor_info?.qualification || "",
-                experience: user.doctor_info?.experience || 0,
-                is_accepting_cases: user.doctor_info?.is_accepting_cases ?? true,
+                avatar_id: user.avatar_id || "1",
             });
             setAllergies(user.patient_info?.known_allergies || []);
             setDiseases(user.patient_info?.chronic_diseases || []);
@@ -50,8 +48,7 @@ export default function ProfilePage() {
     }, [user]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
-        setFormData({ ...formData, [e.target.name]: value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleAddAllergy = () => {
@@ -74,28 +71,19 @@ export default function ProfilePage() {
         setErrorMsg("");
         setSuccessMsg("");
 
-        const payload: any = {
+        const payload = {
             username: formData.username,
             contact_no: formData.contact_no,
             address: formData.address,
             currentPassword: formData.currentPassword,
             newPassword: formData.newPassword,
-        };
-
-        if (user?.role === "patient") {
-            payload.patient_info = {
+            avatar_id: formData.avatar_id,
+            patient_info: {
                 blood_grp: formData.blood_grp,
                 known_allergies: allergies,
                 chronic_diseases: diseases,
-            };
-        } else if (user?.role === "doctor") {
-            payload.doctor_info = {
-                reg_no: formData.reg_no,
-                qualification: formData.qualification,
-                experience: Number(formData.experience),
-                is_accepting_cases: formData.is_accepting_cases,
-            };
-        }
+            }
+        };
 
         try {
             const res = await fetch("/api/users/profile", {
@@ -111,6 +99,7 @@ export default function ProfilePage() {
             setFormData(prev => ({ ...prev, currentPassword: "", newPassword: "" }));
 
             await fetchUser(true);
+            setTimeout(() => setSuccessMsg(""), 3000);
         } catch (err: any) {
             setErrorMsg(err.message);
         } finally {
@@ -127,18 +116,25 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="animate-in fade-in zoom-in duration-500 max-w-4xl mx-auto space-y-6">
+        <div className="animate-in fade-in zoom-in duration-500 max-w-4xl mx-auto space-y-6 pb-12">
 
             {/* Header */}
             <div className="rounded-3xl border border-white/10 bg-[#0f172a]/80 p-8 shadow-2xl backdrop-blur-xl flex flex-col md:flex-row items-center gap-6">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-blue-500/20 text-4xl font-bold text-blue-400 border border-blue-500/30 uppercase shadow-[0_0_20px_rgba(59,130,246,0.15)]">
-                    {user?.username?.charAt(0) || "U"}
+
+                {/* Global Avatar Selector */}
+                <div className="shrink-0">
+                    <AvatarSelector
+                        currentAvatarId={formData.avatar_id}
+                        onSelect={(id) => setFormData({ ...formData, avatar_id: id })}
+                        isAdmin={false}
+                    />
                 </div>
+
                 <div className="text-center md:text-left">
-                    <h1 className="text-3xl font-bold text-white mb-2">My Profile</h1>
+                    <h1 className="text-3xl font-bold text-white mb-2">{formData.username || "My Profile"}</h1>
                     <p className="text-slate-400 flex items-center justify-center md:justify-start gap-2 capitalize">
                         <ShieldCheck className="h-4 w-4 text-green-400" />
-                        Verified {user?.role} Account
+                        Verified Patient Account
                     </p>
                 </div>
             </div>
@@ -186,120 +182,86 @@ export default function ProfilePage() {
                         </div>
                     </div>
 
-                    {/* Role Specific Medical Info (Patient) */}
-                    {user?.role === "patient" && (
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-3 border-b border-white/10 pb-4">
-                                <Activity className="h-5 w-5 text-blue-400" />
-                                <h2 className="text-xl font-semibold text-white">Medical Profile (Patient)</h2>
+                    {/* Medical Info */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+                            <Activity className="h-5 w-5 text-blue-400" />
+                            <h2 className="text-xl font-semibold text-white">Medical Profile</h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2 md:col-span-2">
+                                <label className="text-sm font-medium text-slate-300">Blood Group</label>
+                                <select name="blood_grp" value={formData.blood_grp} onChange={handleChange} className="w-full rounded-xl border border-white/10 bg-black/30 py-3.5 px-4 text-white focus:border-blue-500 focus:outline-none appearance-none md:w-1/2">
+                                    <option value="">Select Group</option>
+                                    <option value="A+">A+</option><option value="A-">A-</option>
+                                    <option value="B+">B+</option><option value="B-">B-</option>
+                                    <option value="O+">O+</option><option value="O-">O-</option>
+                                    <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                                </select>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2 md:col-span-2">
-                                    <label className="text-sm font-medium text-slate-300">Blood Group</label>
-                                    <select name="blood_grp" value={formData.blood_grp} onChange={handleChange} className="w-full rounded-xl border border-white/10 bg-black/30 py-3.5 px-4 text-white focus:border-blue-500 focus:outline-none appearance-none md:w-1/2">
-                                        <option value="">Select Group</option>
-                                        <option value="A+">A+</option><option value="A-">A-</option>
-                                        <option value="B+">B+</option><option value="B-">B-</option>
-                                        <option value="O+">O+</option><option value="O-">O-</option>
-                                        <option value="AB+">AB+</option><option value="AB-">AB-</option>
-                                    </select>
+                            {/* Allergies */}
+                            <div className="space-y-3">
+                                <label className="text-sm font-medium text-slate-300">Known Allergies</label>
+                                <div className="flex gap-2 flex-wrap">
+                                    <input
+                                        type="text"
+                                        value={allergyInput}
+                                        onChange={(e) => setAllergyInput(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddAllergy())}
+                                        placeholder="e.g. Peanuts"
+                                        className="flex-1 rounded-xl border border-white/10 bg-black/30 py-2.5 px-4 text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
+                                    />
+                                    <button type="button" onClick={handleAddAllergy} className="flex items-center gap-1 rounded-xl bg-blue-600/20 px-4 py-2 font-semibold text-blue-400 hover:bg-blue-600/40 transition-colors border border-blue-500/20">
+                                        <Plus className="h-4 w-4" /> Add
+                                    </button>
                                 </div>
-
-                                {/* Allergies */}
-                                <div className="space-y-3">
-                                    <label className="text-sm font-medium text-slate-300">Known Allergies</label>
-                                    <div className="flex gap-2 flex-wrap">
-                                        <input
-                                            type="text"
-                                            value={allergyInput}
-                                            onChange={(e) => setAllergyInput(e.target.value)}
-                                            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddAllergy())}
-                                            placeholder="e.g. Peanuts"
-                                            className="flex-1 rounded-xl border border-white/10 bg-black/30 py-2.5 px-4 text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
-                                        />
-                                        <button type="button" onClick={handleAddAllergy} className="flex items-center gap-1 rounded-xl bg-blue-600/20 px-4 py-2 font-semibold text-blue-400 hover:bg-blue-600/40 transition-colors border border-blue-500/20">
-                                            <Plus className="h-4 w-4" /> Add
-                                        </button>
+                                {allergies.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {allergies.map((item, idx) => (
+                                            <span key={idx} className="flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1 text-sm text-white border border-white/10">
+                                                {item}
+                                                <button type="button" onClick={() => setAllergies(allergies.filter((_, i) => i !== idx))} className="ml-1 text-slate-400 hover:text-red-400">
+                                                    <X className="h-3 w-3" />
+                                                </button>
+                                            </span>
+                                        ))}
                                     </div>
-                                    {/* Badges */}
-                                    {allergies.length > 0 && (
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {allergies.map((item, idx) => (
-                                                <span key={idx} className="flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1 text-sm text-white border border-white/10">
-                                                    {item}
-                                                    <button type="button" onClick={() => setAllergies(allergies.filter((_, i) => i !== idx))} className="ml-1 text-slate-400 hover:text-red-400">
-                                                        <X className="h-3 w-3" />
-                                                    </button>
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
+                                )}
+                            </div>
 
-                                {/* Chronic Diseases */}
-                                <div className="space-y-3">
-                                    <label className="text-sm font-medium text-slate-300">Chronic Diseases</label>
-                                    <div className="flex gap-2 flex-wrap">
-                                        <input
-                                            type="text"
-                                            value={diseaseInput}
-                                            onChange={(e) => setDiseaseInput(e.target.value)}
-                                            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddDisease())}
-                                            placeholder="e.g. Diabetes"
-                                            className="flex-1 rounded-xl border border-white/10 bg-black/30 py-2.5 px-4 text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
-                                        />
-                                        <button type="button" onClick={handleAddDisease} className="flex items-center gap-1 rounded-xl bg-blue-600/20 px-4 py-2 font-semibold text-blue-400 hover:bg-blue-600/40 transition-colors border border-blue-500/20">
-                                            <Plus className="h-4 w-4" /> Add
-                                        </button>
-                                    </div>
-                                    {/* Badges */}
-                                    {diseases.length > 0 && (
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {diseases.map((item, idx) => (
-                                                <span key={idx} className="flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1 text-sm text-white border border-white/10">
-                                                    {item}
-                                                    <button type="button" onClick={() => setDiseases(diseases.filter((_, i) => i !== idx))} className="ml-1 text-slate-400 hover:text-red-400">
-                                                        <X className="h-3 w-3" />
-                                                    </button>
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
+                            {/* Chronic Diseases */}
+                            <div className="space-y-3">
+                                <label className="text-sm font-medium text-slate-300">Chronic Diseases</label>
+                                <div className="flex gap-2 flex-wrap">
+                                    <input
+                                        type="text"
+                                        value={diseaseInput}
+                                        onChange={(e) => setDiseaseInput(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddDisease())}
+                                        placeholder="e.g. Diabetes"
+                                        className="flex-1 rounded-xl border border-white/10 bg-black/30 py-2.5 px-4 text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
+                                    />
+                                    <button type="button" onClick={handleAddDisease} className="flex items-center gap-1 rounded-xl bg-blue-600/20 px-4 py-2 font-semibold text-blue-400 hover:bg-blue-600/40 transition-colors border border-blue-500/20">
+                                        <Plus className="h-4 w-4" /> Add
+                                    </button>
                                 </div>
+                                {diseases.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {diseases.map((item, idx) => (
+                                            <span key={idx} className="flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1 text-sm text-white border border-white/10">
+                                                {item}
+                                                <button type="button" onClick={() => setDiseases(diseases.filter((_, i) => i !== idx))} className="ml-1 text-slate-400 hover:text-red-400">
+                                                    <X className="h-3 w-3" />
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
-                    )}
-
-                    {/* Role Specific Medical Info (Doctor) */}
-                    {user?.role === "doctor" && (
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-3 border-b border-white/10 pb-4">
-                                <Stethoscope className="h-5 w-5 text-blue-400" />
-                                <h2 className="text-xl font-semibold text-white">Professional Profile (Doctor)</h2>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-300">Registration Number</label>
-                                    <input type="text" name="reg_no" value={formData.reg_no} onChange={handleChange} placeholder="Medical Council Reg No" className="w-full rounded-xl border border-white/10 bg-black/30 py-3.5 px-4 text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none" />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-300">Qualification</label>
-                                    <input type="text" name="qualification" value={formData.qualification} onChange={handleChange} placeholder="e.g. BAMS, MD (Ayurveda)" className="w-full rounded-xl border border-white/10 bg-black/30 py-3.5 px-4 text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none" />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-300">Years of Experience</label>
-                                    <input type="number" name="experience" value={formData.experience} onChange={handleChange} min="0" className="w-full rounded-xl border border-white/10 bg-black/30 py-3.5 px-4 text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none" />
-                                </div>
-                                <div className="space-y-2 flex items-center h-full pt-6">
-                                    <label className="flex items-center gap-3 cursor-pointer">
-                                        <input type="checkbox" name="is_accepting_cases" checked={formData.is_accepting_cases} onChange={handleChange} className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                                        <span className="text-sm font-medium text-slate-300">Currently Accepting Cases</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                    </div>
 
                     {/* Security */}
                     <div className="space-y-6">

@@ -4,8 +4,10 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Consultation from "@/models/Consultation";
 import User from "@/models/User";
+import Department from "@/models/Department";
 
 export async function GET(req: Request) {
+  Department;
   try {
     const session = await getServerSession(authOptions);
 

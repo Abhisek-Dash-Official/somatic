@@ -96,11 +96,22 @@ export default function AdminDashboardPage() {
         <div className="space-y-6 sm:space-y-8 p-4 pt-20 sm:p-6 sm:pt-24 lg:p-8 lg:pt-8 w-full max-w-7xl mx-auto text-slate-200">
 
             {/* Header */}
-            <div className="flex flex-col gap-1">
-                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                    Welcome, <span className="text-blue-400 capitalize">{user?.username || "Admin"}</span>
-                </h1>
-                <p className="text-sm sm:text-base text-slate-400">Real-time metrics and clinical workflow analytics.</p>
+            <div className="flex flex-col xl:flex-row items-start xl:items-center gap-6">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/30 overflow-hidden shadow-inner">
+                    <img
+                        src={`/avatars/avatar-${user?.avatar_id || "admin"}.png`}
+                        alt="Admin Avatar"
+                        className="h-full w-full object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).src = "/avatars/avatar-admin.png"; }}
+                    />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                        Welcome, <span className="text-blue-400 capitalize">{user?.username || "Admin"}</span>
+                    </h1>
+                    <p className="text-sm sm:text-base text-slate-400">Real-time metrics and clinical workflow analytics.</p>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-4 sm:gap-6">

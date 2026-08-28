@@ -7,6 +7,7 @@ import {
     User, Phone, MapPin, FileText, Award, ShieldCheck,
     Lock, Loader2, CheckCircle, BriefcaseMedical
 } from "lucide-react";
+import AvatarSelector from "@/components/profile/AvatarSelector";
 
 export default function DoctorProfileClient() {
     const { user, isFetched, fetchUser } = useUserStore();
@@ -20,6 +21,7 @@ export default function DoctorProfileClient() {
         reg_no: "",
         qualification: "",
         experience: 0,
+        avatar_id: "1",
     });
 
     const [passwordData, setPasswordData] = useState({
@@ -37,6 +39,7 @@ export default function DoctorProfileClient() {
                 reg_no: user.doctor_info?.reg_no || "",
                 qualification: user.doctor_info?.qualification || "",
                 experience: user.doctor_info?.experience || 0,
+                avatar_id: user.avatar_id || "1",
             });
         }
     }, [user]);
@@ -53,6 +56,7 @@ export default function DoctorProfileClient() {
             username: profileData.username,
             contact_no: profileData.contact_no,
             address: profileData.address,
+            avatar_id: profileData.avatar_id,
             doctor_info: {
                 reg_no: profileData.reg_no,
                 qualification: profileData.qualification,
@@ -114,7 +118,25 @@ export default function DoctorProfileClient() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="space-y-8 animate-in fade-in duration-500 max-w-4xl mx-auto">
+
+            {/* Header & Avatar Display */}
+            <div className="rounded-3xl border border-white/10 bg-[#0f172a]/80 p-8 shadow-2xl backdrop-blur-xl flex flex-col md:flex-row items-center gap-6">
+                <div className="shrink-0">
+                    <AvatarSelector
+                        currentAvatarId={profileData.avatar_id}
+                        onSelect={(id) => setProfileData({ ...profileData, avatar_id: id })}
+                        isAdmin={false}
+                    />
+                </div>
+                <div className="text-center md:text-left">
+                    <h1 className="text-3xl font-bold text-white mb-2">Dr. {profileData.username || "Profile"}</h1>
+                    <p className="text-slate-400 flex items-center justify-center md:justify-start gap-2 capitalize">
+                        <ShieldCheck className="h-4 w-4 text-blue-400" />
+                        Verified Medical Professional
+                    </p>
+                </div>
+            </div>
 
             {/* DETAILS SECTION */}
             <div className="bg-[#131C31] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">

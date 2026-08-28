@@ -62,9 +62,15 @@ export default function PatientDashboard() {
             {/* Header & Quick Action */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 rounded-3xl border border-white/10 bg-[#0f172a]/80 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
                 <div className="flex items-center gap-4">
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-blue-500/20 text-2xl font-bold text-blue-400 border border-blue-500/20 uppercase">
-                        {user?.username?.charAt(0) || "U"}
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/30 overflow-hidden shadow-inner">
+                        <img
+                            src={`/avatars/avatar-${user?.avatar_id || "0"}.png`}
+                            alt="Patient Avatar"
+                            className="h-full w-full object-cover"
+                            onError={(e) => { (e.target as HTMLImageElement).src = "/avatars/avatar-1.png"; }}
+                        />
                     </div>
+
                     <div>
                         <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Hi, {user?.username}</h1>
                         <p className="mt-1 text-slate-400 flex items-center gap-2">

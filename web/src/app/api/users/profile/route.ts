@@ -22,6 +22,7 @@ export async function PATCH(req: Request) {
     if (body.username) user.username = body.username.trim();
     if (body.contact_no) user.contact_no = body.contact_no.trim();
     if (body.address) user.address = body.address.trim();
+    if (body.avatar_id) user.avatar_id = body.avatar_id;
 
     if (user.role === "doctor" && body.doctor_info) {
       user.doctor_info = {
