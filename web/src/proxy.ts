@@ -15,10 +15,7 @@ export default withAuth(
     const path = req.nextUrl.pathname;
     const isApi = path.startsWith("/api/");
 
-    if (
-      path.startsWith("/api/auth") ||
-      path.startsWith("/api/system/settings")
-    ) {
+    if (path.startsWith("/api/auth")) {
       return NextResponse.next();
     }
 
