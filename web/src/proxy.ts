@@ -41,7 +41,7 @@ export default withAuth(
           },
         );
       }
-      return new NextResponse("Too Many Requests", { status: 429 });
+      return NextResponse.rewrite(new URL("/too-many-requests", req.url));
     }
 
     const rejectAccess = (status: number, message: string) => {
