@@ -7,6 +7,7 @@ import {
     AlertCircle, Activity, Plus, X
 } from "lucide-react";
 import AvatarSelector from "@/components/profile/AvatarSelector";
+import DeleteAccountSection from "@/components/profile/DeleteAccountSection";
 
 export default function ProfilePage() {
     const { user, fetchUser, isLoading, isFetched } = useUserStore();
@@ -288,6 +289,8 @@ export default function ProfilePage() {
                     </div>
                 </form>
             </div>
+
+            <DeleteAccountSection />
         </div>
     );
 }

@@ -7,6 +7,7 @@ import {
     ShieldCheck, Loader2, Save, AlertTriangle, CheckCircle2, Activity, User, Lock, ShieldAlert
 } from "lucide-react";
 import AvatarSelector from "@/components/profile/AvatarSelector";
+import DeleteAccountSection from "@/components/profile/DeleteAccountSection";
 
 interface AdminProfile {
     _id: string;
@@ -340,6 +341,7 @@ export default function AdminProfilePage() {
                         </form>
                     </div>
 
+                    <DeleteAccountSection />
                 </div>
             </div>
         </div>

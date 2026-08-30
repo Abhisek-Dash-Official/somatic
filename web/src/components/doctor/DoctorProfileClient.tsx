@@ -8,6 +8,7 @@ import {
     Lock, Loader2, CheckCircle, BriefcaseMedical
 } from "lucide-react";
 import AvatarSelector from "@/components/profile/AvatarSelector";
+import DeleteAccountSection from "@/components/profile/DeleteAccountSection";
 
 export default function DoctorProfileClient() {
     const { user, isFetched, fetchUser } = useUserStore();
@@ -247,6 +248,7 @@ export default function DoctorProfileClient() {
                 </form>
             </div>
 
+            <DeleteAccountSection />
         </div>
     );
 }

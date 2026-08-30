@@ -13,11 +13,16 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
+
     await dbConnect();
     const user = await User.findById(session.user.id);
 
     if (!user)
       return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+    if (user.is_ban || user.is_delete) {
+      throw new Error("Account is disabled");
+    }
 
     if (body.username) user.username = body.username.trim();
     if (body.contact_no) user.contact_no = body.contact_no.trim();

@@ -24,6 +24,10 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
+        if (user.is_ban || user.is_delete) {
+            throw new Error("Account is disabled");
+        }
+
         return NextResponse.json({ profile: user, stats: { totalActions } });
     } catch (error: any) {
         return NextResponse.json({ error: "Failed to fetch profile data" }, { status: 500 });
