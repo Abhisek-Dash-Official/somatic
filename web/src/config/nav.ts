@@ -3,8 +3,8 @@ export const navLinks = {
     { title: "Home", href: "/" },
     { title: "About", href: "/about" },
     { title: "Services", href: "/services" },
-    { title: "FAQ", href: "/faq" },
     { title: "Contact", href: "/contact" },
+    { title: "First Aid", href: "/first-aid" },
   ],
   footerNav: {
     company: [
@@ -16,6 +16,7 @@ export const navLinks = {
     support: [
       { title: "Help Center", href: "/contact" },
       { title: "Guidelines", href: "/guidelines" },
+      { title: "FAQ", href: "/faq" },
     ],
     legal: [
       { title: "Terms of Service", href: "/terms" },

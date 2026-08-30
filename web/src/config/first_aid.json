@@ -1,0 +1,268 @@
+[
+    {
+        "id": "cpr-adult",
+        "title": "CPR (Adult & Older Child)",
+        "category": "Critical Emergencies",
+        "severity": "high",
+        "short_desc": "Emergency lifesaving procedure performed when the heart stops beating.",
+        "steps": [
+            "Check for safety and responsiveness. Tap the shoulder and shout, 'Are you okay?'",
+            "Call emergency services immediately if there is no response.",
+            "Check for breathing. If they are not breathing or only gasping, begin CPR.",
+            "Place the heel of one hand in the center of the chest, place the other hand on top, and interlock fingers.",
+            "Push hard and fast: at least 2 inches deep, at a rate of 100 to 120 compressions a minute.",
+            "Continue compressions until emergency medical help arrives or the person starts breathing."
+        ],
+        "warnings": [
+            "Do not attempt rescue breaths if you are not trained; hands-only CPR is highly effective.",
+            "Never practice CPR on a healthy, breathing person."
+        ]
+    },
+    {
+        "id": "choking-adult",
+        "title": "Choking (Heimlich Maneuver)",
+        "category": "Critical Emergencies",
+        "severity": "high",
+        "short_desc": "Action to take if an adult or child is clutching their throat and cannot breathe or cough.",
+        "steps": [
+            "Ask 'Are you choking?' If they nod yes and cannot talk, act immediately.",
+            "Stand behind the person and wrap your arms around their waist.",
+            "Make a fist with one hand and place the thumb side just above the person's belly button.",
+            "Grasp your fist with your other hand.",
+            "Give quick, upward thrusts into the abdomen as if trying to lift the person up.",
+            "Repeat until the blockage is dislodged or the person becomes unconscious."
+        ],
+        "warnings": [
+            "If the person becomes unconscious, lower them to the ground and begin CPR.",
+            "Do not perform blind finger sweeps in the mouth; you may push the object deeper."
+        ]
+    },
+    {
+        "id": "heart-attack",
+        "title": "Heart Attack Symptoms",
+        "category": "Critical Emergencies",
+        "severity": "high",
+        "short_desc": "Recognizing and reacting to suspected cardiac arrest or heart attack.",
+        "steps": [
+            "Call emergency services immediately. Do not ignore the symptoms.",
+            "Have the person sit down, rest, and try to keep them calm.",
+            "Loosen any tight clothing.",
+            "If the person is conscious and not allergic, have them chew and swallow an aspirin.",
+            "If the person falls unconscious and stops breathing, begin CPR immediately."
+        ],
+        "warnings": [
+            "Do not let the person drive themselves to the hospital.",
+            "Do not wait to see if the symptoms go away."
+        ]
+    },
+    {
+        "id": "seizure-epilepsy",
+        "title": "Seizures / Epilepsy",
+        "category": "Critical Emergencies",
+        "severity": "high",
+        "short_desc": "What to do if someone is experiencing a sudden, uncontrolled electrical disturbance in the brain.",
+        "steps": [
+            "Ease the person to the floor and place something soft under their head.",
+            "Turn the person gently onto one side. This helps them breathe.",
+            "Clear the area of hard or sharp objects.",
+            "Remove eyeglasses and loosen ties or anything around the neck.",
+            "Time the seizure. If it lasts longer than 5 minutes, call an ambulance."
+        ],
+        "warnings": [
+            "Do not hold the person down or try to stop their movements.",
+            "Do not put anything in the person's mouth (they will not swallow their tongue)."
+        ]
+    },
+    {
+        "id": "severe-bleeding",
+        "title": "Severe Bleeding / Deep Cuts",
+        "category": "Critical Emergencies",
+        "severity": "high",
+        "short_desc": "Stopping heavy blood loss from deep cuts or trauma.",
+        "steps": [
+            "Apply direct, firm pressure to the wound with a clean cloth, tissue, or piece of clothing.",
+            "If blood soaks through, do not remove the cloth. Add more layers on top and keep pressing.",
+            "Elevate the injured area above the heart if possible.",
+            "If the bleeding doesn't stop after 15 minutes of continuous pressure, seek emergency help.",
+            "Keep the person warm to prevent shock."
+        ],
+        "warnings": [
+            "Do not use a tourniquet unless you are trained to do so and the bleeding is life-threatening and uncontrollable.",
+            "Do not remove objects embedded in the wound; apply pressure around the object."
+        ]
+    },
+    {
+        "id": "snake-bite",
+        "title": "Snake Bite",
+        "category": "Poisoning & Bites",
+        "severity": "high",
+        "short_desc": "Emergency response to a venomous or unknown snake bite.",
+        "steps": [
+            "Move away from the snake to prevent further bites.",
+            "Keep the victim calm and still. Movement causes venom to spread faster.",
+            "Remove rings, watches, or tight clothing around the bitten limb before swelling starts.",
+            "Keep the bitten limb at or slightly below the level of the heart.",
+            "Call emergency services immediately."
+        ],
+        "warnings": [
+            "Do NOT cut the wound or attempt to suck the venom out.",
+            "Do NOT apply a tourniquet, ice, or submerge the wound in water.",
+            "Do not give the person caffeine or alcohol."
+        ]
+    },
+    {
+        "id": "severe-burns",
+        "title": "Burns (Thermal)",
+        "category": "Minor Injuries",
+        "severity": "medium",
+        "short_desc": "Immediate action for heat-related burns from fire, hot liquids, or steam.",
+        "steps": [
+            "Remove the person from the heat source immediately.",
+            "Cool the burn under cool (not cold or ice) running water for 10 to 20 minutes.",
+            "Remove rings, tight items, or clothing near the burned area before swelling occurs.",
+            "Cover the burn loosely with a sterile, non-stick dressing or clean cloth.",
+            "Take an over-the-counter pain reliever if necessary and if you have no allergies."
+        ],
+        "warnings": [
+            "Never apply ice, butter, toothpaste, or ointments to a severe burn.",
+            "Do not pop blisters.",
+            "Seek immediate medical help if the burn covers a large area, involves the face/hands, or looks charred."
+        ]
+    },
+    {
+        "id": "fractures",
+        "title": "Fractures / Broken Bones",
+        "category": "Critical Emergencies",
+        "severity": "medium",
+        "short_desc": "First aid for suspected bone fractures or severe dislocations.",
+        "steps": [
+            "Do not move the injured person unless there is immediate danger.",
+            "Stop any bleeding by applying pressure to the wound with a sterile bandage or clean cloth.",
+            "Immobilize the injured area. Do not try to realign the bone or push a bone that's sticking out back in.",
+            "Apply ice packs to limit swelling and help relieve pain. Don't apply ice directly to the skin.",
+            "Treat for shock. If the person feels faint, lay them down and elevate their legs slightly."
+        ],
+        "warnings": [
+            "If it's a suspected neck or back injury, do NOT move the person at all. Wait for paramedics."
+        ]
+    },
+    {
+        "id": "heat-stroke",
+        "title": "Heat Stroke",
+        "category": "General Illness",
+        "severity": "high",
+        "short_desc": "Life-threatening heat illness caused by body overheating.",
+        "steps": [
+            "Move the person to a cool, shaded, or air-conditioned environment immediately.",
+            "Call emergency services. Heat stroke is a medical emergency.",
+            "Remove unnecessary clothing.",
+            "Cool the person rapidly by spraying with cool water, fanning, or placing ice packs in the armpits, groin, and neck.",
+            "If the person is fully conscious, give them cool water to drink."
+        ],
+        "warnings": [
+            "If the person is confused, vomiting, or unconscious, do not give them anything to drink."
+        ]
+    },
+    {
+        "id": "hypoglycemia",
+        "title": "Low Blood Sugar (Hypoglycemia)",
+        "category": "General Illness",
+        "severity": "medium",
+        "short_desc": "Quick treatment for someone experiencing sudden drops in blood sugar (often diabetic).",
+        "steps": [
+            "If the person is conscious and can swallow, give them 15-20 grams of fast-acting carbohydrates.",
+            "Good sources: A glass of fruit juice, regular (non-diet) soda, 1 tablespoon of honey, or hard candies.",
+            "Wait 15 minutes and check how they feel. If symptoms persist, give another 15g of carbs.",
+            "Once they feel better, have them eat a small snack with complex carbs and protein (e.g., half a sandwich)."
+        ],
+        "warnings": [
+            "If the person is unconscious or having a seizure, do NOT force food or fluids into their mouth. Call an ambulance."
+        ]
+    },
+    {
+        "id": "asthma-attack",
+        "title": "Asthma Attack",
+        "category": "Critical Emergencies",
+        "severity": "high",
+        "short_desc": "First aid for sudden shortness of breath and wheezing.",
+        "steps": [
+            "Sit the person upright comfortably and loosen any tight clothing.",
+            "Help them use their prescribed reliever inhaler (usually blue) with a spacer if available.",
+            "Instruct them to take 1 puff every 30-60 seconds, up to a maximum of 10 puffs.",
+            "If symptoms do not improve after 10 puffs, or if you are worried, call an ambulance.",
+            "If the ambulance takes longer than 15 minutes, repeat the inhaler steps."
+        ],
+        "warnings": [
+            "Do not lay the person flat; this restricts breathing further."
+        ]
+    },
+    {
+        "id": "high-fever",
+        "title": "High Fever (Adults)",
+        "category": "General Illness",
+        "severity": "low",
+        "short_desc": "Management of elevated body temperature without immediate access to a doctor.",
+        "steps": [
+            "Rest and drink plenty of fluids (water, oral rehydration solutions, clear broths).",
+            "Take over-the-counter fever reducers like Paracetamol (Acetaminophen) as per package instructions.",
+            "Dress in lightweight clothing and use a light blanket if shivering.",
+            "Apply a lukewarm (not cold) damp sponge or cloth to the forehead and armpits."
+        ],
+        "warnings": [
+            "Do not use cold baths or alcohol rubs; they can cause shivering, which raises core temperature.",
+            "Seek emergency care if fever is accompanied by severe headache, stiff neck, confusion, or breathing difficulty."
+        ]
+    },
+    {
+        "id": "food-poisoning",
+        "title": "Food Poisoning / Diarrhea",
+        "category": "General Illness",
+        "severity": "low",
+        "short_desc": "Managing symptoms of contaminated food consumption.",
+        "steps": [
+            "Stay hydrated. Drink plenty of clear fluids, primarily ORS (Oral Rehydration Solution) or water with a pinch of salt and sugar.",
+            "Eat bland foods (BRAT diet: Bananas, Rice, Applesauce, Toast) when you feel ready.",
+            "Rest adequately as your body flushes the toxins.",
+            "Avoid caffeine, dairy products, alcohol, and greasy or heavily seasoned foods."
+        ],
+        "warnings": [
+            "Do not immediately take anti-diarrheal medication; letting the body expel the bacteria is often better initially.",
+            "Seek medical help if you cannot keep liquids down for 24 hours, have a high fever, or notice blood in stool."
+        ]
+    },
+    {
+        "id": "nosebleed",
+        "title": "Nosebleed",
+        "category": "Minor Injuries",
+        "severity": "low",
+        "short_desc": "Stopping common nosebleeds quickly and safely.",
+        "steps": [
+            "Sit upright and lean slightly forward (NOT backward).",
+            "Pinch the soft part of your nose shut against the hard bony ridge that forms the bridge of the nose.",
+            "Breathe through your mouth and keep pinching for 10 to 15 minutes continuously.",
+            "Apply a cold compress or ice pack to the bridge of your nose.",
+            "If bleeding doesn't stop after 20 minutes of continuous pressure, seek medical help."
+        ],
+        "warnings": [
+            "Do NOT tilt your head back. This causes blood to drain down your throat, which can cause choking or vomiting.",
+            "Do not blow your nose for several hours after the bleeding stops."
+        ]
+    },
+    {
+        "id": "sprains-strains",
+        "title": "Sprains & Strains",
+        "category": "Minor Injuries",
+        "severity": "low",
+        "short_desc": "Initial treatment for twisted ankles, tweaked knees, or pulled muscles.",
+        "steps": [
+            "REST: Avoid using the injured joint or muscle.",
+            "ICE: Apply an ice pack wrapped in a towel for 15-20 minutes every 2-3 hours.",
+            "COMPRESS: Wrap the injured area with an elastic bandage to reduce swelling (not too tight).",
+            "ELEVATE: Keep the injured area raised above heart level if possible."
+        ],
+        "warnings": [
+            "Do not apply heat during the first 48 hours, as it can increase swelling.",
+            "If you cannot bear any weight or the joint looks deformed, suspect a fracture and seek an X-ray."
+        ]
+    }
+]
