@@ -39,6 +39,7 @@ export async function GET(req: Request) {
     });
 
     const pendingQuery = {
+      status: { $ne: "completed" },
       $or: [
         {
           assigned_department_id: doctorDeptId,

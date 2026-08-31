@@ -90,12 +90,12 @@ async def analyze_symptoms(
         model_name = payload.ai_model_override if payload.ai_model_override else "gemini-1.5-flash"
         model = genai.GenerativeModel(model_name)
         
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(
-                response_mime_type="application/json"
+        response = await model.generate_content_async(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    response_mime_type="application/json"
+                )
             )
-        )
         
         end_time = time.time()
         response_time_sec = round(end_time - start_time, 2)

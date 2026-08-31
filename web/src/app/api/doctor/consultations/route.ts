@@ -33,6 +33,7 @@ export async function GET(req: Request) {
     const skip = (page - 1) * limit;
 
     const query = {
+      status: { $ne: "completed" },
       $or: [
         {
           assigned_department_id: doctorDeptId,
