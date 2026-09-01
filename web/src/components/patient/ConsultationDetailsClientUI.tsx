@@ -1,51 +1,123 @@
-import { Metadata } from "next";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import dbConnect from "@/lib/db";
-import Consultation from "@/models/Consultation";
-import { redirect } from "next/navigation";
-import { Clock, User, AlertTriangle, ExternalLink } from "lucide-react";
-import Department from "@/models/Department";
+"use client";
 
-export const metadata: Metadata = { title: "Consultation Details | Somatic" };
+import { useState } from "react";
+import { Clock, User, AlertTriangle, ExternalLink, Languages, Loader2 } from "lucide-react";
 
-export default async function ConsultationDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-    Department;
-    const session = await getServerSession(authOptions);
-    if (!session) redirect("/login");
+export default function ConsultationClientUI({ consultation }: { consultation: any }) {
+    const [targetLang, setTargetLang] = useState("en");
+    const [isTranslating, setIsTranslating] = useState(false);
 
-    const { id } = await params;
-    await dbConnect();
-
-    const consultation = await Consultation.findById(id).populate("assigned_department_id", "name").lean();
-
-    if (!consultation) {
-        return <div className="p-10 text-center text-red-400 font-bold">Consultation not found.</div>;
-    }
+    const [translatedTexts, setTranslatedTexts] = useState({
+        instructions: consultation.doctor_final_prescription?.instructions || "",
+        ai_summary: consultation.ai_draft?.ai_summary_and_advice || "",
+        ayurvedic: consultation.ai_draft?.ayurvedic_hints || ""
+    });
 
     const isCompleted = consultation.status === "completed";
     const isEmergency = consultation.ai_draft?.is_emergency;
+
+    const handleTranslate = async (lang: string) => {
+        setTargetLang(lang);
+        if (lang === "en") {
+            setTranslatedTexts({
+                instructions: consultation.doctor_final_prescription?.instructions || "",
+                ai_summary: consultation.ai_draft?.ai_summary_and_advice || "",
+                ayurvedic: consultation.ai_draft?.ayurvedic_hints || ""
+            });
+            return;
+        }
+
+        if (!("translation" in window)) {
+            alert("Your browser does not support the local Translation API. Please use Chrome with experimental web AI flags enabled.");
+            setTargetLang("en");
+            return;
+        }
+
+        setIsTranslating(true);
+        try {
+            const w = window as any;
+            const canTranslate = await w.translation.canTranslate({
+                sourceLanguage: "en",
+                targetLanguage: lang,
+            });
+
+            if (canTranslate === "no") {
+                alert(`Offline translation to ${lang} is not supported or the language pack is missing.`);
+                setTargetLang("en");
+                return;
+            }
+
+            const translator = await w.translation.createTranslator({
+                sourceLanguage: "en",
+                targetLanguage: lang,
+            });
+
+            const newInstructions = consultation.doctor_final_prescription?.instructions
+                ? await translator.translate(consultation.doctor_final_prescription.instructions)
+                : "";
+
+            const newAiSummary = consultation.ai_draft?.ai_summary_and_advice
+                ? await translator.translate(consultation.ai_draft.ai_summary_and_advice)
+                : "";
+
+            const newAyurvedic = consultation.ai_draft?.ayurvedic_hints
+                ? await translator.translate(consultation.ai_draft.ayurvedic_hints)
+                : "";
+
+            setTranslatedTexts({
+                instructions: newInstructions,
+                ai_summary: newAiSummary,
+                ayurvedic: newAyurvedic
+            });
+
+        } catch (error) {
+            console.error("Translation error:", error);
+            alert("Failed to translate locally.");
+            setTargetLang("en");
+        } finally {
+            setIsTranslating(false);
+        }
+    };
 
     return (
         <div className="max-w-4xl mx-auto p-6 mt-10">
             <div className="bg-[#131C31] shadow-xl rounded-xl border border-slate-800/60 p-6 mb-6">
 
-                {/* Header Section */}
-                <div className="flex justify-between items-center border-b border-slate-700/50 pb-4 mb-5">
+                {/* Header & Local Translation Selector */}
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-700/50 pb-4 mb-5 gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-slate-100">Consultation Report</h1>
                         {consultation.assigned_department_id && (
                             <p className="text-blue-400 text-sm mt-1 font-medium">
-                                Routed to: {(consultation.assigned_department_id as any).name} Department
+                                Routed to: {consultation.assigned_department_id.name} Department
                             </p>
                         )}
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-sm font-semibold border capitalize ${isCompleted ? "bg-green-500/10 text-green-400 border-green-500/20" :
-                        consultation.status === "in_review" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" :
-                            "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-                        }`}>
-                        {consultation.status.replace("_", " ")}
-                    </span>
+
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 bg-[#0B1120] p-1.5 rounded-lg border border-slate-700">
+                            <Languages className="w-4 h-4 text-slate-400 ml-1" />
+                            <select
+                                value={targetLang}
+                                onChange={(e) => handleTranslate(e.target.value)}
+                                disabled={isTranslating}
+                                className="bg-transparent text-sm text-slate-200 outline-none cursor-pointer disabled:opacity-50"
+                            >
+                                <option value="en">English (Original)</option>
+                                <option value="hi">Hindi</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                            </select>
+                            {isTranslating && <Loader2 className="w-4 h-4 text-blue-400 animate-spin mr-1" />}
+                        </div>
+
+                        <span className={`px-3 py-1 rounded-full text-sm font-semibold border capitalize ${isCompleted ? "bg-green-500/10 text-green-400 border-green-500/20" :
+                            consultation.status === "in_review" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" :
+                                "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                            }`}>
+                            {consultation.status.replace("_", " ")}
+                        </span>
+                    </div>
                 </div>
 
                 {isEmergency && (
@@ -104,10 +176,10 @@ export default async function ConsultationDetailsPage({ params }: { params: Prom
                                     </ul>
                                 </div>
 
-                                {consultation.doctor_final_prescription?.instructions && (
+                                {translatedTexts.instructions && (
                                     <div>
                                         <strong className="text-slate-300 block mb-1 text-sm">Instructions / Diet:</strong>
-                                        <p className="text-slate-200 text-sm">{consultation.doctor_final_prescription.instructions}</p>
+                                        <p className="text-slate-200 text-sm">{translatedTexts.instructions}</p>
                                     </div>
                                 )}
                             </div>
@@ -117,13 +189,13 @@ export default async function ConsultationDetailsPage({ params }: { params: Prom
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t border-slate-700/50">
                             <div className="bg-blue-900/10 border border-blue-800/30 p-4 rounded-lg">
                                 <h2 className="text-sm uppercase tracking-wider font-semibold text-blue-400 mb-3">AI Summary & Advice</h2>
-                                <p className="text-blue-200/80 text-sm whitespace-pre-wrap leading-relaxed">{consultation.ai_draft?.ai_summary_and_advice}</p>
+                                <p className="text-blue-200/80 text-sm whitespace-pre-wrap leading-relaxed">{translatedTexts.ai_summary}</p>
                             </div>
 
                             <div className="bg-emerald-900/10 border border-emerald-800/30 p-4 rounded-lg">
                                 <h2 className="text-sm uppercase tracking-wider font-semibold text-emerald-400 mb-3">Ayurvedic Insights</h2>
                                 <div className="text-emerald-200/80 text-sm italic leading-relaxed">
-                                    {consultation.ai_draft?.ayurvedic_hints || "No specific Ayurvedic correlation found."}
+                                    {translatedTexts.ayurvedic || "No specific Ayurvedic correlation found."}
                                 </div>
                             </div>
                         </div>

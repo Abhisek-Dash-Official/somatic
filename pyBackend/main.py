@@ -4,9 +4,12 @@ import time
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
-import google.generativeai as genai
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+
+from google import genai
+from google.genai import types
+
 from prompts import get_medical_prompt
 from rag import initialize_knowledge_base, retrieve_relevant_context
 
@@ -15,8 +18,7 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 INTERNAL_API_SECRET = os.getenv("INTERNAL_API_SECRET", "my_super_secret_key_123")
 
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -67,7 +69,7 @@ async def analyze_symptoms(
             detail="Forbidden: Invalid or missing internal secret token."
         )
 
-    if not GEMINI_API_KEY:
+    if not client:
         raise HTTPException(status_code=500, detail="Gemini API Key is missing.")
 
     retrieved_context = retrieve_relevant_context(payload.symptoms_raw_text)
@@ -88,14 +90,14 @@ async def analyze_symptoms(
     start_time = time.time()
     try:
         model_name = payload.ai_model_override if payload.ai_model_override else "gemini-1.5-flash"
-        model = genai.GenerativeModel(model_name)
         
-        response = await model.generate_content_async(
-                prompt,
-                generation_config=genai.types.GenerationConfig(
-                    response_mime_type="application/json"
-                )
+        response = await client.aio.models.generate_content(
+            model=model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
             )
+        )
         
         end_time = time.time()
         response_time_sec = round(end_time - start_time, 2)
