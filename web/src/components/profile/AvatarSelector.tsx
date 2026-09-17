@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Check, X, Camera } from "lucide-react";
 
 interface AvatarSelectorProps {
@@ -11,8 +12,26 @@ interface AvatarSelectorProps {
 
 export default function AvatarSelector({ currentAvatarId = "1", onSelect, isAdmin = false }: AvatarSelectorProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
-    // Generate array: ["1", "2", ..., "20"] for normal users + optionally "admin" for admin only
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                setIsOpen(false);
+            }
+        };
+        if (isOpen) {
+            window.addEventListener("keydown", handleKeyDown);
+        }
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [isOpen]);
+
     const avatarOptions = Array.from({ length: 20 }, (_, i) => (i + 1).toString());
     if (isAdmin) {
         avatarOptions.unshift("admin");
@@ -41,11 +60,13 @@ export default function AvatarSelector({ currentAvatarId = "1", onSelect, isAdmi
                 </button>
             </div>
 
-            {/* Selection Modal */}
-            {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                    <div className="w-full max-w-2xl bg-[#0B1120] border border-slate-700/60 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-                        <div className="flex items-center justify-between border-b border-slate-800 p-5 bg-[#131C31]">
+            {mounted && isOpen && createPortal(
+                <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
+
+                    <div className="w-full max-w-2xl bg-[#0B1120] border border-slate-700/60 rounded-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden zoom-in-95 animate-in">
+
+                        {/* Header */}
+                        <div className="flex items-center justify-between border-b border-slate-800 p-5 bg-[#131C31] shrink-0">
                             <h2 className="text-lg font-bold text-white flex items-center gap-2">
                                 Choose Avatar
                             </h2>
@@ -57,7 +78,8 @@ export default function AvatarSelector({ currentAvatarId = "1", onSelect, isAdmi
                             </button>
                         </div>
 
-                        <div className="p-6 overflow-y-auto custom-scrollbar">
+                        {/* Scrollable Grid */}
+                        <div className="p-6 overflow-y-auto flex-1 min-h-0 custom-scrollbar">
                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
                                 {avatarOptions.map((id) => {
                                     const isSelected = currentAvatarId === id;
@@ -68,7 +90,9 @@ export default function AvatarSelector({ currentAvatarId = "1", onSelect, isAdmi
                                                 onSelect(id);
                                                 setIsOpen(false);
                                             }}
-                                            className={`relative aspect-square rounded-full border-2 transition-all p-1 ${isSelected ? "border-blue-500 bg-blue-500/10 scale-105" : "border-transparent hover:border-slate-600 hover:bg-slate-800"
+                                            className={`relative aspect-square rounded-full border-2 transition-all p-1 ${isSelected
+                                                    ? "border-blue-500 bg-blue-500/10 scale-105 shadow-[0_0_15px_rgba(37,99,235,0.4)]"
+                                                    : "border-transparent hover:border-slate-600 hover:bg-slate-800"
                                                 }`}
                                         >
                                             <img
@@ -87,7 +111,8 @@ export default function AvatarSelector({ currentAvatarId = "1", onSelect, isAdmi
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     );
