@@ -45,7 +45,7 @@ export default function CreateUserModal({ isOpen, onClose, onSuccess }: Props) {
 
         if (formData.role === "patient") {
             payload.patient_info = { blood_grp: formData.blood_grp };
-        } else if (formData.role === "doctor") {
+        } else if (formData.role === "doctor" || formData.role === "assistant_doctor") {
             payload.doctor_info = {
                 qualification: formData.qualification,
                 reg_no: formData.reg_no,
@@ -139,6 +139,8 @@ export default function CreateUserModal({ isOpen, onClose, onSuccess }: Props) {
                             >
                                 <option value="patient">Patient</option>
                                 <option value="doctor">Doctor</option>
+                                <option value="assistant_doctor">Assistant Doctor</option>
+                                <option value="dispatcher">Dispatcher</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
@@ -183,7 +185,7 @@ export default function CreateUserModal({ isOpen, onClose, onSuccess }: Props) {
                         </div>
                     )}
 
-                    {formData.role === "doctor" && (
+                    {(formData.role === "doctor" || formData.role === "assistant_doctor") && (
                         <div className="space-y-4 pt-2 border-t border-slate-800">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1">

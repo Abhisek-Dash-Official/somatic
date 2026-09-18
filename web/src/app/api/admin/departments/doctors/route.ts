@@ -21,17 +21,20 @@ export async function GET(req: Request) {
     await dbConnect();
 
     const [departmentDoctors, unassignedDoctors] = await Promise.all([
-      User.find({ role: "doctor", "doctor_info.department_id": departmentId })
-        .select("username email doctor_info contact_no avatar_id")
+      User.find({
+        role: { $in: ["doctor", "assistant_doctor"] },
+        "doctor_info.department_id": departmentId,
+      })
+        .select("username email doctor_info contact_no avatar_id role")
         .lean(),
       User.find({
-        role: "doctor",
+        role: { $in: ["doctor", "assistant_doctor"] },
         $or: [
           { "doctor_info.department_id": { $exists: false } },
           { "doctor_info.department_id": null },
         ],
       })
-        .select("username email doctor_info")
+        .select("username email doctor_info role")
         .lean(),
     ]);
 
@@ -59,7 +62,7 @@ export async function PATCH(req: Request) {
       );
     }
 
-    const { doctorId, departmentId, action } = await req.json(); // action: "ASSIGN" | "REMOVE"
+    const { doctorId, departmentId, action } = await req.json();
     if (!doctorId || !action) {
       return NextResponse.json(
         { success: false, message: "Missing required fields" },
@@ -69,10 +72,14 @@ export async function PATCH(req: Request) {
 
     await dbConnect();
 
-    const doctor = await User.findOne({ _id: doctorId, role: "doctor" });
+    const doctor = await User.findOne({
+      _id: doctorId,
+      role: { $in: ["doctor", "assistant_doctor"] },
+    });
+
     if (!doctor) {
       return NextResponse.json(
-        { success: false, message: "Doctor not found" },
+        { success: false, message: "Doctor or Assistant Doctor not found" },
         { status: 404 },
       );
     }
@@ -106,12 +113,13 @@ export async function PATCH(req: Request) {
       details: {
         department_id: departmentId || null,
         doctor_username: doctor.username,
+        role: doctor.role,
       },
     });
 
     return NextResponse.json({
       success: true,
-      message: `Doctor successfully ${action === "ASSIGN" ? "assigned to" : "removed from"} department`,
+      message: `User successfully ${action === "ASSIGN" ? "assigned to" : "removed from"} department`,
     });
   } catch (error: any) {
     console.error("Dept Doctors PATCH Error:", error);

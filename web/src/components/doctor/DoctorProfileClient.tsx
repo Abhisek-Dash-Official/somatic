@@ -32,7 +32,7 @@ export default function DoctorProfileClient() {
     });
 
     useEffect(() => {
-        if (user && user.role === "doctor") {
+        if (user && (user.role === "doctor" || user.role === "assistant_doctor")) {
             setProfileData({
                 username: user.username || "",
                 contact_no: user.contact_no || "",
@@ -121,7 +121,6 @@ export default function DoctorProfileClient() {
     return (
         <div className="space-y-8 animate-in fade-in duration-500 max-w-4xl mx-auto">
 
-            {/* Header & Avatar Display */}
             <div className="rounded-3xl border border-white/10 bg-[#0f172a]/80 p-8 shadow-2xl backdrop-blur-xl flex flex-col md:flex-row items-center gap-6">
                 <div className="shrink-0">
                     <AvatarSelector
@@ -139,7 +138,6 @@ export default function DoctorProfileClient() {
                 </div>
             </div>
 
-            {/* DETAILS SECTION */}
             <div className="bg-[#131C31] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
                 <div className="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
                     <BriefcaseMedical className="w-6 h-6 text-blue-400" />
@@ -215,7 +213,6 @@ export default function DoctorProfileClient() {
                 </form>
             </div>
 
-            {/* SECURITY / PASSWORD SECTION */}
             <div className="bg-[#131C31] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
                 <div className="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
                     <Lock className="w-6 h-6 text-red-400" />

@@ -42,7 +42,7 @@ export default function DoctorDashboardClient() {
             }
         };
 
-        if (user && user.role === "doctor") {
+        if (user && (user.role === "doctor" || user.role === "assistant_doctor")) {
             fetchDashboardData();
         }
     }, [user]);
@@ -76,7 +76,7 @@ export default function DoctorDashboardClient() {
         return <div className="flex justify-center items-center py-32"><Loader2 className="w-12 h-12 animate-spin text-blue-500" /></div>;
     }
 
-    if (user?.role !== "doctor") {
+    if (user?.role !== "doctor" && user?.role !== "assistant_doctor") {
         return <div className="text-center py-20 text-red-400 font-bold text-xl">Access Denied. Doctor privileges required.</div>;
     }
 

@@ -3,14 +3,24 @@ import mongoose, { Schema, model, models } from "mongoose";
 const UserSchema = new Schema(
   {
     username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Please fill a valid email address",
+      ],
+    },
     password_hash: { type: String, required: true },
     avatar_id: { type: String },
     contact_no: { type: String, match: /^[0-9]{10}$/ },
     address: { type: String },
     role: {
       type: String,
-      enum: ["admin", "doctor", "patient"],
+      enum: ["admin", "doctor", "assistant_doctor", "patient", "dispatcher"],
       required: true,
     },
     doctor_info: {

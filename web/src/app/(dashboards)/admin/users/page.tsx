@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import {
     Users, Search, UserPlus, Shield, Stethoscope, ShieldAlert,
-    Activity, Ban, Trash2, RotateCcw, Loader2, AlertTriangle
+    Activity, Ban, Trash2, RotateCcw, Loader2, AlertTriangle, Ambulance, ClipboardPlus
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useUserStore } from "@/store/useUserStore";
@@ -14,7 +14,7 @@ interface UserItem {
     _id: string;
     username: string;
     email: string;
-    role: "admin" | "doctor" | "patient";
+    role: "admin" | "doctor" | "patient" | "assistant_doctor" | "dispatcher";
     avatar_id?: string;
     is_ban: boolean;
     is_delete: boolean;
@@ -31,7 +31,7 @@ interface Department {
 
 export default function AdminUsersPage() {
     const { user: currentUser } = useUserStore();
-    const [activeTab, setActiveTab] = useState<"patient" | "doctor" | "admin">("patient");
+    const [activeTab, setActiveTab] = useState<"patient" | "doctor" | "admin" | "assistant_doctor" | "dispatcher">("patient");
     const [users, setUsers] = useState<UserItem[]>([]);
     const [departments, setDepartments] = useState<Department[]>([]);
     const [loading, setLoading] = useState(true);
@@ -80,7 +80,8 @@ export default function AdminUsersPage() {
             });
 
             if (activeTab === "patient" && bloodGroupFilter) params.append("bloodGroup", bloodGroupFilter);
-            if (activeTab === "doctor") {
+
+            if (activeTab === "doctor" || activeTab === "assistant_doctor") {
                 if (departmentFilter) params.append("departmentId", departmentFilter);
                 if (acceptingFilter !== "") params.append("acceptingCases", acceptingFilter);
             }
@@ -179,10 +180,12 @@ export default function AdminUsersPage() {
                 </button>
             </div>
 
-            <div className="flex bg-[#131C31] border border-slate-800 p-1.5 rounded-2xl w-fit">
+            <div className="flex bg-[#131C31] border border-slate-800 p-1.5 rounded-2xl w-fit flex-wrap">
                 {[
                     { id: "patient", label: "Patients", icon: Activity },
                     { id: "doctor", label: "Doctors", icon: Stethoscope },
+                    { id: "assistant_doctor", label: "Assistant Docs", icon: ClipboardPlus },
+                    { id: "dispatcher", label: "Dispatchers", icon: Ambulance },
                     { id: "admin", label: "Admins", icon: Shield },
                 ].map((tab) => {
                     const Icon = tab.icon;
@@ -190,7 +193,7 @@ export default function AdminUsersPage() {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm transition-all ${activeTab === tab.id
+                            className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-semibold text-sm transition-all ${activeTab === tab.id
                                 ? "bg-blue-600 text-white shadow-md"
                                 : "text-slate-400 hover:text-white hover:bg-slate-800/50"
                                 }`}
@@ -241,7 +244,7 @@ export default function AdminUsersPage() {
                         </select>
                     )}
 
-                    {activeTab === "doctor" && (
+                    {(activeTab === "doctor" || activeTab === "assistant_doctor") && (
                         <>
                             <select
                                 value={departmentFilter}
@@ -273,7 +276,7 @@ export default function AdminUsersPage() {
                     >
                         <option value="created_at">Sort by Date</option>
                         <option value="username">Sort by Name</option>
-                        {activeTab === "doctor" && <option value="experience">Sort by Experience</option>}
+                        {(activeTab === "doctor" || activeTab === "assistant_doctor") && <option value="experience">Sort by Experience</option>}
                     </select>
 
                     <button
@@ -326,10 +329,11 @@ export default function AdminUsersPage() {
 
                                     <div className="flex flex-wrap gap-2 mb-4">
                                         <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider ${u.role === 'admin' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
-                                            u.role === 'doctor' ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20' :
-                                                'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                                                u.role === 'dispatcher' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' :
+                                                    (u.role === 'doctor' || u.role === 'assistant_doctor') ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20' :
+                                                        'bg-blue-500/10 text-blue-400 border border-blue-500/20'
                                             }`}>
-                                            {u.role}
+                                            {u.role.replace("_", " ")}
                                         </span>
 
                                         {u.is_delete ? (
@@ -358,7 +362,7 @@ export default function AdminUsersPage() {
                                                 <span className="font-mono text-blue-400">{u.patient_info?.blood_grp || "N/A"}</span>
                                             </div>
                                         )}
-                                        {u.role === "doctor" && (
+                                        {(u.role === "doctor" || u.role === "assistant_doctor") && (
                                             <>
                                                 <div className="flex justify-between">
                                                     <span className="text-slate-500">Experience:</span>
@@ -383,6 +387,8 @@ export default function AdminUsersPage() {
                                         >
                                             <option value="patient">Patient</option>
                                             <option value="doctor">Doctor</option>
+                                            <option value="assistant_doctor">Assistant Doctor</option>
+                                            <option value="dispatcher">Dispatcher</option>
                                             <option value="admin">Admin</option>
                                         </select>
 

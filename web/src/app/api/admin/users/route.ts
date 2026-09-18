@@ -54,7 +54,7 @@ export async function GET(req: Request) {
       query["patient_info.blood_grp"] = bloodGroup;
     }
 
-    if (role === "doctor") {
+    if (role === "doctor" || role === "assistant_doctor") {
       if (departmentId) {
         query["doctor_info.department_id"] = departmentId;
       }
@@ -68,7 +68,10 @@ export async function GET(req: Request) {
     }
 
     const sortOptions: any = {};
-    if (sortBy === "experience" && role === "doctor") {
+    if (
+      sortBy === "experience" &&
+      (role === "doctor" || role === "assistant_doctor")
+    ) {
       sortOptions["doctor_info.experience"] = sortOrder;
     } else {
       sortOptions[sortBy] = sortOrder;
@@ -151,7 +154,10 @@ export async function POST(req: Request) {
       contact_no,
       address,
       avatar_id: avatar_id || "1",
-      doctor_info: role === "doctor" ? doctor_info : undefined,
+      doctor_info:
+        role === "doctor" || role === "assistant_doctor"
+          ? doctor_info
+          : undefined,
       patient_info: role === "patient" ? patient_info : undefined,
     });
 
@@ -216,7 +222,15 @@ export async function PATCH(req: Request) {
     const details: any = {};
 
     if (action === "ROLE") {
-      if (!["admin", "doctor", "patient"].includes(value)) {
+      if (
+        ![
+          "admin",
+          "doctor",
+          "patient",
+          "assistant_doctor",
+          "dispatcher",
+        ].includes(value)
+      ) {
         return NextResponse.json(
           { success: false, message: "Invalid role" },
           { status: 400 },

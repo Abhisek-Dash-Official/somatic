@@ -10,7 +10,11 @@ import { createSystemLog } from "@/lib/logger";
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id || session.user.role !== "doctor") {
+    if (
+      !session?.user?.id ||
+      (session.user.role !== "doctor" &&
+        session.user.role !== "assistant_doctor")
+    ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
@@ -68,7 +72,7 @@ export async function GET(req: Request) {
 
     await createSystemLog({
       actor_id: session.user.id,
-      actor_role: "doctor",
+      actor_role: session.user.role,
       action_type: "EXPORT_CONSULTATIONS_CSV",
       target_id: session.user.id,
       details: {

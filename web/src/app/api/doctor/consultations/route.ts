@@ -8,7 +8,11 @@ import User from "@/models/User";
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id || session.user.role !== "doctor") {
+    if (
+      !session?.user?.id ||
+      (session.user.role !== "doctor" &&
+        session.user.role !== "assistant_doctor")
+    ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 

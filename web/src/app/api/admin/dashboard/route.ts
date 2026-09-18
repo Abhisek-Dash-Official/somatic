@@ -42,9 +42,12 @@ export async function GET(req: Request) {
       Department.countDocuments({ is_active: true }),
       User.countDocuments({ role: "patient", is_delete: false }),
       User.countDocuments({ role: "admin", is_delete: false }),
-      User.countDocuments({ role: "doctor", is_delete: false }),
       User.countDocuments({
-        role: "doctor",
+        role: { $in: ["doctor", "assistant_doctor"] },
+        is_delete: false,
+      }),
+      User.countDocuments({
+        role: { $in: ["doctor", "assistant_doctor"] },
         "doctor_info.is_accepting_cases": true,
         is_ban: false,
         is_delete: false,

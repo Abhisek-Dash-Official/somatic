@@ -61,9 +61,17 @@ export default withAuth(
 
     if (
       (path.startsWith("/doctor") || path.startsWith("/api/doctor")) &&
-      token.role !== "doctor"
+      token.role !== "doctor" &&
+      token.role !== "assistant_doctor"
     ) {
       return rejectAccess(403, "Forbidden: Doctor access required");
+    }
+
+    if (
+      (path.startsWith("/dispatcher") || path.startsWith("/api/dispatcher")) &&
+      token.role !== "dispatcher"
+    ) {
+      return rejectAccess(403, "Forbidden: Dispatcher access required");
     }
 
     if (
@@ -86,6 +94,7 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/doctor/:path*",
+    "/dispatcher/:path*",
     "/patient/:path*",
     "/api/:path*",
   ],

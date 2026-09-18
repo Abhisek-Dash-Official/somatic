@@ -4,7 +4,10 @@ const SystemLogSchema = new Schema(
   {
     timestamp: { type: Date, default: Date.now },
     actor_id: { type: Schema.Types.ObjectId, ref: "User" },
-    actor_role: { type: String, enum: ["admin", "doctor", "patient"] },
+    actor_role: {
+      type: String,
+      enum: ["admin", "doctor", "assistant_doctor", "patient", "dispatcher"],
+    },
     action_type: { type: String },
     target_id: { type: Schema.Types.ObjectId },
     details: { type: Schema.Types.Mixed },

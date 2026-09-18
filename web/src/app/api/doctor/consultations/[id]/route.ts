@@ -11,7 +11,11 @@ type Props = { params: Promise<{ id: string }> };
 export async function GET(req: Request, { params }: Props) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id || session.user.role !== "doctor")
+    if (
+      !session?.user?.id ||
+      (session.user.role !== "doctor" &&
+        session.user.role !== "assistant_doctor")
+    )
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
 
     const { id } = await params;
@@ -57,7 +61,11 @@ export async function GET(req: Request, { params }: Props) {
 export async function PATCH(req: Request, { params }: Props) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id || session.user.role !== "doctor")
+    if (
+      !session?.user?.id ||
+      (session.user.role !== "doctor" &&
+        session.user.role !== "assistant_doctor")
+    )
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
 
     const { id } = await params;
@@ -97,7 +105,7 @@ export async function PATCH(req: Request, { params }: Props) {
 
       await createSystemLog({
         actor_id: session.user.id,
-        actor_role: "doctor",
+        actor_role: session.user.role,
         action_type: "CLAIM_CONSULTATION",
         target_id: id,
         details: { message: "Doctor viewed and claimed the case." },
@@ -120,7 +128,7 @@ export async function PATCH(req: Request, { params }: Props) {
 
       await createSystemLog({
         actor_id: session.user.id,
-        actor_role: "doctor",
+        actor_role: session.user.role,
         action_type: "RELEASE_CONSULTATION",
         target_id: id,
         details: {
@@ -218,7 +226,7 @@ export async function PATCH(req: Request, { params }: Props) {
 
       await createSystemLog({
         actor_id: session.user.id,
-        actor_role: "doctor",
+        actor_role: session.user.role,
         action_type: "COMPLETE_CONSULTATION",
         target_id: id,
       });
