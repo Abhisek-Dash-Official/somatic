@@ -1,4 +1,4 @@
-def get_medical_prompt(base_prompt: str, age, weight_kg, symptoms_raw_text, language, retrieved_context: str, available_departments: list) -> str:
+def get_medical_prompt(base_prompt: str, age, weight_kg, symptoms_raw_text, retrieved_context: str, available_departments: list) -> str:
     return f"""
     {base_prompt}
     
@@ -11,16 +11,19 @@ def get_medical_prompt(base_prompt: str, age, weight_kg, symptoms_raw_text, lang
     Patient Details:
     - Age: {age if age else "Not provided"}
     - Weight: {weight_kg if weight_kg else "Not provided"} kg
-    - Symptoms & History: {symptoms_raw_text}
-    - Preferred Language for Advice: {language}
+    - Symptoms & History (Raw Input): {symptoms_raw_text}
     
     Task:
-    Using the retrieved Ayurvedic context and general clinical knowledge, analyze the input and return ONLY a valid JSON object matching this exact structure:
+    Using the retrieved Ayurvedic context and general clinical knowledge, analyze the input and return ONLY a valid JSON object matching this exact structure. 
+    CRITICAL: The doctor uses an English interface. All text outputs in the JSON MUST be in ENGLISH, regardless of the patient's preferred language.
+    
     {{
+      "translated_symptoms": string (Translate the 'Symptoms & History' accurately into ENGLISH),
       "is_emergency": boolean (true if symptoms indicate a life-threatening emergency like severe chest pain, extreme bleeding, acute breathing difficulty),
-      "chief_complaints": [string] (list of core symptoms extracted concisely),
-      "ayurvedic_hints": string (brief insight regarding Vata, Pitta, or Kapha imbalance based strictly on the retrieved context, written in the preferred language),
-      "ai_summary_and_advice": string (a professional clinical summary, safety triage precautions, and preliminary guidance written clearly in the preferred language),
-      "assigned_department_id": string (Select the EXACT 'id' of the most appropriate department from the 'Available Hospital Departments' list. If none match or list is empty, return null)
+      "chief_complaints": [string] (list of core symptoms extracted concisely in ENGLISH),
+      "suggested_medicines": [string] (list of suggested generic allopathic and ayurvedic medicines/first-aid based on symptoms, written in ENGLISH),
+      "ayurvedic_hints": string (brief insight regarding Vata, Pitta, or Kapha imbalance based strictly on the retrieved context, written in ENGLISH),
+      "ai_summary_and_advice": string (a professional clinical summary, safety triage precautions, and preliminary guidance written clearly in ENGLISH),
+      "assigned_department_id": string (You MUST select the EXACT 'id' of the most appropriate department strictly from the 'Available Hospital Departments' list. Choose the closest match. Do not return null.)
     }}
     """

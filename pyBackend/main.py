@@ -1,6 +1,5 @@
 import os
 import json
-import time
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
@@ -11,7 +10,9 @@ from google import genai
 from google.genai import types
 
 from prompts import get_medical_prompt
-from rag import initialize_knowledge_base, retrieve_relevant_context
+from rag import retrieve_relevant_context, initialize_knowledge_base
+
+# import traceback
 
 load_dotenv()
 
@@ -42,14 +43,15 @@ class PatientInput(BaseModel):
     symptoms_raw_text: str
     age: int | None = None
     weight_kg: float | None = None
-    preferred_prescription_language: str | None = "English"
     ai_model_override: str | None = "gemini-3.6-flash"
     custom_system_prompt: str | None = None
     available_departments: list[dict] = []
 
 class AIDraftResponse(BaseModel):
+    translated_symptoms: str
     is_emergency: bool
     chief_complaints: list[str]
+    suggested_medicines: list[str] = []
     ayurvedic_hints: str = ""
     ai_summary_and_advice: str
     assigned_department_id: str | None = None
@@ -64,10 +66,7 @@ async def analyze_symptoms(
     x_internal_secret: str = Header(None)
 ):
     if x_internal_secret != INTERNAL_API_SECRET:
-        raise HTTPException(
-            status_code=403,
-            detail="Forbidden: Invalid or missing internal secret token."
-        )
+        raise HTTPException(status_code=403, detail="Forbidden: Invalid or missing internal secret token.")
 
     if not client:
         raise HTTPException(status_code=500, detail="Gemini API Key is missing.")
@@ -82,40 +81,93 @@ async def analyze_symptoms(
         age=payload.age,
         weight_kg=payload.weight_kg,
         symptoms_raw_text=payload.symptoms_raw_text,
-        language=payload.preferred_prescription_language,
         retrieved_context=retrieved_context,
         available_departments=payload.available_departments
     )
     
-    start_time = time.time()
+    model_name = payload.ai_model_override if payload.ai_model_override else "gemini-3.6-flash"
+    
     try:
-        model_name = payload.ai_model_override if payload.ai_model_override else "gemini-1.5-flash"
+        model_name = payload.ai_model_override if payload.ai_model_override else "gemini-3.6-flash"
         
-        response = await client.aio.models.generate_content(
+        chat = client.aio.chats.create(
             model=model_name,
-            contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
             )
         )
+        response = await chat.send_message(prompt)
         
-        end_time = time.time()
-        response_time_sec = round(end_time - start_time, 2)
-
         usage = getattr(response, "usage_metadata", None)
         tokens_prompt = getattr(usage, "prompt_token_count", 0) if usage else 0
         tokens_completion = getattr(usage, "candidates_token_count", 0) if usage else 0
 
-        parsed_data = json.loads(response.text)
+        clean_json = response.text.strip()
+        if clean_json.startswith("```"):
+            clean_json = "\n".join(clean_json.split("\n")[1:-1])
+
+        parsed_data = json.loads(clean_json)
         
         parsed_data["tokens_prompt"] = tokens_prompt
         parsed_data["tokens_completion"] = tokens_completion
-        parsed_data["response_time_sec"] = response_time_sec
+        parsed_data["response_time_sec"] = 0.0
         parsed_data["ai_status"] = "success"
 
         return parsed_data
         
     except Exception as e:
+        # traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+class BatchTranslationRequest(BaseModel):
+    texts: dict[str, str]
+    target_language: str
+    ai_model_override: str | None = "gemini-3.6-flash"
+
+@app.post("/api/translate-batch")
+async def translate_batch_text(
+    payload: BatchTranslationRequest,
+    x_internal_secret: str = Header(None)
+):
+    if x_internal_secret != INTERNAL_API_SECRET:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    if not client:
+        raise HTTPException(status_code=500, detail="Gemini API Key is missing.")
+
+    prompt = (
+        f"You are an expert medical translator. Translate the values of the following JSON object "
+        f"into {payload.target_language}.\n"
+        f"CRITICAL RULES:\n"
+        f"1. Keep the EXACT same JSON keys in the output.\n"
+        f"2. Translate ONLY the values.\n"
+        f"3. Return ONLY a valid JSON object, no markdown, no explanations.\n\n"
+        f"JSON to translate:\n{json.dumps(payload.texts, ensure_ascii=False)}"
+    )
+
+    model_name = payload.ai_model_override if payload.ai_model_override else "gemini-3.6-flash"
+
+    try:
+        model_name = payload.ai_model_override if payload.ai_model_override else "gemini-3.6-flash"
+
+        chat = client.aio.chats.create(
+            model=model_name,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json", 
+                temperature=0.1
+            )
+        )
+        response = await chat.send_message(prompt)
+        
+        clean_json = response.text.strip()
+        if clean_json.startswith("```"):
+            clean_json = "\n".join(clean_json.split("\n")[1:-1])
+
+        translated_dict = json.loads(clean_json)
+        return translated_dict
+        
+    except Exception as e:
+        # traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/")

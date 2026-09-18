@@ -64,3 +64,6 @@ __pycache__/
 # Type checking and testing
 .mypy_cache/
 .pytest_cache/
+
+# DEV TODOs
+TODO

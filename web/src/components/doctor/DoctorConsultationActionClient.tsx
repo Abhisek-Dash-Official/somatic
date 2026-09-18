@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { Loader2, Plus, X, Stethoscope, Save, User, BrainCircuit, Building2, RotateCcw } from "lucide-react";
+import { Loader2, Plus, X, Stethoscope, Save, User, BrainCircuit, Building2, RotateCcw, Ambulance, Volume2 } from "lucide-react";
 
 export default function DoctorConsultationActionClient({ id }: { id: string }) {
     const router = useRouter();
@@ -14,6 +14,7 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
     const [aiDraft, setAiDraft] = useState({ chief_complaints: "", ai_summary_and_advice: "", ayurvedic_hints: "", is_emergency: false });
 
     const [medicines, setMedicines] = useState<string[]>([""]);
+    const [requireAmbulance, setRequireAmbulance] = useState(false);
     const [instructions, setInstructions] = useState("");
     const [followUp, setFollowUp] = useState("");
 
@@ -32,6 +33,14 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
                     ayurvedic_hints: json.ai_draft?.ayurvedic_hints || "",
                     is_emergency: json.ai_draft?.is_emergency || false,
                 });
+
+                if (json.ai_draft?.suggested_medicines?.length > 0) {
+                    setMedicines(json.ai_draft.suggested_medicines);
+                }
+
+                if (json.ambulance_dispatch?.required) {
+                    setRequireAmbulance(true);
+                }
 
                 if (json.status === "pending_review") {
                     const claimRes = await fetch(`/api/doctor/consultations/${id}`, {
@@ -55,6 +64,16 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
         };
         initData();
     }, [id, router]);
+
+    const playAudio = (text: string, lang = "en-US") => {
+        if (!("speechSynthesis" in window)) {
+            return toast.error("Screen reader not supported in this browser.");
+        }
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        window.speechSynthesis.speak(utterance);
+    };
 
     const handleReleaseCase = async () => {
         setReleasing(true);
@@ -99,6 +118,10 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
                         medicines: cleanMeds,
                         instructions,
                         next_follow_up: followUp ? new Date(followUp) : null
+                    },
+                    ambulance_dispatch: {
+                        required: requireAmbulance,
+                        status: requireAmbulance ? "pending" : "not_needed"
                     }
                 })
             });
@@ -156,9 +179,24 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
                         <User className="w-8 h-8" />
                     </div>
                     <div className="flex-1">
-                        <h2 className="text-xl font-bold text-white">Patient Profile</h2>
+                        <h2 className="text-xl font-bold text-white">Patient Profile <span className="text-sm font-normal text-slate-400">({data?.patient_id?.username || "Unknown"})</span></h2>
+
                         <p className="text-slate-400 mt-1">Age: {data?.patient_input?.age} | Weight: {data?.patient_input?.weight_kg} kg | Lang: {data?.patient_input?.preferred_prescription_language}</p>
-                        <p className="text-sm bg-slate-800 p-3 mt-3 rounded-lg border border-slate-700"><strong>Symptoms Logged:</strong> {data?.patient_input?.symptoms_raw_text}</p>
+                        <p className="text-slate-400 mt-1">Contact: {data?.patient_id?.contact_no || "N/A"} | Email: {data?.patient_id?.email || "N/A"}</p>
+
+                        {data?.patient_id?.patient_info && (
+                            <p className="text-sm text-red-300 bg-red-900/20 p-2 mt-2 rounded border border-red-900/30">
+                                <strong>Blood Group:</strong> {data.patient_id.patient_info.blood_grp || "N/A"} | <strong>Allergies:</strong> {data.patient_id.patient_info.known_allergies?.join(", ") || "None"}
+                            </p>
+                        )}
+
+                        <p className="text-sm bg-slate-800 p-3 mt-3 rounded-lg border border-slate-700 text-slate-400"><strong>Original Input:</strong> {data?.patient_input?.symptoms_raw_text}</p>
+
+                        {data?.ai_draft?.translated_symptoms && (
+                            <p className="text-sm bg-blue-900/20 p-3 mt-2 rounded-lg border border-blue-800/50 text-blue-200">
+                                <strong>English Translation (AI):</strong> {data.ai_draft.translated_symptoms}
+                            </p>
+                        )}
 
                         {data?.patient_input?.attachments && data.patient_input.attachments.length > 0 && (
                             <div className="mt-4 p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
@@ -187,7 +225,16 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
                         </div>
 
                         <div>
-                            <label className="text-sm font-medium text-slate-400">AI Summary & Advice</label>
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-medium text-slate-400">AI Summary & Advice</label>
+                                <button
+                                    type="button"
+                                    onClick={() => playAudio(aiDraft.ai_summary_and_advice)}
+                                    className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition"
+                                >
+                                    <Volume2 className="w-3 h-3" /> Listen
+                                </button>
+                            </div>
                             <textarea rows={4} value={aiDraft.ai_summary_and_advice} onChange={e => setAiDraft({ ...aiDraft, ai_summary_and_advice: e.target.value })} className="w-full mt-1 bg-[#0B1120] border border-slate-700 rounded-lg p-3 text-white focus:border-blue-500 outline-none" />
                         </div>
 
@@ -199,6 +246,10 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
                         <label className="flex items-center gap-3 bg-red-500/10 p-3 rounded-lg border border-red-500/20 cursor-pointer">
                             <input type="checkbox" checked={aiDraft.is_emergency} onChange={e => setAiDraft({ ...aiDraft, is_emergency: e.target.checked })} className="w-5 h-5 rounded border-red-500 bg-black text-red-500 focus:ring-red-500" />
                             <span className="text-red-400 font-bold">Mark as Medical Emergency</span>
+                        </label>
+                        <label className="flex items-center gap-3 bg-orange-500/10 p-3 rounded-lg border border-orange-500/20 cursor-pointer mt-3">
+                            <input type="checkbox" checked={requireAmbulance} onChange={e => setRequireAmbulance(e.target.checked)} className="w-5 h-5 rounded border-orange-500 bg-black text-orange-500 focus:ring-orange-500" />
+                            <span className="text-orange-400 font-bold flex items-center gap-2"><Ambulance className="w-5 h-5" /> Dispatch Ambulance</span>
                         </label>
                     </div>
 

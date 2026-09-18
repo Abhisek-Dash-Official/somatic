@@ -14,6 +14,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
+    const { searchParams } = new URL(req.url);
+    const limitParam = searchParams.get("limit") || "50";
+    const limitNumber = limitParam === "all" ? 0 : parseInt(limitParam, 10);
+
     await dbConnect();
     const doctorId = session.user.id;
 
@@ -27,12 +31,17 @@ export async function GET(req: Request) {
       ],
     };
 
-    const consultations = await Consultation.find(query)
+    let dbQuery = Consultation.find(query)
       .populate("patient_id", "username email")
       .populate("claimed_by_doctor_id", "username email")
       .populate("assigned_department_id", "name")
-      .sort({ created_at: -1 })
-      .lean();
+      .sort({ created_at: -1 });
+
+    if (limitNumber > 0) {
+      dbQuery = dbQuery.limit(limitNumber);
+    }
+
+    const consultations = await dbQuery.lean();
 
     const consultationIds = consultations.map((c) => c._id);
     const systemLogs = await SystemLog.find({
@@ -63,8 +72,7 @@ export async function GET(req: Request) {
       action_type: "EXPORT_CONSULTATIONS_CSV",
       target_id: session.user.id,
       details: {
-        message:
-          "Doctor exported consultation history and system audit logs to CSV.",
+        message: `Doctor exported ${limitNumber === 0 ? "All" : limitNumber} consultation history records and system audit logs to CSV.`,
       },
     });
 

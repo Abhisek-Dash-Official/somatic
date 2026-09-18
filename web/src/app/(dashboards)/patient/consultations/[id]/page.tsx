@@ -3,9 +3,10 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Consultation from "@/models/Consultation";
-import { redirect } from "next/navigation";
-import { Clock, User, AlertTriangle, ExternalLink } from "lucide-react";
 import Department from "@/models/Department";
+import { redirect } from "next/navigation";
+import { Clock, User, AlertTriangle, ExternalLink, Ambulance } from "lucide-react";
+import PlayAudioButton from "@/components/patient/PlayAudioButton";
 
 export const metadata: Metadata = { title: "Consultation Details | Somatic" };
 
@@ -29,8 +30,6 @@ export default async function ConsultationDetailsPage({ params }: { params: Prom
     return (
         <div className="max-w-4xl mx-auto p-6 mt-10">
             <div className="bg-[#131C31] shadow-xl rounded-xl border border-slate-800/60 p-6 mb-6">
-
-                {/* Header Section */}
                 <div className="flex justify-between items-center border-b border-slate-700/50 pb-4 mb-5">
                     <div>
                         <h1 className="text-2xl font-bold text-slate-100">Consultation Report</h1>
@@ -40,10 +39,14 @@ export default async function ConsultationDetailsPage({ params }: { params: Prom
                             </p>
                         )}
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-sm font-semibold border capitalize ${isCompleted ? "bg-green-500/10 text-green-400 border-green-500/20" :
-                        consultation.status === "in_review" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" :
-                            "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-                        }`}>
+                    <span
+                        className={`px-3 py-1 rounded-full text-sm font-semibold border capitalize ${isCompleted
+                            ? "bg-green-500/10 text-green-400 border-green-500/20"
+                            : consultation.status === "in_review"
+                                ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                                : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                            }`}
+                    >
                         {consultation.status.replace("_", " ")}
                     </span>
                 </div>
@@ -53,16 +56,34 @@ export default async function ConsultationDetailsPage({ params }: { params: Prom
                         <p className="font-bold mb-1 flex items-center gap-2">
                             <AlertTriangle className="w-5 h-5" /> Medical Emergency Alert
                         </p>
-                        <p className="text-sm opacity-90 ml-7">AI detected potential life-threatening symptoms. Please seek immediate emergency medical care!</p>
+                        <p className="text-sm opacity-90 ml-7">
+                            AI detected potential life-threatening symptoms. Please seek immediate emergency medical care!
+                        </p>
                     </div>
                 )}
 
-                {/* Patient Input (Always Visible) */}
+                {consultation.ambulance_dispatch?.required && (
+                    <div className="bg-orange-900/20 border border-orange-500/30 text-orange-400 p-4 rounded-lg mb-6 shadow-sm">
+                        <p className="font-bold mb-1 flex items-center gap-2">
+                            <Ambulance className="w-5 h-5" /> Ambulance Requested
+                        </p>
+                        <p className="text-sm opacity-90 ml-7">
+                            Status: <span className="uppercase font-bold text-orange-300">{consultation.ambulance_dispatch.status.replace("_", " ")}</span>. A dispatcher will contact you shortly.
+                        </p>
+                    </div>
+                )}
+
                 <div className="bg-[#0B1120] p-4 rounded-lg border border-slate-700/30 mb-6">
-                    <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-400 mb-3 flex items-center gap-2"><User className="w-4 h-4" /> Your Input</h2>
+                    <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-400 mb-3 flex items-center gap-2">
+                        <User className="w-4 h-4" /> Your Input
+                    </h2>
                     <ul className="text-slate-300 space-y-2 text-sm">
-                        <li><strong className="text-slate-200">Age:</strong> {consultation.patient_input?.age} | <strong className="text-slate-200">Weight:</strong> {consultation.patient_input?.weight_kg} kg</li>
-                        <li className="pt-2"><strong className="text-slate-200 block mb-1">Symptoms:</strong> <span className="opacity-90">{consultation.patient_input?.symptoms_raw_text}</span></li>
+                        <li>
+                            <strong className="text-slate-200">Age:</strong> {consultation.patient_input?.age} | <strong className="text-slate-200">Weight:</strong> {consultation.patient_input?.weight_kg} kg
+                        </li>
+                        <li className="pt-2">
+                            <strong className="text-slate-200 block mb-1">Symptoms:</strong> <span className="opacity-90">{consultation.patient_input?.symptoms_raw_text}</span>
+                        </li>
 
                         {consultation.patient_input?.attachments && consultation.patient_input.attachments.length > 0 && (
                             <li className="pt-4 border-t border-slate-700/50 mt-4">
@@ -81,7 +102,6 @@ export default async function ConsultationDetailsPage({ params }: { params: Prom
                     </ul>
                 </div>
 
-                {/* CONDITIONAL RENDERING */}
                 {!isCompleted ? (
                     <div className="bg-slate-800/40 border border-slate-700/50 rounded-lg p-10 text-center flex flex-col items-center">
                         <Clock className="w-12 h-12 text-blue-500/70 mb-4 animate-pulse" />
@@ -90,7 +110,6 @@ export default async function ConsultationDetailsPage({ params }: { params: Prom
                     </div>
                 ) : (
                     <>
-                        {/* DOCTOR FINAL PRESCRIPTION */}
                         <div className="bg-green-900/10 border border-green-800/30 p-5 rounded-lg mb-6">
                             <h2 className="text-sm uppercase tracking-wider font-semibold text-green-400 mb-4">Doctor's Final Prescription</h2>
 
@@ -105,24 +124,65 @@ export default async function ConsultationDetailsPage({ params }: { params: Prom
                                 </div>
 
                                 {consultation.doctor_final_prescription?.instructions && (
-                                    <div>
-                                        <strong className="text-slate-300 block mb-1 text-sm">Instructions / Diet:</strong>
-                                        <p className="text-slate-200 text-sm">{consultation.doctor_final_prescription.instructions}</p>
+                                    <div className="mt-4 border-t border-green-800/30 pt-4">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <strong className="text-slate-300 block text-sm">Instructions / Diet:</strong>
+                                            <PlayAudioButton
+                                                text={consultation.doctor_final_prescription.translated_instructions || consultation.doctor_final_prescription.instructions}
+                                                lang={consultation.patient_input?.preferred_prescription_language || "English"}
+                                            />
+                                        </div>
+
+                                        {consultation.doctor_final_prescription.translated_instructions && (
+                                            <p className="text-slate-200 text-sm font-medium mb-3 p-3 bg-green-900/20 rounded border border-green-800/40">
+                                                {consultation.doctor_final_prescription.translated_instructions}
+                                            </p>
+                                        )}
+
+                                        <div className="text-slate-400 text-xs bg-slate-900/50 p-3 rounded">
+                                            <span className="block mb-1 opacity-70">English Original:</span>
+                                            {consultation.doctor_final_prescription.instructions}
+                                        </div>
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        {/* AI & AYURVEDIC DETAILS */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t border-slate-700/50">
                             <div className="bg-blue-900/10 border border-blue-800/30 p-4 rounded-lg">
-                                <h2 className="text-sm uppercase tracking-wider font-semibold text-blue-400 mb-3">AI Summary & Advice</h2>
-                                <p className="text-blue-200/80 text-sm whitespace-pre-wrap leading-relaxed">{consultation.ai_draft?.ai_summary_and_advice}</p>
+                                <div className="flex items-center justify-between mb-3">
+                                    <h2 className="text-sm uppercase tracking-wider font-semibold text-blue-400">AI Summary & Advice</h2>
+                                    <PlayAudioButton
+                                        text={consultation.ai_draft?.translated_ai_summary_and_advice || consultation.ai_draft?.ai_summary_and_advice || ""}
+                                        lang={consultation.patient_input?.preferred_prescription_language || "English"}
+                                    />
+                                </div>
+                                {consultation.ai_draft?.translated_ai_summary_and_advice && (
+                                    <p className="text-blue-200 text-sm font-medium mb-3 p-3 bg-blue-900/20 rounded border border-blue-800/40">
+                                        {consultation.ai_draft.translated_ai_summary_and_advice}
+                                    </p>
+                                )}
+                                <div className={`text-sm whitespace-pre-wrap leading-relaxed ${consultation.ai_draft?.translated_ai_summary_and_advice ? 'text-slate-400 text-xs bg-slate-900/50 p-3 rounded' : 'text-blue-200/80'}`}>
+                                    {consultation.ai_draft?.translated_ai_summary_and_advice && <span className="block mb-1 opacity-70">English Original:</span>}
+                                    {consultation.ai_draft?.ai_summary_and_advice}
+                                </div>
                             </div>
 
                             <div className="bg-emerald-900/10 border border-emerald-800/30 p-4 rounded-lg">
-                                <h2 className="text-sm uppercase tracking-wider font-semibold text-emerald-400 mb-3">Ayurvedic Insights</h2>
-                                <div className="text-emerald-200/80 text-sm italic leading-relaxed">
+                                <div className="flex items-center justify-between mb-3">
+                                    <h2 className="text-sm uppercase tracking-wider font-semibold text-emerald-400">Ayurvedic Insights</h2>
+                                    <PlayAudioButton
+                                        text={consultation.ai_draft?.translated_ayurvedic_hints || consultation.ai_draft?.ayurvedic_hints || ""}
+                                        lang={consultation.patient_input?.preferred_prescription_language || "English"}
+                                    />
+                                </div>
+                                {consultation.ai_draft?.translated_ayurvedic_hints && (
+                                    <div className="text-emerald-200 text-sm font-medium mb-3 p-3 bg-emerald-900/20 rounded border border-emerald-800/40 italic">
+                                        {consultation.ai_draft.translated_ayurvedic_hints}
+                                    </div>
+                                )}
+                                <div className={`text-sm italic leading-relaxed ${consultation.ai_draft?.translated_ayurvedic_hints ? 'text-slate-400 text-xs bg-slate-900/50 p-3 rounded' : 'text-emerald-200/80'}`}>
+                                    {consultation.ai_draft?.translated_ayurvedic_hints && <span className="block mb-1 opacity-70 not-italic">English Original:</span>}
                                     {consultation.ai_draft?.ayurvedic_hints || "No specific Ayurvedic correlation found."}
                                 </div>
                             </div>

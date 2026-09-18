@@ -71,8 +71,6 @@ export async function POST(req: Request) {
           age: parsedAge,
           weight_kg: parsedWeight,
           symptoms_raw_text,
-          preferred_prescription_language:
-            preferred_prescription_language || "English",
           available_departments: deptListForAI,
         }),
       },
@@ -96,8 +94,10 @@ export async function POST(req: Request) {
         attachments: Array.isArray(attachments) ? attachments : [],
       },
       ai_draft: {
+        translated_symptoms: aiDraft.translated_symptoms,
         is_emergency: aiDraft.is_emergency,
         chief_complaints: aiDraft.chief_complaints,
+        suggested_medicines: aiDraft.suggested_medicines || [],
         ayurvedic_hints: aiDraft.ayurvedic_hints,
         ai_summary_and_advice: aiDraft.ai_summary_and_advice,
       },

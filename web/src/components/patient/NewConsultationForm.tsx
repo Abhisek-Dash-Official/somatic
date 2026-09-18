@@ -19,9 +19,23 @@ export default function NewConsultationForm() {
         const w = window as any;
         const SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
         if (!SpeechRecognition) return toast.error("Your browser doesn't support Voice-to-Text.");
+
+        // Universal Language Map for Mic (Major Indian & Global Languages)
+        const langMap: Record<string, string> = {
+            english: "en-US", hindi: "hi-IN", bengali: "bn-IN", telugu: "te-IN",
+            marathi: "mr-IN", tamil: "ta-IN", urdu: "ur-IN", gujarati: "gu-IN",
+            kannada: "kn-IN", malayalam: "ml-IN", odia: "or-IN", punjabi: "pa-IN",
+            assamese: "as-IN", maithili: "mai-IN",
+            spanish: "es-ES", french: "fr-FR", german: "de-DE", arabic: "ar-SA",
+            chinese: "zh-CN", japanese: "ja-JP", korean: "ko-KR", russian: "ru-RU"
+        };
+
+        const typedLang = formData.preferred_prescription_language.trim().toLowerCase();
+
         const recognition = new SpeechRecognition();
-        recognition.lang = "en-US";
+        recognition.lang = langMap[typedLang] || "en-US";
         recognition.interimResults = false;
+
         recognition.onstart = () => setIsListening(true);
         recognition.onresult = (event: any) => {
             const transcript = event.results[0][0].transcript;

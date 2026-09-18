@@ -20,12 +20,14 @@ export async function GET(req: Request, { params }: Props) {
     const doctor = await User.findById(session.user.id)
       .select("doctor_info")
       .lean();
-    const consultation = await Consultation.findById(id).lean();
+
+    const consultation = await Consultation.findById(id)
+      .populate("patient_id", "username email contact_no patient_info")
+      .lean();
 
     if (!consultation)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    // SECURITY CHECK: Can this doctor view this case?
     const isClaimedByMe =
       consultation.claimed_by_doctor_id?.toString() === session.user.id;
     const isPendingInMyDept =
@@ -60,7 +62,8 @@ export async function PATCH(req: Request, { params }: Props) {
 
     const { id } = await params;
     const body = await req.json();
-    const { action, ai_draft, doctor_final_prescription } = body;
+    const { action, ai_draft, doctor_final_prescription, ambulance_dispatch } =
+      body;
 
     await dbConnect();
 
@@ -72,7 +75,6 @@ export async function PATCH(req: Request, { params }: Props) {
     if (!consultation)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    // SECURITY CHECK for modifications
     const isClaimedByMe =
       consultation.claimed_by_doctor_id?.toString() === session.user.id;
     const isPendingInMyDept =
@@ -134,8 +136,82 @@ export async function PATCH(req: Request, { params }: Props) {
 
     // ACTION: COMPLETE
     if (action === "complete" && isClaimedByMe) {
-      consultation.ai_draft = ai_draft;
-      consultation.doctor_final_prescription = doctor_final_prescription;
+      const targetLang =
+        consultation.patient_input?.preferred_prescription_language ||
+        "English";
+
+      let trans_instructions: string | null = null;
+      let trans_summary: string | null = null;
+      let trans_ayurveda: string | null = null;
+
+      console.log(`[TRANSLATION CHECK] Patient Language is: ${targetLang}`);
+
+      if (targetLang.toLowerCase() !== "english") {
+        console.log(
+          `[TRANSLATION START] Sending BATCH translation for ${targetLang}...`,
+        );
+
+        const textsToTranslate: Record<string, string> = {};
+        if (doctor_final_prescription.instructions)
+          textsToTranslate.instructions =
+            doctor_final_prescription.instructions;
+        if (ai_draft.ai_summary_and_advice)
+          textsToTranslate.summary = ai_draft.ai_summary_and_advice;
+        if (ai_draft.ayurvedic_hints)
+          textsToTranslate.ayurveda = ai_draft.ayurvedic_hints;
+
+        if (Object.keys(textsToTranslate).length > 0) {
+          try {
+            const res = await fetch(
+              `${process.env.PYTHON_BACKEND_URL || "http://localhost:8000"}/api/translate-batch`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "x-internal-secret":
+                    process.env.INTERNAL_API_SECRET ||
+                    "my_super_secret_key_123",
+                },
+                body: JSON.stringify({
+                  texts: textsToTranslate,
+                  target_language: targetLang,
+                }),
+              },
+            );
+
+            if (res.ok) {
+              const translatedData = await res.json();
+              trans_instructions = translatedData.instructions || null;
+              trans_summary = translatedData.summary || null;
+              trans_ayurveda = translatedData.ayurveda || null;
+              console.log("[TRANSLATION SUCCESS] Batch translation done!");
+            }
+          } catch (e) {
+            console.error("[TRANSLATION ERROR] Batch API failed:", e);
+          }
+        }
+      }
+
+      consultation.ai_draft.ai_summary_and_advice =
+        ai_draft.ai_summary_and_advice;
+      consultation.ai_draft.ayurvedic_hints = ai_draft.ayurvedic_hints;
+      consultation.ai_draft.chief_complaints = ai_draft.chief_complaints;
+      consultation.ai_draft.is_emergency = ai_draft.is_emergency;
+
+      if (trans_summary)
+        consultation.ai_draft.translated_ai_summary_and_advice = trans_summary;
+      if (trans_ayurveda)
+        consultation.ai_draft.translated_ayurvedic_hints = trans_ayurveda;
+
+      consultation.doctor_final_prescription = {
+        ...doctor_final_prescription,
+        translated_instructions: trans_instructions,
+      };
+
+      if (ambulance_dispatch) {
+        consultation.ambulance_dispatch = ambulance_dispatch;
+      }
+
       consultation.status = "completed";
       consultation.resolved_at = new Date();
       await consultation.save();
@@ -145,10 +221,8 @@ export async function PATCH(req: Request, { params }: Props) {
         actor_role: "doctor",
         action_type: "COMPLETE_CONSULTATION",
         target_id: id,
-        details: {
-          has_medicines: doctor_final_prescription.medicines.length > 0,
-        },
       });
+
       return NextResponse.json(
         { message: "Consultation completed successfully" },
         { status: 200 },

@@ -22,15 +22,28 @@ const ConsultationSchema = new Schema(
       preferred_prescription_language: { type: String },
     },
     ai_draft: {
+      translated_symptoms: { type: String },
       is_emergency: { type: Boolean, default: false },
       chief_complaints: [{ type: String }],
+      suggested_medicines: [{ type: String }],
       ayurvedic_hints: { type: String },
+      translated_ayurvedic_hints: { type: String },
       ai_summary_and_advice: { type: String },
+      translated_ai_summary_and_advice: { type: String },
     },
     doctor_final_prescription: {
       medicines: [{ type: String }],
       instructions: { type: String },
+      translated_instructions: { type: String },
       next_follow_up: { type: Date, default: null },
+    },
+    ambulance_dispatch: {
+      required: { type: Boolean, default: false },
+      status: {
+        type: String,
+        enum: ["not_needed", "pending", "dispatched", "arrived"],
+        default: "not_needed",
+      },
     },
     resolved_at: { type: Date },
   },
