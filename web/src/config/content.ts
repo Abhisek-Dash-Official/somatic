@@ -4,11 +4,11 @@ export const pageContent = {
     subtitle:
       "AI-Assisted Digital Healthcare Bridging Modern Triage with Holistic Insights",
     mission:
-      "Our mission is to support healthcare professionals through AI-assisted case taking and structured digital health records. Somatic organizes complex patient narratives, generates dual-modality clinical drafts, and automates departmental routing, empowering doctors to make the final clinical decision with maximum efficiency.",
+      "Our mission is to support healthcare professionals through AI-assisted case taking and structured digital health records. Somatic organizes complex patient narratives, generates dual-modality clinical drafts, automates departmental routing, and facilitates end-to-end patient care from emergency ambulance dispatch to medical e-commerce.",
     vision:
-      "Our vision is to make healthcare more accessible, organized, and digitally secure by combining integrative medical practices with responsible AI technology, strict zero-trust audit logging, and seamless telemedicine workflows.",
+      "Our vision is to make healthcare more accessible, organized, and digitally secure by combining integrative medical practices with responsible AI technology, real-time hospital telemetry, and seamless telemedicine workflows.",
     story:
-      "Somatic was engineered to solve the chronic bottlenecks of manual case taking, fragmented patient records, and delayed emergency routing in modern clinics. The platform provides a secure, intuitive digital interface where patients can dictate their symptoms and attach medical reports. Behind the scenes, advanced LLMs process this data to prepare a structured preliminary case summary, automatically flagging potential SOS emergencies. The doctor reviews the AI-generated draft, refines the clinical instructions, and approves the final digital prescription. This human-in-the-loop approach radically reduces administrative fatigue while keeping absolute clinical authority in the hands of qualified healthcare professionals.",
+      "Somatic was engineered to solve the chronic bottlenecks of manual case taking, fragmented patient records, and delayed emergency routing in modern clinics. The platform provides a secure digital interface where patients can dictate symptoms in their local language. Behind the scenes, advanced LLMs process this data to prepare a structured preliminary case summary, automatically flagging potential SOS emergencies. Doctors review these drafts (with built-in screen reader support) and approve final prescriptions which are instantly reverse-translated for the patient. Beyond consultations, Somatic bridges the physical gap with real-time Ambulance Telemetry for ER preparation and a Universal Medical E-Commerce module for COD medicine and blood unit dispatch.",
     team: [
       {
         name: "Abhisek Dash",
@@ -19,34 +19,35 @@ export const pageContent = {
         github: "https://github.com/Abhisek-Dash-Official/",
       },
       {
-        name: "Srishty Singh",
-        role: "Head of Medical Data & Product Research",
-        bio: "Leads medical data collection and product research for the platform. Ensures absolute accuracy in drug databases and cross-modality mappings. Works closely with the AI and clinical teams to refine medical data before doctor review.",
-        image: "/members/srishty-singh.png",
-        linkedin: "#",
-        github: "#",
-      },
-      {
-        name: "Baibhav",
-        role: "Lead Beta Tester & QA Specialist",
-        bio: "Validates system functionality from the perspective of both patients and medical professionals. Evaluates the usability of the AI draft interface and emergency routing to optimize the clinical review process and enhance platform safety.",
-        image: "/members/baibhav.png",
-        linkedin: "#",
-        github: "#",
-      },
-      {
         name: "Jyotirmayee Behera",
-        role: "Product Manager",
-        bio: "Drives the strategic roadmap and cross-functional execution of the platform. Synthesizes feedback from clinical advisory boards, developers, and patient advocacy groups to deliver high-utility, regulatory-compliant medical software solutions.",
+        role: "Lead Product Associate & Operations Coordinator",
+        bio: "Drives end-to-end operational efficiency, specializing in product curation, rich media sourcing, and stakeholder presentations. Acts as a strategic right hand in translating complex code architectures into comprehensive mind maps and actionable product workflows.",
+
         image: "/members/Jyotirmayee.png",
         linkedin: "#",
         github: "#",
       },
       {
+        name: "Srishty Singh",
+        role: "Director of Medical Intelligence & Clinical Data",
+        bio: "Architects and oversees the platform's medical data strategy, product research, and high-fidelity drug databases. Spearheads the structural integration between AI execution layers and clinical data pipelines, ensuring absolute accuracy, cross-modality precision, and pre-clinical data readiness.",
+        image: "/members/srishty-singh.png",
+        linkedin: "#",
+        github: "#",
+      },
+      {
         name: "Shireen Fatima",
-        role: "Data Privacy Officer",
-        bio: "Oversees information security frameworks and data governance protocols. Audits platform architecture to guarantee absolute compliance with medical data retention laws, ensuring strict safeguarding and RBAC isolation of sensitive patient information.",
+        role: "Chief Information Security & Privacy Officer (CISPO)",
+        bio: "Commands the platform's global information security frameworks, enterprise data governance, and medical regulatory compliance. Directs end-to-end platform audit strategies to enforce strict medical data retention laws, zero-trust RBAC architecture, and bulletproof patient data isolation.",
         image: "/members/Shireen.png",
+        linkedin: "#",
+        github: "#",
+      },
+      {
+        name: "Baibhav",
+        role: "QA Assistant",
+        bio: "Assists with basic, routine system checks and surface-level functionality reviews. Supports the internal team by logging user interface feedback and maintaining standard quality verification checklists under direct supervision.",
+        image: "/members/baibhav.png",
         linkedin: "#",
         github: "#",
       },
@@ -97,6 +98,11 @@ export const pageContent = {
       question: "How does the automated prescription generator work?",
       answer:
         "Once the doctor completes the case-taking module, the platform compiles the diagnosis, prescribed herbs/medicines, and lifestyle recommendations into a standardized, legally compliant PDF prescription that can be shared instantly.",
+    },
+    {
+      question: "How does the medical e-commerce module work?",
+      answer:
+        "Patients and hospitals can directly order prescribed medicines, rare anti-venoms, or request emergency blood units through our platform. Orders are fulfilled via a reliable Cash-on-Delivery (COD) dispatch system.",
     },
   ],
   blog: [
@@ -186,15 +192,9 @@ export const pageContent = {
       icon: "Mic",
     },
     {
-      title: "Dual-Modality Clinical Insights",
-      description:
-        "Seamlessly bridge modern and traditional medicine. Our engine combines standard Allopathic triage with real-time Ayurvedic Dosha (Vata-Pitta-Kapha) computational scoring.",
-      icon: "Activity",
-    },
-    {
       title: "Intelligent Department Routing",
       description:
-        "Eliminate manual front-desk bottlenecks. The AI automatically analyzes the chief complaints and routes the case directly to the precise hospital department (e.g., Cardiology, Dermatology).",
+        "Eliminate manual front-desk bottlenecks. The AI automatically analyzes the chief complaints and routes the case directly to the precise hospital department.",
       icon: "Network",
     },
     {
@@ -210,46 +210,34 @@ export const pageContent = {
       icon: "ListChecks",
     },
     {
-      title: "Dynamic Prescription Generation",
+      title: "Universal Medical E-Commerce",
       description:
-        "Accelerate the consultation process. Doctors can review the AI draft, tweak chief complaints, add clinical instructions, and generate a standardized digital prescription in seconds.",
-      icon: "FileText",
+        "A built-in shop module allowing patients and hospitals to order prescribed medicines, rare anti-venoms, and emergency blood units via a Cash-on-Delivery (COD) dispatch system.",
+      icon: "ShoppingCart",
     },
     {
-      title: "Strict Role-Based Access Control (RBAC)",
+      title: "Ambulance & Live ER Telemetry",
       description:
-        "Ensure absolute data privacy with highly isolated portals for Patients, Doctors, and Administrators. Users can only access data explicitly permitted by their assigned system role.",
-      icon: "ShieldCheck",
+        "If an ambulance is dispatched, the app maintains a Real-Time Sync, sharing the patient's vitals with the hospital so the ER is fully prepared before arrival.",
+      icon: "Ambulance",
     },
     {
-      title: "Immutable System Audit Logging",
+      title: "Instant QR Code EHR Admission",
       description:
-        "Maintain a zero-trust accountability trail. Every login, case claim, prescription update, and data export is permanently recorded with timestamps and user IDs in a secure MongoDB collection.",
-      icon: "Database",
+        "When a patient physically reaches the hospital, a 2-second scan of their app's pre-saved QR Code instantly auto-fills their entire admission and insurance paperwork.",
+      icon: "QrCode",
     },
     {
-      title: "Comprehensive CSV Data Export",
+      title: "Audio Screen Reader Integration",
       description:
-        "Enable administrators and authorized doctors to instantly download extensive patient consultation histories and system logs for offline clinical reporting and legal compliance.",
-      icon: "DownloadCloud",
+        "Save time on reading. Doctors can use the built-in Screen Reader to listen to AI drafts, and patients can tap to hear their final translated instructions read aloud.",
+      icon: "Volume2",
     },
     {
-      title: "Multi-Lingual Patient Support",
+      title: "Seamless Reverse Translation",
       description:
-        "Bridge the communication gap. Capture preferred prescription languages during the initial triage to ensure patients fully understand their clinical instructions and dietary plans.",
+        "Doctors review cases in English, but the finalized digital prescription is automatically reverse-translated into the patient's preferred local language for complete understanding.",
       icon: "Languages",
-    },
-    {
-      title: "Integrated Medical Attachments",
-      description:
-        "Allow patients to securely attach multiple external laboratory reports, radiological images, or prior medical documents for a comprehensive doctor review before the consultation.",
-      icon: "Paperclip",
-    },
-    {
-      title: "Enterprise API Rate Limiting",
-      description:
-        "Guarantee platform stability and defend against DDoS attacks with Upstash Redis sliding-window rate limiting, protecting critical healthcare infrastructure 24/7.",
-      icon: "Lock",
     },
   ],
 
@@ -257,74 +245,33 @@ export const pageContent = {
     {
       title: "Automated Patient Intake & Triage",
       description:
-        "Transform your hospital's waiting room. We replace manual paperwork with an intelligent, self-service digital intake that categorizes and prepares patients before the doctor even sees them.",
+        "Transform your hospital's waiting room. We replace manual paperwork with an intelligent, self-service digital intake that categorizes and prepares patients.",
       icon: "UserPlus",
-    },
-    {
-      title: "Seamless Inter-Departmental Routing",
-      description:
-        "Optimize hospital logistics. Our service ensures that patient cases are routed to the exact specialty required, reducing internal transfers and saving critical medical time.",
-      icon: "GitMerge",
     },
     {
       title: "Secure EHR Infrastructure",
       description:
-        "Protect your patients' most valuable asset. We provide end-to-end, bank-grade AES-256 encrypted storage for electronic health records, consultation histories, and medical attachments.",
+        "Protect your patients' most valuable asset. We provide end-to-end, bank-grade AES-256 encrypted storage for electronic health records.",
       icon: "Shield",
     },
+
     {
-      title: "Integrative Medicine (Ayush) Consulting",
+      title: "Zero-Queue Dispatch Operations",
       description:
-        "Modernize traditional healthcare institutions. We help seamlessly blend holistic Ayurvedic medicine with data-driven Allopathic clinical tools to provide comprehensive patient care.",
-      icon: "Leaf",
+        "If all doctors are busy, authorized Assistant Doctors step in. If a case still sits pending, a dedicated Dispatcher actively intervenes to ensure immediate attention.",
+      icon: "Clock",
     },
     {
-      title: "Clinical Audit & Compliance Tracking",
+      title: "Emergency Transport Sync",
       description:
-        "Stay ahead of regulatory requirements. Our service provides administrators with the tools to track hospital efficiency, monitor doctor workflows, and export immutable legal audit logs.",
-      icon: "FileBarChart",
+        "Upgrade your critical care response with integrated ambulance dispatch systems that sync live patient telemetry directly to your hospital's emergency room dashboard.",
+      icon: "Activity",
     },
     {
-      title: "Doctor Workload Optimization",
+      title: "Hospital Pharmacy Integration",
       description:
-        "Prevent physician burnout. By providing pre-filled AI drafts and smart queue management (claim/release), we drastically reduce the administrative burden on your medical staff.",
-      icon: "Stethoscope",
-    },
-    {
-      title: "Priority Emergency Handling Setup",
-      description:
-        "Upgrade your critical care response. We implement automated SOS detection systems that instantly alert department staff to high-risk patients hiding in standard consultation queues.",
-      icon: "Siren",
-    },
-    {
-      title: "Multi-Lingual Communication Setup",
-      description:
-        "Serve a diverse demographic. We configure your triage systems to handle and generate medical instructions in multiple regional languages, enhancing patient safety and adherence.",
-      icon: "MessageSquare",
-    },
-    {
-      title: "Custom AI Triage Configuration",
-      description:
-        "Tailor the AI to your hospital's specific needs. We customize the Gemini LLM system prompts to align with your institution's specific clinical guidelines and triage protocols.",
-      icon: "BrainCircuit",
-    },
-    {
-      title: "High-Availability Cloud Hosting",
-      description:
-        "Ensure your telemedicine platform never goes down. We provide scalable, highly-available cloud infrastructure backed by robust Upstash Redis and MongoDB database clusters.",
-      icon: "Cloud",
-    },
-    {
-      title: "Enterprise Data Export & Reporting",
-      description:
-        "Unlock actionable insights from your hospital's data. We provide secure, structured CSV export services for deep demographic analysis and clinical research.",
-      icon: "PieChart",
-    },
-    {
-      title: "Platform Onboarding & Staff Training",
-      description:
-        "Ensure a smooth digital transition. We provide comprehensive onboarding, RBAC configuration, and training for your doctors and administrative staff to master the Somatic platform.",
-      icon: "Users",
+        "Connect your hospital's pharmacy and blood bank to our universal e-commerce module, allowing seamless COD dispatches directly to the patient's location.",
+      icon: "Package",
     },
   ],
   legal: {
@@ -377,6 +324,14 @@ export const pageContent = {
         heading: "12. Governing Law and Dispute Resolution",
         text: "These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which Somatic's primary corporate entity is registered, without regard to its conflict of law provisions. Any legal action or proceeding arising under these Terms will be brought exclusively in the federal or state courts located in that jurisdiction.",
       },
+      {
+        heading: "13. Medical E-Commerce and Blood Bank Logistics",
+        text: "The universal medical e-commerce module, including medicine delivery and emergency blood unit dispatch, operates on a best-effort basis. Somatic acts strictly as a technology intermediary connecting patients, hospitals, and registered blood banks. We do not manufacture medicines nor do we physically bank blood. Users acknowledge that blood unit availability is dynamic. The receiving hospital or Practitioner bears the absolute liability for conducting mandatory cross-matching and compatibility testing prior to any transfusion. Somatic is not liable for transit delays, stock-outs, or adverse reactions arising from administered products.",
+      },
+      {
+        heading: "14. Cash-on-Delivery (COD) and Dispatch Protocols",
+        text: "Orders placed via the Cash-on-Delivery (COD) dispatch system constitute a binding intent to purchase. Somatic and its partnered dispatchers reserve the right to cancel orders or restrict COD privileges for users exhibiting fraudulent behavior, excessive cancellations, or abusive conduct toward delivery personnel. Ambulance dispatch ETAs are algorithmic estimates and are subject to real-world traffic and logistical constraints.",
+      },
     ],
     privacy: [
       {
@@ -427,6 +382,10 @@ export const pageContent = {
         heading: "12. Updates to the Privacy Policy",
         text: "We reserve the right to update this Privacy Policy as our technology, AI integrations, or regulatory obligations evolve. Users will be notified of significant changes via the Platform. Continued use of the Platform after such updates constitutes acceptance of the revised data handling practices.",
       },
+      {
+        heading: "13. Physical Logistics and Dispatch Data Sharing",
+        text: "To facilitate the fulfillment of e-commerce orders, blood unit requests, and ambulance dispatches, Somatic must share specific PII (such as physical delivery addresses, real-time geolocation, and contact numbers) with authorized third-party dispatchers, ambulance drivers, and delivery personnel. This data is shared on a strictly need-to-know basis to ensure the successful physical delivery of critical care items or transport.",
+      },
     ],
     guidelines: [
       {
@@ -468,6 +427,10 @@ export const pageContent = {
       {
         heading: "10. Professional Platform Conduct",
         text: "All communications, including clinical notes and system interactions, must maintain a high standard of professional decorum. Abuse of the system, circumvention of role-based limits, or unprofessional conduct within the platform’s data fields will result in administrative review and account suspension.",
+      },
+      {
+        heading: "11. E-Commerce & Blood Request Integrity",
+        text: "Practitioners utilizing the e-commerce module must prescribe medications based solely on objective clinical necessity. Inducing unnecessary orders or artificially inflating prescriptions for personal or platform gain is strictly prohibited. Emergency blood requests must only be initiated for verified clinical emergencies, ensuring that critical regional blood bank inventories are not depleted by non-urgent hoarding.",
       },
     ],
   },
