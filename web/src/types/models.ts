@@ -166,6 +166,7 @@ export interface IBloodBank {
   _id?: string;
   name: string;
   hospital_affiliation?: string;
+  images?: string[];
   license_no: string;
   contact_no: string;
   email?: string;

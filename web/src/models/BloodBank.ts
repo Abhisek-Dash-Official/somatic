@@ -23,6 +23,7 @@ const BloodBankSchema = new Schema<IBloodBankDocument>(
   {
     name: { type: String, required: true, trim: true },
     hospital_affiliation: { type: String, trim: true },
+    images: [{ type: String }],
     license_no: { type: String, required: true, unique: true },
     contact_no: { type: String, required: true, match: /^[0-9]{10}$/ },
     email: { type: String, lowercase: true, trim: true },
