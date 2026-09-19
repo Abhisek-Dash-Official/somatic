@@ -1,6 +1,11 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import mongoose, { Schema, Document, model, models } from "mongoose";
+import { IFeedback } from "@/types/models";
 
-const FeedbackSchema = new Schema(
+export interface IFeedbackDocument extends IFeedback, Document {
+  _id: any;
+}
+
+const FeedbackSchema = new Schema<IFeedbackDocument>(
   {
     reported_by_user_id: {
       type: Schema.Types.ObjectId,
@@ -14,4 +19,5 @@ const FeedbackSchema = new Schema(
   { timestamps: { createdAt: "created_at", updatedAt: false } },
 );
 
-export default models.Feedback || model("Feedback", FeedbackSchema);
+export default models.Feedback ||
+  model<IFeedbackDocument>("Feedback", FeedbackSchema);

@@ -1,14 +1,15 @@
 export const navLinks = {
   mainNav: [
-    { title: "Home", href: "/" },
     { title: "About", href: "/about" },
-    { title: "Services", href: "/services" },
-    { title: "Contact", href: "/contact" },
     { title: "First Aid", href: "/first-aid" },
+    { title: "Shop", href: "/shop" },
+    { title: "Cart", href: "/shop/cart" },
+    { title: "Contact", href: "/contact" },
   ],
   footerNav: {
     company: [
       { title: "About Somatic", href: "/about" },
+      { title: "Services", href: "/services" },
       { title: "Features", href: "/features" },
       { title: "Blog", href: "/blog" },
       { title: "Contact Us", href: "/contact" },

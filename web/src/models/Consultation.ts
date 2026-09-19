@@ -1,6 +1,11 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import mongoose, { Schema, Document, model, models } from "mongoose";
+import { IConsultation } from "@/types/models";
 
-const ConsultationSchema = new Schema(
+export interface IConsultationDocument extends IConsultation, Document {
+  _id: any;
+}
+
+const ConsultationSchema = new Schema<IConsultationDocument>(
   {
     patient_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
     assigned_department_id: { type: Schema.Types.ObjectId, ref: "Department" },
@@ -50,4 +55,5 @@ const ConsultationSchema = new Schema(
   { timestamps: { createdAt: "created_at", updatedAt: false } },
 );
 
-export default models.Consultation || model("Consultation", ConsultationSchema);
+export default models.Consultation ||
+  model<IConsultationDocument>("Consultation", ConsultationSchema);

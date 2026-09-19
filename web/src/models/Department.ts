@@ -1,6 +1,11 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import mongoose, { Schema, Document, model, models } from "mongoose";
+import { IDepartment } from "@/types/models";
 
-const DepartmentSchema = new Schema(
+export interface IDepartmentDocument extends IDepartment, Document {
+  _id: any;
+}
+
+const DepartmentSchema = new Schema<IDepartmentDocument>(
   {
     name: { type: String, required: true, unique: true },
     desc: { type: String },
@@ -10,4 +15,5 @@ const DepartmentSchema = new Schema(
   { timestamps: { createdAt: "created_at", updatedAt: false } },
 );
 
-export default models.Department || model("Department", DepartmentSchema);
+export default models.Department ||
+  model<IDepartmentDocument>("Department", DepartmentSchema);

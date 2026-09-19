@@ -1,6 +1,11 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import mongoose, { Schema, Document, model, models } from "mongoose";
+import { IUser } from "@/types/models";
 
-const UserSchema = new Schema(
+export interface IUserDocument extends IUser, Document {
+  _id: any;
+}
+
+const UserSchema = new Schema<IUserDocument>(
   {
     username: { type: String, required: true, unique: true },
     email: {
@@ -41,4 +46,4 @@ const UserSchema = new Schema(
   { timestamps: { createdAt: "created_at", updatedAt: false } },
 );
 
-export default models.User || model("User", UserSchema);
+export default models.User || model<IUserDocument>("User", UserSchema);

@@ -1,6 +1,11 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import mongoose, { Schema, Document, model, models } from "mongoose";
+import { ISystemLog } from "@/types/models";
 
-const SystemLogSchema = new Schema(
+export interface ISystemLogDocument extends ISystemLog, Document {
+  _id: any;
+}
+
+const SystemLogSchema = new Schema<ISystemLogDocument>(
   {
     timestamp: { type: Date, default: Date.now },
     actor_id: { type: Schema.Types.ObjectId, ref: "User" },
@@ -15,4 +20,5 @@ const SystemLogSchema = new Schema(
   { timestamps: { createdAt: "created_at", updatedAt: false } },
 );
 
-export default models.SystemLog || model("SystemLog", SystemLogSchema);
+export default models.SystemLog ||
+  model<ISystemLogDocument>("SystemLog", SystemLogSchema);
