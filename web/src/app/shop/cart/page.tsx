@@ -96,22 +96,27 @@ export default function CartPage() {
     return (
         <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8" style={pageStyle}>
             <div className="max-w-6xl mx-auto">
-                <div className="flex items-center gap-4 mb-8">
-                    <Link
-                        href="/shop"
-                        aria-label="Back to shop"
-                        className="w-11 h-11 flex items-center justify-center rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                    >
-                        <ArrowLeft size={20} />
-                    </Link>
-                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Shopping cart</h1>
-                    <span className="bg-teal-700 text-white text-sm font-semibold px-3 py-1 rounded-md">
+                {/* Fixed Heading & Item Count for Responsiveness */}
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href="/shop"
+                            aria-label="Back to shop"
+                            className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition shrink-0"
+                        >
+                            <ArrowLeft size={18} />
+                        </Link>
+                        <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                            Shopping cart
+                        </h1>
+                    </div>
+                    <span className="bg-teal-700 text-white text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-md">
                         {items.length} {items.length === 1 ? "item" : "items"}
                     </span>
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
-                    <div className="w-full lg:w-2/3 space-y-3">
+                    <div className="w-full lg:w-2/3 space-y-4">
                         {items.map((item: any) => {
                             const details = getItemDetails(item);
                             const lineTotal = details.price * item.quantity;
@@ -122,61 +127,69 @@ export default function CartPage() {
                                 <div
                                     key={`${itemId}-${item.blood_group ?? "na"}`}
                                     className={`bg-white rounded-xl border border-slate-200 border-l-4 ${details.isBlood ? "border-l-red-500" : "border-l-teal-600"
-                                        } p-5 flex flex-col sm:flex-row sm:items-center gap-5`}
+                                        } p-4 sm:p-5 flex flex-col gap-4`}
                                 >
-                                    <div
-                                        className={`w-14 h-14 shrink-0 rounded-lg flex items-center justify-center ${details.isBlood ? "bg-red-50 text-red-600" : "bg-teal-50 text-teal-700"
-                                            }`}
-                                    >
-                                        <Icon size={26} />
-                                    </div>
+                                    {/* Top Row: Icon, Details, and Clean Remove Button */}
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="flex items-start gap-3 sm:gap-4 min-w-0">
+                                            <div
+                                                className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-lg flex items-center justify-center ${details.isBlood ? "bg-red-50 text-red-600" : "bg-teal-50 text-teal-700"
+                                                    }`}
+                                            >
+                                                <Icon size={24} />
+                                            </div>
 
-                                    <div className="flex-1 min-w-0">
-                                        <span
-                                            className={`inline-block text-xs font-semibold px-2 py-0.5 rounded mb-1.5 ${details.isBlood ? "bg-red-100 text-red-700" : "bg-teal-100 text-teal-800"
-                                                }`}
+                                            <div className="min-w-0">
+                                                <span
+                                                    className={`inline-block text-xs font-semibold px-2 py-0.5 rounded mb-1 ${details.isBlood ? "bg-red-100 text-red-700" : "bg-teal-100 text-teal-800"
+                                                        }`}
+                                                >
+                                                    {details.type}
+                                                </span>
+                                                <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-tight truncate">
+                                                    {details.name}
+                                                </h2>
+                                                <p className="text-xs sm:text-sm text-slate-600 mt-0.5">{details.manufacturer}</p>
+                                                <p className="text-xs sm:text-sm text-slate-500 mt-1">{formatINR(details.price)} each</p>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={() => updateItemQuantity(itemId, item.blood_group, "remove")}
+                                            className="text-slate-400 hover:text-red-600 transition-colors p-1.5 shrink-0 flex items-center gap-1 text-xs sm:text-sm bg-slate-50 hover:bg-red-50 rounded-lg border border-slate-200 hover:border-red-200"
+                                            aria-label="Remove item"
                                         >
-                                            {details.type}
-                                        </span>
-                                        <h2 className="text-lg font-bold text-slate-900 leading-tight truncate">
-                                            {details.name}
-                                        </h2>
-                                        <p className="text-sm text-slate-600 mt-0.5">{details.manufacturer}</p>
-                                        <p className="text-sm text-slate-500 mt-2">{formatINR(details.price)} each</p>
+                                            <Trash2 size={15} />
+                                            <span className="hidden sm:inline">Remove</span>
+                                        </button>
                                     </div>
 
-                                    <div className="flex sm:flex-col items-center sm:items-end justify-between gap-4 w-full sm:w-auto">
+                                    {/* Bottom Row: Quantity Controls & Price */}
+                                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                                         <div className="flex items-center rounded-lg bg-slate-100 border border-slate-300 p-1">
                                             <button
                                                 onClick={() => updateItemQuantity(itemId, item.blood_group, "decrease")}
                                                 aria-label="Decrease quantity"
-                                                className="w-9 h-9 flex items-center justify-center text-slate-700 hover:bg-white rounded-md transition active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                                                className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-white rounded-md transition active:scale-95"
                                             >
-                                                <Minus size={16} />
+                                                <Minus size={14} />
                                             </button>
-                                            <span className="w-10 text-center font-bold text-slate-900 tabular-nums">
+                                            <span className="w-8 sm:w-10 text-center font-bold text-sm text-slate-900 tabular-nums">
                                                 {item.quantity}
                                             </span>
                                             <button
                                                 onClick={() => updateItemQuantity(itemId, item.blood_group, "increase")}
                                                 aria-label="Increase quantity"
-                                                className="w-9 h-9 flex items-center justify-center text-slate-700 hover:bg-white rounded-md transition active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                                                className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-white rounded-md transition active:scale-95"
                                             >
-                                                <Plus size={16} />
+                                                <Plus size={14} />
                                             </button>
                                         </div>
 
-                                        <div className="flex sm:flex-col items-center sm:items-end gap-4 sm:gap-2">
-                                            <span className="text-xl font-extrabold text-slate-900 tabular-nums">
+                                        <div className="text-right">
+                                            <span className="text-lg sm:text-xl font-extrabold text-slate-900 tabular-nums">
                                                 {formatINR(lineTotal)}
                                             </span>
-                                            <button
-                                                onClick={() => updateItemQuantity(itemId, item.blood_group, "remove")}
-                                                className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-red-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded"
-                                            >
-                                                <Trash2 size={16} />
-                                                Remove
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -193,7 +206,7 @@ export default function CartPage() {
 
                             <div className="p-6">
                                 <div className="space-y-3.5 pb-5 border-b border-dashed border-slate-300">
-                                    <div className="flex justify-between text-slate-600">
+                                    <div className="flex justify-between text-slate-600 text-sm sm:text-base">
                                         <span>
                                             Subtotal ({totalUnits} {totalUnits === 1 ? "unit" : "units"})
                                         </span>
@@ -201,7 +214,7 @@ export default function CartPage() {
                                             {formatINR(subtotal)}
                                         </span>
                                     </div>
-                                    <div className="flex justify-between text-slate-600">
+                                    <div className="flex justify-between text-slate-600 text-sm sm:text-base">
                                         <span className="flex items-center gap-2">
                                             <Truck size={16} className="text-slate-500" />
                                             Delivery
@@ -212,19 +225,19 @@ export default function CartPage() {
 
                                 <div className="pt-5 mb-7">
                                     <div className="flex justify-between items-end">
-                                        <span className="text-slate-900 font-bold">Total</span>
-                                        <span className="text-4xl font-extrabold text-slate-900 tabular-nums tracking-tight">
+                                        <span className="text-slate-900 font-bold text-base sm:text-lg">Total</span>
+                                        <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tabular-nums tracking-tight">
                                             {formatINR(subtotal)}
                                         </span>
                                     </div>
                                     <p className="text-xs text-slate-500 mt-1.5 text-right">Inclusive of all taxes</p>
                                 </div>
 
-                                <button className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-blue-700 active:scale-[0.98] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+                                <button className="w-full bg-blue-600 text-white py-3.5 sm:py-4 rounded-lg font-bold text-base sm:text-lg hover:bg-blue-700 active:scale-[0.98] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                                     Proceed to checkout
                                 </button>
 
-                                <div className="mt-5 flex items-center justify-center gap-2 text-sm text-slate-600">
+                                <div className="mt-5 flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-600">
                                     <ShieldCheck size={18} className="text-teal-700" />
                                     Safe and secure payments
                                 </div>

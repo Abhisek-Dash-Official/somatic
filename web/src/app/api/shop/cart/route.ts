@@ -93,11 +93,13 @@ export async function POST(req: Request) {
         total_amount: 0,
       });
     } else {
-      const existingItemIndex = cart.items.findIndex(
-        (item: any) =>
-          item.item_id.toString() === item_id &&
-          item.blood_group === blood_group,
-      );
+      const existingItemIndex = cart.items.findIndex((item: any) => {
+        const isSameId = item.item_id.toString() === item_id;
+        if (item_type === "BloodBank") {
+          return isSameId && item.blood_group === blood_group;
+        }
+        return isSameId;
+      });
 
       if (existingItemIndex > -1) {
         cart.items[existingItemIndex].quantity += quantity;

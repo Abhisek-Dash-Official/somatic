@@ -23,6 +23,12 @@ interface CartStore {
     targetQuantity: number,
     action?: string,
   ) => Promise<void>;
+  addToCart: (
+    item_type: "Medicine" | "BloodBank",
+    item_id: string,
+    blood_group?: string,
+    quantity?: number,
+  ) => Promise<boolean>;
 }
 
 const debounceTimers: Record<string, NodeJS.Timeout> = {};
@@ -116,6 +122,28 @@ export const useCartStore = create<CartStore>((set, get) => ({
     } catch (err) {
       console.error("Cart sync error:", err);
       get().fetchCart();
+    }
+  },
+  addToCart: async (item_type, item_id, blood_group, quantity = 1) => {
+    try {
+      const res = await fetch("/api/shop/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ item_type, item_id, blood_group, quantity }),
+      });
+
+      if (res.ok) {
+        const updatedCart = await res.json();
+        set({
+          items: updatedCart.items || [],
+          total_amount: updatedCart.total_amount || 0,
+        });
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error("Add to cart error:", err);
+      return false;
     }
   },
 }));

@@ -5,11 +5,11 @@ import mongoose from "mongoose";
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     await dbConnect();
-    const bloodBankId = params.id;
+    const bloodBankId = (await params).id;
 
     if (!mongoose.Types.ObjectId.isValid(bloodBankId)) {
       return NextResponse.json(

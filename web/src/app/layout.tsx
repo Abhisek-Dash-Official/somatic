@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+  ),
   keywords: siteConfig.keywords,
   authors: siteConfig.authors,
   creator: siteConfig.authors[0].name,
