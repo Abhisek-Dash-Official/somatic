@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Medicine from "@/models/Medicine";
-import mongoose from "mongoose";
 
 export async function GET(req: Request) {
   try {
@@ -11,7 +10,10 @@ export async function GET(req: Request) {
     const search = searchParams.get("search");
     const category = searchParams.get("category");
     const limit = parseInt(searchParams.get("limit") || "8", 10);
+
+    // Cursors from frontend
     const lastId = searchParams.get("lastId");
+    const lastDate = searchParams.get("lastDate");
 
     const query: any = { is_active: true };
 
@@ -20,8 +22,6 @@ export async function GET(req: Request) {
       query.$or = [
         { name: { $regex: escapedSearch, $options: "i" } },
         { brand: { $regex: escapedSearch, $options: "i" } },
-        { composition: { $regex: escapedSearch, $options: "i" } },
-        { tags: { $regex: escapedSearch, $options: "i" } },
       ];
     }
 
@@ -29,13 +29,20 @@ export async function GET(req: Request) {
       query.category = category.toLowerCase();
     }
 
-    if (lastId && mongoose.Types.ObjectId.isValid(lastId)) {
-      query._id = { ...query._id, $lt: new mongoose.Types.ObjectId(lastId) };
+    // Cursor condition: fetch items older than the last fetched item
+    if (lastId && lastDate) {
+      query.$or = [
+        { created_at: { $lt: new Date(lastDate) } },
+        {
+          created_at: new Date(lastDate),
+          _id: { $lt: lastId },
+        },
+      ];
     }
 
     const medicines = await Medicine.find(query)
-      .sort({ _id: -1 })
-      .limit(limit)
+      .sort({ created_at: -1, _id: -1 })
+      .limit(limit) // No .skip() needed! Super fast even for 1M+ rows
       .lean();
 
     return NextResponse.json(
