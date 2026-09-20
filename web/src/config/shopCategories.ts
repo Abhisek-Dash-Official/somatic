@@ -17,7 +17,7 @@ export const SHOP_CATEGORIES: ShopCategory[] = [
     subtitle: "Genuine Healthcare Essentials",
     description:
       "Order prescribed and over-the-counter medicines directly with fast doorstep delivery.",
-    href: "/medicines",
+    href: "/shop/medicines",
     image: "/shop/medicines.jpg",
     badge: "Available 24/7",
     themeColor: "teal",
@@ -29,7 +29,7 @@ export const SHOP_CATEGORIES: ShopCategory[] = [
     subtitle: "Emergency & Regular Supply",
     description:
       "Find available blood groups and units from verified blood banks in real-time.",
-    href: "/bloodbanks",
+    href: "/shop/bloodbanks",
     image: "/shop/bloodbanks.jpeg",
     badge: "Urgent Support",
     themeColor: "red",
