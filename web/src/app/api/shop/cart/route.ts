@@ -9,18 +9,19 @@ import BloodBank from "@/models/BloodBank";
 async function calculateTotalAmount(items: any[]): Promise<number> {
   let total = 0;
   for (const item of items) {
-    if (item.item_type === "medicine") {
+    if (item.item_type === "Medicine") {
       const medicine = await Medicine.findById(item.item_id).select(
-        "pricing.price",
+        "pricing.price pricing.mrp",
       );
-      if (medicine?.pricing?.price) {
-        total += medicine.pricing.price * item.quantity;
+      if (medicine) {
+        const price = medicine.pricing?.price ?? medicine.pricing?.mrp ?? 0;
+        total += price * item.quantity;
       }
-    } else if (item.item_type === "blood") {
+    } else if (item.item_type === "BloodBank") {
       const bloodBank = await BloodBank.findById(item.item_id).select(
         "inventory",
       );
-      const bloodItem = bloodBank?.inventory.find(
+      const bloodItem = bloodBank?.inventory?.find(
         (inv: any) => inv.blood_group === item.blood_group,
       );
       if (bloodItem?.price_per_unit) {
@@ -108,11 +109,19 @@ export async function POST(req: Request) {
     cart.total_amount = await calculateTotalAmount(cart.items);
     await cart.save();
 
-    return NextResponse.json(cart, { status: 200 });
+    const populatedCart = await Cart.findById(cart._id)
+      .populate({
+        path: "items.item_id",
+        select:
+          "name manufacturer pricing hospital_affiliation address inventory images",
+      })
+      .lean();
+
+    return NextResponse.json(populatedCart, { status: 200 });
   } catch (error: any) {
     console.error("Cart POST Error:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Internal Server Error", details: error.message },
       { status: 500 },
     );
   }
@@ -129,11 +138,11 @@ export async function PATCH(req: Request) {
     await dbConnect();
 
     const body = await req.json();
-    const { item_id, blood_group, action } = body;
+    const { item_id, blood_group, action, quantity } = body;
 
-    if (!item_id || !action) {
+    if (!item_id) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing item_id field" },
         { status: 400 },
       );
     }
@@ -149,15 +158,20 @@ export async function PATCH(req: Request) {
     );
 
     if (itemIndex > -1) {
-      if (action === "increase") {
+      if (
+        action === "remove" ||
+        (typeof quantity === "number" && quantity <= 0)
+      ) {
+        cart.items.splice(itemIndex, 1);
+      } else if (typeof quantity === "number") {
+        cart.items[itemIndex].quantity = quantity;
+      } else if (action === "increase") {
         cart.items[itemIndex].quantity += 1;
       } else if (action === "decrease") {
         cart.items[itemIndex].quantity -= 1;
         if (cart.items[itemIndex].quantity <= 0) {
           cart.items.splice(itemIndex, 1);
         }
-      } else if (action === "remove") {
-        cart.items.splice(itemIndex, 1);
       }
 
       cart.total_amount = await calculateTotalAmount(cart.items);
@@ -181,7 +195,7 @@ export async function PATCH(req: Request) {
   } catch (error: any) {
     console.error("Cart PATCH Error:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Internal Server Error", details: error.message },
       { status: 500 },
     );
   }

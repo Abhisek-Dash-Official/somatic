@@ -9,7 +9,7 @@ const CartItemSchema = new Schema(
   {
     item_type: {
       type: String,
-      enum: ["medicine", "blood"],
+      enum: ["Medicine", "BloodBank"],
       required: true,
     },
     item_id: {

@@ -188,9 +188,9 @@ export interface IBloodBank {
 }
 
 export interface IOrderItem {
-  item_type: "medicine" | "blood";
+  item_type: "Medicine" | "BloodBank";
   item_id: string | any; // Reference to Medicine or BloodBank ID
-  blood_group?: string; // Only required if item_type is "blood"
+  blood_group?: string; // Only required if item_type is "BloodBank"
   quantity: number;
   unit_price: number;
 }
