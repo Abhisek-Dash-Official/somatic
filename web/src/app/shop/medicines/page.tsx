@@ -90,7 +90,7 @@ export default function MedicinesPage() {
         fetchMedicines(true);
     }, [category]);
 
-    const handleSearch = (e: React.FormEvent) => {
+    const handleSearch = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setHasMore(true);
         fetchingRef.current = false;
