@@ -26,7 +26,7 @@ const OrderItemSchema = new Schema(
 
 const OrderSchema = new Schema<IOrderDocument>(
   {
-    patient_id: {
+    user_id: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,

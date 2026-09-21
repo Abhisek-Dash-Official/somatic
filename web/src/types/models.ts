@@ -197,7 +197,7 @@ export interface IOrderItem {
 
 export interface IOrder {
   _id?: string;
-  patient_id: string | any;
+  user_id: string | any;
   items: IOrderItem[];
   total_amount: number;
   payment_method: "COD" | "ONLINE";
