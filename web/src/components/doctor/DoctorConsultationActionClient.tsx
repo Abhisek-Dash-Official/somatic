@@ -97,7 +97,7 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
         }
     };
 
-    const submitPrescription = async (e: React.FormEvent) => {
+    const submitPrescription = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setSubmitting(true);
 

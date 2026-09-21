@@ -60,7 +60,7 @@ export default function NewConsultationForm() {
         setFormData(prev => ({ ...prev, attachments: prev.attachments.filter((_, i) => i !== index) }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
 

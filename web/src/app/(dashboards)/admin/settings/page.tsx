@@ -48,7 +48,7 @@ export default function AdminSettingsPage() {
         setSettings({ ...settings, [field]: value });
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setSaving(true);
 

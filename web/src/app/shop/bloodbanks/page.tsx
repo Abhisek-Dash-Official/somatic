@@ -88,7 +88,7 @@ export default function BloodBanksList() {
         fetchBloodBanks(true);
     }, [bloodGroup]);
 
-    const handleSearchSubmit = (e: React.FormEvent) => {
+    const handleSearchSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setHasMore(true);
         fetchingRef.current = false;

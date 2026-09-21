@@ -68,7 +68,7 @@ export default function AdminDepartmentsPage() {
         setIsFormOpen(true);
     };
 
-    const handleSaveDepartment = async (e: React.FormEvent) => {
+    const handleSaveDepartment = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setSaving(true);
 

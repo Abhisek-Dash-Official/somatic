@@ -49,7 +49,7 @@ export default function DoctorProfileClient() {
         return <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 animate-spin text-blue-500" /></div>;
     }
 
-    const handleProfileSubmit = async (e: React.FormEvent) => {
+    const handleProfileSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoadingProfile(true);
 
@@ -86,7 +86,7 @@ export default function DoctorProfileClient() {
         }
     };
 
-    const handlePasswordSubmit = async (e: React.FormEvent) => {
+    const handlePasswordSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (passwordData.newPassword !== passwordData.confirmPassword) {
             toast.error("New passwords do not match!");

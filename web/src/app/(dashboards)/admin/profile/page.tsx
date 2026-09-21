@@ -69,7 +69,7 @@ export default function AdminProfilePage() {
         }
     };
 
-    const handleUpdateProfile = async (e: React.FormEvent) => {
+    const handleUpdateProfile = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setSavingProfile(true);
         setProfileError("");
@@ -96,7 +96,7 @@ export default function AdminProfilePage() {
         }
     };
 
-    const handleUpdatePassword = async (e: React.FormEvent) => {
+    const handleUpdatePassword = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setSavingPassword(true);
         setPwdError("");
