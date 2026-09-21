@@ -6,12 +6,12 @@ import { useUserStore } from "@/store/useUserStore";
 import { navLinks } from "@/config/nav";
 import {
     LayoutDashboard, Building2, Users, Ticket,
-    Settings, Stethoscope, User, PlusCircle, ClipboardList, LogOut, Logs, UserShield
+    Settings, Stethoscope, User, PlusCircle, ClipboardList, LogOut, Logs, UserShield, Pill, Droplets
 } from "lucide-react";
 
 const IconMap: Record<string, any> = {
     LayoutDashboard, Building2, Users, Ticket,
-    Settings, Stethoscope, User, PlusCircle, ClipboardList, Logs, UserShield
+    Settings, Stethoscope, User, PlusCircle, ClipboardList, Logs, LogOut, UserShield, Pill, Droplets
 };
 
 export default function Sidebar() {

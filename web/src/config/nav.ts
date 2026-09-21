@@ -45,6 +45,8 @@ export const navLinks = {
       { title: "Departments", href: "/admin/departments", icon: "Building2" },
       { title: "Users", href: "/admin/users", icon: "Users" },
       { title: "Tickets", href: "/admin/tickets", icon: "Ticket" },
+      { title: "Medicines", href: "/admin/medicines", icon: "Pill" },
+      { title: "Blood Banks", href: "/admin/bloodbanks", icon: "Droplets" },
       { title: "Settings", href: "/admin/settings", icon: "Settings" },
       { title: "System Logs", href: "/admin/logs", icon: "Logs" },
       { title: "Profile", href: "/admin/profile", icon: "UserShield" },
