@@ -184,7 +184,15 @@ export async function PUT(req: Request, context: RouteContext) {
     }
 
     if (auth_config !== undefined) {
-      existingHospital.auth_config = auth_config;
+      const currentAuthConfig =
+        existingHospital.auth_config?.toObject?.() ||
+        existingHospital.auth_config ||
+        {};
+
+      existingHospital.auth_config = {
+        ...currentAuthConfig,
+        ...auth_config,
+      };
     }
 
     if (typeof is_active === "boolean") {
