@@ -49,6 +49,47 @@ const ConsultationSchema = new Schema<IConsultationDocument>(
         enum: ["not_needed", "pending", "dispatched", "arrived"],
         default: "not_needed",
       },
+      patient_location: {
+        type: {
+          type: String,
+          enum: ["Point"],
+        },
+        coordinates: { type: [Number] },
+        address: { type: String },
+      },
+
+      receiving_hospital: {
+        hospital_id: {
+          type: Schema.Types.ObjectId,
+          ref: "Hospital",
+        },
+        name: { type: String },
+        address: { type: String },
+      },
+
+      hospital_confirmation: {
+        confirmed: {
+          type: Boolean,
+          default: false,
+        },
+        confirmed_at: { type: Date },
+      },
+
+      ambulance_service: {
+        name: { type: String },
+        contact_no: { type: String },
+        vehicle_no: { type: String },
+      },
+
+      dispatcher_id: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      requested_at: { type: Date },
+      dispatched_at: { type: Date },
+      arrived_at: { type: Date },
+      cancelled_at: { type: Date },
+      cancellation_reason: { type: String },
     },
     resolved_at: { type: Date },
   },

@@ -1,3 +1,5 @@
+import mongoose, { Document } from "mongoose";
+
 export interface IMedicine {
   name: string;
   brand: string;
@@ -138,7 +140,46 @@ export interface IDoctorFinalPrescription {
 
 export interface IAmbulanceDispatch {
   required?: boolean;
-  status?: "not_needed" | "pending" | "dispatched" | "arrived";
+
+  status?:
+    | "not_needed"
+    | "pending"
+    | "contacting_patient"
+    | "hospital_selected"
+    | "dispatched"
+    | "arrived"
+    | "cancelled";
+
+  patient_location?: {
+    type: "Point";
+    coordinates: [number, number];
+    address: string;
+  };
+
+  receiving_hospital?: {
+    hospital_id: mongoose.Types.ObjectId;
+    name: string;
+    address: string;
+  };
+
+  hospital_confirmation?: {
+    confirmed: boolean;
+    confirmed_at?: Date;
+  };
+
+  ambulance_service?: {
+    name?: string;
+    contact_no?: string;
+    vehicle_no?: string;
+  };
+
+  dispatcher_id?: mongoose.Types.ObjectId;
+
+  requested_at?: Date;
+  dispatched_at?: Date;
+  arrived_at?: Date;
+  cancelled_at?: Date;
+  cancellation_reason?: string;
 }
 
 export interface IConsultation {
@@ -232,4 +273,38 @@ export interface ICart {
   items: ICartItem[];
   total_amount: number;
   updated_at?: Date | string;
+}
+
+export interface IHospital extends Document {
+  name: string;
+  qr_identifier: string;
+  paperwork_endpoint: string;
+
+  auth_config?: {
+    type?: "none" | "api_key" | "bearer" | "basic";
+    api_key?: string;
+    api_key_header?: string;
+    token?: string;
+    username?: string;
+    password?: string;
+  };
+
+  contact: {
+    phone: string;
+    emergency_phone?: string;
+    email?: string;
+  };
+
+  address: string;
+
+  location: {
+    type: "Point";
+    coordinates: [number, number];
+  };
+
+  has_ambulance: boolean;
+
+  is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
 }

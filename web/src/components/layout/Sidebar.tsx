@@ -7,13 +7,13 @@ import { useUserStore } from "@/store/useUserStore";
 import { navLinks } from "@/config/nav";
 import {
     LayoutDashboard, Building2, Users, Ticket, Hourglass, Ambulance,
-    Settings, Stethoscope, User, PlusCircle, ClipboardList,
+    Settings, Stethoscope, User, PlusCircle, ClipboardList, Hospital,
     LogOut, Logs, UserShield, Pill, Droplets, MoreHorizontal,
 } from "lucide-react";
 
 const IconMap: Record<string, any> = {
     LayoutDashboard, Building2, Users, Ticket, Hourglass, Ambulance,
-    Settings, Stethoscope, User, PlusCircle, ClipboardList,
+    Settings, Stethoscope, User, PlusCircle, ClipboardList, Hospital,
     Logs, LogOut, UserShield, Pill, Droplets, MoreHorizontal
 };
 

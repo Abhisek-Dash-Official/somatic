@@ -119,10 +119,7 @@ export default function DoctorConsultationActionClient({ id }: { id: string }) {
                         instructions,
                         next_follow_up: followUp ? new Date(followUp) : null
                     },
-                    ambulance_dispatch: {
-                        required: requireAmbulance,
-                        status: requireAmbulance ? "pending" : "not_needed"
-                    }
+                    requireAmbulance
                 })
             });
 

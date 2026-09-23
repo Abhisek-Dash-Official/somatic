@@ -1,23 +1,5 @@
 import mongoose, { Schema, Document, model, models } from "mongoose";
-
-export interface IHospital extends Document {
-  name: string;
-  qr_identifier: string;
-  paperwork_endpoint: string;
-
-  auth_config?: {
-    type?: "none" | "api_key" | "bearer" | "basic";
-    api_key?: string;
-    api_key_header?: string;
-    token?: string;
-    username?: string;
-    password?: string;
-  };
-
-  is_active: boolean;
-  created_at: Date;
-  updated_at: Date;
-}
+import { IHospital } from "@/types/models";
 
 const HospitalSchema = new Schema<IHospital>(
   {
@@ -69,6 +51,48 @@ const HospitalSchema = new Schema<IHospital>(
       },
     },
 
+    contact: {
+      phone: {
+        type: String,
+        required: true,
+      },
+
+      emergency_phone: {
+        type: String,
+      },
+
+      email: {
+        type: String,
+        lowercase: true,
+        trim: true,
+      },
+    },
+
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        required: true,
+        default: "Point",
+      },
+
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
+    },
+
+    has_ambulance: {
+      type: Boolean,
+      default: false,
+    },
+
     is_active: {
       type: Boolean,
       default: true,
@@ -81,5 +105,7 @@ const HospitalSchema = new Schema<IHospital>(
     },
   },
 );
+
+HospitalSchema.index({ location: "2dsphere" });
 
 export default models.Hospital || model<IHospital>("Hospital", HospitalSchema);

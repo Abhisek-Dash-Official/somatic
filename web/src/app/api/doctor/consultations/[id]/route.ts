@@ -70,7 +70,7 @@ export async function PATCH(req: Request, { params }: Props) {
 
     const { id } = await params;
     const body = await req.json();
-    const { action, ai_draft, doctor_final_prescription, ambulance_dispatch } =
+    const { action, ai_draft, doctor_final_prescription, requireAmbulance } =
       body;
 
     await dbConnect();
@@ -216,8 +216,11 @@ export async function PATCH(req: Request, { params }: Props) {
         translated_instructions: trans_instructions,
       };
 
-      if (ambulance_dispatch) {
-        consultation.ambulance_dispatch = ambulance_dispatch;
+      if (requireAmbulance !== undefined) {
+        consultation.ambulance_dispatch = {
+          required: Boolean(requireAmbulance),
+          status: requireAmbulance ? "pending" : "not_needed",
+        };
       }
 
       consultation.status = "completed";
