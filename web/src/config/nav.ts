@@ -6,6 +6,33 @@ export const navLinks = {
     { title: "Cart", href: "/shop/cart" },
     { title: "Contact", href: "/contact" },
   ],
+  accountMenu: {
+    authenticated: [
+      {
+        title: "Notifications",
+        href: "/notifications",
+        icon: "Bell",
+        danger: false,
+      },
+      {
+        title: "Dashboard",
+        href: "dashboard",
+        icon: "LayoutDashboard",
+        danger: false,
+      },
+      { title: "Profile", href: "profile", icon: "User", danger: false },
+      {
+        title: "Sign Out",
+        href: "/api/auth/signout",
+        icon: "LogOut",
+        danger: true,
+      },
+    ],
+    guest: [
+      { title: "Sign In", href: "/login", icon: "LogIn", danger: false },
+      { title: "Register", href: "/register", icon: "UserPlus", danger: false },
+    ],
+  },
   footerNav: {
     company: [
       { title: "About Somatic", href: "/about" },
