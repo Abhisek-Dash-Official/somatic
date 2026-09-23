@@ -340,7 +340,7 @@ INTERNAL_API_SECRET=your_internal_api_secret
 Create a `.env` file inside the `pyBackend/` directory:
 
 ```env
-GEMINI_API_KEY=your_gemini_api_key
+GROQ_API_KEY=your_groq_api_key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 INTERNAL_API_SECRET=your_internal_api_secret
 ```
@@ -357,7 +357,7 @@ INTERNAL_API_SECRET=your_internal_api_secret
 | `UPSTASH_REDIS_REST_TOKEN` | `web`              | Authentication token for Upstash Redis         |
 | `PYTHON_BACKEND_URL`       | `web`              | URL of the Python/FastAPI backend              |
 | `INTERNAL_API_SECRET`      | `web`, `pyBackend` | Secret used for internal backend communication |
-| `GEMINI_API_KEY`           | `pyBackend`        | API key for Gemini-based AI functionality      |
+| `GROQ_API_KEY`             | `pyBackend`        | API key for Groq-based AI functionality        |
 
 ## Screenshots & UI Previews
 

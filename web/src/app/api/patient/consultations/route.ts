@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Consultation from "@/models/Consultation";
+import SystemSetting from "@/models/SystemSetting";
 import Department from "@/models/Department";
 import { createSystemLog } from "@/lib/logger";
 
@@ -50,6 +51,24 @@ export async function POST(req: Request) {
     }
 
     await dbConnect();
+    const systemSetting = await SystemSetting.findOne()
+
+      .select("ai_model_config")
+
+      .lean();
+
+    const aiModel = systemSetting?.ai_model_config?.current_model;
+
+    const aiSystemPrompt = systemSetting?.ai_model_config?.system_prompt;
+
+    if (!aiModel) {
+      return NextResponse.json(
+        { error: "AI model is not configured in system settings." },
+
+        { status: 500 },
+      );
+    }
+
     const activeDepartments = await Department.find({ is_active: true })
       .select("_id name")
       .lean();
@@ -71,6 +90,8 @@ export async function POST(req: Request) {
           age: parsedAge,
           weight_kg: parsedWeight,
           symptoms_raw_text,
+          ai_model_override: aiModel,
+          custom_system_prompt: aiSystemPrompt,
           available_departments: deptListForAI,
         }),
       },

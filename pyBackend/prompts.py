@@ -1,3 +1,5 @@
+import json
+
 def get_medical_prompt(base_prompt: str, age, weight_kg, symptoms_raw_text, retrieved_context: str, available_departments: list) -> str:
     return f"""
     {base_prompt}
@@ -27,3 +29,16 @@ def get_medical_prompt(base_prompt: str, age, weight_kg, symptoms_raw_text, retr
       "assigned_department_id": string (You MUST select the EXACT 'id' of the most appropriate department strictly from the 'Available Hospital Departments' list. Choose the closest match. Do not return null.)
     }}
     """
+
+def get_translation_prompt(texts: dict, target_language: str) -> str:
+    return f"""
+You are an expert medical translator. Translate the values of the following JSON object into {target_language}.
+
+CRITICAL RULES:
+1. Keep the EXACT same JSON keys in the output.
+2. Translate ONLY the values.
+3. Return ONLY a valid JSON object, no markdown, no explanations.
+
+JSON to translate:
+{json.dumps(texts, ensure_ascii=False)}
+"""
