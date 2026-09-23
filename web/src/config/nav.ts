@@ -61,7 +61,7 @@ export const navLinks = {
       },
       {
         title: "Ambulance Requests",
-        href: "/dispatcher/ambulance-requests",
+        href: "/dispatcher/ambulances",
         icon: "Ambulance",
       },
       { title: "Tickets", href: "/tickets", icon: "Ticket" },

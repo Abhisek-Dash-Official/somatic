@@ -150,17 +150,23 @@ export default function DispatcherConsultations() {
     return (
         <div className="min-h-screen bg-[#0B1120] text-slate-300 overflow-x-hidden">
             <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-5 sm:space-y-6">
-                <div className="min-w-0">
-                    <div className="flex items-center gap-2 text-blue-400 mb-2">
-                        <Stethoscope className="w-4 h-4" />
-                        <span className="text-xs sm:text-sm">Dispatcher Control Center</span>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                        <div className="flex items-center gap-2 text-blue-400 mb-2">
+                            <Stethoscope className="w-4 h-4" />
+                            <span className="text-xs sm:text-sm">Dispatcher Control Center</span>
+                        </div>
+
+                        <h1 className="text-2xl sm:text-3xl font-bold text-white">Consultations</h1>
+
+                        <p className="text-sm text-slate-400 mt-2 max-w-2xl">
+                            Monitor patient cases, doctor activity, emergencies and ambulance coordination.
+                        </p>
                     </div>
 
-                    <h1 className="text-2xl sm:text-3xl font-bold text-white">Consultations</h1>
-
-                    <p className="text-sm text-slate-400 mt-2 max-w-2xl">
-                        Monitor patient cases, doctor activity, emergencies and ambulance coordination.
-                    </p>
+                    <div className="shrink-0 rounded-xl border border-slate-800 bg-[#131C31] px-4 py-2 text-xs text-slate-400">
+                        Auto refresh · 15s
+                    </div>
                 </div>
 
                 <div className="bg-[#131C31] border border-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5">
