@@ -303,7 +303,7 @@ export default function BloodBankFormModal({ editingBank, onClose, onSuccess }: 
                         <h3 className="text-xs font-semibold text-rose-400 uppercase tracking-wider">Facility Images</h3>
                         <div className="flex gap-2">
                             <input
-                                type="url"
+                                type="text"
                                 placeholder="Paste Image URL..."
                                 value={imageUrlInput}
                                 onChange={(e) => setImageUrlInput(e.target.value)}
@@ -359,7 +359,7 @@ export default function BloodBankFormModal({ editingBank, onClose, onSuccess }: 
 
                                     <div className="p-2 border-t border-slate-800">
                                         <input
-                                            type="url"
+                                            type="text"
                                             value={img}
                                             onChange={(e) => updateImageUrl(idx, e.target.value)}
                                             placeholder="Image URL"

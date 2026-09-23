@@ -324,7 +324,7 @@ export default function MedicineFormModal({ editingMedicine, onClose, onSuccess 
                         <h3 className="text-xs font-semibold text-blue-400 uppercase tracking-wider">Product Images</h3>
                         <div className="flex gap-2">
                             <input
-                                type="url"
+                                type="text"
                                 placeholder="Paste Image URL..."
                                 value={imageUrlInput}
                                 onChange={(e) => setImageUrlInput(e.target.value)}
@@ -380,7 +380,7 @@ export default function MedicineFormModal({ editingMedicine, onClose, onSuccess 
 
                                     <div className="p-2 border-t border-slate-800">
                                         <input
-                                            type="url"
+                                            type="text"
                                             value={img}
                                             onChange={(e) => updateImageUrl(idx, e.target.value)}
                                             placeholder="Image URL"

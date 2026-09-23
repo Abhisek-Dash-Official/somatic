@@ -51,6 +51,21 @@ export const navLinks = {
       { title: "System Logs", href: "/admin/logs", icon: "Logs" },
       { title: "Profile", href: "/admin/profile", icon: "UserShield" },
     ],
+    dispatcher: [
+      { title: "Dashboard", href: "/dispatcher", icon: "LayoutDashboard" },
+      {
+        title: "Consultations",
+        href: "/dispatcher/consultations",
+        icon: "Hourglass",
+      },
+      {
+        title: "Ambulance Requests",
+        href: "/dispatcher/ambulance-requests",
+        icon: "Ambulance",
+      },
+      { title: "Tickets", href: "/tickets", icon: "Ticket" },
+      { title: "Profile", href: "/dispatcher/profile", icon: "User" },
+    ],
     doctor: [
       { title: "Dashboard", href: "/doctor", icon: "LayoutDashboard" },
       {
