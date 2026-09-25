@@ -21,13 +21,17 @@ const UserSchema = new Schema<IUserDocument>(
     },
     password_hash: { type: String, required: true },
     avatar_id: { type: String },
+    date_of_birth: { type: Date },
+    weight_kg: { type: Number, min: 0 },
     contact_no: { type: String, match: /^[0-9]{10}$/ },
     address: { type: String },
+
     role: {
       type: String,
       enum: ["admin", "doctor", "assistant_doctor", "patient", "dispatcher"],
       required: true,
     },
+
     doctor_info: {
       reg_no: { type: String },
       qualification: { type: String },
@@ -35,11 +39,23 @@ const UserSchema = new Schema<IUserDocument>(
       department_id: { type: Schema.Types.ObjectId, ref: "Department" },
       is_accepting_cases: { type: Boolean, default: true },
     },
+
     patient_info: {
       blood_grp: { type: String },
       known_allergies: [{ type: String }],
       chronic_diseases: [{ type: String }],
     },
+
+    insurance: {
+      type: {
+        type: String,
+        enum: ["somatic", "external"],
+      },
+      provider_name: { type: String, trim: true },
+      policy_number: { type: String, trim: true },
+      policy_holder_name: { type: String, trim: true },
+    },
+
     is_delete: { type: Boolean, default: false },
     is_ban: { type: Boolean, default: false },
   },

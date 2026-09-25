@@ -42,6 +42,13 @@ export interface IPatientInfo {
   chronic_diseases?: string[];
 }
 
+export interface IUserInsurance {
+  type?: "somatic" | "external";
+  provider_name?: string;
+  policy_number?: string;
+  policy_holder_name?: string;
+}
+
 export interface IUser {
   _id?: string;
   username: string;
@@ -49,10 +56,13 @@ export interface IUser {
   password_hash: string;
   avatar_id?: string;
   contact_no?: string;
+  date_of_birth?: Date;
+  weight_kg?: number;
   address?: string;
   role: "admin" | "doctor" | "assistant_doctor" | "patient" | "dispatcher";
   doctor_info?: IDoctorInfo;
   patient_info?: IPatientInfo;
+  insurance?: IUserInsurance;
   is_delete: boolean;
   is_ban: boolean;
   created_at?: Date | string;
@@ -305,6 +315,107 @@ export interface IHospital extends Document {
   has_ambulance: boolean;
 
   is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface IInsurancePolicy extends Document {
+  _id: any;
+
+  user_id: mongoose.Types.ObjectId;
+  plan_id: mongoose.Types.ObjectId;
+
+  policy_number: string;
+
+  insured_members?: {
+    name: string;
+    relationship: string;
+    date_of_birth?: Date;
+  }[];
+
+  start_date: Date;
+  expiry_date: Date;
+
+  status: "pending" | "active" | "expired" | "cancelled";
+
+  documents?: {
+    type: "policy" | "id_proof" | "medical" | "other";
+    file_url: string;
+    uploaded_at: Date;
+  }[];
+
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface IInsuranceClaim extends Document {
+  _id: any;
+
+  user_id: mongoose.Types.ObjectId;
+  policy_id: mongoose.Types.ObjectId;
+
+  hospital_id?: mongoose.Types.ObjectId;
+
+  claim_number?: string;
+
+  claim_type: "cashless" | "reimbursement";
+
+  incident_type?: "accident" | "illness" | "emergency" | "other";
+
+  incident_date?: Date;
+  treatment_date?: Date;
+  admission_date?: Date;
+  discharge_date?: Date;
+
+  estimated_amount?: number;
+  claimed_amount?: number;
+  approved_amount?: number;
+
+  status:
+    | "draft"
+    | "submitted"
+    | "under_review"
+    | "documents_required"
+    | "approved"
+    | "partially_approved"
+    | "rejected"
+    | "settled";
+
+  rejection_reason?: string;
+
+  documents?: {
+    type:
+      | "claim_form"
+      | "hospital_bill"
+      | "discharge_summary"
+      | "prescription"
+      | "lab_report"
+      | "medical_record"
+      | "id_proof"
+      | "other";
+    file_url: string;
+    uploaded_at: Date;
+  }[];
+
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface IInsurancePlan extends Document {
+  _id: any;
+
+  name: string;
+  description?: string;
+
+  coverage_amount: number;
+  premium_amount: number;
+
+  premium_frequency: "monthly" | "quarterly" | "half_yearly" | "yearly";
+
+  features?: string[];
+
+  is_active: boolean;
+
   created_at: Date;
   updated_at: Date;
 }
