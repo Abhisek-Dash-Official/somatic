@@ -45,9 +45,17 @@ export const pageContent = {
       },
       {
         name: "Baibhav",
-        role: "QA Assistant",
+        role: "Lead Quality Assurance Assistant",
         bio: "Assists with basic, routine system checks and surface-level functionality reviews. Supports the internal team by logging user interface feedback and maintaining standard quality verification checklists under direct supervision.",
         image: "/members/baibhav.png",
+        linkedin: "#",
+        github: "#",
+      },
+      {
+        name: "Priyanshu Sharma",
+        role: "Chief Commercial Officer (CCO)",
+        bio: "A dedicated commercial professional with strong communication skills focused on healthcare growth. Handles business development, manages relationships with hospitals and clinics, and drives daily sales operations to connect the company's products with the right medical partners.",
+        image: "/members/priyanshu-sharma.png",
         linkedin: "#",
         github: "#",
       },
