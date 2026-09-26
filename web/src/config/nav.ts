@@ -4,6 +4,15 @@ export const navLinks = {
     { title: "First Aid", href: "/first-aid" },
     { title: "Shop", href: "/shop" },
     { title: "Cart", href: "/shop/cart" },
+  ],
+
+  moreNav: [
+    { title: "Insurance", href: "/insurance" },
+    { title: "Services", href: "/services" },
+    { title: "Features", href: "/features" },
+    { title: "Guidelines", href: "/guidelines" },
+    { title: "FAQ", href: "/faq" },
+    { title: "Blogs", href: "/blogs" },
     { title: "Contact", href: "/contact" },
   ],
   accountMenu: {
@@ -38,7 +47,7 @@ export const navLinks = {
       { title: "About Somatic", href: "/about" },
       { title: "Services", href: "/services" },
       { title: "Features", href: "/features" },
-      { title: "Blog", href: "/blog" },
+      { title: "Blogs", href: "/blogs" },
       { title: "Contact Us", href: "/contact" },
     ],
     support: [

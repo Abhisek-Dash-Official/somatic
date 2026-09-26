@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useUserStore } from "@/store/useUserStore";
 import { siteConfig } from "@/config/site";
 import { navLinks } from "@/config/nav";
-import { Menu, X, ChevronRight, LogOut, Bell, User, LayoutDashboard, LogIn, UserPlus } from "lucide-react";
+import { Menu, X, ChevronRight, ChevronDown, LogOut, Bell, User, LayoutDashboard, LogIn, UserPlus } from "lucide-react";
 
 const accountIconMap: Record<string, any> = { Bell, LayoutDashboard, User, LogOut, LogIn, UserPlus };
 
@@ -55,13 +55,16 @@ export default function Header() {
     const { user } = useUserStore();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+    const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
     const pathname = usePathname();
     const desktopAccountRef = useRef<HTMLDivElement>(null);
     const mobileAccountRef = useRef<HTMLDivElement>(null);
+    const moreMenuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setIsMobileMenuOpen(false);
         setIsAccountMenuOpen(false);
+        setIsMoreMenuOpen(false);
     }, [pathname]);
 
     useEffect(() => {
@@ -69,8 +72,10 @@ export default function Header() {
             const target = event.target as Node;
             const isInsideDesktop = desktopAccountRef.current?.contains(target);
             const isInsideMobile = mobileAccountRef.current?.contains(target);
+            const isInsideMore = moreMenuRef.current?.contains(target);
 
             if (!isInsideDesktop && !isInsideMobile) setIsAccountMenuOpen(false);
+            if (!isInsideMore) setIsMoreMenuOpen(false);
         };
 
         document.addEventListener("mousedown", handleClickOutside);
@@ -78,6 +83,7 @@ export default function Header() {
     }, []);
 
     const dashboardHref = user ? `/${user.role}` : "/login";
+    const isMoreActive = navLinks.moreNav.some((link) => pathname === link.href);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0B1120]/90 backdrop-blur-md">
@@ -87,12 +93,39 @@ export default function Header() {
                     <span className="text-xl font-bold tracking-tight text-white md:text-2xl">{siteConfig.name}</span>
                 </Link>
 
-                <nav className="hidden items-center gap-8 md:flex">
+                <nav className="hidden items-center gap-7 md:flex">
                     {navLinks.mainNav.map((link) => (
                         <Link key={link.title} href={link.href} className={`text-sm font-medium transition-colors ${pathname === link.href ? "text-blue-400" : "text-slate-400 hover:text-blue-400"}`}>
                             {link.title}
                         </Link>
                     ))}
+
+                    <div ref={moreMenuRef} className="relative">
+                        <button
+                            type="button"
+                            onClick={() => setIsMoreMenuOpen((prev) => !prev)}
+                            aria-expanded={isMoreMenuOpen}
+                            className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${isMoreActive ? "text-blue-400" : "text-slate-400 hover:text-blue-400"}`}
+                        >
+                            More
+                            <ChevronDown className={`h-4 w-4 transition-transform ${isMoreMenuOpen ? "rotate-180" : ""}`} />
+                        </button>
+
+                        {isMoreMenuOpen && (
+                            <div className="absolute left-1/2 top-9 z-50 w-52 -translate-x-1/2 rounded-2xl border border-white/10 bg-[#0f172a] p-2 shadow-2xl">
+                                {navLinks.moreNav.map((link) => (
+                                    <Link
+                                        key={link.title}
+                                        href={link.href}
+                                        onClick={() => setIsMoreMenuOpen(false)}
+                                        className={`block rounded-xl px-3 py-2.5 text-sm transition ${pathname === link.href ? "bg-blue-500/10 text-blue-400" : "text-slate-300 hover:bg-white/5 hover:text-white"}`}
+                                    >
+                                        {link.title}
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </nav>
 
                 <div className="hidden items-center gap-3 md:flex">
@@ -104,8 +137,14 @@ export default function Header() {
                     )}
 
                     <div ref={desktopAccountRef} className="relative">
-                        <button type="button" onClick={() => setIsAccountMenuOpen((prev) => !prev)} aria-label="Account menu" aria-expanded={isAccountMenuOpen} className={`flex h-10 w-10 items-center justify-center rounded-full border transition-all ${isAccountMenuOpen ? "border-blue-500/40 bg-blue-500/10 text-blue-400" : "border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/10 hover:text-white"}`}>
-                            <User className="h-5 w-5" />
+                        <button
+                            type="button"
+                            onClick={() => setIsAccountMenuOpen((prev) => !prev)}
+                            aria-label="Account menu"
+                            aria-expanded={isAccountMenuOpen}
+                            className={`flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border transition-all ${isAccountMenuOpen ? "border-blue-500/40 bg-blue-500/10" : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10"}`}
+                        >
+                            <Image src={`/avatars/avatar-${user?.avatar_id || "1"}.png`} alt={user?.username || "User"} width={40} height={40} className="h-full w-full object-cover" />
                         </button>
 
                         {isAccountMenuOpen && <AccountDropdown user={user} onClose={() => setIsAccountMenuOpen(false)} />}
@@ -114,14 +153,25 @@ export default function Header() {
 
                 <div className="flex items-center gap-2 md:hidden">
                     <div ref={mobileAccountRef} className="relative">
-                        <button type="button" onClick={() => setIsAccountMenuOpen((prev) => !prev)} aria-label="Account menu" aria-expanded={isAccountMenuOpen} className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all ${isAccountMenuOpen ? "border-blue-500/40 bg-blue-500/10 text-blue-400" : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"}`}>
-                            <User className="h-5 w-5" />
+                        <button
+                            type="button"
+                            onClick={() => setIsAccountMenuOpen((prev) => !prev)}
+                            aria-label="Account menu"
+                            aria-expanded={isAccountMenuOpen}
+                            className={`flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border transition-all ${isAccountMenuOpen ? "border-blue-500/40 bg-blue-500/10" : "border-white/10 bg-white/5 hover:bg-white/10"}`}
+                        >
+                            <Image src={`/avatars/avatar-${user?.avatar_id || "1"}.png`} alt={user?.username || "User"} width={40} height={40} className="h-full w-full object-cover" />
                         </button>
 
                         {isAccountMenuOpen && <AccountDropdown user={user} onClose={() => setIsAccountMenuOpen(false)} />}
                     </div>
 
-                    <button type="button" aria-label="Toggle menu" onClick={() => setIsMobileMenuOpen((prev) => !prev)} className="p-2 text-slate-300 hover:text-white">
+                    <button
+                        type="button"
+                        aria-label="Toggle menu"
+                        onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                        className="p-2 text-slate-300 hover:text-white"
+                    >
                         {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                     </button>
                 </div>
@@ -133,8 +183,12 @@ export default function Header() {
                         <div className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Main Menu</div>
 
                         <div className="space-y-1">
-                            {navLinks.mainNav.map((link) => (
-                                <Link key={link.title} href={link.href} className={`block rounded-xl px-4 py-3 text-base font-medium ${pathname === link.href ? "bg-blue-600/10 text-blue-400" : "text-slate-300 hover:bg-white/5 hover:text-blue-400"}`}>
+                            {[...navLinks.mainNav, ...navLinks.moreNav].map((link) => (
+                                <Link
+                                    key={link.title}
+                                    href={link.href}
+                                    className={`block rounded-xl px-4 py-3 text-base font-medium ${pathname === link.href ? "bg-blue-600/10 text-blue-400" : "text-slate-300 hover:bg-white/5 hover:text-blue-400"}`}
+                                >
                                     {link.title}
                                 </Link>
                             ))}
@@ -148,8 +202,12 @@ export default function Header() {
                                 </Link>
                             ) : (
                                 <div className="flex flex-col gap-3">
-                                    <Link href="/login" className="flex w-full items-center justify-center rounded-xl border border-white/20 bg-white/5 p-3 font-medium text-white">Sign In</Link>
-                                    <Link href="/register" className="flex w-full items-center justify-center rounded-xl bg-blue-600 p-3 font-medium text-white shadow-lg">Register</Link>
+                                    <Link href="/login" className="flex w-full items-center justify-center rounded-xl border border-white/20 bg-white/5 p-3 font-medium text-white">
+                                        Sign In
+                                    </Link>
+                                    <Link href="/register" className="flex w-full items-center justify-center rounded-xl bg-blue-600 p-3 font-medium text-white shadow-lg">
+                                        Register
+                                    </Link>
                                 </div>
                             )}
                         </div>
