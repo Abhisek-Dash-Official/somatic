@@ -452,7 +452,7 @@ somatic/
 │   │   │   │
 │   │   │   ├── (main)/
 │   │   │   │   ├── about/
-│   │   │   │   ├── blogs/
+│   │   │   │   ├── blog/
 │   │   │   │   ├── contact/
 │   │   │   │   ├── faq/
 │   │   │   │   ├── features/

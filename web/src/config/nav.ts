@@ -12,7 +12,7 @@ export const navLinks = {
     { title: "Features", href: "/features" },
     { title: "Guidelines", href: "/guidelines" },
     { title: "FAQ", href: "/faq" },
-    { title: "Blogs", href: "/blogs" },
+    { title: "Blog", href: "/blog" },
     { title: "Contact", href: "/contact" },
   ],
   accountMenu: {
@@ -47,7 +47,7 @@ export const navLinks = {
       { title: "About Somatic", href: "/about" },
       { title: "Services", href: "/services" },
       { title: "Features", href: "/features" },
-      { title: "Blogs", href: "/blogs" },
+      { title: "Blog", href: "/blog" },
       { title: "Contact Us", href: "/contact" },
     ],
     support: [

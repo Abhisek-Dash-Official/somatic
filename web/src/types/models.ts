@@ -336,7 +336,14 @@ export interface IInsurancePolicy extends Document {
   start_date: Date;
   expiry_date: Date;
 
-  status: "pending" | "active" | "expired" | "cancelled";
+  status:
+    | "pending"
+    | "approved"
+    | "payment_pending"
+    | "active"
+    | "rejected"
+    | "expired"
+    | "cancelled";
 
   documents?: {
     type: "policy" | "id_proof" | "medical" | "other";
@@ -411,6 +418,8 @@ export interface IInsurancePlan extends Document {
   premium_amount: number;
 
   premium_frequency: "monthly" | "quarterly" | "half_yearly" | "yearly";
+
+  policy_term_years: number;
 
   features?: string[];
 

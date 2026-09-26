@@ -48,7 +48,15 @@ const InsurancePolicySchema = new Schema<IInsurancePolicyDocument>(
 
     status: {
       type: String,
-      enum: ["pending", "active", "expired", "cancelled"],
+      enum: [
+        "pending",
+        "approved",
+        "payment_pending",
+        "active",
+        "rejected",
+        "expired",
+        "cancelled",
+      ],
       default: "pending",
     },
 

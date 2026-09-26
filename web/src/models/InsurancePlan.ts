@@ -36,6 +36,8 @@ const InsurancePlanSchema = new Schema<IInsurancePlanDocument>(
       required: true,
     },
 
+    policy_term_years: { type: Number, required: true, min: 1 },
+
     features: [{ type: String }],
 
     is_active: {
