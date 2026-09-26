@@ -351,6 +351,13 @@ export interface IInsurancePolicy extends Document {
     uploaded_at: Date;
   }[];
 
+  approved_by?: mongoose.Types.ObjectId;
+  approved_at?: Date;
+
+  rejected_by?: mongoose.Types.ObjectId;
+  rejected_at?: Date;
+  rejection_reason?: string;
+
   created_at: Date;
   updated_at: Date;
 }

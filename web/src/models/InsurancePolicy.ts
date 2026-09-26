@@ -76,6 +76,29 @@ const InsurancePolicySchema = new Schema<IInsurancePolicyDocument>(
         },
       },
     ],
+
+    approved_by: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    approved_at: {
+      type: Date,
+    },
+
+    rejected_by: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    rejected_at: {
+      type: Date,
+    },
+
+    rejection_reason: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: {
