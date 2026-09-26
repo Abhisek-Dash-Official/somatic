@@ -17,8 +17,13 @@
             "Do not attempt rescue breaths if you are not trained; hands-only CPR is highly effective.",
             "Never practice CPR on a healthy, breathing person."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://images.pexels.com/photos/11655091/pexels-photo-11655091.jpeg?cs=srgb&dl=pexels-raven-domingo-66737910-11655091.jpg&fm=jpg",
+            "https://www.bing.com/th/id/OIP.1GQOIkp-kiK7JVw6qV6iCAHaJn?w=193&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=ImgAns&rm=2"
+        ],
+        "video_urls": [
+            "https://youtu.be/Plse2FOkV4Q?si=HBg-pNDA1R5lYo3a"
+        ]
     },
     {
         "id": "choking-adult",
@@ -38,8 +43,13 @@
             "If the person becomes unconscious, lower them to the ground and begin CPR.",
             "Do not perform blind finger sweeps in the mouth; you may push the object deeper."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://th.bing.com/th/id/OIP.YpEIzdKxBwgdhju6zMFqSgHaKe?w=186&h=263&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+            "https://i.pinimg.com/originals/fe/c3/d8/fec3d89cecbdb686d1c08d1b35f84e3c.jpg"
+        ],
+        "video_urls": [
+            "https://youtu.be/GymXjJJ7Ugo?si=Hzce1QRIb6134Rxd"
+        ]
     },
     {
         "id": "heart-attack",
@@ -58,8 +68,13 @@
             "Do not let the person drive themselves to the hospital.",
             "Do not wait to see if the symptoms go away."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://th.bing.com/th/id/OIP.lYzKLx1lC67VAPvSSVwO5gHaJF?w=139&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+            "https://th.bing.com/th/id/OIP.csvOdwORXgidc_Qw0ko1rgHaEK?w=303&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"
+        ],
+        "video_urls": [
+            "https://youtu.be/gDwt7dD3awc?si=mpaRqMUx2JIHdBBd"
+        ]
     },
     {
         "id": "seizure-epilepsy",
@@ -78,8 +93,13 @@
             "Do not hold the person down or try to stop their movements.",
             "Do not put anything in the person's mouth (they will not swallow their tongue)."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://c8.alamy.com/comp/RHYMNH/set-of-epilepsy-seizures-first-aid-situation-with-text-fine-for-medical-infobrochures-public-sites-about-epilepsy-and-medical-checks-banners-for-RHYMNH.jpg",
+            "https://img.freepik.com/premium-vector/epilepsy-first-aid-medical-examination-concept-with-people-scene-flat-cartoon-design_198565-6560.jpg?w=2000"
+        ],
+        "video_urls": [
+            "https://youtu.be/Ovsw7tdneqE?si=3_31kXpD4EQlSG6Y"
+        ]
     },
     {
         "id": "severe-bleeding",
@@ -98,8 +118,13 @@
             "Do not use a tourniquet unless you are trained to do so and the bleeding is life-threatening and uncontrollable.",
             "Do not remove objects embedded in the wound; apply pressure around the object."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://i.pinimg.com/736x/4f/ab/4e/4fab4e8c87300da5cbf1651fd990fc2f--first-aid.jpg",
+            "https://www.shutterstock.com/image-vector/stopping-bleeding-first-aid-medical-600nw-2300424001.jpg"
+        ],
+        "video_urls": [
+            "https://youtu.be/8pTaqY40-Rs?si=2oZk2FTNTzbcmMlo"
+        ]
     },
     {
         "id": "snake-bite",
@@ -119,8 +144,13 @@
             "Do NOT apply a tourniquet, ice, or submerge the wound in water.",
             "Do not give the person caffeine or alcohol."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://images.squarespace-cdn.com/content/v1/5f1647aa64238d3760db1c04/1595295715951-KYFOIEIJCHQPVQGRCS25/SNAKE+BITE+FA+facebook+info+2.png",
+            "https://i.pinimg.com/originals/fa/b5/0e/fab50ea27cf26b6a776b464bc7ed074b.png"
+        ],
+        "video_urls": [
+            "https://youtu.be/nH8o-bgwo_g?si=IBeBzdeNgD-6bRY6"
+        ]
     },
     {
         "id": "severe-burns",
@@ -140,8 +170,13 @@
             "Do not pop blisters.",
             "Seek immediate medical help if the burn covers a large area, involves the face/hands, or looks charred."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://tse1.explicit.bing.net/th/id/OIP.4I1HveLfs7fDwkIWUgWrQwHaFY?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+            "https://tse4.mm.bing.net/th/id/OIP.r6oP8QkMVAGstyBuGRF7WwHaEN?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+        ],
+        "video_urls": [
+            "https://youtu.be/B51VgoEZcDs?si=o5CegiT0fPZLbZOE"
+        ]
     },
     {
         "id": "fractures",
@@ -159,8 +194,13 @@
         "warnings": [
             "If it's a suspected neck or back injury, do NOT move the person at all. Wait for paramedics."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://image.slidesharecdn.com/firstaid-201006235339/85/fracture-first-aid-by-dr-hany-aldakar-md-orthopedic-surgery-and-traumatology-22-638.jpg?cb=1668528171",
+            "https://protectorfiresafety.com/34906-thickbox_default/fracture-first-aid-safety-posters.jpg"
+        ],
+        "video_urls": [
+            "https://youtu.be/2v8vlXgGXwE?si=ZZVvztGfle4AIRC6"
+        ]
     },
     {
         "id": "heat-stroke",
@@ -178,8 +218,13 @@
         "warnings": [
             "If the person is confused, vomiting, or unconscious, do not give them anything to drink."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://img.freepik.com/premium-vector/heat-stroke-first-aid-medical-examination-concept-with-people-scene-flat-cartoon-design_198565-6543.jpg?w=2000",
+            "https://www.firstaidpro.com.au/wp-content/uploads/2022/02/Heatstroke-First-Aid.png"
+        ],
+        "video_urls": [
+            "https://youtu.be/jvGC_dQJUtE?si=fDrhJhrs1E8iKfQr"
+        ]
     },
     {
         "id": "hypoglycemia",
@@ -196,8 +241,13 @@
         "warnings": [
             "If the person is unconscious or having a seizure, do NOT force food or fluids into their mouth. Call an ambulance."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://tse2.mm.bing.net/th/id/OIP.Py7luAbkHtb_pCRu6MvBDwHaFh?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+            "https://tse4.mm.bing.net/th/id/OIP.yPjt4CovnrAYFYhowpuzpwHaKe?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+        ],
+        "video_urls": [
+            "https://youtu.be/L06DNMRcy98?si=ww0g09ZeZgzET3qi"
+        ]
     },
     {
         "id": "asthma-attack",
@@ -215,8 +265,13 @@
         "warnings": [
             "Do not lay the person flat; this restricts breathing further."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://tse1.mm.bing.net/th/id/OIP.qG4gsvfZmPzLmn6f0cO0ogHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+            "https://tse1.mm.bing.net/th/id/OIP.IzRR_7JYbQtb-mBFO86EcwHaKS?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+        ],
+        "video_urls": [
+            "https://youtu.be/hdVKpUR513M"
+        ]
     },
     {
         "id": "high-fever",
@@ -234,8 +289,13 @@
             "Do not use cold baths or alcohol rubs; they can cause shivering, which raises core temperature.",
             "Seek emergency care if fever is accompanied by severe headache, stiff neck, confusion, or breathing difficulty."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://tse3.mm.bing.net/th/id/OIP.5ZQod4O7yqhKxAzRI6sExgHaJh?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+            "https://i.pinimg.com/736x/2e/3d/3a/2e3d3a6532d5ea5f7381bc9352b5c630.jpg"
+        ],
+        "video_urls": [
+            "https://youtu.be/faLkXDXrhnM?si=6OkeMQBoajFBViZS"
+        ]
     },
     {
         "id": "food-poisoning",
@@ -253,8 +313,13 @@
             "Do not immediately take anti-diarrheal medication; letting the body expel the bacteria is often better initially.",
             "Seek medical help if you cannot keep liquids down for 24 hours, have a high fever, or notice blood in stool."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://www.shutterstock.com/shutterstock/photos/749487316/display_1500/stock-vector-food-poisoning-infographic-man-with-symptoms-and-treatment-749487316.jpg",
+            "https://stmarkjamestraining.ca/wp-content/uploads/2015/01/Food-poisoning-infographic-guide.jpg"
+        ],
+        "video_urls": [
+            "https://youtu.be/K36B1wnMHIo?si=0bj5vdwuKoC6iYga"
+        ]
     },
     {
         "id": "nosebleed",
@@ -273,8 +338,13 @@
             "Do NOT tilt your head back. This causes blood to drain down your throat, which can cause choking or vomiting.",
             "Do not blow your nose for several hours after the bleeding stops."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://thumbs.dreamstime.com/b/illustrated-guide-how-to-treat-nosebleed-home-five-simple-steps-effective-first-aid-easy-instructions-visuals-382619381.jpg?w=992",
+            "https://www.shutterstock.com/shutterstock/photos/1982229161/display_1500/stock-vector-cute-info-graphic-about-nose-bleeding-cartoon-vector-1982229161.jpg"
+        ],
+        "video_urls": [
+            "https://youtu.be/PmmhxW0vVXA?si=ARIbnrdF2pgFCNsG"
+        ]
     },
     {
         "id": "sprains-strains",
@@ -292,7 +362,12 @@
             "Do not apply heat during the first 48 hours, as it can increase swelling.",
             "If you cannot bear any weight or the joint looks deformed, suspect a fracture and seek an X-ray."
         ],
-        "img_urls": [],
-        "video_urls": []
+        "img_urls": [
+            "https://gaiaguides.com/wp-content/uploads/2018/01/asokpor.jpg",
+            "https://www.wikihow.com/images/thumb/c/cc/Treat-a-Sprain-During-First-Aid-Step-1-Version-2.jpg/aid1291918-v4-728px-Treat-a-Sprain-During-First-Aid-Step-1-Version-2.jpg"
+        ],
+        "video_urls": [
+            "https://youtu.be/hte5VYbRXJw?si=VOEmf0b0EoJpT5xE"
+        ]
     }
 ]
