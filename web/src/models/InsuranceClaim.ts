@@ -95,6 +95,10 @@ const InsuranceClaimSchema = new Schema(
       trim: true,
     },
 
+    required_documents: {
+      type: [String],
+    },
+
     documents: [
       {
         type: {

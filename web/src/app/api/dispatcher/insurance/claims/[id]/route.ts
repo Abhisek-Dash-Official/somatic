@@ -73,7 +73,8 @@ export async function PATCH(
 
     const { id } = await params;
     const body = await req.json();
-    const { action, rejection_reason, approved_amount } = body;
+    const { action, rejection_reason, approved_amount, required_documents } =
+      body;
 
     if (!action) {
       return NextResponse.json(
@@ -139,7 +140,20 @@ export async function PATCH(
         );
       }
 
+      if (
+        !Array.isArray(required_documents) ||
+        required_documents.length === 0
+      ) {
+        return NextResponse.json(
+          { error: "Required documents must be provided" },
+          { status: 400 },
+        );
+      }
+
       claim.status = "documents_required";
+      claim.required_documents = required_documents;
+      claim.rejection_reason = undefined;
+      claim.approved_amount = undefined;
 
       await SystemLog.create({
         actor_id: session.user.id,
@@ -148,6 +162,7 @@ export async function PATCH(
         target_id: claim._id,
         details: {
           claim_number: claim.claim_number,
+          required_documents,
         },
       });
     } else if (action === "approve") {

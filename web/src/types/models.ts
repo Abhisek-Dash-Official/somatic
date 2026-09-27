@@ -397,6 +397,8 @@ export interface IInsuranceClaim extends Document {
 
   rejection_reason?: string;
 
+  required_documents?: string[];
+
   documents?: {
     type:
       | "claim_form"
