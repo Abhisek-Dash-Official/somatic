@@ -23,7 +23,6 @@ const InsurancePolicySchema = new Schema<IInsurancePolicyDocument>(
 
     policy_number: {
       type: String,
-      required: true,
       unique: true,
       trim: true,
     },
@@ -38,12 +37,10 @@ const InsurancePolicySchema = new Schema<IInsurancePolicyDocument>(
 
     start_date: {
       type: Date,
-      required: true,
     },
 
     expiry_date: {
       type: Date,
-      required: true,
     },
 
     status: {

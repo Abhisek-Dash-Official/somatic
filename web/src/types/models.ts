@@ -435,3 +435,30 @@ export interface IInsurancePlan extends Document {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface ITransaction {
+  _id?: string;
+  user_id: string | any;
+  transaction_type: "insurance_premium" | "shop_order";
+  reference_id: string | any;
+  amount: number;
+  currency?: string;
+  status:
+    | "created"
+    | "pending"
+    | "paid"
+    | "failed"
+    | "refunded"
+    | "partially_refunded"
+    | "cancelled";
+  payment_gateway?: "razorpay";
+  gateway_order_id?: string;
+  gateway_payment_id?: string;
+  gateway_signature?: string;
+  paid_at?: Date | string;
+  failed_at?: Date | string;
+  failure_reason?: string;
+  metadata?: Record<string, any>;
+  created_at?: Date | string;
+  updated_at?: Date | string;
+}
