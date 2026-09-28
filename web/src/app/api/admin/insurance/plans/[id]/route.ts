@@ -1,29 +1,28 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import InsurancePlan from "@/models/InsurancePlan";
 import SystemLog from "@/models/SystemLog";
 
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
+
+export async function GET(req: NextRequest, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    if (!session?.user?.id || session.user.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.user.role !== "admin") {
-      return NextResponse.json(
-        { error: "Only admins can view insurance plans" },
-        { status: 403 },
-      );
-    }
-
     const { id } = await params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json({ error: "Invalid plan ID" }, { status: 400 });
+    }
 
     await dbConnect();
 
@@ -38,8 +37,7 @@ export async function GET(
 
     return NextResponse.json({ plan });
   } catch (error) {
-    console.error("Admin insurance plan detail error:", error);
-
+    console.error("Admin insurance plan GET error:", error);
     return NextResponse.json(
       { error: "Failed to fetch insurance plan" },
       { status: 500 },
@@ -47,25 +45,20 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function PATCH(req: NextRequest, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    if (!session?.user?.id || session.user.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.user.role !== "admin") {
-      return NextResponse.json(
-        { error: "Only admins can update insurance plans" },
-        { status: 403 },
-      );
+    const { id } = await params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json({ error: "Invalid plan ID" }, { status: 400 });
     }
 
-    const { id } = await params;
     const body = await req.json();
 
     await dbConnect();
@@ -79,62 +72,57 @@ export async function PATCH(
       );
     }
 
-    const {
-      name,
-      description,
-      coverage_amount,
-      premium_amount,
-      premium_frequency,
-      policy_term_years,
-      features,
-      is_active,
-    } = body;
+    const updates: Record<string, any> = {};
 
-    if (name !== undefined) {
-      if (!name?.trim()) {
+    if (body.name !== undefined) {
+      if (typeof body.name !== "string" || !body.name.trim()) {
         return NextResponse.json(
-          { error: "Plan name cannot be empty" },
+          { error: "Plan name is required" },
           { status: 400 },
         );
       }
-
-      plan.name = name.trim();
+      updates.name = body.name.trim();
     }
 
-    if (description !== undefined) {
-      plan.description = description?.trim();
-    }
-
-    if (coverage_amount !== undefined) {
-      const value = Number(coverage_amount);
-
-      if (!Number.isFinite(value) || value <= 0) {
+    if (body.description !== undefined) {
+      if (body.description !== null && typeof body.description !== "string") {
         return NextResponse.json(
-          { error: "Coverage amount must be greater than zero" },
+          { error: "Invalid description" },
           { status: 400 },
         );
       }
-
-      plan.coverage_amount = value;
+      updates.description =
+        typeof body.description === "string"
+          ? body.description.trim()
+          : undefined;
     }
 
-    if (premium_amount !== undefined) {
-      const value = Number(premium_amount);
-
-      if (!Number.isFinite(value) || value <= 0) {
+    if (body.coverage_amount !== undefined) {
+      const value = Number(body.coverage_amount);
+      if (!Number.isFinite(value) || value < 0) {
         return NextResponse.json(
-          { error: "Premium amount must be greater than zero" },
+          { error: "Valid coverage amount is required" },
           { status: 400 },
         );
       }
-
-      plan.premium_amount = value;
+      updates.coverage_amount = value;
     }
 
-    if (premium_frequency !== undefined) {
+    if (body.premium_amount !== undefined) {
+      const value = Number(body.premium_amount);
+      if (!Number.isFinite(value) || value < 0) {
+        return NextResponse.json(
+          { error: "Valid premium amount is required" },
+          { status: 400 },
+        );
+      }
+      updates.premium_amount = value;
+    }
+
+    if (body.premium_frequency !== undefined) {
       if (
         !["monthly", "quarterly", "half_yearly", "yearly"].includes(
-          premium_frequency,
+          body.premium_frequency,
         )
       ) {
         return NextResponse.json(
@@ -142,38 +130,62 @@ export async function PATCH(
           { status: 400 },
         );
       }
-
-      plan.premium_frequency = premium_frequency;
+      updates.premium_frequency = body.premium_frequency;
     }
 
-    if (policy_term_years !== undefined) {
-      const value = Number(policy_term_years);
-
-      if (!Number.isFinite(value) || value <= 0) {
+    if (body.policy_term_years !== undefined) {
+      const value = Number(body.policy_term_years);
+      if (!Number.isInteger(value) || value < 1) {
         return NextResponse.json(
-          { error: "Policy term must be greater than zero" },
+          { error: "Policy term must be at least 1 year" },
           { status: 400 },
         );
       }
-
-      plan.policy_term_years = value;
+      updates.policy_term_years = value;
     }
 
-    if (features !== undefined) {
-      if (!Array.isArray(features)) {
+    if (body.features !== undefined) {
+      if (!Array.isArray(body.features)) {
         return NextResponse.json(
           { error: "Features must be an array" },
           { status: 400 },
         );
       }
 
-      plan.features = features;
+      updates.features = body.features
+        .filter(
+          (feature: unknown) => typeof feature === "string" && feature.trim(),
+        )
+        .map((feature: string) => feature.trim());
     }
 
-    if (is_active !== undefined) {
-      plan.is_active = Boolean(is_active);
+    if (body.is_active !== undefined) {
+      if (typeof body.is_active !== "boolean") {
+        return NextResponse.json(
+          { error: "is_active must be a boolean" },
+          { status: 400 },
+        );
+      }
+      updates.is_active = body.is_active;
     }
 
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json(
+        { error: "No valid fields provided for update" },
+        { status: 400 },
+      );
+    }
+
+    const previousValues = {
+      name: plan.name,
+      coverage_amount: plan.coverage_amount,
+      premium_amount: plan.premium_amount,
+      premium_frequency: plan.premium_frequency,
+      policy_term_years: plan.policy_term_years,
+      is_active: plan.is_active,
+    };
+
+    Object.assign(plan, updates);
     await plan.save();
 
     await SystemLog.create({
@@ -182,12 +194,8 @@ export async function PATCH(
       action_type: "INSURANCE_PLAN_UPDATED",
       target_id: plan._id,
       details: {
-        name: plan.name,
-        coverage_amount: plan.coverage_amount,
-        premium_amount: plan.premium_amount,
-        premium_frequency: plan.premium_frequency,
-        policy_term_years: plan.policy_term_years,
-        is_active: plan.is_active,
+        previous_values: previousValues,
+        updated_fields: Object.keys(updates),
       },
     });
 
@@ -196,8 +204,7 @@ export async function PATCH(
       plan,
     });
   } catch (error) {
-    console.error("Insurance plan update error:", error);
-
+    console.error("Admin insurance plan PATCH error:", error);
     return NextResponse.json(
       { error: "Failed to update insurance plan" },
       { status: 500 },

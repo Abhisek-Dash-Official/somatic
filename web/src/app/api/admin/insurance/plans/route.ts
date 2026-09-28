@@ -1,33 +1,63 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import InsurancePlan from "@/models/InsurancePlan";
 import SystemLog from "@/models/SystemLog";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    if (!session?.user?.id || session.user.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    if (session.user.role !== "admin") {
-      return NextResponse.json(
-        { error: "Only admins can view insurance plans" },
-        { status: 403 },
-      );
     }
 
     await dbConnect();
 
-    const plans = await InsurancePlan.find({}).sort({ created_at: -1 }).lean();
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(Number(searchParams.get("page")) || 1, 1);
+    const limit = Math.min(
+      Math.max(Number(searchParams.get("limit")) || 10, 1),
+      100,
+    );
+    const search = searchParams.get("search")?.trim() || "";
+    const status = searchParams.get("status")?.trim() || "";
 
-    return NextResponse.json({ plans });
+    const query: Record<string, any> = {};
+
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    if (status === "active") {
+      query.is_active = true;
+    } else if (status === "inactive") {
+      query.is_active = false;
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [plans, total] = await Promise.all([
+      InsurancePlan.find(query)
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      InsurancePlan.countDocuments(query),
+    ]);
+
+    return NextResponse.json({
+      plans,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
-    console.error("Admin insurance plans fetch error:", error);
-
+    console.error("Admin insurance plans GET error:", error);
     return NextResponse.json(
       { error: "Failed to fetch insurance plans" },
       { status: 500 },
@@ -35,53 +65,55 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    if (!session?.user?.id || session.user.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    if (session.user.role !== "admin") {
-      return NextResponse.json(
-        { error: "Only admins can create insurance plans" },
-        { status: 403 },
-      );
     }
 
     const body = await req.json();
 
-    const {
-      name,
-      description,
-      coverage_amount,
-      premium_amount,
-      premium_frequency,
-      policy_term_years,
-      features,
-      is_active,
-    } = body;
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const description =
+      typeof body.description === "string" ? body.description.trim() : "";
+    const coverageAmount = Number(body.coverage_amount);
+    const premiumAmount = Number(body.premium_amount);
+    const premiumFrequency = body.premium_frequency;
+    const policyTermYears = Number(body.policy_term_years);
+    const features = Array.isArray(body.features)
+      ? body.features
+          .filter(
+            (feature: unknown) => typeof feature === "string" && feature.trim(),
+          )
+          .map((feature: string) => feature.trim())
+      : [];
 
-    if (
-      !name?.trim() ||
-      coverage_amount === undefined ||
-      premium_amount === undefined ||
-      !premium_frequency ||
-      policy_term_years === undefined
-    ) {
+    if (!name) {
       return NextResponse.json(
-        {
-          error:
-            "Name, coverage amount, premium amount, premium frequency and policy term are required",
-        },
+        { error: "Plan name is required" },
+        { status: 400 },
+      );
+    }
+
+    if (!Number.isFinite(coverageAmount) || coverageAmount < 0) {
+      return NextResponse.json(
+        { error: "Valid coverage amount is required" },
+        { status: 400 },
+      );
+    }
+
+    if (!Number.isFinite(premiumAmount) || premiumAmount < 0) {
+      return NextResponse.json(
+        { error: "Valid premium amount is required" },
         { status: 400 },
       );
     }
 
     if (
       !["monthly", "quarterly", "half_yearly", "yearly"].includes(
-        premium_frequency,
+        premiumFrequency,
       )
     ) {
       return NextResponse.json(
@@ -90,34 +122,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const coverageAmount = Number(coverage_amount);
-    const premiumAmount = Number(premium_amount);
-    const policyTermYears = Number(policy_term_years);
-
-    if (!Number.isFinite(coverageAmount) || coverageAmount <= 0) {
+    if (!Number.isInteger(policyTermYears) || policyTermYears < 1) {
       return NextResponse.json(
-        { error: "Coverage amount must be greater than zero" },
-        { status: 400 },
-      );
-    }
-
-    if (!Number.isFinite(premiumAmount) || premiumAmount <= 0) {
-      return NextResponse.json(
-        { error: "Premium amount must be greater than zero" },
-        { status: 400 },
-      );
-    }
-
-    if (!Number.isFinite(policyTermYears) || policyTermYears <= 0) {
-      return NextResponse.json(
-        { error: "Policy term must be greater than zero" },
-        { status: 400 },
-      );
-    }
-
-    if (features !== undefined && !Array.isArray(features)) {
-      return NextResponse.json(
-        { error: "Features must be an array" },
+        { error: "Policy term must be at least 1 year" },
         { status: 400 },
       );
     }
@@ -125,14 +132,14 @@ export async function POST(req: Request) {
     await dbConnect();
 
     const plan = await InsurancePlan.create({
-      name: name.trim(),
-      description: description?.trim(),
+      name,
+      description: description || undefined,
       coverage_amount: coverageAmount,
       premium_amount: premiumAmount,
-      premium_frequency,
+      premium_frequency: premiumFrequency,
       policy_term_years: policyTermYears,
-      features: features || [],
-      is_active: is_active !== undefined ? Boolean(is_active) : true,
+      features,
+      is_active: body.is_active !== false,
     });
 
     await SystemLog.create({
@@ -157,8 +164,7 @@ export async function POST(req: Request) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Insurance plan creation error:", error);
-
+    console.error("Admin insurance plans POST error:", error);
     return NextResponse.json(
       { error: "Failed to create insurance plan" },
       { status: 500 },
