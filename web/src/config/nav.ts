@@ -1,5 +1,3 @@
-import { title } from "process";
-
 export const navLinks = {
   mainNav: [
     { title: "About", href: "/about" },
@@ -12,6 +10,64 @@ export const navLinks = {
     { title: "Insurance", href: "/patient/insurance" },
     { title: "Blog", href: "/blog" },
     { title: "Contact", href: "/contact" },
+  ],
+  portalNav: [
+    {
+      title: "Dashboard",
+      description: "Access your role-based SOMATIC workspace",
+      image: "/portal/dashboard.webp",
+      hrefByRole: {
+        admin: "/admin",
+        dispatcher: "/dispatcher",
+        doctor: "/doctor",
+        assistant_doctor: "/doctor",
+        patient: "/patient",
+      },
+      icon: "LayoutDashboard",
+    },
+    {
+      title: "Insurance",
+      description: "Manage your coverage, policies and claims",
+      image: "/portal/insurance.jpeg",
+      hrefByRole: {
+        patient: "/patient/insurance",
+        dispatcher: "/dispatcher/insurance",
+        admin: "/admin/insurance",
+      },
+      icon: "ShieldCheck",
+    },
+    {
+      title: "Lab Tests & Diagnostics",
+      description: "Access diagnostic testing and laboratory services",
+      image: "/portal/labs.jpg",
+      hrefByRole: {
+        patient: "/patient/labs",
+        dispatcher: "/dispatcher/labs",
+        admin: "/admin/labs",
+      },
+      icon: "Microscope",
+    },
+    {
+      title: "First Aid",
+      description: "Find quick guidance for common emergency situations",
+      image: "/portal/first-aid.jpg",
+      href: "/first-aid",
+      icon: "HeartPulse",
+    },
+    {
+      title: "Shop",
+      description: "Medicines, blood banks and healthcare essentials",
+      image: "/portal/shop.jpeg",
+      href: "/shop",
+      icon: "ShoppingBag",
+    },
+    {
+      title: "Learn",
+      description: "Learn about medicines, health and everyday healthcare",
+      image: "/portal/learn.jpeg",
+      href: "/learn",
+      icon: "BookOpen",
+    },
   ],
   accountMenu: {
     authenticated: [
