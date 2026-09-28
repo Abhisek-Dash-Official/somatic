@@ -82,6 +82,8 @@ export const navLinks = {
       { title: "Medicines", href: "/admin/medicines", icon: "Pill" },
       { title: "Blood Banks", href: "/admin/bloodbanks", icon: "Droplets" },
       { title: "Hospitals", href: "/admin/hospitals", icon: "Hospital" },
+      { title: "Insurance", href: "/admin/insurance", icon: "ShieldCheck" },
+      { title: "Labs", href: "/admin/labs", icon: "Microscope" },
       { title: "Settings", href: "/admin/settings", icon: "Settings" },
       { title: "System Logs", href: "/admin/logs", icon: "Logs" },
       { title: "Profile", href: "/admin/profile", icon: "UserShield" },
