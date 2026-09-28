@@ -1,0 +1,200 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight, Check, Loader2, ShieldCheck } from "lucide-react";
+import { useParams } from "next/navigation";
+import { toast } from "react-toastify";
+
+const parseResponse = async (response: Response) => {
+    const text = await response.text();
+
+    if (!text.trim()) {
+        throw new Error(`Request returned an empty response (${response.status})`);
+    }
+
+    try {
+        return JSON.parse(text);
+    } catch {
+        throw new Error(`Request returned an invalid response (${response.status})`);
+    }
+};
+
+const frequencyLabels: Record<string, string> = {
+    monthly: "Monthly",
+    quarterly: "Quarterly",
+    half_yearly: "Half Yearly",
+    yearly: "Yearly",
+};
+
+export default function InsurancePlanDetailsPage() {
+    const params = useParams();
+    const [plan, setPlan] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadPlan = async () => {
+            try {
+                const response = await fetch("/api/insurance/plans");
+                const data = await parseResponse(response);
+
+                if (!response.ok) {
+                    throw new Error(data?.error || "Failed to load insurance plans");
+                }
+
+                const foundPlan = (data.plans || []).find(
+                    (item: any) => item._id?.toString() === params.id?.toString(),
+                );
+
+                if (!foundPlan) {
+                    throw new Error("Insurance plan not found");
+                }
+
+                setPlan(foundPlan);
+            } catch (error: any) {
+                console.error("Insurance plan details error:", error);
+                toast.error(error?.message || "Failed to load insurance plan");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (params.id) {
+            loadPlan();
+        }
+    }, [params.id]);
+
+    if (loading) {
+        return (
+            <main className="flex min-h-[70vh] items-center justify-center">
+                <Loader2 className="animate-spin text-blue-400" size={32} />
+            </main>
+        );
+    }
+
+    if (!plan) {
+        return (
+            <main className="mx-auto flex min-h-[70vh] w-full max-w-3xl items-center justify-center px-4">
+                <div className="w-full rounded-2xl border border-slate-800 bg-[#111a2f] p-8 text-center">
+                    <ShieldCheck className="mx-auto text-slate-600" size={40} />
+                    <h1 className="mt-4 text-xl font-semibold text-white">Insurance plan not found</h1>
+                    <p className="mt-2 text-sm text-slate-500">The selected insurance plan is no longer available.</p>
+                    <Link
+                        href="/patient/insurance#available-plans"
+                        className="mt-6 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-500"
+                    >
+                        <ArrowLeft size={17} />
+                        Back to Plans
+                    </Link>
+                </div>
+            </main>
+        );
+    }
+
+    return (
+        <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+            <Link
+                href="/patient/insurance#available-plans"
+                className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white"
+            >
+                <ArrowLeft size={17} />
+                Back to Insurance Plans
+            </Link>
+
+            <section className="mt-6 overflow-hidden rounded-3xl border border-slate-800 bg-[#111a2f]">
+                <div className="border-b border-slate-800 bg-linear-to-br from-blue-500/10 via-transparent to-transparent p-6 sm:p-8">
+                    <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex items-start gap-4">
+                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400">
+                                <ShieldCheck size={28} />
+                            </div>
+
+                            <div>
+                                <p className="text-sm font-medium text-blue-400">SOMATIC Insurance</p>
+                                <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">{plan.name}</h1>
+                                <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+                                    {plan.description || "Health insurance coverage designed to support your medical needs."}
+                                </p>
+                            </div>
+                        </div>
+
+                        {plan.is_active && (
+                            <span className="w-fit rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400">
+                                Available
+                            </span>
+                        )}
+                    </div>
+                </div>
+
+                <div className="grid gap-4 p-6 sm:grid-cols-3 sm:p-8">
+                    <div className="rounded-2xl border border-slate-800 bg-[#0c1426] p-5">
+                        <p className="text-xs text-slate-500">Coverage Amount</p>
+                        <p className="mt-2 text-2xl font-bold text-white">
+                            ₹{Number(plan.coverage_amount || 0).toLocaleString("en-IN")}
+                        </p>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-800 bg-[#0c1426] p-5">
+                        <p className="text-xs text-slate-500">Premium</p>
+                        <p className="mt-2 text-2xl font-bold text-white">
+                            ₹{Number(plan.premium_amount || 0).toLocaleString("en-IN")}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500">
+                            {frequencyLabels[plan.premium_frequency] || plan.premium_frequency}
+                        </p>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-800 bg-[#0c1426] p-5">
+                        <p className="text-xs text-slate-500">Policy Term</p>
+                        <p className="mt-2 text-2xl font-bold text-white">
+                            {plan.policy_term_years} {plan.policy_term_years === 1 ? "Year" : "Years"}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="border-t border-slate-800 p-6 sm:p-8">
+                    <h2 className="text-lg font-semibold text-white">Plan Benefits</h2>
+
+                    {plan.features?.length > 0 ? (
+                        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                            {plan.features.map((feature: string, index: number) => (
+                                <div
+                                    key={`${feature}-${index}`}
+                                    className="flex items-start gap-3 rounded-xl border border-slate-800 bg-[#0c1426] p-4"
+                                >
+                                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400">
+                                        <Check size={13} />
+                                    </div>
+                                    <span className="text-sm leading-6 text-slate-300">{feature}</span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="mt-4 text-sm text-slate-500">No additional benefits have been listed for this plan.</p>
+                    )}
+                </div>
+
+                <div className="flex flex-col gap-3 border-t border-slate-800 bg-[#0c1426] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+                    <div>
+                        <p className="text-sm font-medium text-white">Ready to apply?</p>
+                        <p className="mt-1 text-xs text-slate-500">Submit your insurance proposal for review.</p>
+                    </div>
+
+                    {plan.is_active ? (
+                        <Link
+                            href={`/patient/insurance/plans/${plan._id}/apply`}
+                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-medium text-white transition hover:bg-blue-500"
+                        >
+                            Apply for This Plan
+                            <ArrowRight size={18} />
+                        </Link>
+                    ) : (
+                        <span className="rounded-xl border border-slate-700 px-6 py-3 text-sm text-slate-500">
+                            Plan Unavailable
+                        </span>
+                    )}
+                </div>
+            </section>
+        </main>
+    );
+}

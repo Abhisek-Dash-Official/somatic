@@ -41,7 +41,7 @@ export async function POST(
       );
     }
 
-    if (policy.status !== "approved") {
+    if (policy.status !== "approved" && policy.status !== "payment_pending") {
       return NextResponse.json(
         { error: "This insurance policy is not ready for payment" },
         { status: 400 },
@@ -78,9 +78,10 @@ export async function POST(
         message: "Payment order already exists",
         transaction_id: existingTransaction._id,
         razorpay_order_id: existingTransaction.gateway_order_id,
-        amount: existingTransaction.amount,
+        amount: Math.round(existingTransaction.amount * 100),
         currency: existingTransaction.currency,
         key_id: process.env.RAZORPAY_KEY_ID,
+        plan_name: plan.name,
       });
     }
 
@@ -159,9 +160,10 @@ export async function POST(
       message: "Payment order created successfully",
       transaction_id: transaction._id,
       razorpay_order_id: razorpayOrder.id,
-      amount,
-      currency: "INR",
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency,
       key_id: razorpayKeyId,
+      plan_name: plan.name,
     });
   } catch (error) {
     console.error("Insurance payment order creation error:", error);

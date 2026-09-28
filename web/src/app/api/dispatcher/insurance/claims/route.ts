@@ -5,7 +5,6 @@ import dbConnect from "@/lib/db";
 import InsuranceClaim from "@/models/InsuranceClaim";
 import "@/models/User";
 import "@/models/InsurancePolicy";
-import "@/models/Hospital";
 
 export async function GET(req: Request) {
   try {
@@ -55,7 +54,6 @@ export async function GET(req: Request) {
     const claims = await InsuranceClaim.find(query)
       .populate("user_id", "username email contact_no")
       .populate("policy_id", "policy_number status")
-      .populate("hospital_id", "name address contact")
       .sort({ created_at: -1 })
       .lean();
 

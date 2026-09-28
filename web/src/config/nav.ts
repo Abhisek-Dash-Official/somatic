@@ -1,3 +1,5 @@
+import { title } from "process";
+
 export const navLinks = {
   mainNav: [
     { title: "About", href: "/about" },
@@ -7,11 +9,7 @@ export const navLinks = {
   ],
 
   moreNav: [
-    { title: "Insurance", href: "/insurance" },
-    { title: "Services", href: "/services" },
-    { title: "Features", href: "/features" },
-    { title: "Guidelines", href: "/guidelines" },
-    { title: "FAQ", href: "/faq" },
+    { title: "Insurance", href: "/patient/insurance" },
     { title: "Blog", href: "/blog" },
     { title: "Contact", href: "/contact" },
   ],
@@ -99,6 +97,11 @@ export const navLinks = {
         title: "Ambulance Requests",
         href: "/dispatcher/ambulances",
         icon: "Ambulance",
+      },
+      {
+        title: "Insurance",
+        href: "/dispatcher/insurance",
+        icon: "ShieldCheck",
       },
       { title: "Tickets", href: "/tickets", icon: "Ticket" },
       { title: "Profile", href: "/dispatcher/profile", icon: "User" },

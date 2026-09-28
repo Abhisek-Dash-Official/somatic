@@ -21,11 +21,6 @@ const InsuranceClaimSchema = new Schema(
       index: true,
     },
 
-    hospital_id: {
-      type: Schema.Types.ObjectId,
-      ref: "Hospital",
-    },
-
     claim_number: {
       type: String,
       unique: true,
@@ -103,16 +98,6 @@ const InsuranceClaimSchema = new Schema(
       {
         type: {
           type: String,
-          enum: [
-            "claim_form",
-            "hospital_bill",
-            "discharge_summary",
-            "prescription",
-            "lab_report",
-            "medical_record",
-            "id_proof",
-            "other",
-          ],
         },
         file_url: {
           type: String,

@@ -26,7 +26,6 @@ export async function POST(req: Request) {
 
     const {
       policy_id,
-      hospital_id,
       claim_type,
       incident_type,
       incident_date,
@@ -74,20 +73,6 @@ export async function POST(req: Request) {
       );
     }
 
-    if (hospital_id) {
-      const hospital = await Hospital.findOne({
-        _id: hospital_id,
-        is_active: true,
-      });
-
-      if (!hospital) {
-        return NextResponse.json(
-          { error: "Hospital not found" },
-          { status: 404 },
-        );
-      }
-    }
-
     const amount = claimed_amount ?? estimated_amount;
 
     if (
@@ -114,7 +99,6 @@ export async function POST(req: Request) {
     const claim = await InsuranceClaim.create({
       user_id: session.user.id,
       policy_id: policy._id,
-      hospital_id: hospital_id || undefined,
       claim_type,
       incident_type,
       incident_date,
@@ -154,7 +138,6 @@ export async function POST(req: Request) {
           _id: claim._id,
           claim_number: claim.claim_number,
           policy_id: claim.policy_id,
-          hospital_id: claim.hospital_id,
           claim_type: claim.claim_type,
           status: claim.status,
           claimed_amount: claim.claimed_amount,
@@ -194,7 +177,6 @@ export async function GET() {
       user_id: session.user.id,
     })
       .populate("policy_id", "policy_number status")
-      .populate("hospital_id", "name address contact")
       .sort({ created_at: -1 })
       .lean();
 

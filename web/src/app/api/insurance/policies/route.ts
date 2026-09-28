@@ -139,3 +139,38 @@ export async function POST(req: Request) {
     );
   }
 }
+
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (session.user.role !== "patient") {
+      return NextResponse.json(
+        { error: "Only patients can access insurance policies" },
+        { status: 403 },
+      );
+    }
+
+    await dbConnect();
+
+    const policies = await InsurancePolicy.find({
+      user_id: session.user.id,
+    })
+      .populate("plan_id")
+      .sort({ created_at: -1 })
+      .lean();
+
+    return NextResponse.json({ policies });
+  } catch (error) {
+    console.error("Insurance policies fetch error:", error);
+
+    return NextResponse.json(
+      { error: "Failed to fetch insurance policies" },
+      { status: 500 },
+    );
+  }
+}

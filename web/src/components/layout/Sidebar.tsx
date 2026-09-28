@@ -8,13 +8,13 @@ import { navLinks } from "@/config/nav";
 import {
     LayoutDashboard, Building2, Users, Ticket, Hourglass, Ambulance,
     Settings, Stethoscope, User, PlusCircle, ClipboardList, Hospital,
-    LogOut, Logs, UserShield, Pill, Droplets, MoreHorizontal,
+    LogOut, Logs, UserShield, Pill, Droplets, MoreHorizontal, ShieldCheck
 } from "lucide-react";
 
 const IconMap: Record<string, any> = {
     LayoutDashboard, Building2, Users, Ticket, Hourglass, Ambulance,
     Settings, Stethoscope, User, PlusCircle, ClipboardList, Hospital,
-    Logs, LogOut, UserShield, Pill, Droplets, MoreHorizontal
+    Logs, LogOut, UserShield, Pill, Droplets, MoreHorizontal, ShieldCheck
 };
 
 export default function Sidebar() {

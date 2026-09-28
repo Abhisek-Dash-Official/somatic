@@ -32,8 +32,7 @@ export async function GET(
 
     const claim = await InsuranceClaim.findById(id)
       .populate("user_id", "username email contact_no address")
-      .populate("policy_id")
-      .populate("hospital_id", "name address contact");
+      .populate("policy_id");
 
     if (!claim) {
       return NextResponse.json(

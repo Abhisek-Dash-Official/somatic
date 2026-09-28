@@ -3,11 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import InsuranceClaim from "@/models/InsuranceClaim";
+import InsurancePolicy from "@/models/InsurancePolicy";
 
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  InsurancePolicy;
   try {
     const session = await getServerSession(authOptions);
 
@@ -31,7 +33,6 @@ export async function GET(
       user_id: session.user.id,
     })
       .populate("policy_id", "policy_number status start_date expiry_date")
-      .populate("hospital_id", "name address contact")
       .lean();
 
     if (!claim) {

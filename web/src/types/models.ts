@@ -325,7 +325,7 @@ export interface IInsurancePolicy extends Document {
   user_id: mongoose.Types.ObjectId;
   plan_id: mongoose.Types.ObjectId;
 
-  policy_number: string;
+  policy_number?: string;
 
   insured_members?: {
     name: string;
@@ -333,8 +333,8 @@ export interface IInsurancePolicy extends Document {
     date_of_birth?: Date;
   }[];
 
-  start_date: Date;
-  expiry_date: Date;
+  start_date?: Date;
+  expiry_date?: Date;
 
   status:
     | "pending"
@@ -362,13 +362,11 @@ export interface IInsurancePolicy extends Document {
   updated_at: Date;
 }
 
-export interface IInsuranceClaim extends Document {
+export interface IInsuranceClaim {
   _id: any;
 
   user_id: mongoose.Types.ObjectId;
   policy_id: mongoose.Types.ObjectId;
-
-  hospital_id?: mongoose.Types.ObjectId;
 
   claim_number?: string;
 
@@ -400,15 +398,7 @@ export interface IInsuranceClaim extends Document {
   required_documents?: string[];
 
   documents?: {
-    type:
-      | "claim_form"
-      | "hospital_bill"
-      | "discharge_summary"
-      | "prescription"
-      | "lab_report"
-      | "medical_record"
-      | "id_proof"
-      | "other";
+    type: string;
     file_url: string;
     uploaded_at: Date;
   }[];

@@ -3,17 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
-    Ambulance,
-    ArrowRight,
-    Building2,
-    CheckCircle2,
-    Clock3,
-    Loader2,
-    MapPin,
-    Phone,
-    Truck,
-    User,
-    XCircle,
+    Ambulance, ArrowRight, Building2, CheckCircle2, Clock3, Loader2, MapPin, Phone, Truck, User, XCircle, ShieldCheck, FlaskConical
 } from "lucide-react";
 import { useUserStore } from "@/store/useUserStore";
 
@@ -30,14 +20,7 @@ interface DashboardData {
     recentRequests: any[];
 }
 
-const statusConfig: Record<
-    string,
-    {
-        label: string;
-        icon: any;
-        className: string;
-    }
-> = {
+const statusConfig: Record<string, { label: string; icon: any; className: string; }> = {
     pending: {
         label: "Pending",
         icon: Clock3,
@@ -267,6 +250,60 @@ export default function DispatcherDashboard() {
 
                                         <p className="text-xs text-slate-500 mt-1 wrap-break-word">
                                             Monitor doctor case activity
+                                        </p>
+                                    </div>
+
+                                    <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-white transition shrink-0" />
+                                </div>
+                            </Link>
+
+                            <div className="border border-emerald-500/20 bg-emerald-500/5 rounded-xl p-4 sm:p-5 transition min-w-0">
+                                <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-400 mb-3 sm:mb-4" />
+
+                                <div className="flex items-center justify-between gap-3">
+                                    <div className="min-w-0">
+                                        <p className="text-sm sm:text-base text-white font-semibold wrap-break-word">
+                                            Insurance
+                                        </p>
+
+                                        <p className="text-xs text-slate-500 mt-1 wrap-break-word">
+                                            Manage proposals and claims
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="mt-4 grid grid-cols-2 gap-2">
+                                    <Link
+                                        href="/dispatcher/insurance"
+                                        className="group inline-flex items-center justify-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/10"
+                                    >
+                                        Proposals
+                                        <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+                                    </Link>
+
+                                    <Link
+                                        href="/dispatcher/insurance/claims"
+                                        className="group inline-flex items-center justify-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/10"
+                                    >
+                                        Claims
+                                        <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+                                    </Link>
+                                </div>
+                            </div>
+                            <Link
+                                href="/dispatcher/labs"
+                                className="group border border-cyan-500/20 bg-cyan-500/5 hover:bg-cyan-500/10 rounded-xl p-4 sm:p-5 transition min-w-0"
+                            >
+                                <FlaskConical className="w-6 h-6 sm:w-7 sm:h-7 text-cyan-400 mb-3 sm:mb-4" />
+
+                                <div className="flex items-center justify-between gap-3">
+                                    <div className="min-w-0">
+                                        <p className="text-sm sm:text-base text-white font-semibold wrap-break-word">
+                                            Lab Tests & Diagnostics
+                                        </p>
+
+                                        <p className="text-xs text-slate-500 mt-1 wrap-break-word">
+                                            Manage test bookings and diagnostic services
                                         </p>
                                     </div>
 

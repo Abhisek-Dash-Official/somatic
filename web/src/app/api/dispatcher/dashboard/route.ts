@@ -3,8 +3,10 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Consultation from "@/models/Consultation";
+import Department from "@/models/Department";
 
 export async function GET() {
+  Department;
   try {
     const session = await getServerSession(authOptions);
 
