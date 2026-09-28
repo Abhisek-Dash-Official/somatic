@@ -29,7 +29,11 @@ export default function InsuranceDocumentUpload({
         onChange([...documents, { type: "id_proof", file_url: "" }]);
     };
 
-    const updateDocument = (index: number, field: keyof InsuranceDocument, value: string) => {
+    const updateDocument = (
+        index: number,
+        field: keyof InsuranceDocument,
+        value: string
+    ) => {
         const updated = [...documents];
         updated[index] = { ...updated[index], [field]: value } as InsuranceDocument;
         onChange(updated);
@@ -42,19 +46,22 @@ export default function InsuranceDocumentUpload({
     return (
         <div className="space-y-4">
             {documents.map((document, index) => (
-                <div key={index} className="rounded-2xl border border-slate-800 bg-[#0c1426] p-5">
+                <div key={index} className="rounded-xl border border-border bg-surface-secondary p-5">
                     <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                                 <FileText size={18} />
                             </div>
-                            <p className="text-sm font-medium text-white">Document {index + 1}</p>
+
+                            <p className="text-sm font-medium text-foreground">
+                                Document {index + 1}
+                            </p>
                         </div>
 
                         <button
                             type="button"
                             onClick={() => removeDocument(index)}
-                            className="rounded-lg p-2 text-slate-500 transition hover:bg-red-500/10 hover:text-red-400"
+                            className="rounded-lg p-2 text-muted-foreground transition hover:bg-danger/10 hover:text-danger"
                         >
                             <Trash2 size={17} />
                         </button>
@@ -62,13 +69,16 @@ export default function InsuranceDocumentUpload({
 
                     <div className="mt-4 grid gap-4 sm:grid-cols-2">
                         <div>
-                            <label className="mb-2 block text-xs font-medium text-slate-400">
+                            <label className="mb-2 block text-xs font-medium text-muted">
                                 Document Type
                             </label>
+
                             <select
                                 value={document.type}
-                                onChange={(event) => updateDocument(index, "type", event.target.value)}
-                                className="w-full rounded-xl border border-slate-700 bg-[#111a2f] px-4 py-3 text-sm text-white outline-none focus:border-blue-500"
+                                onChange={(event) =>
+                                    updateDocument(index, "type", event.target.value)
+                                }
+                                className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
                             >
                                 {documentTypes.map((type) => (
                                     <option key={type.value} value={type.value}>
@@ -79,15 +89,18 @@ export default function InsuranceDocumentUpload({
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-xs font-medium text-slate-400">
+                            <label className="mb-2 block text-xs font-medium text-muted">
                                 File URL
                             </label>
+
                             <input
                                 type="url"
                                 value={document.file_url}
-                                onChange={(event) => updateDocument(index, "file_url", event.target.value)}
+                                onChange={(event) =>
+                                    updateDocument(index, "file_url", event.target.value)
+                                }
                                 placeholder="https://..."
-                                className="w-full rounded-xl border border-slate-700 bg-[#111a2f] px-4 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-500"
+                                className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
                             />
                         </div>
                     </div>
@@ -97,15 +110,21 @@ export default function InsuranceDocumentUpload({
             <button
                 type="button"
                 onClick={addDocument}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-700 px-4 py-3 text-sm font-medium text-slate-400 transition hover:border-blue-500/50 hover:text-blue-400"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border px-4 py-3 text-sm font-medium text-muted transition hover:border-primary/50 hover:bg-accent hover:text-primary"
             >
                 <Plus size={18} />
                 Add Document
             </button>
 
             {requiredTypes.length > 0 && (
-                <p className="text-xs text-slate-500">
-                    Required documents: {requiredTypes.map((type) => documentTypes.find((item) => item.value === type)?.label).filter(Boolean).join(", ")}
+                <p className="text-xs text-muted-foreground">
+                    Required documents:{" "}
+                    {requiredTypes
+                        .map((type) =>
+                            documentTypes.find((item) => item.value === type)?.label
+                        )
+                        .filter(Boolean)
+                        .join(", ")}
                 </p>
             )}
         </div>

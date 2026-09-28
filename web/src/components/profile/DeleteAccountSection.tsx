@@ -12,6 +12,7 @@ export default function DeleteAccountSection() {
 
     const handleDeleteAccount = async () => {
         setLoading(true);
+
         try {
             const res = await fetch("/api/users/me", {
                 method: "DELETE",
@@ -29,9 +30,8 @@ export default function DeleteAccountSection() {
             setTimeout(() => {
                 signOut({ callbackUrl: "/login" });
             }, 1500);
-
         } catch (error: any) {
-            toast.error(error.message);
+            toast.error(error.message || "Failed to delete account");
             setIsModalOpen(false);
         } finally {
             setLoading(false);
@@ -39,21 +39,25 @@ export default function DeleteAccountSection() {
     };
 
     return (
-        <div className="bg-[#131C31] border border-red-500/20 rounded-2xl p-6 sm:p-8 shadow-lg mt-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="mt-6 rounded-xl border border-danger/20 bg-surface p-6 sm:p-8">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                    <h2 className="text-lg font-bold text-red-400 flex items-center gap-2 mb-1">
-                        <AlertTriangle className="h-5 w-5" /> Delete Account
+                    <h2 className="mb-1 flex items-center gap-2 text-lg font-bold text-danger">
+                        <AlertTriangle className="h-5 w-5" />
+                        Delete Account
                     </h2>
-                    <p className="text-sm text-slate-400">
+
+                    <p className="text-sm text-muted">
                         Permanently remove your account and all associated data. This action cannot be undone.
                     </p>
                 </div>
+
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl border border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white transition-all font-semibold text-sm"
+                    className="flex shrink-0 items-center gap-2 rounded-lg border border-danger/50 px-5 py-2.5 text-sm font-semibold text-danger transition hover:bg-danger hover:text-white"
                 >
-                    <Trash2 className="h-4 w-4" /> Delete My Account
+                    <Trash2 className="h-4 w-4" />
+                    Delete My Account
                 </button>
             </div>
 

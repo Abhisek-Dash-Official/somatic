@@ -28,11 +28,11 @@ const formatDate = (date?: string) => {
 };
 
 const statusStyles: Record<string, string> = {
-    pending: "border-amber-500/20 bg-amber-500/10 text-amber-400",
-    approved: "border-blue-500/20 bg-blue-500/10 text-blue-400",
-    payment_pending: "border-orange-500/20 bg-orange-500/10 text-orange-400",
-    active: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
-    rejected: "border-red-500/20 bg-red-500/10 text-red-400",
+    pending: "border-warning/20 bg-warning/10 text-warning",
+    approved: "border-primary/20 bg-primary/10 text-primary",
+    payment_pending: "border-warning/20 bg-warning/10 text-warning",
+    active: "border-success/20 bg-success/10 text-success",
+    rejected: "border-danger/20 bg-danger/10 text-danger",
 };
 
 const statusLabel = (status: string) =>
@@ -69,9 +69,7 @@ export default function DispatcherInsuranceDetailsPage() {
     };
 
     useEffect(() => {
-        if (params.id) {
-            fetchPolicy();
-        }
+        if (params.id) fetchPolicy();
     }, [params.id]);
 
     const updatePolicy = async (action: "approve" | "reject") => {
@@ -118,24 +116,24 @@ export default function DispatcherInsuranceDetailsPage() {
 
     if (loading) {
         return (
-            <main className="flex min-h-[70vh] items-center justify-center">
-                <Loader2 className="animate-spin text-blue-400" size={32} />
+            <main className="flex min-h-[70vh] items-center justify-center bg-background">
+                <Loader2 className="animate-spin text-primary" size={32} />
             </main>
         );
     }
 
     if (!policy) {
         return (
-            <main className="mx-auto flex min-h-[70vh] w-full max-w-3xl items-center justify-center px-4">
-                <div className="w-full rounded-2xl border border-slate-800 bg-[#111a2f] p-8 text-center">
-                    <ShieldCheck className="mx-auto text-slate-600" size={40} />
-                    <h1 className="mt-4 text-xl font-semibold text-white">Proposal not found</h1>
-                    <p className="mt-2 text-sm text-slate-500">
+            <main className="mx-auto flex min-h-[70vh] w-full max-w-3xl items-center justify-center bg-background px-4">
+                <div className="w-full rounded-xl border border-border bg-surface p-8 text-center">
+                    <ShieldCheck className="mx-auto text-muted-foreground" size={40} />
+                    <h1 className="mt-4 text-xl font-semibold text-foreground">Proposal not found</h1>
+                    <p className="mt-2 text-sm text-muted">
                         This insurance proposal could not be found.
                     </p>
                     <Link
                         href="/dispatcher/insurance"
-                        className="mt-6 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-500"
+                        className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover"
                     >
                         <ArrowLeft size={17} />
                         Back to Proposals
@@ -150,38 +148,38 @@ export default function DispatcherInsuranceDetailsPage() {
     const isPending = policy.status === "pending";
 
     return (
-        <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+        <main className="mx-auto w-full max-w-6xl px-4 py-6 text-foreground sm:px-6 lg:px-8">
             <Link
                 href="/dispatcher/insurance"
-                className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white"
+                className="inline-flex items-center gap-2 text-sm text-muted transition hover:text-foreground"
             >
                 <ArrowLeft size={17} />
                 Back to Insurance Proposals
             </Link>
 
-            <section className="mt-6 overflow-hidden rounded-3xl border border-slate-800 bg-[#111a2f]">
-                <div className="border-b border-slate-800 bg-linear-to-br from-blue-500/10 via-transparent to-transparent p-6 sm:p-8">
+            <section className="mt-6 overflow-hidden rounded-xl border border-border bg-surface">
+                <div className="border-b border-border bg-primary/5 p-6 sm:p-8">
                     <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                         <div className="flex items-start gap-4">
-                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400">
+                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                                 <ShieldCheck size={28} />
                             </div>
 
                             <div>
-                                <p className="text-sm font-medium text-blue-400">
+                                <p className="text-sm font-medium text-primary">
                                     Insurance Proposal Review
                                 </p>
-                                <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
+                                <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">
                                     {plan?.name || "Insurance Proposal"}
                                 </h1>
-                                <p className="mt-2 text-sm text-slate-500">
+                                <p className="mt-2 text-sm text-muted">
                                     Submitted on {formatDate(policy.created_at)}
                                 </p>
                             </div>
                         </div>
 
                         <span
-                            className={`w-fit rounded-full border px-3 py-1.5 text-xs font-medium ${statusStyles[policy.status] || "border-slate-700 bg-slate-500/10 text-slate-400"}`}
+                            className={`w-fit rounded-full border px-3 py-1.5 text-xs font-medium ${statusStyles[policy.status] || "border-border bg-surface-secondary text-muted"}`}
                         >
                             {statusLabel(policy.status)}
                         </span>
@@ -189,75 +187,75 @@ export default function DispatcherInsuranceDetailsPage() {
                 </div>
 
                 <div className="grid gap-4 p-6 sm:grid-cols-3 sm:p-8">
-                    <div className="rounded-2xl border border-slate-800 bg-[#0c1426] p-5">
-                        <p className="text-xs text-slate-500">Coverage Amount</p>
-                        <p className="mt-2 text-2xl font-bold text-white">
+                    <div className="rounded-lg border border-border bg-surface-secondary p-5">
+                        <p className="text-xs text-muted">Coverage Amount</p>
+                        <p className="mt-2 text-2xl font-bold text-foreground">
                             ₹{Number(plan?.coverage_amount || 0).toLocaleString("en-IN")}
                         </p>
                     </div>
 
-                    <div className="rounded-2xl border border-slate-800 bg-[#0c1426] p-5">
-                        <p className="text-xs text-slate-500">Premium</p>
-                        <p className="mt-2 text-2xl font-bold text-white">
+                    <div className="rounded-lg border border-border bg-surface-secondary p-5">
+                        <p className="text-xs text-muted">Premium</p>
+                        <p className="mt-2 text-2xl font-bold text-foreground">
                             ₹{Number(plan?.premium_amount || 0).toLocaleString("en-IN")}
                         </p>
-                        <p className="mt-1 text-xs capitalize text-slate-500">
+                        <p className="mt-1 text-xs capitalize text-muted">
                             {plan?.premium_frequency?.replace("_", " ")}
                         </p>
                     </div>
 
-                    <div className="rounded-2xl border border-slate-800 bg-[#0c1426] p-5">
-                        <p className="text-xs text-slate-500">Policy Term</p>
-                        <p className="mt-2 text-2xl font-bold text-white">
+                    <div className="rounded-lg border border-border bg-surface-secondary p-5">
+                        <p className="text-xs text-muted">Policy Term</p>
+                        <p className="mt-2 text-2xl font-bold text-foreground">
                             {plan?.policy_term_years}{" "}
                             {Number(plan?.policy_term_years) === 1 ? "Year" : "Years"}
                         </p>
                     </div>
                 </div>
 
-                <div className="grid gap-6 border-t border-slate-800 p-6 lg:grid-cols-2 lg:p-8">
+                <div className="grid gap-6 border-t border-border p-6 lg:grid-cols-2 lg:p-8">
                     <div>
                         <div className="flex items-center gap-3">
-                            <UserRound className="text-blue-400" size={21} />
+                            <UserRound className="text-primary" size={21} />
                             <div>
-                                <h2 className="font-semibold text-white">Patient Information</h2>
-                                <p className="mt-1 text-xs text-slate-500">Applicant details</p>
+                                <h2 className="font-semibold text-foreground">Patient Information</h2>
+                                <p className="mt-1 text-xs text-muted">Applicant details</p>
                             </div>
                         </div>
 
                         <div className="mt-5 space-y-3">
-                            <div className="rounded-xl border border-slate-800 bg-[#0c1426] p-4">
-                                <p className="text-xs text-slate-500">Name</p>
-                                <p className="mt-1 text-sm font-medium text-white">
+                            <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                                <p className="text-xs text-muted">Name</p>
+                                <p className="mt-1 text-sm font-medium text-foreground">
                                     {patient?.username || "Not available"}
                                 </p>
                             </div>
 
-                            <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-[#0c1426] p-4">
-                                <Mail className="text-slate-500" size={17} />
+                            <div className="flex items-center gap-3 rounded-lg border border-border bg-surface-secondary p-4">
+                                <Mail className="text-muted-foreground" size={17} />
                                 <div>
-                                    <p className="text-xs text-slate-500">Email</p>
-                                    <p className="mt-1 text-sm text-slate-300">
+                                    <p className="text-xs text-muted">Email</p>
+                                    <p className="mt-1 text-sm text-foreground">
                                         {patient?.email || "Not available"}
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-[#0c1426] p-4">
-                                <Phone className="text-slate-500" size={17} />
+                            <div className="flex items-center gap-3 rounded-lg border border-border bg-surface-secondary p-4">
+                                <Phone className="text-muted-foreground" size={17} />
                                 <div>
-                                    <p className="text-xs text-slate-500">Contact</p>
-                                    <p className="mt-1 text-sm text-slate-300">
+                                    <p className="text-xs text-muted">Contact</p>
+                                    <p className="mt-1 text-sm text-foreground">
                                         {patient?.contact_no || "Not available"}
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="flex items-start gap-3 rounded-xl border border-slate-800 bg-[#0c1426] p-4">
-                                <MapPin className="mt-0.5 text-slate-500" size={17} />
+                            <div className="flex items-start gap-3 rounded-lg border border-border bg-surface-secondary p-4">
+                                <MapPin className="mt-0.5 text-muted-foreground" size={17} />
                                 <div>
-                                    <p className="text-xs text-slate-500">Address</p>
-                                    <p className="mt-1 text-sm leading-6 text-slate-300">
+                                    <p className="text-xs text-muted">Address</p>
+                                    <p className="mt-1 text-sm leading-6 text-foreground">
                                         {patient?.address || "Not available"}
                                     </p>
                                 </div>
@@ -267,10 +265,10 @@ export default function DispatcherInsuranceDetailsPage() {
 
                     <div>
                         <div className="flex items-center gap-3">
-                            <UserRound className="text-blue-400" size={21} />
+                            <UserRound className="text-primary" size={21} />
                             <div>
-                                <h2 className="font-semibold text-white">Insured Members</h2>
-                                <p className="mt-1 text-xs text-slate-500">
+                                <h2 className="font-semibold text-foreground">Insured Members</h2>
+                                <p className="mt-1 text-xs text-muted">
                                     Members included in the proposal
                                 </p>
                             </div>
@@ -281,20 +279,20 @@ export default function DispatcherInsuranceDetailsPage() {
                                 policy.insured_members.map((member: any, index: number) => (
                                     <div
                                         key={`${member.name}-${index}`}
-                                        className="rounded-xl border border-slate-800 bg-[#0c1426] p-4"
+                                        className="rounded-lg border border-border bg-surface-secondary p-4"
                                     >
                                         <div className="flex items-center justify-between gap-3">
                                             <div>
-                                                <p className="text-sm font-medium text-white">
+                                                <p className="text-sm font-medium text-foreground">
                                                     {member.name}
                                                 </p>
-                                                <p className="mt-1 text-xs capitalize text-slate-500">
+                                                <p className="mt-1 text-xs capitalize text-muted">
                                                     {member.relationship || "Member"}
                                                 </p>
                                             </div>
 
                                             {member.date_of_birth && (
-                                                <p className="text-xs text-slate-500">
+                                                <p className="text-xs text-muted">
                                                     {formatDate(member.date_of_birth)}
                                                 </p>
                                             )}
@@ -302,16 +300,16 @@ export default function DispatcherInsuranceDetailsPage() {
                                     </div>
                                 ))
                             ) : (
-                                <p className="text-sm text-slate-500">No insured members found.</p>
+                                <p className="text-sm text-muted">No insured members found.</p>
                             )}
                         </div>
                     </div>
                 </div>
 
                 {plan?.description && (
-                    <div className="border-t border-slate-800 p-6 sm:p-8">
-                        <h2 className="font-semibold text-white">Plan Description</h2>
-                        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+                    <div className="border-t border-border p-6 sm:p-8">
+                        <h2 className="font-semibold text-foreground">Plan Description</h2>
+                        <p className="mt-3 max-w-3xl text-sm leading-6 text-muted">
                             {plan.description}
                         </p>
 
@@ -320,7 +318,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                 {plan.features.map((feature: string, index: number) => (
                                     <div
                                         key={`${feature}-${index}`}
-                                        className="rounded-xl border border-slate-800 bg-[#0c1426] p-4 text-sm text-slate-300"
+                                        className="rounded-lg border border-border bg-surface-secondary p-4 text-sm text-foreground"
                                     >
                                         {feature}
                                     </div>
@@ -331,12 +329,12 @@ export default function DispatcherInsuranceDetailsPage() {
                 )}
 
                 {policy.documents?.length > 0 && (
-                    <div className="border-t border-slate-800 p-6 sm:p-8">
+                    <div className="border-t border-border p-6 sm:p-8">
                         <div className="flex items-center gap-3">
-                            <FileText className="text-blue-400" size={21} />
+                            <FileText className="text-primary" size={21} />
                             <div>
-                                <h2 className="font-semibold text-white">Supporting Documents</h2>
-                                <p className="mt-1 text-xs text-slate-500">
+                                <h2 className="font-semibold text-foreground">Supporting Documents</h2>
+                                <p className="mt-1 text-xs text-muted">
                                     Documents submitted with this proposal
                                 </p>
                             </div>
@@ -349,16 +347,16 @@ export default function DispatcherInsuranceDetailsPage() {
                                     href={document.file_url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex items-center justify-between gap-3 rounded-xl border border-slate-800 bg-[#0c1426] p-4 transition hover:border-blue-500/40"
+                                    className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface-secondary p-4 transition hover:bg-accent"
                                 >
                                     <div className="flex min-w-0 items-center gap-3">
-                                        <FileText className="shrink-0 text-slate-400" size={18} />
-                                        <span className="truncate text-sm capitalize text-slate-300">
+                                        <FileText className="shrink-0 text-muted-foreground" size={18} />
+                                        <span className="truncate text-sm capitalize text-foreground">
                                             {document.type?.replaceAll("_", " ") || "Document"}
                                         </span>
                                     </div>
 
-                                    <span className="shrink-0 text-xs font-medium text-blue-400">
+                                    <span className="shrink-0 text-xs font-medium text-primary">
                                         View
                                     </span>
                                 </a>
@@ -368,10 +366,10 @@ export default function DispatcherInsuranceDetailsPage() {
                 )}
 
                 {policy.status === "rejected" && policy.rejection_reason && (
-                    <div className="border-t border-slate-800 p-6 sm:p-8">
-                        <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-5">
-                            <p className="text-sm font-semibold text-red-400">Rejection Reason</p>
-                            <p className="mt-2 text-sm leading-6 text-slate-400">
+                    <div className="border-t border-border p-6 sm:p-8">
+                        <div className="rounded-xl border border-danger/20 bg-danger/10 p-5">
+                            <p className="text-sm font-semibold text-danger">Rejection Reason</p>
+                            <p className="mt-2 text-sm leading-6 text-muted">
                                 {policy.rejection_reason}
                             </p>
                         </div>
@@ -379,14 +377,14 @@ export default function DispatcherInsuranceDetailsPage() {
                 )}
 
                 {isPending && (
-                    <div className="border-t border-slate-800 bg-[#0c1426] p-6 sm:p-8">
+                    <div className="border-t border-border bg-surface-secondary p-6 sm:p-8">
                         {!showReject && !showApproveConfirm && (
                             <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
                                 <button
                                     type="button"
                                     onClick={() => setShowReject(true)}
                                     disabled={actionLoading}
-                                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-500/30 px-6 py-3 text-sm font-medium text-red-400 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-danger/30 px-6 py-3 text-sm font-medium text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <XCircle size={18} />
                                     Reject Proposal
@@ -396,7 +394,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                     type="button"
                                     onClick={() => setShowApproveConfirm(true)}
                                     disabled={actionLoading}
-                                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <CheckCircle2 size={18} />
                                     Approve Proposal
@@ -405,9 +403,9 @@ export default function DispatcherInsuranceDetailsPage() {
                         )}
 
                         {showApproveConfirm && (
-                            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5">
-                                <h3 className="font-semibold text-white">Approve Insurance Proposal?</h3>
-                                <p className="mt-2 text-sm leading-6 text-slate-400">
+                            <div className="rounded-xl border border-success/20 bg-success/10 p-5">
+                                <h3 className="font-semibold text-foreground">Approve Insurance Proposal?</h3>
+                                <p className="mt-2 text-sm leading-6 text-muted">
                                     This will approve the proposal and allow the patient to proceed with premium payment.
                                 </p>
 
@@ -416,7 +414,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                         type="button"
                                         onClick={() => setShowApproveConfirm(false)}
                                         disabled={actionLoading}
-                                        className="rounded-xl border border-slate-700 px-5 py-3 text-sm font-medium text-slate-300 transition hover:text-white"
+                                        className="rounded-lg border border-border px-5 py-3 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
                                     >
                                         Cancel
                                     </button>
@@ -425,7 +423,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                         type="button"
                                         onClick={() => updatePolicy("approve")}
                                         disabled={actionLoading}
-                                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         {actionLoading && <Loader2 className="animate-spin" size={18} />}
                                         Confirm Approval
@@ -435,9 +433,9 @@ export default function DispatcherInsuranceDetailsPage() {
                         )}
 
                         {showReject && (
-                            <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-5">
-                                <h3 className="font-semibold text-white">Reject Insurance Proposal</h3>
-                                <p className="mt-1 text-sm text-slate-500">
+                            <div className="rounded-xl border border-danger/20 bg-danger/10 p-5">
+                                <h3 className="font-semibold text-foreground">Reject Insurance Proposal</h3>
+                                <p className="mt-1 text-sm text-muted">
                                     Provide a reason that will be visible to the patient.
                                 </p>
 
@@ -446,7 +444,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                     onChange={(event) => setRejectionReason(event.target.value)}
                                     placeholder="Enter rejection reason..."
                                     rows={4}
-                                    className="mt-4 w-full resize-none rounded-xl border border-slate-700 bg-[#0c1426] px-4 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-red-500"
+                                    className="mt-4 w-full resize-none rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-danger focus:ring-4 focus:ring-danger/10"
                                 />
 
                                 <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-end">
@@ -457,7 +455,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                             setRejectionReason("");
                                         }}
                                         disabled={actionLoading}
-                                        className="rounded-xl border border-slate-700 px-5 py-3 text-sm font-medium text-slate-300 transition hover:text-white"
+                                        className="rounded-lg border border-border px-5 py-3 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
                                     >
                                         Cancel
                                     </button>
@@ -466,7 +464,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                         type="button"
                                         onClick={() => updatePolicy("reject")}
                                         disabled={actionLoading}
-                                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-danger px-5 py-3 text-sm font-medium text-white transition hover:bg-danger/90 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         {actionLoading && <Loader2 className="animate-spin" size={18} />}
                                         Confirm Rejection

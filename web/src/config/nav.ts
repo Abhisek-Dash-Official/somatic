@@ -7,7 +7,10 @@ export const navLinks = {
   ],
 
   moreNav: [
+    { title: "Soma AI", href: "/chat" },
     { title: "Insurance", href: "/patient/insurance" },
+    { title: "Lab Tests & Diagnostics", href: "/labs" },
+    { title: "Learn", href: "/learn" },
     { title: "Blog", href: "/blog" },
     { title: "Contact", href: "/contact" },
   ],
@@ -63,7 +66,8 @@ export const navLinks = {
     },
     {
       title: "Learn",
-      description: "Learn about medicines, health and everyday healthcare",
+      description:
+        "Learn about medicines, health, diseases and everyday healthcare",
       image: "/portal/learn.jpeg",
       href: "/learn",
       icon: "BookOpen",
@@ -185,6 +189,11 @@ export const navLinks = {
         title: "My Consultations",
         href: "/patient/consultations",
         icon: "ClipboardList",
+      },
+      {
+        title: "Lab Test & Diagnotics",
+        href: "/admin/labs",
+        icon: "Microscope",
       },
       { title: "Tickets", href: "/tickets", icon: "Ticket" },
       { title: "Profile", href: "/patient/profile", icon: "User" },

@@ -6,9 +6,7 @@ import Image from "next/image";
 import { MapPin, Loader2, Filter } from "lucide-react";
 
 const getValidImage = (imgSrc: string) => {
-    if (imgSrc && (imgSrc.startsWith("http") || imgSrc.startsWith("/"))) {
-        return imgSrc;
-    }
+    if (imgSrc && (imgSrc.startsWith("http") || imgSrc.startsWith("/"))) return imgSrc;
     return "/fallback.png";
 };
 
@@ -35,11 +33,8 @@ export default function BloodBanksList() {
         fetchingRef.current = true;
 
         try {
-            if (isNewSearch) {
-                setLoading(true);
-            } else {
-                setLoadingMore(true);
-            }
+            if (isNewSearch) setLoading(true);
+            else setLoadingMore(true);
 
             const params = new URLSearchParams();
             params.set("limit", limit.toString());
@@ -48,11 +43,10 @@ export default function BloodBanksList() {
             if (city.trim()) params.set("city", city.trim());
 
             const currentList = bloodBanksRef.current;
+
             if (!isNewSearch && currentList.length > 0) {
                 const lastItem = currentList[currentList.length - 1];
-                if (lastItem) {
-                    params.set("lastId", lastItem._id);
-                }
+                if (lastItem) params.set("lastId", lastItem._id);
             }
 
             const res = await fetch(`/api/shop/bloodbanks?${params.toString()}`);
@@ -65,7 +59,7 @@ export default function BloodBanksList() {
                     setBloodBanks(fetchedData);
                 } else {
                     setBloodBanks((prev) => {
-                        const existingIds = new Set(prev.map(item => item._id));
+                        const existingIds = new Set(prev.map((item) => item._id));
                         const uniqueNewItems = fetchedData.filter((item: any) => !existingIds.has(item._id));
                         return [...prev, ...uniqueNewItems];
                     });
@@ -112,27 +106,28 @@ export default function BloodBanksList() {
     );
 
     return (
-        <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
-                <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl">
+                <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                     <div>
-                        <h1 className="text-3xl font-bold text-slate-900">Available Blood Banks</h1>
-                        <p className="text-slate-500 mt-1">Find blood banks and check real-time availability.</p>
+                        <h1 className="text-3xl font-bold text-foreground">Available Blood Banks</h1>
+                        <p className="mt-1 text-muted">Find blood banks and check real-time availability.</p>
                     </div>
-                    <div className="bg-red-600 text-white px-4 py-2 rounded-xl font-bold text-sm shadow">
+
+                    <div className="rounded-lg bg-danger px-4 py-2 text-sm font-bold text-white">
                         Rendered Items: {bloodBanks.length}
                     </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-8">
-                    <form onSubmit={handleSearchSubmit} className="flex flex-col lg:flex-row gap-4">
+                <div className="mb-8 rounded-xl border border-border bg-surface p-4 shadow-sm">
+                    <form onSubmit={handleSearchSubmit} className="flex flex-col gap-4 lg:flex-row">
                         <div className="flex-1">
                             <input
                                 type="text"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search by blood bank name..."
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-red-500"
+                                className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                         </div>
 
@@ -142,7 +137,7 @@ export default function BloodBanksList() {
                                 value={city}
                                 onChange={(e) => setCity(e.target.value)}
                                 placeholder="Filter by city..."
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-red-500"
+                                className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                         </div>
 
@@ -150,7 +145,7 @@ export default function BloodBanksList() {
                             <select
                                 value={bloodGroup}
                                 onChange={(e) => setBloodGroup(e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-red-500 font-medium text-slate-700"
+                                className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 font-medium text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                             >
                                 <option value="">All Blood Groups</option>
                                 <option value="A+">A+</option>
@@ -166,7 +161,7 @@ export default function BloodBanksList() {
 
                         <button
                             type="submit"
-                            className="px-6 py-3 rounded-xl bg-slate-900 text-white font-semibold hover:bg-slate-800 transition-colors"
+                            className="rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover"
                         >
                             Filter
                         </button>
@@ -174,18 +169,18 @@ export default function BloodBanksList() {
                 </div>
 
                 {loading ? (
-                    <div className="min-h-96 flex items-center justify-center text-lg font-semibold text-slate-500">
+                    <div className="flex min-h-96 items-center justify-center text-lg font-semibold text-muted">
                         Loading Blood Banks...
                     </div>
                 ) : bloodBanks.length === 0 ? (
-                    <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
-                        <Filter className="w-12 h-12 mx-auto text-slate-300 mb-4" />
-                        <h2 className="text-xl font-bold text-slate-800">No blood banks found</h2>
-                        <p className="text-slate-500 mt-2">Try changing your search or blood group filter.</p>
+                    <div className="rounded-xl border border-border bg-surface p-12 text-center">
+                        <Filter className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                        <h2 className="text-xl font-bold text-foreground">No blood banks found</h2>
+                        <p className="mt-2 text-muted">Try changing your search or blood group filter.</p>
                     </div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {bloodBanks.map((bank, index) => {
                                 const isLastItem = index === bloodBanks.length - 1;
 
@@ -193,10 +188,10 @@ export default function BloodBanksList() {
                                     <div
                                         ref={isLastItem ? lastElementRef : null}
                                         key={`${bank._id}-${index}`}
-                                        className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+                                        className="flex flex-col justify-between overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
                                     >
                                         <div>
-                                            <div className="relative h-48 w-full bg-slate-200">
+                                            <div className="relative h-48 w-full bg-surface-secondary">
                                                 <Image
                                                     src={getValidImage(bank.images?.[0])}
                                                     alt={bank.name}
@@ -204,26 +199,35 @@ export default function BloodBanksList() {
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                     className="object-cover"
                                                 />
+
                                                 {bank.is_delivery_available && (
-                                                    <span className="absolute top-4 right-4 bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                                                    <span className="absolute right-4 top-4 rounded-full border border-success/30 bg-success/10 px-3 py-1 text-xs font-bold text-success">
                                                         Delivery Available
                                                     </span>
                                                 )}
                                             </div>
 
                                             <div className="p-6">
-                                                <h2 className="text-xl font-bold text-slate-800 mb-2 truncate">{bank.name}</h2>
-                                                <p className="text-sm text-slate-500 mb-4 flex items-center gap-1.5">
-                                                    <MapPin className="w-4 h-4 text-slate-400" /> {bank.address?.city}, {bank.address?.state}
+                                                <h2 className="mb-2 truncate text-xl font-bold text-foreground">
+                                                    {bank.name}
+                                                </h2>
+
+                                                <p className="mb-4 flex items-center gap-1.5 text-sm text-muted">
+                                                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                                                    {bank.address?.city}, {bank.address?.state}
                                                 </p>
 
-                                                <div className="flex items-center justify-between mt-4">
-                                                    <div className="text-sm text-slate-600">
-                                                        <span className="font-semibold">{bank.inventory?.length || 0}</span> Blood Groups
+                                                <div className="mt-4 flex items-center justify-between gap-3">
+                                                    <div className="text-sm text-muted">
+                                                        <span className="font-semibold text-foreground">
+                                                            {bank.inventory?.length || 0}
+                                                        </span>{" "}
+                                                        Blood Groups
                                                     </div>
+
                                                     <Link
                                                         href={`/shop/bloodbanks/${bank._id}`}
-                                                        className="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+                                                        className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-primary hover:text-primary-foreground"
                                                     >
                                                         View Details
                                                     </Link>
@@ -237,13 +241,15 @@ export default function BloodBanksList() {
 
                         {loadingMore && (
                             <div className="flex items-center justify-center py-8">
-                                <Loader2 className="w-6 h-6 animate-spin text-red-600" />
-                                <span className="ml-2 text-sm text-slate-600 font-medium">Loading more blood banks...</span>
+                                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                                <span className="ml-2 text-sm font-medium text-muted">
+                                    Loading more blood banks...
+                                </span>
                             </div>
                         )}
 
                         {!hasMore && bloodBanks.length > 0 && (
-                            <div className="text-center py-8 text-sm text-slate-400 font-medium">
+                            <div className="py-8 text-center text-sm font-medium text-muted-foreground">
                                 You have reached the end of the list. Total Rendered: {bloodBanks.length}
                             </div>
                         )}

@@ -160,7 +160,7 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
                     },
                 },
                 theme: {
-                    color: "#9333ea",
+                    color: "#10b981",
                 },
             };
 
@@ -180,16 +180,16 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
 
     if (loading) {
         return (
-            <div className="flex min-h-[60vh] items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
+            <div className="flex min-h-[60vh] items-center justify-center bg-background">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
         );
     }
 
     if (!policy) {
         return (
-            <div className="p-6">
-                <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-8 text-center text-zinc-400">
+            <div className="min-h-[60vh] bg-background p-6">
+                <div className="rounded-xl border border-border bg-surface p-8 text-center text-muted">
                     Insurance policy not found.
                 </div>
             </div>
@@ -198,15 +198,18 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
 
     if (policy.status === "active") {
         return (
-            <div className="min-h-[60vh] p-4 md:p-6">
-                <div className="mx-auto max-w-xl rounded-xl border border-zinc-800 bg-zinc-950 p-8 text-center">
-                    <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-400" />
-                    <h1 className="mt-4 text-xl font-bold text-white">Policy Already Active</h1>
-                    <p className="mt-2 text-sm text-zinc-400">
+            <div className="min-h-[60vh] bg-background p-4 md:p-6">
+                <div className="mx-auto max-w-xl rounded-xl border border-border bg-surface p-8 text-center">
+                    <CheckCircle2 className="mx-auto h-12 w-12 text-success" />
+                    <h1 className="mt-4 text-xl font-bold text-foreground">Policy Already Active</h1>
+                    <p className="mt-2 text-sm text-muted">
                         This insurance policy has already been activated successfully.
                     </p>
 
-                    <Link href={`/patient/insurance/policies/${policy._id}`} className="mt-6 inline-flex items-center gap-2 rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-purple-500">
+                    <Link
+                        href={`/patient/insurance/policies/${policy._id}`}
+                        className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
+                    >
                         View Policy
                     </Link>
                 </div>
@@ -216,15 +219,18 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
 
     if (policy.status !== "approved" && policy.status !== "payment_pending") {
         return (
-            <div className="min-h-[60vh] p-4 md:p-6">
-                <div className="mx-auto max-w-xl rounded-xl border border-zinc-800 bg-zinc-950 p-8 text-center">
-                    <ShieldCheck className="mx-auto h-12 w-12 text-zinc-600" />
-                    <h1 className="mt-4 text-xl font-bold text-white">Payment Not Available</h1>
-                    <p className="mt-2 text-sm text-zinc-400">
+            <div className="min-h-[60vh] bg-background p-4 md:p-6">
+                <div className="mx-auto max-w-xl rounded-xl border border-border bg-surface p-8 text-center">
+                    <ShieldCheck className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <h1 className="mt-4 text-xl font-bold text-foreground">Payment Not Available</h1>
+                    <p className="mt-2 text-sm text-muted">
                         This insurance policy is not currently ready for payment.
                     </p>
 
-                    <Link href={`/patient/insurance/policies/${policy._id}`} className="mt-6 inline-flex items-center gap-2 rounded-lg border border-zinc-700 px-5 py-2.5 text-sm font-medium text-zinc-200 transition hover:border-zinc-600 hover:bg-zinc-900">
+                    <Link
+                        href={`/patient/insurance/policies/${policy._id}`}
+                        className="mt-6 inline-flex items-center gap-2 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-foreground"
+                    >
                         View Policy
                     </Link>
                 </div>
@@ -235,59 +241,64 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
     const premium = Number(policy.plan_id?.premium_amount || 0);
 
     return (
-        <div className="min-h-screen space-y-6 p-4 md:p-6">
+        <div className="min-h-screen space-y-6 bg-background p-4 text-foreground md:p-6">
             <div className="flex items-center gap-3">
-                <Link href={`/patient/insurance/policies/${policy._id}`} className="rounded-lg border border-zinc-800 p-2 text-zinc-400 transition hover:border-zinc-700 hover:text-white">
+                <Link
+                    href={`/patient/insurance/policies/${policy._id}`}
+                    className="rounded-lg border border-border bg-surface p-2 text-muted transition hover:border-primary/40 hover:text-foreground"
+                >
                     <ArrowLeft className="h-4 w-4" />
                 </Link>
 
                 <div>
-                    <h1 className="text-2xl font-bold text-white">Insurance Premium Payment</h1>
-                    <p className="mt-1 text-sm text-zinc-400">Complete your premium payment to activate the policy.</p>
+                    <h1 className="text-2xl font-bold text-foreground">Insurance Premium Payment</h1>
+                    <p className="mt-1 text-sm text-muted">Complete your premium payment to activate the policy.</p>
                 </div>
             </div>
 
             <div className="mx-auto grid max-w-4xl gap-6 lg:grid-cols-3">
                 <section className="space-y-6 lg:col-span-2">
-                    <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-6">
+                    <div className="rounded-xl border border-border bg-surface p-6">
                         <div className="flex items-start gap-4">
-                            <div className="rounded-lg bg-purple-500/10 p-3">
-                                <ShieldCheck className="h-6 w-6 text-purple-400" />
+                            <div className="rounded-lg bg-primary/10 p-3">
+                                <ShieldCheck className="h-6 w-6 text-primary" />
                             </div>
 
                             <div>
-                                <h2 className="text-lg font-semibold text-white">{policy.plan_id?.name || "Insurance Plan"}</h2>
-                                <p className="mt-1 text-sm text-zinc-500">
+                                <h2 className="text-lg font-semibold text-foreground">
+                                    {policy.plan_id?.name || "Insurance Plan"}
+                                </h2>
+                                <p className="mt-1 text-sm text-muted">
                                     Policy ID: {policy._id}
                                 </p>
                             </div>
                         </div>
 
                         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                            <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
-                                <p className="text-xs text-zinc-500">Coverage Amount</p>
-                                <p className="mt-1 text-lg font-semibold text-white">
+                            <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                                <p className="text-xs text-muted">Coverage Amount</p>
+                                <p className="mt-1 text-lg font-semibold text-foreground">
                                     ₹{Number(policy.plan_id?.coverage_amount || 0).toLocaleString("en-IN")}
                                 </p>
                             </div>
 
-                            <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
-                                <p className="text-xs text-zinc-500">Policy Term</p>
-                                <p className="mt-1 text-lg font-semibold text-white">
+                            <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                                <p className="text-xs text-muted">Policy Term</p>
+                                <p className="mt-1 text-lg font-semibold text-foreground">
                                     {policy.plan_id?.policy_term_years || 0} year{policy.plan_id?.policy_term_years !== 1 ? "s" : ""}
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-6">
-                        <h2 className="font-semibold text-white">Secure Payment</h2>
+                    <div className="rounded-xl border border-border bg-surface p-6">
+                        <h2 className="font-semibold text-foreground">Secure Payment</h2>
 
-                        <div className="mt-4 flex items-start gap-3 rounded-lg border border-zinc-800 bg-zinc-900/40 p-4">
-                            <CreditCard className="mt-0.5 h-5 w-5 text-purple-400" />
+                        <div className="mt-4 flex items-start gap-3 rounded-lg border border-border bg-surface-secondary p-4">
+                            <CreditCard className="mt-0.5 h-5 w-5 text-primary" />
                             <div>
-                                <p className="text-sm text-zinc-200">Payment powered by Razorpay</p>
-                                <p className="mt-1 text-xs leading-5 text-zinc-500">
+                                <p className="text-sm text-foreground">Payment powered by Razorpay</p>
+                                <p className="mt-1 text-xs leading-5 text-muted">
                                     You will be redirected to the secure Razorpay checkout window to complete your payment.
                                 </p>
                             </div>
@@ -295,26 +306,26 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
                     </div>
                 </section>
 
-                <aside className="h-fit rounded-xl border border-zinc-800 bg-zinc-950 p-6 lg:sticky lg:top-6">
-                    <h2 className="font-semibold text-white">Payment Summary</h2>
+                <aside className="h-fit rounded-xl border border-border bg-surface p-6 lg:sticky lg:top-6">
+                    <h2 className="font-semibold text-foreground">Payment Summary</h2>
 
                     <div className="mt-5 space-y-3 text-sm">
                         <div className="flex justify-between gap-4">
-                            <span className="text-zinc-500">Plan</span>
-                            <span className="text-right text-zinc-200">{policy.plan_id?.name || "Insurance"}</span>
+                            <span className="text-muted">Plan</span>
+                            <span className="text-right text-foreground">{policy.plan_id?.name || "Insurance"}</span>
                         </div>
 
                         <div className="flex justify-between gap-4">
-                            <span className="text-zinc-500">Frequency</span>
-                            <span className="capitalize text-zinc-200">
+                            <span className="text-muted">Frequency</span>
+                            <span className="capitalize text-foreground">
                                 {policy.plan_id?.premium_frequency?.replaceAll("_", " ") || "—"}
                             </span>
                         </div>
 
-                        <div className="border-t border-zinc-800 pt-4">
+                        <div className="border-t border-border pt-4">
                             <div className="flex items-end justify-between gap-4">
-                                <span className="text-zinc-400">Premium</span>
-                                <span className="text-2xl font-bold text-white">
+                                <span className="text-muted">Premium</span>
+                                <span className="text-2xl font-bold text-foreground">
                                     ₹{premium.toLocaleString("en-IN")}
                                 </span>
                             </div>
@@ -325,13 +336,13 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
                         type="button"
                         disabled={paying || !scriptLoaded}
                         onClick={handlePayment}
-                        className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {paying ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
                         {paying ? "Processing..." : !scriptLoaded ? "Loading Payment..." : `Pay ₹${premium.toLocaleString("en-IN")}`}
                     </button>
 
-                    <p className="mt-3 text-center text-xs leading-5 text-zinc-600">
+                    <p className="mt-3 text-center text-xs leading-5 text-muted">
                         Your policy becomes active only after successful payment verification.
                     </p>
                 </aside>

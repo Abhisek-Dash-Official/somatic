@@ -36,20 +36,17 @@ interface Pagination {
 
 export default function HospitalsPage() {
     const [hospitals, setHospitals] = useState<Hospital[]>([]);
-    const [pagination, setPagination] =
-        useState<Pagination>({
-            total: 0,
-            page: 1,
-            limit: 10,
-            totalPages: 1,
-        });
+    const [pagination, setPagination] = useState<Pagination>({
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+    });
 
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("");
     const [sortBy, setSortBy] = useState("created_at");
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
-        "desc",
-    );
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [loading, setLoading] = useState(true);
 
     const fetchHospitals = async () => {
@@ -99,13 +96,7 @@ export default function HospitalsPage() {
 
     useEffect(() => {
         fetchHospitals();
-    }, [
-        pagination.page,
-        pagination.limit,
-        status,
-        sortBy,
-        sortOrder,
-    ]);
+    }, [pagination.page, pagination.limit, status, sortBy, sortOrder]);
 
     const handleSearch = () => {
         setPagination((prev) => ({
@@ -118,9 +109,7 @@ export default function HospitalsPage() {
 
     const handleSort = (value: string) => {
         if (sortBy === value) {
-            setSortOrder((prev) =>
-                prev === "asc" ? "desc" : "asc",
-            );
+            setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
         } else {
             setSortBy(value);
             setSortOrder("asc");
@@ -132,41 +121,40 @@ export default function HospitalsPage() {
         }));
     };
 
-    const formatDate = (date: string) => {
-        return new Date(date).toLocaleDateString("en-IN", {
+    const formatDate = (date: string) =>
+        new Date(date).toLocaleDateString("en-IN", {
             day: "2-digit",
             month: "short",
             year: "numeric",
         });
-    };
 
     return (
         <div className="w-full space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="flex items-center gap-3 text-2xl font-bold text-white sm:text-3xl">
-                        <Building2 className="h-7 w-7 text-blue-400" />
+                    <h1 className="flex items-center gap-3 text-2xl font-bold text-foreground sm:text-3xl">
+                        <Building2 className="h-7 w-7 text-primary" />
                         Hospitals
                     </h1>
 
-                    <p className="mt-1 text-sm text-slate-400">
+                    <p className="mt-1 text-sm text-muted">
                         Manage hospital integrations and QR identifiers
                     </p>
                 </div>
 
                 <Link
                     href="/admin/hospitals/new"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
                 >
                     <Plus className="h-5 w-5" />
                     Add Hospital
                 </Link>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+            <div className="rounded-xl border border-border bg-surface p-4">
                 <div className="flex flex-col gap-3 lg:flex-row">
                     <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
+                        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
 
                         <input
                             value={search}
@@ -177,7 +165,7 @@ export default function HospitalsPage() {
                                 }
                             }}
                             placeholder="Search hospital or QR identifier..."
-                            className="w-full rounded-xl border border-white/10 bg-slate-950 py-3 pl-10 pr-4 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-blue-500"
+                            className="w-full rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
                         />
                     </div>
 
@@ -191,17 +179,23 @@ export default function HospitalsPage() {
                                     page: 1,
                                 }));
                             }}
-                            className="rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-blue-500"
+                            className="rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-primary"
                         >
-                            <option value="">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
+                            <option value="" className="bg-surface">
+                                All Status
+                            </option>
+                            <option value="active" className="bg-surface">
+                                Active
+                            </option>
+                            <option value="inactive" className="bg-surface">
+                                Inactive
+                            </option>
                         </select>
 
                         <button
                             type="button"
                             onClick={handleSearch}
-                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-slate-200 transition hover:bg-white/10"
+                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm font-medium text-foreground transition hover:bg-accent"
                         >
                             <SlidersHorizontal className="h-4 w-4" />
                             Search
@@ -210,38 +204,38 @@ export default function HospitalsPage() {
                 </div>
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/60">
+            <div className="overflow-hidden rounded-xl border border-border bg-surface">
                 <div className="hidden overflow-x-auto md:block">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-white/10 text-left">
+                            <tr className="border-b border-border text-left">
                                 <th
                                     onClick={() => handleSort("name")}
-                                    className="cursor-pointer px-5 py-4 text-xs font-semibold uppercase tracking-wide text-slate-400"
+                                    className="cursor-pointer px-5 py-4 text-xs font-semibold uppercase tracking-wide text-muted"
                                 >
                                     Hospital
                                 </th>
 
-                                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-muted">
                                     QR Identifier
                                 </th>
 
-                                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-muted">
                                     Auth
                                 </th>
 
                                 <th
                                     onClick={() => handleSort("created_at")}
-                                    className="cursor-pointer px-5 py-4 text-xs font-semibold uppercase tracking-wide text-slate-400"
+                                    className="cursor-pointer px-5 py-4 text-xs font-semibold uppercase tracking-wide text-muted"
                                 >
                                     Created
                                 </th>
 
-                                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-muted">
                                     Status
                                 </th>
 
-                                <th className="px-5 py-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                <th className="px-5 py-4 text-right text-xs font-semibold uppercase tracking-wide text-muted">
                                     Actions
                                 </th>
                             </tr>
@@ -252,7 +246,7 @@ export default function HospitalsPage() {
                                 <tr>
                                     <td
                                         colSpan={6}
-                                        className="px-5 py-16 text-center text-sm text-slate-500"
+                                        className="px-5 py-16 text-center text-sm text-muted-foreground"
                                     >
                                         Loading hospitals...
                                     </td>
@@ -261,7 +255,7 @@ export default function HospitalsPage() {
                                 <tr>
                                     <td
                                         colSpan={6}
-                                        className="px-5 py-16 text-center text-sm text-slate-500"
+                                        className="px-5 py-16 text-center text-sm text-muted-foreground"
                                     >
                                         No hospitals found
                                     </td>
@@ -270,37 +264,37 @@ export default function HospitalsPage() {
                                 hospitals.map((hospital) => (
                                     <tr
                                         key={hospital._id}
-                                        className="border-b border-white/5 last:border-0"
+                                        className="border-b border-border last:border-0 hover:bg-surface-secondary"
                                     >
                                         <td className="px-5 py-4">
-                                            <p className="font-semibold text-white">
+                                            <p className="font-semibold text-foreground">
                                                 {hospital.name}
                                             </p>
 
-                                            <p className="mt-1 max-w-xs truncate text-xs text-slate-500">
+                                            <p className="mt-1 max-w-xs truncate text-xs text-muted-foreground">
                                                 {hospital.paperwork_endpoint}
                                             </p>
                                         </td>
 
                                         <td className="px-5 py-4">
-                                            <span className="rounded-lg bg-slate-800 px-2.5 py-1 font-mono text-xs text-slate-300">
+                                            <span className="rounded-md bg-surface-secondary px-2.5 py-1 font-mono text-xs text-muted">
                                                 {hospital.qr_identifier}
                                             </span>
                                         </td>
 
-                                        <td className="px-5 py-4 text-sm capitalize text-slate-300">
+                                        <td className="px-5 py-4 text-sm capitalize text-muted">
                                             {hospital.auth_config?.type || "none"}
                                         </td>
 
-                                        <td className="px-5 py-4 text-sm text-slate-400">
+                                        <td className="px-5 py-4 text-sm text-muted">
                                             {formatDate(hospital.created_at)}
                                         </td>
 
                                         <td className="px-5 py-4">
                                             <span
                                                 className={`rounded-full px-3 py-1 text-xs font-semibold ${hospital.is_active
-                                                        ? "bg-green-500/10 text-green-400"
-                                                        : "bg-red-500/10 text-red-400"
+                                                        ? "bg-success/10 text-success"
+                                                        : "bg-danger/10 text-danger"
                                                     }`}
                                             >
                                                 {hospital.is_active
@@ -313,14 +307,14 @@ export default function HospitalsPage() {
                                             <div className="flex justify-end gap-2">
                                                 <Link
                                                     href={`/admin/hospitals/${hospital._id}`}
-                                                    className="rounded-lg p-2 text-slate-400 transition hover:bg-white/10 hover:text-white"
+                                                    className="rounded-lg p-2 text-muted transition hover:bg-accent hover:text-foreground"
                                                 >
                                                     <Eye className="h-4 w-4" />
                                                 </Link>
 
                                                 <Link
                                                     href={`/admin/hospitals/${hospital._id}?edit=true`}
-                                                    className="rounded-lg p-2 text-slate-400 transition hover:bg-white/10 hover:text-blue-400"
+                                                    className="rounded-lg p-2 text-muted transition hover:bg-accent hover:text-primary"
                                                 >
                                                     <Edit3 className="h-4 w-4" />
                                                 </Link>
@@ -333,36 +327,33 @@ export default function HospitalsPage() {
                     </table>
                 </div>
 
-                <div className="divide-y divide-white/5 md:hidden">
+                <div className="divide-y divide-border md:hidden">
                     {loading ? (
-                        <div className="px-5 py-16 text-center text-sm text-slate-500">
+                        <div className="px-5 py-16 text-center text-sm text-muted-foreground">
                             Loading hospitals...
                         </div>
                     ) : hospitals.length === 0 ? (
-                        <div className="px-5 py-16 text-center text-sm text-slate-500">
+                        <div className="px-5 py-16 text-center text-sm text-muted-foreground">
                             No hospitals found
                         </div>
                     ) : (
                         hospitals.map((hospital) => (
-                            <div
-                                key={hospital._id}
-                                className="space-y-4 p-5"
-                            >
+                            <div key={hospital._id} className="space-y-4 p-5">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="min-w-0">
-                                        <h3 className="truncate font-semibold text-white">
+                                        <h3 className="truncate font-semibold text-foreground">
                                             {hospital.name}
                                         </h3>
 
-                                        <p className="mt-1 truncate text-xs text-slate-500">
+                                        <p className="mt-1 truncate text-xs text-muted-foreground">
                                             {hospital.paperwork_endpoint}
                                         </p>
                                     </div>
 
                                     <span
                                         className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${hospital.is_active
-                                                ? "bg-green-500/10 text-green-400"
-                                                : "bg-red-500/10 text-red-400"
+                                                ? "bg-success/10 text-success"
+                                                : "bg-danger/10 text-danger"
                                             }`}
                                     >
                                         {hospital.is_active
@@ -373,21 +364,22 @@ export default function HospitalsPage() {
 
                                 <div className="grid grid-cols-2 gap-3 text-sm">
                                     <div>
-                                        <p className="text-xs text-slate-500">
+                                        <p className="text-xs text-muted-foreground">
                                             QR Identifier
                                         </p>
-                                        <p className="mt-1 truncate font-mono text-slate-300">
+
+                                        <p className="mt-1 truncate font-mono text-muted">
                                             {hospital.qr_identifier}
                                         </p>
                                     </div>
 
                                     <div>
-                                        <p className="text-xs text-slate-500">
+                                        <p className="text-xs text-muted-foreground">
                                             Authentication
                                         </p>
-                                        <p className="mt-1 capitalize text-slate-300">
-                                            {hospital.auth_config?.type ||
-                                                "none"}
+
+                                        <p className="mt-1 capitalize text-muted">
+                                            {hospital.auth_config?.type || "none"}
                                         </p>
                                     </div>
                                 </div>
@@ -395,7 +387,7 @@ export default function HospitalsPage() {
                                 <div className="flex gap-2">
                                     <Link
                                         href={`/admin/hospitals/${hospital._id}`}
-                                        className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-slate-200"
+                                        className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-accent"
                                     >
                                         <Eye className="h-4 w-4" />
                                         View
@@ -403,7 +395,7 @@ export default function HospitalsPage() {
 
                                     <Link
                                         href={`/admin/hospitals/${hospital._id}?edit=true`}
-                                        className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium text-white"
+                                        className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
                                     >
                                         <Edit3 className="h-4 w-4" />
                                         Edit
@@ -414,13 +406,11 @@ export default function HospitalsPage() {
                     )}
                 </div>
 
-                <div className="flex flex-col gap-3 border-t border-white/10 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-sm text-slate-500">
+                <div className="flex flex-col gap-3 border-t border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-sm text-muted-foreground">
                         {pagination.total === 0
                             ? "No hospitals"
-                            : `Showing ${(pagination.page - 1) *
-                            pagination.limit +
-                            1
+                            : `Showing ${(pagination.page - 1) * pagination.limit + 1
                             }-${Math.min(
                                 pagination.page * pagination.limit,
                                 pagination.total,
@@ -437,29 +427,25 @@ export default function HospitalsPage() {
                                     page: prev.page - 1,
                                 }))
                             }
-                            className="rounded-lg border border-white/10 p-2 text-slate-400 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                            className="rounded-lg border border-border bg-surface-secondary p-2 text-muted transition hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
                         >
                             <ChevronLeft className="h-4 w-4" />
                         </button>
 
-                        <span className="px-2 text-sm text-slate-300">
-                            {pagination.page} /{" "}
-                            {pagination.totalPages || 1}
+                        <span className="px-2 text-sm text-muted">
+                            {pagination.page} / {pagination.totalPages || 1}
                         </span>
 
                         <button
                             type="button"
-                            disabled={
-                                pagination.page >=
-                                pagination.totalPages
-                            }
+                            disabled={pagination.page >= pagination.totalPages}
                             onClick={() =>
                                 setPagination((prev) => ({
                                     ...prev,
                                     page: prev.page + 1,
                                 }))
                             }
-                            className="rounded-lg border border-white/10 p-2 text-slate-400 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                            className="rounded-lg border border-border bg-surface-secondary p-2 text-muted transition hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
                         >
                             <ChevronRight className="h-4 w-4" />
                         </button>

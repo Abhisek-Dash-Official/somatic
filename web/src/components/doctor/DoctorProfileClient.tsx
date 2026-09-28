@@ -4,8 +4,16 @@ import { useEffect, useState } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import { toast } from "react-toastify";
 import {
-    User, Phone, MapPin, FileText, Award, ShieldCheck,
-    Lock, Loader2, CheckCircle, BriefcaseMedical
+    User,
+    Phone,
+    MapPin,
+    FileText,
+    Award,
+    ShieldCheck,
+    Lock,
+    Loader2,
+    CheckCircle,
+    BriefcaseMedical,
 } from "lucide-react";
 import AvatarSelector from "@/components/profile/AvatarSelector";
 import DeleteAccountSection from "@/components/profile/DeleteAccountSection";
@@ -32,7 +40,10 @@ export default function DoctorProfileClient() {
     });
 
     useEffect(() => {
-        if (user && (user.role === "doctor" || user.role === "assistant_doctor")) {
+        if (
+            user &&
+            (user.role === "doctor" || user.role === "assistant_doctor")
+        ) {
             setProfileData({
                 username: user.username || "",
                 contact_no: user.contact_no || "",
@@ -46,10 +57,16 @@ export default function DoctorProfileClient() {
     }, [user]);
 
     if (!isFetched) {
-        return <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 animate-spin text-blue-500" /></div>;
+        return (
+            <div className="flex justify-center py-20">
+                <Loader2 className="w-10 h-10 animate-spin text-primary" />
+            </div>
+        );
     }
 
-    const handleProfileSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    const handleProfileSubmit = async (
+        e: React.SubmitEvent<HTMLFormElement>,
+    ) => {
         e.preventDefault();
         setLoadingProfile(true);
 
@@ -62,7 +79,7 @@ export default function DoctorProfileClient() {
                 reg_no: profileData.reg_no,
                 qualification: profileData.qualification,
                 experience: Number(profileData.experience),
-            }
+            },
         };
 
         try {
@@ -86,27 +103,35 @@ export default function DoctorProfileClient() {
         }
     };
 
-    const handlePasswordSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    const handlePasswordSubmit = async (
+        e: React.SubmitEvent<HTMLFormElement>,
+    ) => {
         e.preventDefault();
+
         if (passwordData.newPassword !== passwordData.confirmPassword) {
             toast.error("New passwords do not match!");
             return;
         }
 
         setLoadingPassword(true);
+
         try {
             const res = await fetch("/api/users/profile", {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     currentPassword: passwordData.currentPassword,
-                    newPassword: passwordData.newPassword
+                    newPassword: passwordData.newPassword,
                 }),
             });
 
             if (res.ok) {
                 toast.success("Password changed successfully!");
-                setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+                setPasswordData({
+                    currentPassword: "",
+                    newPassword: "",
+                    confirmPassword: "",
+                });
             } else {
                 const data = await res.json();
                 toast.error(data.error || "Failed to change password");
@@ -118,128 +143,286 @@ export default function DoctorProfileClient() {
         }
     };
 
+    const inputClass =
+        "w-full bg-surface-secondary border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition";
+
+    const passwordInputClass =
+        "w-full bg-surface-secondary border border-border rounded-xl py-3 px-4 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition";
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500 max-w-4xl mx-auto">
-
-            <div className="rounded-3xl border border-white/10 bg-[#0f172a]/80 p-8 shadow-2xl backdrop-blur-xl flex flex-col md:flex-row items-center gap-6">
+            <div className="rounded-xl border border-border bg-surface p-8 flex flex-col md:flex-row items-center gap-6">
                 <div className="shrink-0">
                     <AvatarSelector
                         currentAvatarId={profileData.avatar_id}
-                        onSelect={(id) => setProfileData({ ...profileData, avatar_id: id })}
+                        onSelect={(id) =>
+                            setProfileData({
+                                ...profileData,
+                                avatar_id: id,
+                            })
+                        }
                         isAdmin={false}
                     />
                 </div>
+
                 <div className="text-center md:text-left">
-                    <h1 className="text-3xl font-bold text-white mb-2">Dr. {profileData.username || "Profile"}</h1>
-                    <p className="text-slate-400 flex items-center justify-center md:justify-start gap-2 capitalize">
-                        <ShieldCheck className="h-4 w-4 text-blue-400" />
+                    <h1 className="text-3xl font-bold text-foreground mb-2">
+                        Dr. {profileData.username || "Profile"}
+                    </h1>
+
+                    <p className="text-muted flex items-center justify-center md:justify-start gap-2 capitalize">
+                        <ShieldCheck className="h-4 w-4 text-primary" />
                         Verified Medical Professional
                     </p>
                 </div>
             </div>
 
-            <div className="bg-[#131C31] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
-                <div className="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
-                    <BriefcaseMedical className="w-6 h-6 text-blue-400" />
-                    <h2 className="text-xl font-bold text-white">Professional Details</h2>
+            <div className="bg-surface border border-border rounded-xl p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-6 border-b border-border pb-4">
+                    <BriefcaseMedical className="w-6 h-6 text-primary" />
+                    <h2 className="text-xl font-bold text-foreground">
+                        Professional Details
+                    </h2>
                 </div>
 
                 <form onSubmit={handleProfileSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-slate-400">Username</label>
+                            <label className="text-sm font-medium text-muted">
+                                Username
+                            </label>
+
                             <div className="relative">
-                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                                <input type="text" required value={profileData.username} onChange={e => setProfileData({ ...profileData, username: e.target.value })} className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition" />
+                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    required
+                                    value={profileData.username}
+                                    onChange={(e) =>
+                                        setProfileData({
+                                            ...profileData,
+                                            username: e.target.value,
+                                        })
+                                    }
+                                    className={inputClass}
+                                />
                             </div>
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-slate-400">Contact Number</label>
+                            <label className="text-sm font-medium text-muted">
+                                Contact Number
+                            </label>
+
                             <div className="relative">
-                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                                <input type="text" required value={profileData.contact_no} onChange={e => setProfileData({ ...profileData, contact_no: e.target.value })} className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition" />
+                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    required
+                                    value={profileData.contact_no}
+                                    onChange={(e) =>
+                                        setProfileData({
+                                            ...profileData,
+                                            contact_no: e.target.value,
+                                        })
+                                    }
+                                    className={inputClass}
+                                />
                             </div>
                         </div>
 
                         <div className="space-y-1 md:col-span-2">
-                            <label className="text-sm font-medium text-slate-400">Clinic / Hospital Address</label>
+                            <label className="text-sm font-medium text-muted">
+                                Clinic / Hospital Address
+                            </label>
+
                             <div className="relative">
-                                <MapPin className="absolute left-3 top-4 w-5 h-5 text-slate-500" />
-                                <textarea rows={2} required value={profileData.address} onChange={e => setProfileData({ ...profileData, address: e.target.value })} className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition custom-scrollbar" />
+                                <MapPin className="absolute left-3 top-4 w-5 h-5 text-muted-foreground" />
+                                <textarea
+                                    rows={2}
+                                    required
+                                    value={profileData.address}
+                                    onChange={(e) =>
+                                        setProfileData({
+                                            ...profileData,
+                                            address: e.target.value,
+                                        })
+                                    }
+                                    className={`${inputClass} pl-10 custom-scrollbar`}
+                                />
                             </div>
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-slate-400">Medical Registration No.</label>
+                            <label className="text-sm font-medium text-muted">
+                                Medical Registration No.
+                            </label>
+
                             <div className="relative">
-                                <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                                <input type="text" required value={profileData.reg_no} onChange={e => setProfileData({ ...profileData, reg_no: e.target.value })} className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition" />
+                                <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    required
+                                    value={profileData.reg_no}
+                                    onChange={(e) =>
+                                        setProfileData({
+                                            ...profileData,
+                                            reg_no: e.target.value,
+                                        })
+                                    }
+                                    className={inputClass}
+                                />
                             </div>
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-slate-400">Qualifications</label>
+                            <label className="text-sm font-medium text-muted">
+                                Qualifications
+                            </label>
+
                             <div className="relative">
-                                <Award className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                                <Award className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                                 <input
                                     type="text"
                                     required
                                     value={profileData.qualification}
-                                    onChange={e => setProfileData({ ...profileData, qualification: e.target.value })}
-                                    className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition"
+                                    onChange={(e) =>
+                                        setProfileData({
+                                            ...profileData,
+                                            qualification: e.target.value,
+                                        })
+                                    }
+                                    className={inputClass}
                                     placeholder="e.g. MBBS, MD (Medicine)"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-slate-400">Experience (Years)</label>
+                            <label className="text-sm font-medium text-muted">
+                                Experience (Years)
+                            </label>
+
                             <div className="relative">
-                                <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                                <input type="number" min="0" required value={profileData.experience} onChange={e => setProfileData({ ...profileData, experience: Number(e.target.value) })} className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition" />
+                                <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                                <input
+                                    type="number"
+                                    min="0"
+                                    required
+                                    value={profileData.experience}
+                                    onChange={(e) =>
+                                        setProfileData({
+                                            ...profileData,
+                                            experience: Number(e.target.value),
+                                        })
+                                    }
+                                    className={inputClass}
+                                />
                             </div>
                         </div>
-
                     </div>
 
-                    <div className="flex justify-end pt-4 border-t border-slate-800">
-                        <button type="submit" disabled={loadingProfile} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold transition disabled:opacity-50">
-                            {loadingProfile ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle className="w-5 h-5" />}
+                    <div className="flex justify-end pt-4 border-t border-border">
+                        <button
+                            type="submit"
+                            disabled={loadingProfile}
+                            className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold transition disabled:opacity-50"
+                        >
+                            {loadingProfile ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <CheckCircle className="w-5 h-5" />
+                            )}
                             Save Profile
                         </button>
                     </div>
                 </form>
             </div>
 
-            <div className="bg-[#131C31] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
-                <div className="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
-                    <Lock className="w-6 h-6 text-red-400" />
-                    <h2 className="text-xl font-bold text-white">Security & Password</h2>
+            <div className="bg-surface border border-border rounded-xl p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-6 border-b border-border pb-4">
+                    <Lock className="w-6 h-6 text-danger" />
+                    <h2 className="text-xl font-bold text-foreground">
+                        Security & Password
+                    </h2>
                 </div>
 
                 <form onSubmit={handlePasswordSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-1 md:col-span-2">
-                            <label className="text-sm font-medium text-slate-400">Current Password</label>
-                            <input type="password" required value={passwordData.currentPassword} onChange={e => setPasswordData({ ...passwordData, currentPassword: e.target.value })} className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-red-500 outline-none transition" placeholder="••••••••" />
+                            <label className="text-sm font-medium text-muted">
+                                Current Password
+                            </label>
+
+                            <input
+                                type="password"
+                                required
+                                value={passwordData.currentPassword}
+                                onChange={(e) =>
+                                    setPasswordData({
+                                        ...passwordData,
+                                        currentPassword: e.target.value,
+                                    })
+                                }
+                                className={passwordInputClass}
+                                placeholder="••••••••"
+                            />
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-slate-400">New Password</label>
-                            <input type="password" required minLength={6} value={passwordData.newPassword} onChange={e => setPasswordData({ ...passwordData, newPassword: e.target.value })} className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-red-500 outline-none transition" placeholder="••••••••" />
+                            <label className="text-sm font-medium text-muted">
+                                New Password
+                            </label>
+
+                            <input
+                                type="password"
+                                required
+                                minLength={6}
+                                value={passwordData.newPassword}
+                                onChange={(e) =>
+                                    setPasswordData({
+                                        ...passwordData,
+                                        newPassword: e.target.value,
+                                    })
+                                }
+                                className={passwordInputClass}
+                                placeholder="••••••••"
+                            />
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-slate-400">Confirm New Password</label>
-                            <input type="password" required minLength={6} value={passwordData.confirmPassword} onChange={e => setPasswordData({ ...passwordData, confirmPassword: e.target.value })} className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-red-500 outline-none transition" placeholder="••••••••" />
+                            <label className="text-sm font-medium text-muted">
+                                Confirm New Password
+                            </label>
+
+                            <input
+                                type="password"
+                                required
+                                minLength={6}
+                                value={passwordData.confirmPassword}
+                                onChange={(e) =>
+                                    setPasswordData({
+                                        ...passwordData,
+                                        confirmPassword: e.target.value,
+                                    })
+                                }
+                                className={passwordInputClass}
+                                placeholder="••••••••"
+                            />
                         </div>
                     </div>
 
                     <div className="flex justify-end pt-4">
-                        <button type="submit" disabled={loadingPassword} className="flex items-center gap-2 bg-slate-800 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 border border-transparent text-slate-300 px-6 py-3 rounded-xl font-bold transition disabled:opacity-50">
-                            {loadingPassword ? <Loader2 className="w-5 h-5 animate-spin" /> : "Update Password"}
+                        <button
+                            type="submit"
+                            disabled={loadingPassword}
+                            className="flex items-center gap-2 bg-surface-secondary hover:bg-danger/10 hover:text-danger hover:border-danger/20 border border-border text-muted px-6 py-3 rounded-xl font-bold transition disabled:opacity-50"
+                        >
+                            {loadingPassword ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                "Update Password"
+                            )}
                         </button>
                     </div>
                 </form>

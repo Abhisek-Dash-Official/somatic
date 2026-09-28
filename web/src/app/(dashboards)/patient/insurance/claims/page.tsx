@@ -52,48 +52,59 @@ export default function PatientInsuranceClaimsPage() {
 
     if (loading) {
         return (
-            <main className="min-h-screen bg-[#080f1d] px-4 py-6 md:px-6">
+            <main className="min-h-screen bg-background px-4 py-6 text-foreground md:px-6">
                 <div className="mx-auto max-w-6xl space-y-6">
-                    <div className="h-8 w-48 animate-pulse rounded bg-slate-800" />
-                    <div className="h-24 animate-pulse rounded-2xl border border-slate-800 bg-[#0d1627]" />
-                    <div className="h-40 animate-pulse rounded-2xl border border-slate-800 bg-[#0d1627]" />
+                    <div className="h-8 w-48 animate-pulse rounded bg-surface-secondary" />
+                    <div className="h-24 animate-pulse rounded-xl border border-border bg-surface" />
+                    <div className="h-40 animate-pulse rounded-xl border border-border bg-surface" />
                 </div>
             </main>
         );
     }
 
     return (
-        <main className="min-h-screen bg-[#080f1d] px-4 py-6 md:px-6">
+        <main className="min-h-screen bg-background px-4 py-6 text-foreground md:px-6">
             <div className="mx-auto max-w-6xl space-y-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <Link href="/patient/insurance" className="mb-3 inline-flex items-center gap-2 text-sm font-medium text-slate-400 transition hover:text-white">
+                        <Link
+                            href="/patient/insurance"
+                            className="mb-3 inline-flex items-center gap-2 text-sm font-medium text-muted transition hover:text-foreground"
+                        >
                             <ArrowLeft className="h-4 w-4" />
                             Back to Insurance
                         </Link>
 
-                        <h1 className="text-2xl font-bold text-white">My Insurance Claims</h1>
-                        <p className="mt-1 text-sm text-slate-500">Track and manage your submitted insurance claims.</p>
+                        <h1 className="text-2xl font-bold text-foreground">My Insurance Claims</h1>
+                        <p className="mt-1 text-sm text-muted">
+                            Track and manage your submitted insurance claims.
+                        </p>
                     </div>
 
-                    <Link href="/patient/insurance/claims/new" className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-700">
+                    <Link
+                        href="/patient/insurance/claims/new"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                    >
                         <Plus className="h-4 w-4" />
                         New Claim
                     </Link>
                 </div>
 
                 {claims.length === 0 ? (
-                    <section className="rounded-2xl border border-slate-800 bg-[#0d1627] p-10 text-center shadow-xl shadow-black/10">
-                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-purple-500/10">
-                            <ShieldCheck className="h-7 w-7 text-purple-400" />
+                    <section className="rounded-xl border border-border bg-surface p-10 text-center">
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                            <ShieldCheck className="h-7 w-7 text-primary" />
                         </div>
 
-                        <h2 className="mt-4 text-lg font-semibold text-white">No insurance claims yet</h2>
-                        <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
+                        <h2 className="mt-4 text-lg font-semibold text-foreground">No insurance claims yet</h2>
+                        <p className="mx-auto mt-2 max-w-md text-sm text-muted">
                             You have not submitted any insurance claims. Create a claim when you need to request coverage.
                         </p>
 
-                        <Link href="/patient/insurance/claims/new" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-700">
+                        <Link
+                            href="/patient/insurance/claims/new"
+                            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                        >
                             <Plus className="h-4 w-4" />
                             Create New Claim
                         </Link>
@@ -104,13 +115,17 @@ export default function PatientInsuranceClaimsPage() {
                             const needsDocuments = claim.status === "documents_required";
 
                             return (
-                                <section key={claim._id} className="rounded-2xl border border-slate-800 bg-[#0d1627] p-5 shadow-xl shadow-black/10 transition hover:border-slate-700">
+                                <section
+                                    key={claim._id}
+                                    className="rounded-xl border border-border bg-surface p-5 transition hover:border-primary/30"
+                                >
                                     <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                                         <div className="min-w-0 flex-1">
                                             <div className="flex flex-wrap items-center gap-3">
                                                 <div className="flex items-center gap-2">
-                                                    <FileText className="h-5 w-5 text-purple-400" />
-                                                    <h2 className="font-semibold text-white">
+                                                    <FileText className="h-5 w-5 text-primary" />
+
+                                                    <h2 className="font-semibold text-foreground">
                                                         {claim.claim_number || "Insurance Claim"}
                                                     </h2>
                                                 </div>
@@ -120,41 +135,53 @@ export default function PatientInsuranceClaimsPage() {
 
                                             <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                                                 <div>
-                                                    <p className="text-xs font-medium uppercase tracking-wide text-slate-600">Claim Type</p>
-                                                    <p className="mt-1 text-sm capitalize text-slate-300">
+                                                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                                                        Claim Type
+                                                    </p>
+                                                    <p className="mt-1 text-sm capitalize text-foreground">
                                                         {claim.claim_type}
                                                     </p>
                                                 </div>
 
                                                 <div>
-                                                    <p className="text-xs font-medium uppercase tracking-wide text-slate-600">Incident</p>
-                                                    <p className="mt-1 text-sm capitalize text-slate-300">
+                                                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                                                        Incident
+                                                    </p>
+                                                    <p className="mt-1 text-sm capitalize text-foreground">
                                                         {claim.incident_type || "—"}
                                                     </p>
                                                 </div>
 
                                                 <div>
-                                                    <p className="text-xs font-medium uppercase tracking-wide text-slate-600">Claimed Amount</p>
-                                                    <p className="mt-1 text-sm font-semibold text-slate-200">
+                                                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                                                        Claimed Amount
+                                                    </p>
+                                                    <p className="mt-1 text-sm font-semibold text-foreground">
                                                         {formatAmount(claim.claimed_amount)}
                                                     </p>
                                                 </div>
 
                                                 <div>
-                                                    <p className="text-xs font-medium uppercase tracking-wide text-slate-600">Submitted</p>
-                                                    <div className="mt-1 flex items-center gap-1.5 text-sm text-slate-300">
-                                                        <CalendarDays className="h-4 w-4 text-slate-500" />
+                                                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                                                        Submitted
+                                                    </p>
+
+                                                    <div className="mt-1 flex items-center gap-1.5 text-sm text-muted">
+                                                        <CalendarDays className="h-4 w-4 text-muted-foreground" />
                                                         {formatDate(claim.created_at)}
                                                     </div>
                                                 </div>
                                             </div>
 
                                             {needsDocuments && (
-                                                <div className="mt-4 flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
-                                                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+                                                <div className="mt-4 flex items-start gap-3 rounded-lg border border-warning/20 bg-warning/10 p-3">
+                                                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
+
                                                     <div>
-                                                        <p className="text-sm font-medium text-amber-300">Additional documents required</p>
-                                                        <p className="mt-0.5 text-xs text-amber-400/70">
+                                                        <p className="text-sm font-medium text-warning">
+                                                            Additional documents required
+                                                        </p>
+                                                        <p className="mt-0.5 text-xs text-muted">
                                                             Please submit the documents requested by the insurance dispatcher.
                                                         </p>
                                                     </div>
@@ -163,7 +190,10 @@ export default function PatientInsuranceClaimsPage() {
                                         </div>
 
                                         <div className="flex shrink-0 flex-col gap-2 sm:flex-row lg:flex-col">
-                                            <Link href={`/patient/insurance/claims/${claim._id}`} className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-900/60 px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:border-purple-500/50 hover:bg-purple-500/10 hover:text-purple-300">
+                                            <Link
+                                                href={`/patient/insurance/claims/${claim._id}`}
+                                                className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-foreground"
+                                            >
                                                 View Claim
                                                 <ChevronRight className="h-4 w-4" />
                                             </Link>

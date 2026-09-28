@@ -20,11 +20,11 @@ import {
 import { useUserStore } from "@/store/useUserStore";
 import type { IConsultation, IDepartment, IUser } from "@/types/models";
 
-type PopulatedPatient = Pick<IUser, "username" | "email" | "contact_no" | "address" | "patient_info"> & { _id: string; };
+type PopulatedPatient = Pick<IUser, "username" | "email" | "contact_no" | "address" | "patient_info"> & { _id: string };
 
-type PopulatedDoctor = Pick<IUser, "username" | "email" | "contact_no" | "address" | "doctor_info"> & { _id: string; };
+type PopulatedDoctor = Pick<IUser, "username" | "email" | "contact_no" | "address" | "doctor_info"> & { _id: string };
 
-type PopulatedDepartment = Pick<IDepartment, "name"> & { _id: string; };
+type PopulatedDepartment = Pick<IDepartment, "name"> & { _id: string };
 
 type PopulatedConsultation = Omit<IConsultation, "patient_id" | "assigned_department_id" | "claimed_by_doctor_id"> & {
     patient_id?: PopulatedPatient;
@@ -43,44 +43,44 @@ const statusConfig = {
     pending_review: {
         label: "Pending Review",
         icon: Clock3,
-        className: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
+        className: "text-warning bg-warning/10 border-warning/20",
     },
     in_review: {
         label: "In Review",
         icon: Stethoscope,
-        className: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+        className: "text-info bg-info/10 border-info/20",
     },
     completed: {
         label: "Completed",
         icon: CheckCircle2,
-        className: "text-green-400 bg-green-500/10 border-green-500/20",
+        className: "text-success bg-success/10 border-success/20",
     },
 };
 
 const ambulanceConfig: Record<string, { label: string; className: string }> = {
     pending: {
         label: "Ambulance Pending",
-        className: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
+        className: "text-warning bg-warning/10 border-warning/20",
     },
     contacting_patient: {
         label: "Contacting Patient",
-        className: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+        className: "text-info bg-info/10 border-info/20",
     },
     hospital_selected: {
         label: "Hospital Selected",
-        className: "text-purple-400 bg-purple-500/10 border-purple-500/20",
+        className: "text-primary bg-primary/10 border-primary/20",
     },
     dispatched: {
         label: "Ambulance Dispatched",
-        className: "text-orange-400 bg-orange-500/10 border-orange-500/20",
+        className: "text-info bg-info/10 border-info/20",
     },
     arrived: {
         label: "Ambulance Arrived",
-        className: "text-green-400 bg-green-500/10 border-green-500/20",
+        className: "text-success bg-success/10 border-success/20",
     },
     cancelled: {
         label: "Ambulance Cancelled",
-        className: "text-red-400 bg-red-500/10 border-red-500/20",
+        className: "text-danger bg-danger/10 border-danger/20",
     },
 };
 
@@ -148,74 +148,92 @@ export default function DispatcherConsultations() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0B1120] text-slate-300 overflow-x-hidden">
-            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-5 sm:space-y-6">
+        <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
+            <div className="mx-auto w-full max-w-7xl space-y-5 px-4 py-5 sm:space-y-6 sm:px-6 sm:py-8 lg:px-8">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
-                        <div className="flex items-center gap-2 text-blue-400 mb-2">
-                            <Stethoscope className="w-4 h-4" />
+                        <div className="mb-2 flex items-center gap-2 text-primary">
+                            <Stethoscope className="h-4 w-4" />
                             <span className="text-xs sm:text-sm">Dispatcher Control Center</span>
                         </div>
 
-                        <h1 className="text-2xl sm:text-3xl font-bold text-white">Consultations</h1>
+                        <h1 className="text-2xl font-bold sm:text-3xl">Consultations</h1>
 
-                        <p className="text-sm text-slate-400 mt-2 max-w-2xl">
+                        <p className="mt-2 max-w-2xl text-sm text-muted">
                             Monitor patient cases, doctor activity, emergencies and ambulance coordination.
                         </p>
                     </div>
 
-                    <div className="shrink-0 rounded-xl border border-slate-800 bg-[#131C31] px-4 py-2 text-xs text-slate-400">
+                    <div className="shrink-0 rounded-lg border border-border bg-surface px-4 py-2 text-xs text-muted">
                         Auto refresh · 15s
                     </div>
                 </div>
 
-                <div className="bg-[#131C31] border border-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5">
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+                <div className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
                         <div className="relative md:col-span-2 xl:col-span-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
                             <input
                                 value={search}
                                 onChange={(e) => handleFilterChange(setSearch, e.target.value)}
                                 placeholder="Search symptoms or complaint..."
-                                className="w-full h-10 bg-[#0B1120] border border-slate-800 rounded-lg pl-9 pr-3 text-sm text-white placeholder:text-slate-600 outline-none focus:border-blue-500/50"
+                                className="h-10 w-full rounded-lg border border-border bg-surface-secondary pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
                             />
                         </div>
 
-                        <FilterSelect value={status} onChange={(value) => handleFilterChange(setStatus, value)} options={[["all", "All Statuses"], ["pending_review", "Pending Review"], ["in_review", "In Review"], ["completed", "Completed"]]} />
+                        <FilterSelect
+                            value={status}
+                            onChange={(value) => handleFilterChange(setStatus, value)}
+                            options={[["all", "All Statuses"], ["pending_review", "Pending Review"], ["in_review", "In Review"], ["completed", "Completed"]]}
+                        />
 
-                        <FilterSelect value={emergency} onChange={(value) => handleFilterChange(setEmergency, value)} options={[["all", "All Cases"], ["emergency", "Emergency Only"], ["normal", "Normal Only"]]} />
+                        <FilterSelect
+                            value={emergency}
+                            onChange={(value) => handleFilterChange(setEmergency, value)}
+                            options={[["all", "All Cases"], ["emergency", "Emergency Only"], ["normal", "Normal Only"]]}
+                        />
 
-                        <FilterSelect value={ambulance} onChange={(value) => handleFilterChange(setAmbulance, value)} options={[["all", "All Ambulance"], ["required", "Ambulance Required"], ["not_required", "No Ambulance"]]} />
+                        <FilterSelect
+                            value={ambulance}
+                            onChange={(value) => handleFilterChange(setAmbulance, value)}
+                            options={[["all", "All Ambulance"], ["required", "Ambulance Required"], ["not_required", "No Ambulance"]]}
+                        />
 
-                        <FilterSelect value={date} onChange={(value) => handleFilterChange(setDate, value)} options={[["all", "All Dates"], ["today", "Today"], ["7days", "Last 7 Days"], ["30days", "Last 30 Days"]]} />
+                        <FilterSelect
+                            value={date}
+                            onChange={(value) => handleFilterChange(setDate, value)}
+                            options={[["all", "All Dates"], ["today", "Today"], ["7days", "Last 7 Days"], ["30days", "Last 30 Days"]]}
+                        />
 
-                        <FilterSelect value={sort} onChange={(value) => handleFilterChange(setSort, value)} options={[["priority", "Priority"], ["newest", "Newest"], ["oldest", "Oldest"]]} />
+                        <FilterSelect
+                            value={sort}
+                            onChange={(value) => handleFilterChange(setSort, value)}
+                            options={[["priority", "Priority"], ["newest", "Newest"], ["oldest", "Oldest"]]}
+                        />
                     </div>
                 </div>
 
                 <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                        <p className="text-sm text-slate-400">
+                        <p className="text-sm text-muted">
                             {pagination?.total || 0} consultation{pagination?.total === 1 ? "" : "s"}
                         </p>
                     </div>
 
-                    {loading && <Loader2 className="w-4 h-4 text-blue-400 animate-spin shrink-0" />}
+                    {loading && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary" />}
                 </div>
 
                 <div className="space-y-3">
                     {loading && consultations.length === 0 ? (
-                        <div className="bg-[#131C31] border border-slate-800 rounded-xl sm:rounded-2xl py-16 flex justify-center">
-                            <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
+                        <div className="flex justify-center rounded-xl border border-border bg-surface py-16">
+                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
                         </div>
                     ) : consultations.length === 0 ? (
-                        <div className="bg-[#131C31] border border-slate-800 rounded-xl sm:rounded-2xl py-16 px-4 text-center">
-                            <Stethoscope className="w-10 h-10 text-slate-700 mx-auto mb-3" />
-
-                            <p className="text-slate-400">No consultations found.</p>
-
-                            <p className="text-xs text-slate-600 mt-1">Try changing your filters or search.</p>
+                        <div className="rounded-xl border border-border bg-surface px-4 py-16 text-center">
+                            <Stethoscope className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+                            <p className="text-muted">No consultations found.</p>
+                            <p className="mt-1 text-xs text-muted-foreground">Try changing your filters or search.</p>
                         </div>
                     ) : (
                         consultations.map((consultation) => (
@@ -224,7 +242,9 @@ export default function DispatcherConsultations() {
                     )}
                 </div>
 
-                {pagination && pagination.totalPages > 1 && <Pagination pagination={pagination} onPageChange={setPage} />}
+                {pagination && pagination.totalPages > 1 && (
+                    <Pagination pagination={pagination} onPageChange={setPage} />
+                )}
             </div>
         </div>
     );
@@ -241,31 +261,34 @@ function ConsultationCard({ consultation }: { consultation: PopulatedConsultatio
     const emergency = consultation.ai_draft?.is_emergency === true;
     const ambulanceRequired = consultation.ambulance_dispatch?.required === true;
     const ambulanceStatus = consultation.ambulance_dispatch?.status;
-    const symptoms = consultation.ai_draft?.translated_symptoms || consultation.patient_input?.symptoms_raw_text || "No symptoms available";
+    const symptoms =
+        consultation.ai_draft?.translated_symptoms ||
+        consultation.patient_input?.symptoms_raw_text ||
+        "No symptoms available";
 
     return (
-        <div className={`bg-[#131C31] border rounded-xl sm:rounded-2xl p-4 sm:p-5 transition hover:border-slate-700 ${emergency ? "border-red-500/30" : "border-slate-800"}`}>
-            <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-4">
+        <div className={`rounded-xl border bg-surface p-4 transition sm:p-5 ${emergency ? "border-danger/30" : "border-border"} hover:border-primary/30`}>
+            <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-start">
                 <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="text-base sm:text-lg font-semibold text-white wrap-break-word">{patient}</h2>
+                        <h2 className="wrap-break-word text-base font-semibold sm:text-lg">{patient}</h2>
 
-                        <span className={`text-[11px] sm:text-xs px-2.5 py-1 rounded-full border flex items-center gap-1 ${statusData.className}`}>
-                            <StatusIcon className="w-3 h-3" />
+                        <span className={`flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] sm:text-xs ${statusData.className}`}>
+                            <StatusIcon className="h-3 w-3" />
                             {statusData.label}
                         </span>
 
                         {emergency && (
-                            <span className="text-[11px] sm:text-xs px-2.5 py-1 rounded-full border border-red-500/20 bg-red-500/10 text-red-400 flex items-center gap-1">
-                                <AlertTriangle className="w-3 h-3" />
+                            <span className="flex items-center gap-1 rounded-full border border-danger/20 bg-danger/10 px-2.5 py-1 text-[11px] text-danger sm:text-xs">
+                                <AlertTriangle className="h-3 w-3" />
                                 Emergency
                             </span>
                         )}
                     </div>
 
-                    <p className="text-sm text-slate-400 mt-3 line-clamp-2 wrap-break-word">{symptoms}</p>
+                    <p className="mt-3 line-clamp-2 wrap-break-word text-sm text-muted">{symptoms}</p>
 
-                    <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-x-5 sm:gap-y-2 mt-4 text-xs text-slate-500">
+                    <div className="mt-4 flex flex-col gap-2 text-xs text-muted-foreground sm:flex-row sm:flex-wrap sm:gap-x-5 sm:gap-y-2">
                         <InfoItem icon={Stethoscope} text={department} />
                         <InfoItem icon={User} text={`Doctor: ${doctor}`} />
 
@@ -277,42 +300,42 @@ function ConsultationCard({ consultation }: { consultation: PopulatedConsultatio
                     </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row xl:flex-col gap-2 shrink-0">
+                <div className="flex shrink-0 flex-col gap-2 sm:flex-row xl:flex-col">
                     {consultation.claimed_by_doctor_id?.contact_no && (
                         <a
                             href={`tel:${consultation.claimed_by_doctor_id.contact_no}`}
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-200 transition"
+                            className="flex items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 py-2.5 text-sm text-muted transition hover:bg-accent hover:text-foreground"
                         >
-                            <Phone className="w-4 h-4" />
+                            <Phone className="h-4 w-4" />
                             Contact Doctor
                         </a>
                     )}
 
                     <Link
                         href={`/dispatcher/consultations/${consultation._id}`}
-                        className="flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg text-sm text-blue-400 transition"
+                        className="flex items-center justify-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-4 py-2.5 text-sm text-primary transition hover:bg-primary/15"
                     >
                         View Case
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="h-4 w-4" />
                     </Link>
                 </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-800 flex flex-wrap gap-2">
+            <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
                 {ambulanceRequired ? (
                     <Link
                         href={`/dispatcher/ambulances/${consultation._id}`}
-                        className="text-xs px-2.5 py-1.5 rounded-lg border border-orange-500/20 bg-orange-500/10 text-orange-400 flex items-center gap-1.5 hover:bg-orange-500/15 transition"
+                        className="flex items-center gap-1.5 rounded-lg border border-warning/20 bg-warning/10 px-2.5 py-1.5 text-xs text-warning transition hover:bg-warning/15"
                     >
-                        <Ambulance className="w-3.5 h-3.5" />
+                        <Ambulance className="h-3.5 w-3.5" />
 
                         {ambulanceStatus && ambulanceConfig[ambulanceStatus]
                             ? ambulanceConfig[ambulanceStatus].label
                             : "Ambulance Required"}
                     </Link>
                 ) : (
-                    <span className="text-xs px-2.5 py-1.5 rounded-lg border border-slate-800 bg-slate-900/50 text-slate-500 flex items-center gap-1.5">
-                        <Ambulance className="w-3.5 h-3.5" />
+                    <span className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-secondary px-2.5 py-1.5 text-xs text-muted">
+                        <Ambulance className="h-3.5 w-3.5" />
                         No Ambulance Required
                     </span>
                 )}
@@ -320,9 +343,9 @@ function ConsultationCard({ consultation }: { consultation: PopulatedConsultatio
                 {consultation.patient_id?.contact_no && (
                     <a
                         href={`tel:${consultation.patient_id.contact_no}`}
-                        className="text-xs px-2.5 py-1.5 rounded-lg border border-slate-800 bg-slate-900/50 text-slate-400 hover:text-white transition flex items-center gap-1.5"
+                        className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-secondary px-2.5 py-1.5 text-xs text-muted transition hover:bg-accent hover:text-foreground"
                     >
-                        <Phone className="w-3.5 h-3.5" />
+                        <Phone className="h-3.5 w-3.5" />
                         Contact Patient
                     </a>
                 )}
@@ -333,19 +356,27 @@ function ConsultationCard({ consultation }: { consultation: PopulatedConsultatio
 
 function InfoItem({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
     return (
-        <span className="flex items-start gap-1.5 min-w-0">
-            <Icon className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+        <span className="flex min-w-0 items-start gap-1.5">
+            <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             <span className="wrap-break-word">{text}</span>
         </span>
     );
 }
 
-function FilterSelect({ value, onChange, options }: { value: string; onChange: (value: string) => void; options: [string, string][] }) {
+function FilterSelect({
+    value,
+    onChange,
+    options,
+}: {
+    value: string;
+    onChange: (value: string) => void;
+    options: [string, string][];
+}) {
     return (
         <select
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full h-10 bg-[#0B1120] border border-slate-800 rounded-lg px-3 text-sm text-slate-300 outline-none focus:border-blue-500/50"
+            className="h-10 w-full rounded-lg border border-border bg-surface-secondary px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
         >
             {options.map(([optionValue, label]) => (
                 <option key={optionValue} value={optionValue}>
@@ -356,7 +387,13 @@ function FilterSelect({ value, onChange, options }: { value: string; onChange: (
     );
 }
 
-function Pagination({ pagination, onPageChange }: { pagination: Pagination; onPageChange: (page: number) => void }) {
+function Pagination({
+    pagination,
+    onPageChange,
+}: {
+    pagination: Pagination;
+    onPageChange: (page: number) => void;
+}) {
     const { page, totalPages } = pagination;
 
     return (
@@ -365,20 +402,22 @@ function Pagination({ pagination, onPageChange }: { pagination: Pagination; onPa
                 type="button"
                 disabled={page <= 1}
                 onClick={() => onPageChange(page - 1)}
-                className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-800 bg-[#131C31] text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:pointer-events-none transition"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface text-muted transition hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
             >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="h-4 w-4" />
             </button>
 
-            <div className="px-3 text-sm text-slate-400">Page {page} of {totalPages}</div>
+            <div className="px-3 text-sm text-muted">
+                Page {page} of {totalPages}
+            </div>
 
             <button
                 type="button"
                 disabled={page >= totalPages}
                 onClick={() => onPageChange(page + 1)}
-                className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-800 bg-[#131C31] text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:pointer-events-none transition"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface text-muted transition hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
             >
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="h-4 w-4" />
             </button>
         </div>
     );

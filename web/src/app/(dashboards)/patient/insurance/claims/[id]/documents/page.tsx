@@ -230,12 +230,16 @@ export default function InsuranceClaimDocumentsPage() {
                 return;
             }
 
-            setClaim((current) => current ? {
-                ...current,
-                status: data.claim.status,
-                documents: data.claim.documents,
-                required_documents: data.claim.required_documents || [],
-            } : current);
+            setClaim((current) =>
+                current
+                    ? {
+                        ...current,
+                        status: data.claim.status,
+                        documents: data.claim.documents,
+                        required_documents: data.claim.required_documents || [],
+                    }
+                    : current
+            );
 
             setRequiredInputs({});
             setAdditionalDocuments([]);
@@ -247,10 +251,13 @@ export default function InsuranceClaimDocumentsPage() {
         }
     };
 
+    const inputClass =
+        "rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10";
+
     if (loading) {
         return (
-            <main className="min-h-screen bg-[#080f1d] px-4 py-6 md:px-6">
-                <div className="mx-auto max-w-5xl rounded-2xl border border-slate-800 bg-[#0d1627] p-8 text-slate-400">
+            <main className="min-h-screen bg-background px-4 py-6 md:px-6">
+                <div className="mx-auto max-w-5xl rounded-xl border border-border bg-surface p-8 text-muted">
                     Loading documents...
                 </div>
             </main>
@@ -259,11 +266,14 @@ export default function InsuranceClaimDocumentsPage() {
 
     if (!claim) {
         return (
-            <main className="min-h-screen bg-[#080f1d] px-4 py-6 md:px-6">
-                <div className="mx-auto max-w-5xl rounded-2xl border border-slate-800 bg-[#0d1627] p-8 text-center">
-                    <FileText className="mx-auto h-10 w-10 text-slate-600" />
-                    <h1 className="mt-4 text-lg font-semibold text-white">Claim not found</h1>
-                    <Link href="/patient/insurance/claims" className="mt-5 inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white">
+            <main className="min-h-screen bg-background px-4 py-6 md:px-6">
+                <div className="mx-auto max-w-5xl rounded-xl border border-border bg-surface p-8 text-center">
+                    <FileText className="mx-auto h-10 w-10 text-muted-foreground" />
+                    <h1 className="mt-4 text-lg font-semibold text-foreground">Claim not found</h1>
+                    <Link
+                        href="/patient/insurance/claims"
+                        className="mt-5 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                    >
                         <ArrowLeft className="h-4 w-4" />
                         Back to Claims
                     </Link>
@@ -273,24 +283,27 @@ export default function InsuranceClaimDocumentsPage() {
     }
 
     return (
-        <main className="min-h-screen bg-[#080f1d] px-4 py-6 md:px-6">
+        <main className="min-h-screen bg-background px-4 py-6 text-foreground md:px-6">
             <div className="mx-auto max-w-5xl space-y-6">
                 <div>
-                    <Link href={`/patient/insurance/claims/${claimId}`} className="inline-flex items-center gap-2 text-sm font-medium text-slate-400 transition hover:text-white">
+                    <Link
+                        href={`/patient/insurance/claims/${claimId}`}
+                        className="inline-flex items-center gap-2 text-sm font-medium text-muted transition hover:text-foreground"
+                    >
                         <ArrowLeft className="h-4 w-4" />
                         Back to Claim
                     </Link>
 
-                    <h1 className="mt-4 text-2xl font-bold text-white">Claim Documents</h1>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <h1 className="mt-4 text-2xl font-bold text-foreground">Claim Documents</h1>
+                    <p className="mt-1 text-sm text-muted">
                         Claim #{claim.claim_number || claim._id}
                     </p>
                 </div>
 
-                <section className="rounded-2xl border border-slate-800 bg-[#0d1627] p-5 shadow-xl shadow-black/10">
+                <section className="rounded-xl border border-border bg-surface p-5">
                     <div className="mb-5">
-                        <h2 className="text-lg font-semibold text-white">Submitted Documents</h2>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <h2 className="text-lg font-semibold text-foreground">Submitted Documents</h2>
+                        <p className="mt-1 text-sm text-muted">
                             View, edit or remove documents already submitted with this claim.
                         </p>
                     </div>
@@ -298,17 +311,22 @@ export default function InsuranceClaimDocumentsPage() {
                     {uploadedDocuments.length > 0 ? (
                         <div className="space-y-3">
                             {uploadedDocuments.map((document: any, index: number) => (
-                                <div key={index} className="rounded-xl border border-slate-800 bg-[#101b2e] p-4">
+                                <div key={index} className="rounded-lg border border-border bg-surface-secondary p-4">
                                     {editingIndex === index ? (
                                         <div className="space-y-3">
                                             <div className="grid gap-3 md:grid-cols-[190px_1fr]">
                                                 <select
                                                     value={editDocument.type}
-                                                    onChange={(event) => setEditDocument((current) => ({ ...current, type: event.target.value }))}
-                                                    className="rounded-lg border border-slate-700 bg-[#0b1424] px-3 py-2.5 text-sm text-slate-200 outline-none focus:border-purple-500"
+                                                    onChange={(event) =>
+                                                        setEditDocument((current) => ({
+                                                            ...current,
+                                                            type: event.target.value,
+                                                        }))
+                                                    }
+                                                    className={inputClass}
                                                 >
                                                     {documentTypes.map(([value, label]) => (
-                                                        <option key={value} value={value}>
+                                                        <option key={value} value={value} className="bg-surface text-foreground">
                                                             {label}
                                                         </option>
                                                     ))}
@@ -317,9 +335,14 @@ export default function InsuranceClaimDocumentsPage() {
                                                 <input
                                                     type="url"
                                                     value={editDocument.file_url}
-                                                    onChange={(event) => setEditDocument((current) => ({ ...current, file_url: event.target.value }))}
+                                                    onChange={(event) =>
+                                                        setEditDocument((current) => ({
+                                                            ...current,
+                                                            file_url: event.target.value,
+                                                        }))
+                                                    }
                                                     placeholder="Enter document URL"
-                                                    className="rounded-lg border border-slate-700 bg-[#0b1424] px-3 py-2.5 text-sm text-slate-200 outline-none placeholder:text-slate-600 focus:border-purple-500"
+                                                    className={inputClass}
                                                 />
                                             </div>
 
@@ -327,7 +350,7 @@ export default function InsuranceClaimDocumentsPage() {
                                                 <button
                                                     type="button"
                                                     onClick={saveDocument}
-                                                    className="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-700"
+                                                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
                                                 >
                                                     <Save className="h-4 w-4" />
                                                     Save
@@ -336,7 +359,7 @@ export default function InsuranceClaimDocumentsPage() {
                                                 <button
                                                     type="button"
                                                     onClick={cancelEditing}
-                                                    className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900/60 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800"
+                                                    className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
                                                 >
                                                     <X className="h-4 w-4" />
                                                     Cancel
@@ -346,21 +369,21 @@ export default function InsuranceClaimDocumentsPage() {
                                     ) : (
                                         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                                             <div className="flex min-w-0 items-center gap-3">
-                                                <div className="rounded-lg bg-purple-500/10 p-2">
-                                                    <FileText className="h-5 w-5 text-purple-400" />
+                                                <div className="rounded-lg bg-primary/10 p-2">
+                                                    <FileText className="h-5 w-5 text-primary" />
                                                 </div>
 
                                                 <div className="min-w-0">
-                                                    <p className="font-medium text-slate-100">
+                                                    <p className="font-medium text-foreground">
                                                         {documentLabels[document.type] || document.type}
                                                     </p>
 
-                                                    <p className="mt-1 truncate text-sm text-slate-500">
+                                                    <p className="mt-1 truncate text-sm text-muted">
                                                         {document.file_url}
                                                     </p>
 
                                                     {document.uploaded_at && (
-                                                        <p className="mt-1 text-xs text-slate-600">
+                                                        <p className="mt-1 text-xs text-muted-foreground">
                                                             Uploaded {new Date(document.uploaded_at).toLocaleDateString("en-IN", {
                                                                 day: "2-digit",
                                                                 month: "short",
@@ -376,7 +399,7 @@ export default function InsuranceClaimDocumentsPage() {
                                                     href={document.file_url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm font-medium text-slate-300 transition hover:border-purple-500/50 hover:bg-purple-500/10 hover:text-purple-300"
+                                                    className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary"
                                                 >
                                                     <ExternalLink className="h-4 w-4" />
                                                     View
@@ -386,7 +409,7 @@ export default function InsuranceClaimDocumentsPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => startEditing(index)}
-                                                        className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm font-medium text-slate-300 transition hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-300"
+                                                        className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary"
                                                     >
                                                         <Edit3 className="h-4 w-4" />
                                                         Edit
@@ -397,7 +420,7 @@ export default function InsuranceClaimDocumentsPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => removeDocument(index)}
-                                                        className="inline-flex items-center gap-2 rounded-lg border border-red-500/20 px-3 py-2 text-sm font-medium text-red-400 transition hover:bg-red-500/10"
+                                                        className="inline-flex items-center gap-2 rounded-lg border border-danger/20 px-3 py-2 text-sm font-medium text-danger transition hover:bg-danger/10"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                         Remove
@@ -410,18 +433,18 @@ export default function InsuranceClaimDocumentsPage() {
                             ))}
                         </div>
                     ) : (
-                        <div className="rounded-xl border border-dashed border-slate-700 px-5 py-10 text-center">
-                            <FileText className="mx-auto h-8 w-8 text-slate-600" />
-                            <p className="mt-3 text-sm font-medium text-slate-400">No documents uploaded yet</p>
+                        <div className="rounded-lg border border-dashed border-border px-5 py-10 text-center">
+                            <FileText className="mx-auto h-8 w-8 text-muted-foreground" />
+                            <p className="mt-3 text-sm font-medium text-muted">No documents uploaded yet</p>
                         </div>
                     )}
                 </section>
 
                 {requiredDocuments.length > 0 && (
-                    <section className="rounded-2xl border border-slate-800 bg-[#0d1627] p-5 shadow-xl shadow-black/10">
+                    <section className="rounded-xl border border-border bg-surface p-5">
                         <div className="mb-5">
-                            <h2 className="text-lg font-semibold text-white">Required Documents</h2>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <h2 className="text-lg font-semibold text-foreground">Required Documents</h2>
+                            <p className="mt-1 text-sm text-muted">
                                 Please provide the documents requested by the insurance dispatcher.
                             </p>
                         </div>
@@ -432,18 +455,18 @@ export default function InsuranceClaimDocumentsPage() {
                                 const value = getRequiredDocumentValue(type);
 
                                 return (
-                                    <div key={type} className="rounded-xl border border-slate-800 bg-[#101b2e] p-4">
+                                    <div key={type} className="rounded-lg border border-border bg-surface-secondary p-4">
                                         <div className="mb-3 flex items-center gap-3">
-                                            <div className="rounded-lg bg-purple-500/10 p-2">
-                                                <FileText className="h-5 w-5 text-purple-400" />
+                                            <div className="rounded-lg bg-primary/10 p-2">
+                                                <FileText className="h-5 w-5 text-primary" />
                                             </div>
 
                                             <div>
-                                                <p className="font-medium text-slate-100">
+                                                <p className="font-medium text-foreground">
                                                     {documentLabels[type] || type}
                                                 </p>
 
-                                                <p className={`text-xs ${existingDocument ? "text-emerald-400" : "text-amber-400"}`}>
+                                                <p className={`text-xs ${existingDocument ? "text-success" : "text-warning"}`}>
                                                     {existingDocument ? "Already uploaded" : "Required"}
                                                 </p>
                                             </div>
@@ -451,7 +474,7 @@ export default function InsuranceClaimDocumentsPage() {
 
                                         {existingDocument ? (
                                             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                                <p className="min-w-0 truncate text-sm text-slate-500">
+                                                <p className="min-w-0 truncate text-sm text-muted">
                                                     {existingDocument.file_url}
                                                 </p>
 
@@ -459,7 +482,7 @@ export default function InsuranceClaimDocumentsPage() {
                                                     href={existingDocument.file_url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm font-medium text-slate-300 transition hover:border-purple-500/50 hover:bg-purple-500/10 hover:text-purple-300"
+                                                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary"
                                                 >
                                                     <ExternalLink className="h-4 w-4" />
                                                     View
@@ -471,7 +494,7 @@ export default function InsuranceClaimDocumentsPage() {
                                                 value={value}
                                                 onChange={(event) => updateRequiredDocument(type, event.target.value)}
                                                 placeholder={`Enter ${documentLabels[type] || type} URL`}
-                                                className="w-full rounded-lg border border-slate-700 bg-[#0b1424] px-3 py-2.5 text-sm text-slate-200 outline-none placeholder:text-slate-600 focus:border-purple-500"
+                                                className={`w-full ${inputClass}`}
                                             />
                                         )}
                                     </div>
@@ -482,25 +505,25 @@ export default function InsuranceClaimDocumentsPage() {
                 )}
 
                 {canUpload && (
-                    <section className="rounded-2xl border border-slate-800 bg-[#0d1627] p-5 shadow-xl shadow-black/10">
+                    <section className="rounded-xl border border-border bg-surface p-5">
                         <div className="mb-5">
-                            <h2 className="text-lg font-semibold text-white">Additional Documents</h2>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <h2 className="text-lg font-semibold text-foreground">Additional Documents</h2>
+                            <p className="mt-1 text-sm text-muted">
                                 You can optionally submit additional documents along with the required documents.
                             </p>
                         </div>
 
                         <div className="space-y-4">
                             {additionalDocuments.map((document, index) => (
-                                <div key={index} className="rounded-xl border border-slate-800 bg-[#101b2e] p-4">
+                                <div key={index} className="rounded-lg border border-border bg-surface-secondary p-4">
                                     <div className="grid gap-3 md:grid-cols-[190px_1fr_auto]">
                                         <select
                                             value={document.type}
                                             onChange={(event) => updateAdditionalDocument(index, "type", event.target.value)}
-                                            className="rounded-lg border border-slate-700 bg-[#0b1424] px-3 py-2.5 text-sm text-slate-200 outline-none focus:border-purple-500"
+                                            className={inputClass}
                                         >
                                             {documentTypes.map(([value, label]) => (
-                                                <option key={value} value={value}>
+                                                <option key={value} value={value} className="bg-surface text-foreground">
                                                     {label}
                                                 </option>
                                             ))}
@@ -511,13 +534,13 @@ export default function InsuranceClaimDocumentsPage() {
                                             value={document.file_url}
                                             onChange={(event) => updateAdditionalDocument(index, "file_url", event.target.value)}
                                             placeholder="Enter document URL"
-                                            className="rounded-lg border border-slate-700 bg-[#0b1424] px-3 py-2.5 text-sm text-slate-200 outline-none placeholder:text-slate-600 focus:border-purple-500"
+                                            className={inputClass}
                                         />
 
                                         <button
                                             type="button"
                                             onClick={() => removeAdditionalDocument(index)}
-                                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-500/20 px-3 py-2 text-sm font-medium text-red-400 transition hover:bg-red-500/10"
+                                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-danger/20 px-3 py-2 text-sm font-medium text-danger transition hover:bg-danger/10"
                                         >
                                             <Trash2 className="h-4 w-4" />
                                             Remove
@@ -530,7 +553,7 @@ export default function InsuranceClaimDocumentsPage() {
                                 <button
                                     type="button"
                                     onClick={addAdditionalDocument}
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-900/60 px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:border-purple-500/50 hover:bg-purple-500/10 hover:text-purple-300"
+                                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary"
                                 >
                                     <Plus className="h-4 w-4" />
                                     Add Extra Document
@@ -540,7 +563,7 @@ export default function InsuranceClaimDocumentsPage() {
                                     type="button"
                                     onClick={submitDocuments}
                                     disabled={submitting}
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <Upload className="h-4 w-4" />
                                     {submitting ? "Submitting..." : "Submit Documents"}
@@ -551,7 +574,7 @@ export default function InsuranceClaimDocumentsPage() {
                 )}
 
                 {!canUpload && (
-                    <div className="rounded-xl border border-slate-800 bg-[#0d1627] p-4 text-sm text-slate-500">
+                    <div className="rounded-lg border border-border bg-surface p-4 text-sm text-muted">
                         New documents can only be submitted when the claim requires additional documents.
                     </div>
                 )}

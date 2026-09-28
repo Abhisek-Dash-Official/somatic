@@ -9,19 +9,23 @@ export const metadata: Metadata = {
 };
 
 export default function PatientDashboardPage() {
-    return <>
-        <PatientDashboardClient />
-        <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-white/10 bg-[#0f172a]/60 p-5 sm:flex-row">
-            <div>
-                <h3 className="font-semibold text-white">
-                    Visiting a Hospital?
-                </h3>
-                <p className="mt-1 text-sm text-slate-400">
-                    Scan the hospital QR code to prefill your available information.
-                </p>
-            </div>
+    return (
+        <>
+            <PatientDashboardClient />
 
-            <QRScannerBtn className="w-full sm:w-auto" />
-        </div>
-    </>
+            <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row">
+                <div>
+                    <h3 className="font-semibold text-foreground">
+                        Visiting a Hospital?
+                    </h3>
+
+                    <p className="mt-1 text-sm text-muted">
+                        Scan the hospital QR code to prefill your available information.
+                    </p>
+                </div>
+
+                <QRScannerBtn className="w-full sm:w-auto" />
+            </div>
+        </>
+    );
 }

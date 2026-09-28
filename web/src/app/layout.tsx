@@ -5,6 +5,7 @@ import MaintenanceGuard from "@/components/MaintenanceGuard";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
+import ThemeProvider from "@/components/ThemeProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -84,7 +85,9 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable}`}>
       <body className="font-sans bg-background text-foreground antialiased">
         <MaintenanceGuard>
-          {children}
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
         </MaintenanceGuard>
         <ToastContainer
           position="bottom-right"

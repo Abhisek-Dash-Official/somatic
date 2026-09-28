@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Mic, Plus, X } from "lucide-react";
@@ -18,46 +19,92 @@ export default function NewConsultationForm() {
     const toggleListening = () => {
         const w = window as any;
         const SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
-        if (!SpeechRecognition) return toast.error("Your browser doesn't support Voice-to-Text.");
 
-        // Universal Language Map for Mic (Major Indian & Global Languages)
+        if (!SpeechRecognition) {
+            return toast.error("Your browser doesn't support Voice-to-Text.");
+        }
+
         const langMap: Record<string, string> = {
-            english: "en-US", hindi: "hi-IN", bengali: "bn-IN", telugu: "te-IN",
-            marathi: "mr-IN", tamil: "ta-IN", urdu: "ur-IN", gujarati: "gu-IN",
-            kannada: "kn-IN", malayalam: "ml-IN", odia: "or-IN", punjabi: "pa-IN",
-            assamese: "as-IN", maithili: "mai-IN",
-            spanish: "es-ES", french: "fr-FR", german: "de-DE", arabic: "ar-SA",
-            chinese: "zh-CN", japanese: "ja-JP", korean: "ko-KR", russian: "ru-RU"
+            english: "en-US",
+            hindi: "hi-IN",
+            bengali: "bn-IN",
+            telugu: "te-IN",
+            marathi: "mr-IN",
+            tamil: "ta-IN",
+            urdu: "ur-IN",
+            gujarati: "gu-IN",
+            kannada: "kn-IN",
+            malayalam: "ml-IN",
+            odia: "or-IN",
+            punjabi: "pa-IN",
+            assamese: "as-IN",
+            maithili: "mai-IN",
+            spanish: "es-ES",
+            french: "fr-FR",
+            german: "de-DE",
+            arabic: "ar-SA",
+            chinese: "zh-CN",
+            japanese: "ja-JP",
+            korean: "ko-KR",
+            russian: "ru-RU",
         };
 
         const typedLang = formData.preferred_prescription_language.trim().toLowerCase();
-
         const recognition = new SpeechRecognition();
+
         recognition.lang = langMap[typedLang] || "en-US";
         recognition.interimResults = false;
 
         recognition.onstart = () => setIsListening(true);
+
         recognition.onresult = (event: any) => {
             const transcript = event.results[0][0].transcript;
-            setFormData(prev => ({ ...prev, symptoms_raw_text: prev.symptoms_raw_text ? prev.symptoms_raw_text + " " + transcript : transcript }));
+
+            setFormData((prev) => ({
+                ...prev,
+                symptoms_raw_text: prev.symptoms_raw_text
+                    ? `${prev.symptoms_raw_text} ${transcript}`
+                    : transcript,
+            }));
         };
-        recognition.onerror = () => { toast.error("Error recognizing voice."); setIsListening(false); };
+
+        recognition.onerror = () => {
+            toast.error("Error recognizing voice.");
+            setIsListening(false);
+        };
+
         recognition.onend = () => setIsListening(false);
-        if (isListening) recognition.stop(); else { recognition.start(); toast.info("Listening..."); }
+
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
+            toast.info("Listening...");
+        }
     };
 
     const addAttachment = () => {
-        setFormData(prev => ({ ...prev, attachments: [...prev.attachments, { file_url: "", file_type: "link" }] }));
+        setFormData((prev) => ({
+            ...prev,
+            attachments: [...prev.attachments, { file_url: "", file_type: "link" }],
+        }));
     };
 
     const updateAttachment = (index: number, url: string) => {
         const newAtt = [...formData.attachments];
         newAtt[index].file_url = url;
-        setFormData(prev => ({ ...prev, attachments: newAtt }));
+
+        setFormData((prev) => ({
+            ...prev,
+            attachments: newAtt,
+        }));
     };
 
     const removeAttachment = (index: number) => {
-        setFormData(prev => ({ ...prev, attachments: prev.attachments.filter((_, i) => i !== index) }));
+        setFormData((prev) => ({
+            ...prev,
+            attachments: prev.attachments.filter((_, i) => i !== index),
+        }));
     };
 
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -68,7 +115,7 @@ export default function NewConsultationForm() {
 
         const cleanData = {
             ...formData,
-            attachments: formData.attachments.filter(a => a.file_url.trim() !== "")
+            attachments: formData.attachments.filter((a) => a.file_url.trim() !== ""),
         };
 
         try {
@@ -77,63 +124,160 @@ export default function NewConsultationForm() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(cleanData),
             });
+
             const data = await res.json();
 
             if (res.ok) {
-                toast.update(toastId, { render: "Consultation created successfully!", type: "success", isLoading: false, autoClose: 3000 });
+                toast.update(toastId, {
+                    render: "Consultation created successfully!",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 3000,
+                });
             } else {
-                toast.update(toastId, { render: data.error || "Failed to create consultation", type: "error", isLoading: false, autoClose: 4000 });
+                toast.update(toastId, {
+                    render: data.error || "Failed to create consultation",
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 4000,
+                });
             }
-        } catch (error) {
-            toast.update(toastId, { render: "Server timeout or network error.", type: "error", isLoading: false, autoClose: 4000 });
+        } catch {
+            toast.update(toastId, {
+                render: "Server timeout or network error.",
+                type: "error",
+                isLoading: false,
+                autoClose: 4000,
+            });
         } finally {
             setLoading(false);
         }
     };
 
+    const inputClass =
+        "block w-full rounded-lg border border-border bg-background px-3 py-2.5 text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary";
+
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">Age</label>
-                    <input type="number" required min="0" max="120" className="block w-full rounded-md bg-[#0B1120] border border-slate-700 text-slate-200 p-2.5 outline-none focus:border-blue-500" value={formData.age} onChange={e => setFormData({ ...formData, age: e.target.value })} />
+                    <label className="mb-1 block text-sm font-medium text-foreground">
+                        Age
+                    </label>
+                    <input
+                        type="number"
+                        required
+                        min="0"
+                        max="120"
+                        className={inputClass}
+                        value={formData.age}
+                        onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                    />
                 </div>
+
                 <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">Weight (kg)</label>
-                    <input type="number" required min="1" max="300" step="0.1" className="block w-full rounded-md bg-[#0B1120] border border-slate-700 text-slate-200 p-2.5 outline-none focus:border-blue-500" value={formData.weight_kg} onChange={e => setFormData({ ...formData, weight_kg: e.target.value })} />
+                    <label className="mb-1 block text-sm font-medium text-foreground">
+                        Weight (kg)
+                    </label>
+                    <input
+                        type="number"
+                        required
+                        min="1"
+                        max="300"
+                        step="0.1"
+                        className={inputClass}
+                        value={formData.weight_kg}
+                        onChange={(e) => setFormData({ ...formData, weight_kg: e.target.value })}
+                    />
                 </div>
             </div>
 
             <div>
-                <div className="flex justify-between items-end mb-1">
-                    <label className="block text-sm font-medium text-slate-300">Describe Symptoms</label>
-                    <button type="button" onClick={toggleListening} className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-md transition ${isListening ? 'bg-red-500/20 text-red-400' : 'bg-slate-800 text-slate-400 hover:text-white'}`}>
-                        {isListening ? <><Mic className="w-3 h-3 animate-pulse" /> Listening...</> : <><Mic className="w-3 h-3" /> Dictate</>}
+                <div className="mb-1 flex items-end justify-between">
+                    <label className="block text-sm font-medium text-foreground">
+                        Describe Symptoms
+                    </label>
+
+                    <button
+                        type="button"
+                        onClick={toggleListening}
+                        className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold transition ${isListening
+                                ? "bg-danger/10 text-danger"
+                                : "bg-surface-secondary text-muted hover:text-foreground"
+                            }`}
+                    >
+                        <Mic className={`h-3 w-3 ${isListening ? "animate-pulse" : ""}`} />
+                        {isListening ? "Listening..." : "Dictate"}
                     </button>
                 </div>
-                <textarea required rows={4} className="block w-full rounded-md bg-[#0B1120] border border-slate-700 text-slate-200 p-2.5 outline-none focus:border-blue-500" value={formData.symptoms_raw_text} onChange={e => setFormData({ ...formData, symptoms_raw_text: e.target.value })} />
+
+                <textarea
+                    required
+                    rows={4}
+                    className={inputClass}
+                    value={formData.symptoms_raw_text}
+                    onChange={(e) => setFormData({ ...formData, symptoms_raw_text: e.target.value })}
+                />
             </div>
 
-            {/* DYNAMIC ATTACHMENTS ARRAY */}
             <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Attachment Links (Optional)</label>
+                <label className="mb-2 block text-sm font-medium text-foreground">
+                    Attachment Links (Optional)
+                </label>
+
                 {formData.attachments.map((att, i) => (
-                    <div key={i} className="flex gap-2 mb-2">
-                        <input type="url" placeholder="Paste link of image/pdf/video..." className="flex-1 rounded-md bg-[#0B1120] border border-slate-700 text-slate-200 p-2.5 outline-none focus:border-blue-500" value={att.file_url} onChange={e => updateAttachment(i, e.target.value)} />
-                        <button type="button" onClick={() => removeAttachment(i)} className="p-2.5 bg-red-500/10 text-red-400 rounded-md hover:bg-red-500/20"><X className="w-5 h-5" /></button>
+                    <div key={i} className="mb-2 flex gap-2">
+                        <input
+                            type="url"
+                            placeholder="Paste link of image/pdf/video..."
+                            className={`flex-1 ${inputClass}`}
+                            value={att.file_url}
+                            onChange={(e) => updateAttachment(i, e.target.value)}
+                        />
+
+                        <button
+                            type="button"
+                            onClick={() => removeAttachment(i)}
+                            className="rounded-lg bg-danger/10 p-2.5 text-danger transition hover:bg-danger/20"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
                     </div>
                 ))}
-                <button type="button" onClick={addAttachment} className="text-sm text-blue-400 flex items-center gap-1 hover:underline mt-1">
-                    <Plus className="w-4 h-4" /> Add Link
+
+                <button
+                    type="button"
+                    onClick={addAttachment}
+                    className="mt-1 flex items-center gap-1 text-sm text-primary hover:text-primary-hover"
+                >
+                    <Plus className="h-4 w-4" />
+                    Add Link
                 </button>
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Preferred Language</label>
-                <input type="text" className="block w-full rounded-md bg-[#0B1120] border border-slate-700 text-slate-200 p-2.5 outline-none focus:border-blue-500" value={formData.preferred_prescription_language} onChange={e => setFormData({ ...formData, preferred_prescription_language: e.target.value })} />
+                <label className="mb-1 block text-sm font-medium text-foreground">
+                    Preferred Language
+                </label>
+
+                <input
+                    type="text"
+                    className={inputClass}
+                    value={formData.preferred_prescription_language}
+                    onChange={(e) =>
+                        setFormData({
+                            ...formData,
+                            preferred_prescription_language: e.target.value,
+                        })
+                    }
+                />
             </div>
 
-            <button type="submit" disabled={loading} className="w-full bg-blue-600/90 text-slate-100 p-3 rounded-md font-semibold hover:bg-blue-500 disabled:opacity-50 transition">
+            <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-lg bg-primary p-3 font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+            >
                 {loading ? "Submitting..." : "Submit Consultation"}
             </button>
         </form>

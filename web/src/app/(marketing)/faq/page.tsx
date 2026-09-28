@@ -10,34 +10,59 @@ export const metadata: Metadata = {
 
 export default function FAQPage() {
     return (
-        <div className="container mx-auto px-4 py-20 sm:px-6 max-w-6xl">
-            <div className="mb-16 flex flex-col items-center text-center">
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                    <HelpCircle className="h-8 w-8" />
-                </div>
-                <h1 className="mb-4 text-4xl font-extrabold text-white sm:text-5xl">
-                    Frequently Asked <span className="text-blue-400">Questions</span>
-                </h1>
-                <p className="max-w-2xl text-lg text-slate-400">
-                    Everything you need to know about Somatic, its AI capabilities, and data security standards.
-                </p>
-            </div>
+        <main className="bg-background text-foreground">
+            <div className="mx-auto max-w-6xl px-5 py-14 sm:px-6 sm:py-20 lg:py-24">
+                {/* HEADER */}
+                <section className="border-b border-border pb-12 sm:pb-16">
+                    <div className="flex items-start gap-4">
+                        <div className="mt-1 hidden h-9 w-9 items-center justify-center bg-accent text-accent-foreground sm:flex">
+                            <HelpCircle className="h-4 w-4" />
+                        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                {pageContent.faq.map((item, index) => (
-                    <div
-                        key={index}
-                        className="rounded-3xl border border-white/10 bg-[#0f172a]/60 p-8 transition-all hover:bg-white/5 hover:border-blue-500/30 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]"
-                    >
-                        <h3 className="mb-4 text-xl font-bold text-white leading-snug">
-                            {item.question}
-                        </h3>
-                        <p className="text-slate-400 leading-relaxed text-base">
-                            {item.answer}
-                        </p>
+                        <div>
+                            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                                Help center
+                            </p>
+
+                            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+                                Frequently asked questions.
+                            </h1>
+
+                            <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg">
+                                Everything you need to know about Somatic, its AI capabilities, and data security standards.
+                            </p>
+                        </div>
                     </div>
-                ))}
+                </section>
+
+                {/* FAQ */}
+                <section className="pt-10 sm:pt-14">
+                    <div className="grid gap-x-12 md:grid-cols-2">
+                        {pageContent.faq.map((item, index) => (
+                            <article
+                                key={index}
+                                className="border-b border-border py-7 first:border-t md:nth-[2]:border-t"
+                            >
+                                <div className="flex gap-5">
+                                    <span className="pt-1 text-xs font-semibold text-primary">
+                                        {String(index + 1).padStart(2, "0")}
+                                    </span>
+
+                                    <div>
+                                        <h2 className="text-lg font-bold leading-snug sm:text-xl">
+                                            {item.question}
+                                        </h2>
+
+                                        <p className="mt-3 text-sm leading-7 text-muted sm:text-base">
+                                            {item.answer}
+                                        </p>
+                                    </div>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                </section>
             </div>
-        </div>
+        </main>
     );
 }

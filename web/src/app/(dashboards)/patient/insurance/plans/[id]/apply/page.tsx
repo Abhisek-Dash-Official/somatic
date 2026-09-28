@@ -154,7 +154,7 @@ export default function InsurancePlanApplyPage() {
     if (loading) {
         return (
             <main className="flex min-h-[70vh] items-center justify-center">
-                <Loader2 className="animate-spin text-blue-400" size={32} />
+                <Loader2 className="animate-spin text-primary" size={32} />
             </main>
         );
     }
@@ -162,12 +162,13 @@ export default function InsurancePlanApplyPage() {
     if (!plan) {
         return (
             <main className="mx-auto flex min-h-[70vh] w-full max-w-3xl items-center justify-center px-4">
-                <div className="w-full rounded-2xl border border-slate-800 bg-[#111a2f] p-8 text-center">
-                    <ShieldCheck className="mx-auto text-slate-600" size={40} />
-                    <h1 className="mt-4 text-xl font-semibold text-white">Insurance plan not found</h1>
+                <div className="w-full rounded-xl border border-border bg-surface p-8 text-center">
+                    <ShieldCheck className="mx-auto text-muted-foreground" size={40} />
+                    <h1 className="mt-4 text-xl font-semibold text-foreground">Insurance plan not found</h1>
+
                     <Link
                         href="/patient/insurance#available-plans"
-                        className="mt-6 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-500"
+                        className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover"
                     >
                         <ArrowLeft size={17} />
                         Back to Plans
@@ -181,74 +182,86 @@ export default function InsurancePlanApplyPage() {
         <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
             <Link
                 href={`/patient/insurance/plans/${plan._id}`}
-                className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white"
+                className="inline-flex items-center gap-2 text-sm text-muted transition hover:text-foreground"
             >
                 <ArrowLeft size={17} />
                 Back to Plan
             </Link>
 
             <form onSubmit={submitApplication} className="mt-6 space-y-6">
-                <section className="rounded-3xl border border-slate-800 bg-[#111a2f] p-6 sm:p-8">
+                <section className="rounded-xl border border-border bg-surface p-6 sm:p-8">
                     <div className="flex items-start gap-4">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                             <ShieldCheck size={24} />
                         </div>
 
                         <div>
-                            <p className="text-sm font-medium text-blue-400">Insurance Application</p>
-                            <h1 className="mt-1 text-2xl font-bold text-white">Apply for {plan.name}</h1>
-                            <p className="mt-2 text-sm leading-6 text-slate-400">
+                            <p className="text-sm font-medium text-primary">Insurance Application</p>
+                            <h1 className="mt-1 text-2xl font-bold text-foreground">
+                                Apply for {plan.name}
+                            </h1>
+                            <p className="mt-2 text-sm leading-6 text-muted">
                                 Provide the insured member details and supporting documents for review.
                             </p>
                         </div>
                     </div>
 
                     <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                        <div className="rounded-xl border border-slate-800 bg-[#0c1426] p-4">
-                            <p className="text-xs text-slate-500">Coverage</p>
-                            <p className="mt-1 font-semibold text-white">₹{Number(plan.coverage_amount || 0).toLocaleString("en-IN")}</p>
+                        <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                            <p className="text-xs text-muted-foreground">Coverage</p>
+                            <p className="mt-1 font-semibold text-foreground">
+                                ₹{Number(plan.coverage_amount || 0).toLocaleString("en-IN")}
+                            </p>
                         </div>
 
-                        <div className="rounded-xl border border-slate-800 bg-[#0c1426] p-4">
-                            <p className="text-xs text-slate-500">Premium</p>
-                            <p className="mt-1 font-semibold text-white">₹{Number(plan.premium_amount || 0).toLocaleString("en-IN")}</p>
+                        <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                            <p className="text-xs text-muted-foreground">Premium</p>
+                            <p className="mt-1 font-semibold text-foreground">
+                                ₹{Number(plan.premium_amount || 0).toLocaleString("en-IN")}
+                            </p>
                         </div>
 
-                        <div className="rounded-xl border border-slate-800 bg-[#0c1426] p-4">
-                            <p className="text-xs text-slate-500">Policy Term</p>
-                            <p className="mt-1 font-semibold text-white">
+                        <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                            <p className="text-xs text-muted-foreground">Policy Term</p>
+                            <p className="mt-1 font-semibold text-foreground">
                                 {plan.policy_term_years} {plan.policy_term_years === 1 ? "Year" : "Years"}
                             </p>
                         </div>
                     </div>
                 </section>
 
-                <section className="rounded-3xl border border-slate-800 bg-[#111a2f] p-6 sm:p-8">
+                <section className="rounded-xl border border-border bg-surface p-6 sm:p-8">
                     <div className="mb-6 flex items-center gap-3">
-                        <UserRound className="text-blue-400" size={21} />
+                        <UserRound className="text-primary" size={21} />
+
                         <div>
-                            <h2 className="font-semibold text-white">Insured Members</h2>
-                            <p className="mt-1 text-xs text-slate-500">Add yourself and any family members to the policy.</p>
+                            <h2 className="font-semibold text-foreground">Insured Members</h2>
+                            <p className="mt-1 text-xs text-muted">
+                                Add yourself and any family members to the policy.
+                            </p>
                         </div>
                     </div>
 
                     <InsuranceMemberForm members={members} onChange={setMembers} />
                 </section>
 
-                <section className="rounded-3xl border border-slate-800 bg-[#111a2f] p-6 sm:p-8">
+                <section className="rounded-xl border border-border bg-surface p-6 sm:p-8">
                     <div className="mb-6 flex items-center gap-3">
-                        <FileText className="text-blue-400" size={21} />
+                        <FileText className="text-primary" size={21} />
+
                         <div>
-                            <h2 className="font-semibold text-white">Supporting Documents</h2>
-                            <p className="mt-1 text-xs text-slate-500">Add document URLs if supporting documents are available.</p>
+                            <h2 className="font-semibold text-foreground">Supporting Documents</h2>
+                            <p className="mt-1 text-xs text-muted">
+                                Add document URLs if supporting documents are available.
+                            </p>
                         </div>
                     </div>
 
                     <InsuranceDocumentUpload documents={documents} onChange={setDocuments} />
                 </section>
 
-                <section className="rounded-2xl border border-amber-500/10 bg-amber-500/5 p-5">
-                    <p className="text-sm leading-6 text-slate-400">
+                <section className="rounded-lg border border-warning/20 bg-warning/10 p-5">
+                    <p className="text-sm leading-6 text-muted">
                         Your application will first be reviewed by SOMATIC. Payment is required only after the proposal is approved.
                     </p>
                 </section>
@@ -256,7 +269,7 @@ export default function InsurancePlanApplyPage() {
                 <button
                     type="submit"
                     disabled={submitting}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {submitting ? <Loader2 className="animate-spin" size={19} /> : <ShieldCheck size={19} />}
                     {submitting ? "Submitting Application..." : "Submit Insurance Application"}

@@ -25,36 +25,57 @@ const frequencyLabels: Record<string, string> = {
 
 export default function InsurancePlanCard({ plan }: InsurancePlanCardProps) {
     return (
-        <div className="flex h-full flex-col rounded-2xl border border-slate-800 bg-[#111a2f] p-6 transition hover:border-blue-500/40">
+        <div className="flex h-full flex-col rounded-xl border border-border bg-surface p-6 transition hover:border-primary/40">
             <div className="flex items-start justify-between gap-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <ShieldCheck size={22} />
                 </div>
-                <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
+
+                <span className="rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
                     Active
                 </span>
             </div>
 
-            <h2 className="mt-5 text-xl font-semibold text-white">{plan.name}</h2>
-            <p className="mt-2 min-h-10 text-sm leading-6 text-slate-400">{plan.description || "Health insurance coverage by SOMATIC."}</p>
+            <h2 className="mt-5 text-xl font-semibold text-foreground">
+                {plan.name}
+            </h2>
+
+            <p className="mt-2 min-h-10 text-sm leading-6 text-muted">
+                {plan.description || "Health insurance coverage by SOMATIC."}
+            </p>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
-                <div className="rounded-xl border border-slate-800 bg-[#0c1426] p-4">
-                    <p className="text-xs text-slate-500">Coverage</p>
-                    <p className="mt-1 text-lg font-semibold text-white">₹{plan.coverage_amount.toLocaleString("en-IN")}</p>
+                <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                    <p className="text-xs text-muted-foreground">Coverage</p>
+                    <p className="mt-1 text-lg font-semibold text-foreground">
+                        ₹{plan.coverage_amount.toLocaleString("en-IN")}
+                    </p>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-[#0c1426] p-4">
-                    <p className="text-xs text-slate-500">Premium</p>
-                    <p className="mt-1 text-lg font-semibold text-white">₹{plan.premium_amount.toLocaleString("en-IN")}</p>
-                    <p className="text-xs text-slate-500">per {frequencyLabels[plan.premium_frequency] || plan.premium_frequency}</p>
+
+                <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                    <p className="text-xs text-muted-foreground">Premium</p>
+                    <p className="mt-1 text-lg font-semibold text-foreground">
+                        ₹{plan.premium_amount.toLocaleString("en-IN")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                        per{" "}
+                        {frequencyLabels[plan.premium_frequency] ||
+                            plan.premium_frequency}
+                    </p>
                 </div>
             </div>
 
             {plan.features && plan.features.length > 0 && (
                 <div className="mt-6 space-y-3">
                     {plan.features.slice(0, 4).map((feature, index) => (
-                        <div key={`${feature}-${index}`} className="flex items-start gap-2 text-sm text-slate-300">
-                            <Check className="mt-0.5 shrink-0 text-emerald-400" size={16} />
+                        <div
+                            key={`${feature}-${index}`}
+                            className="flex items-start gap-2 text-sm text-muted"
+                        >
+                            <Check
+                                className="mt-0.5 shrink-0 text-success"
+                                size={16}
+                            />
                             <span>{feature}</span>
                         </div>
                     ))}
@@ -62,7 +83,10 @@ export default function InsurancePlanCard({ plan }: InsurancePlanCardProps) {
             )}
 
             <div className="mt-auto pt-6">
-                <Link href={`/patient/insurance/plans/${plan._id}`} className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-500">
+                <Link
+                    href={`/patient/insurance/plans/${plan._id}`}
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
+                >
                     View Plan <ArrowRight size={17} />
                 </Link>
             </div>

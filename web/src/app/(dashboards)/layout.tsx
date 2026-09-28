@@ -11,23 +11,21 @@ export default function DashboardLayout({
 }) {
     return (
         <UserInitializer>
-            <div className="flex h-screen flex-col bg-[#0B1120] font-sans text-slate-300 selection:bg-blue-500/30 overflow-hidden">
-
+            <div className="flex h-screen flex-col overflow-hidden bg-background font-sans text-foreground selection:bg-primary/30">
                 <Header />
 
-                <div className="flex flex-col md:flex-row flex-1 overflow-hidden relative">
-
+                <div className="relative flex flex-1 flex-col overflow-hidden md:flex-row">
                     <Sidebar />
 
-                    <div className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden custom-scrollbar w-full pb-16 md:pb-0">
-                        <main className="flex-1 w-full p-4 md:p-6 lg:p-8">
+                    <div className="custom-scrollbar flex w-full flex-1 flex-col overflow-x-hidden overflow-y-auto pb-16 md:pb-0">
+                        <main className="w-full flex-1 p-4 md:p-6 lg:p-8">
                             <div className="mx-auto w-full max-w-7xl">
                                 {children}
                             </div>
                         </main>
+
                         <Footer />
                     </div>
-
                 </div>
             </div>
         </UserInitializer>

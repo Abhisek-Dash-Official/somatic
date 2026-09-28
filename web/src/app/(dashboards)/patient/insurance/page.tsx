@@ -68,34 +68,37 @@ export default function InsurancePage() {
     if (loading) {
         return (
             <main className="flex min-h-[70vh] items-center justify-center">
-                <Loader2 className="animate-spin text-blue-400" size={32} />
+                <Loader2 className="animate-spin text-primary" size={32} />
             </main>
         );
     }
 
     return (
         <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            <section className="rounded-3xl border border-slate-800 bg-[#111a2f] p-6 sm:p-8">
+            <section className="rounded-xl border border-border bg-surface p-6 sm:p-8">
                 <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
                     <div>
                         <div className="flex items-center gap-3">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                                 <ShieldCheck size={25} />
                             </div>
+
                             <div>
-                                <p className="text-sm font-medium text-blue-400">SOMATIC Insurance</p>
-                                <h1 className="text-2xl font-bold text-white sm:text-3xl">Protect your health and family</h1>
+                                <p className="text-sm font-medium text-primary">SOMATIC Insurance</p>
+                                <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
+                                    Protect your health and family
+                                </h1>
                             </div>
                         </div>
 
-                        <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-400">
+                        <p className="mt-4 max-w-2xl text-sm leading-6 text-muted">
                             Choose an insurance plan, submit your proposal, and manage your policy and claims from one place.
                         </p>
                     </div>
 
                     <Link
                         href="/patient/insurance/claims/new"
-                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 px-5 py-3 text-sm font-medium text-slate-200 transition hover:border-blue-500/40 hover:text-white"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-border px-5 py-3 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-foreground"
                     >
                         <Plus size={18} />
                         New Claim
@@ -106,8 +109,8 @@ export default function InsurancePage() {
             {policies.length > 0 && (
                 <section className="mt-8">
                     <div className="mb-4">
-                        <h2 className="text-xl font-semibold text-white">My Insurance</h2>
-                        <p className="mt-1 text-sm text-slate-500">View and manage your insurance policies.</p>
+                        <h2 className="text-xl font-semibold text-foreground">My Insurance</h2>
+                        <p className="mt-1 text-sm text-muted">View and manage your insurance policies.</p>
                     </div>
 
                     <div className="grid gap-5 lg:grid-cols-2">
@@ -120,14 +123,14 @@ export default function InsurancePage() {
 
             <section id="available-plans" className="mt-10 scroll-mt-24">
                 <div className="mb-5">
-                    <h2 className="text-xl font-semibold text-white">Available Plans</h2>
-                    <p className="mt-1 text-sm text-slate-500">Choose a plan based on your coverage requirements.</p>
+                    <h2 className="text-xl font-semibold text-foreground">Available Plans</h2>
+                    <p className="mt-1 text-sm text-muted">Choose a plan based on your coverage requirements.</p>
                 </div>
 
                 {plans.length === 0 ? (
-                    <div className="rounded-2xl border border-slate-800 bg-[#111a2f] p-10 text-center">
-                        <ShieldCheck className="mx-auto text-slate-600" size={35} />
-                        <p className="mt-3 text-sm text-slate-400">No insurance plans are currently available.</p>
+                    <div className="rounded-xl border border-border bg-surface p-10 text-center">
+                        <ShieldCheck className="mx-auto text-muted-foreground" size={35} />
+                        <p className="mt-3 text-sm text-muted">No insurance plans are currently available.</p>
                     </div>
                 ) : (
                     <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -141,22 +144,22 @@ export default function InsurancePage() {
             <section className="mt-10">
                 <div className="mb-5 flex items-center justify-between gap-4">
                     <div>
-                        <h2 className="text-xl font-semibold text-white">My Claims</h2>
-                        <p className="mt-1 text-sm text-slate-500">Track your submitted insurance claims.</p>
+                        <h2 className="text-xl font-semibold text-foreground">My Claims</h2>
+                        <p className="mt-1 text-sm text-muted">Track your submitted insurance claims.</p>
                     </div>
 
                     <Link
                         href="/patient/insurance/claims"
-                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-400 hover:text-blue-300"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-hover"
                     >
                         View all <ArrowRight size={16} />
                     </Link>
                 </div>
 
                 {claims.length === 0 ? (
-                    <div className="rounded-2xl border border-slate-800 bg-[#111a2f] p-8 text-center">
-                        <FileText className="mx-auto text-slate-600" size={30} />
-                        <p className="mt-3 text-sm text-slate-400">You have not submitted any insurance claims yet.</p>
+                    <div className="rounded-xl border border-border bg-surface p-8 text-center">
+                        <FileText className="mx-auto text-muted-foreground" size={30} />
+                        <p className="mt-3 text-sm text-muted">You have not submitted any insurance claims yet.</p>
                     </div>
                 ) : (
                     <div className="grid gap-5 lg:grid-cols-2">

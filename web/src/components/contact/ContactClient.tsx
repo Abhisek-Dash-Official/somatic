@@ -4,7 +4,15 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
 import { pageContent } from "@/config/content";
-import { Mail, MessageSquare, AlertCircle, Loader2, Send, CheckCircle2, Phone } from "lucide-react";
+import {
+    Mail,
+    MessageSquare,
+    AlertCircle,
+    Loader2,
+    Send,
+    CheckCircle2,
+    Phone,
+} from "lucide-react";
 
 export default function ContactClient() {
     const { user, isFetched } = useUserStore();
@@ -44,139 +52,194 @@ export default function ContactClient() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-20 sm:px-6 max-w-5xl">
-            <div className="mb-16 flex flex-col items-center text-center">
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                    <MessageSquare className="h-8 w-8" />
-                </div>
-                <h1 className="mb-4 text-4xl font-extrabold text-white sm:text-5xl">Contact & <span className="text-blue-400">Support</span></h1>
-                <p className="max-w-2xl text-lg text-slate-400">{pageContent.contact.description}</p>
-            </div>
+        <main className="bg-background text-foreground">
+            <div className="mx-auto max-w-5xl px-5 py-14 sm:px-6 sm:py-20 lg:py-24">
+                {/* HEADER */}
+                <section className="border-b border-border pb-12 sm:pb-16">
+                    <div className="flex items-start gap-4">
+                        <div className="mt-1 hidden h-9 w-9 items-center justify-center bg-accent text-accent-foreground sm:flex">
+                            <MessageSquare className="h-4 w-4" />
+                        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                                Support
+                            </p>
 
-                {/* Contact Information Side */}
-                <div className="md:col-span-1 space-y-6">
-                    <div className="rounded-3xl border border-white/10 bg-[#0f172a]/60 p-8 shadow-xl space-y-6">
-                        <h3 className="text-xl font-bold text-white border-b border-white/10 pb-4">Direct Contact</h3>
+                            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+                                Contact & support.
+                            </h1>
 
-                        {/* Email */}
-                        <div className="flex items-start gap-4">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
-                                <Mail className="h-5 w-5" />
+                            <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg">
+                                {pageContent.contact.description}
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="grid gap-8 pt-10 sm:pt-14 md:grid-cols-[0.75fr_1.25fr]">
+                    {/* CONTACT INFORMATION */}
+                    <div>
+                        <h2 className="mb-6 text-lg font-bold">Get in touch</h2>
+
+                        <div className="divide-y divide-border border-y border-border">
+                            <div className="flex items-start gap-4 py-5">
+                                <Mail className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+
+                                <div>
+                                    <p className="text-sm font-semibold">Email us</p>
+
+                                    <a
+                                        href={`mailto:${pageContent.contact.email}`}
+                                        className="mt-1 block text-sm text-muted transition-colors hover:text-primary"
+                                    >
+                                        {pageContent.contact.email}
+                                    </a>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm font-semibold text-white">Email Us</p>
-                                <a href={`mailto:${pageContent.contact.email}`} className="text-slate-400 text-sm hover:text-blue-400 transition-colors">
-                                    {pageContent.contact.email}
-                                </a>
+
+                            <div className="flex items-start gap-4 py-5">
+                                <Phone className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+
+                                <div>
+                                    <p className="text-sm font-semibold">24/7 Helpline</p>
+
+                                    <a
+                                        href={`tel:${pageContent.contact.helpline}`}
+                                        className="mt-1 block text-sm text-muted transition-colors hover:text-primary"
+                                    >
+                                        {pageContent.contact.helpline}
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Helpline */}
-                        <div className="flex items-start gap-4">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-500/10 text-green-400">
-                                <Phone className="h-5 w-5" />
-                            </div>
-                            <div>
-                                <p className="text-sm font-semibold text-white">24/7 Helpline</p>
-                                <a href={`tel:${pageContent.contact.helpline}`} className="text-slate-400 text-sm hover:text-green-400 transition-colors">
-                                    {pageContent.contact.helpline}
-                                </a>
-                            </div>
-                        </div>
-
-                        <div className="rounded-xl bg-blue-500/10 p-4 border border-blue-500/20">
-                            <p className="text-xs text-blue-300 leading-relaxed">
-                                <strong className="block text-sm text-blue-400 mb-1">Response Time</strong>
+                        <div className="mt-6 border-l-2 border-primary bg-surface-secondary px-4 py-4">
+                            <p className="text-xs leading-5 text-muted">
+                                <strong className="mb-1 block text-sm text-foreground">
+                                    Response time
+                                </strong>
                                 {pageContent.contact.responseTime}
                             </p>
                         </div>
 
-                        {/* Emergency Notice */}
                         {pageContent.contact.emergencyNotice && (
-                            <div className="rounded-xl bg-red-500/10 p-4 border border-red-500/20 flex items-start gap-3">
-                                <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
-                                <p className="text-xs text-red-300 leading-relaxed">
-                                    {pageContent.contact.emergencyNotice}
+                            <div className="mt-4 border-l-2 border-danger bg-surface-secondary px-4 py-4">
+                                <div className="flex items-start gap-3">
+                                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
+
+                                    <p className="text-xs leading-5 text-muted">
+                                        {pageContent.contact.emergencyNotice}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* FORM */}
+                    <div className="border border-border bg-surface">
+                        {isFetched && !user ? (
+                            <div className="flex min-h-105 flex-col items-center justify-center p-8 text-center sm:p-12">
+                                <div className="mb-5 flex h-10 w-10 items-center justify-center bg-accent text-accent-foreground">
+                                    <AlertCircle className="h-5 w-5" />
+                                </div>
+
+                                <h2 className="text-2xl font-bold">
+                                    Login required
+                                </h2>
+
+                                <p className="mt-3 max-w-md text-sm leading-6 text-muted">
+                                    Our feedback and ticketing system is linked to user accounts so we can track and resolve issues effectively.
                                 </p>
-                            </div>
-                        )}
-                    </div>
-                </div>
 
-                {/* Feedback Form Side */}
-                <div className="md:col-span-2 relative">
-
-                    {/* Guest User Overlay (Strict Block) */}
-                    {isFetched && !user && (
-                        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-3xl bg-[#0B1120]/80 backdrop-blur-sm border border-white/10 p-8 text-center">
-                            <AlertCircle className="h-12 w-12 text-blue-400 mb-4" />
-                            <h3 className="text-2xl font-bold text-white mb-2">Login Required</h3>
-                            <p className="text-slate-400 mb-6 max-w-md">Our feedback and ticketing system is linked to user accounts to track and resolve issues effectively.</p>
-                            <Link href="/login" className="rounded-full bg-blue-600 px-8 py-3 font-semibold text-white transition-all hover:bg-blue-500">
-                                Sign In to Continue
-                            </Link>
-                        </div>
-                    )}
-
-                    <div className="rounded-3xl border border-white/10 bg-[#0f172a]/80 p-8 sm:p-10 shadow-2xl backdrop-blur-xl">
-                        <h3 className="mb-6 text-2xl font-bold text-white">Submit a Ticket</h3>
-
-                        {success && (
-                            <div className="mb-6 flex items-center gap-3 rounded-xl border border-green-500/20 bg-green-500/10 p-4 text-green-400">
-                                <CheckCircle2 className="h-6 w-6 shrink-0" />
-                                <p>Your feedback has been submitted!</p>
-                            </div>
-                        )}
-
-                        {error && (
-                            <div className="mb-6 flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-400">
-                                <AlertCircle className="h-5 w-5 shrink-0" />
-                                <p>{error}</p>
-                            </div>
-                        )}
-
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-300">Ticket Type</label>
-                                <select
-                                    value={formData.ticket_type}
-                                    onChange={(e) => setFormData({ ...formData, ticket_type: e.target.value })}
-                                    disabled={!user}
-                                    className="w-full rounded-xl border border-white/10 bg-black/30 py-3.5 px-4 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none cursor-pointer disabled:opacity-50"
+                                <Link
+                                    href="/login"
+                                    className="mt-7 inline-flex items-center justify-center bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary-hover"
                                 >
-                                    <option value="General Support">General Support</option>
-                                    <option value="Bug Report">Bug Report</option>
-                                    <option value="Feature Request">Feature Request</option>
-                                    <option value="Clinical Data Issue">Clinical Data Issue</option>
-                                </select>
+                                    Sign in to continue
+                                </Link>
                             </div>
+                        ) : (
+                            <div className="p-6 sm:p-8 lg:p-10">
+                                <div className="mb-8">
+                                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">
+                                        Feedback
+                                    </p>
 
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-300">Describe the issue</label>
-                                <textarea
-                                    required
-                                    rows={5}
-                                    value={formData.message}
-                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                    disabled={!user}
-                                    placeholder="Please provide as much detail as possible..."
-                                    className="w-full resize-none rounded-xl border border-white/10 bg-black/30 py-3.5 px-4 text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50 custom-scrollbar"
-                                />
+                                    <h2 className="mt-2 text-2xl font-bold">
+                                        Submit a ticket
+                                    </h2>
+                                </div>
+
+                                {success && (
+                                    <div className="mb-6 flex items-center gap-3 border-l-2 border-success bg-surface-secondary p-4 text-sm text-muted">
+                                        <CheckCircle2 className="h-5 w-5 shrink-0 text-success" />
+                                        <p>Your feedback has been submitted.</p>
+                                    </div>
+                                )}
+
+                                {error && (
+                                    <div className="mb-6 flex items-center gap-3 border-l-2 border-danger bg-surface-secondary p-4 text-sm text-muted">
+                                        <AlertCircle className="h-5 w-5 shrink-0 text-danger" />
+                                        <p>{error}</p>
+                                    </div>
+                                )}
+
+                                <form onSubmit={handleSubmit} className="space-y-6">
+                                    <div>
+                                        <label className="mb-2 block text-sm font-medium">
+                                            Ticket type
+                                        </label>
+
+                                        <select
+                                            value={formData.ticket_type}
+                                            onChange={(e) => setFormData({ ...formData, ticket_type: e.target.value })}
+                                            disabled={!user}
+                                            className="w-full appearance-none border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            <option value="General Support">General Support</option>
+                                            <option value="Bug Report">Bug Report</option>
+                                            <option value="Feature Request">Feature Request</option>
+                                            <option value="Clinical Data Issue">Clinical Data Issue</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="mb-2 block text-sm font-medium">
+                                            Describe the issue
+                                        </label>
+
+                                        <textarea
+                                            required
+                                            rows={6}
+                                            value={formData.message}
+                                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                            disabled={!user}
+                                            placeholder="Please provide as much detail as possible..."
+                                            className="w-full resize-none border border-border bg-background px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground transition-colors focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+                                        />
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={loading || !user}
+                                        className="flex w-full items-center justify-center gap-2 bg-primary py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        {loading ? (
+                                            <Loader2 className="h-5 w-5 animate-spin" />
+                                        ) : (
+                                            <>
+                                                <Send className="h-4 w-4" />
+                                                Submit ticket
+                                            </>
+                                        )}
+                                    </button>
+                                </form>
                             </div>
-
-                            <button
-                                type="submit"
-                                disabled={loading || !user}
-                                className="group flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-4 font-bold text-white transition-all hover:bg-blue-500 disabled:opacity-50"
-                            >
-                                {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Send className="h-5 w-5" /> Submit Ticket</>}
-                            </button>
-                        </form>
+                        )}
                     </div>
-                </div>
+                </section>
             </div>
-        </div>
+        </main>
     );
 }

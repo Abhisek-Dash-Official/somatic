@@ -15,39 +15,39 @@ export default function ConfirmModal({ isOpen, title, message, loading, onClose,
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="w-full max-w-md bg-[#0B1120] border border-slate-700 rounded-2xl shadow-2xl p-6 space-y-4">
-
+        <div className="fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/60 p-4 backdrop-blur-sm fade-in duration-200">
+            <div className="w-full max-w-md space-y-4 rounded-2xl border border-border bg-surface p-6 shadow-2xl">
                 <div className="flex items-center gap-3">
-                    <div className="p-3 bg-red-500/10 rounded-xl border border-red-500/20 text-red-400 shrink-0">
-                        <AlertTriangle className="w-6 h-6" />
+                    <div className="shrink-0 rounded-xl border border-danger/20 bg-danger/10 p-3 text-danger">
+                        <AlertTriangle className="h-6 w-6" />
                     </div>
+
                     <div>
-                        <h3 className="text-lg font-bold text-white">{title}</h3>
-                        <p className="text-sm text-slate-400 mt-0.5">{message}</p>
+                        <h3 className="text-lg font-bold text-foreground">{title}</h3>
+                        <p className="mt-0.5 text-sm text-muted">{message}</p>
                     </div>
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
+                <div className="flex justify-end gap-3 border-t border-border pt-4">
                     <button
                         type="button"
                         onClick={onClose}
                         disabled={loading}
-                        className="px-4 py-2.5 rounded-xl text-slate-400 hover:text-white text-sm font-semibold transition"
+                        className="rounded-xl px-4 py-2.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-secondary hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         Cancel
                     </button>
+
                     <button
                         type="button"
                         onClick={onConfirm}
                         disabled={loading}
-                        className="flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition disabled:opacity-50 shadow-[0_0_15px_rgba(220,38,38,0.2)]"
+                        className="flex items-center gap-2 rounded-xl bg-danger px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-danger/90 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                         Confirm
                     </button>
                 </div>
-
             </div>
         </div>
     );

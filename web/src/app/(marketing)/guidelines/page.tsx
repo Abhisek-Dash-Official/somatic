@@ -10,20 +10,31 @@ export const metadata: Metadata = {
 
 export default function GuidelinesPage() {
     return (
-        <div className="container mx-auto px-4 py-20 sm:px-6 max-w-4xl">
+        <div className="container mx-auto max-w-4xl px-4 py-16 sm:px-6 md:py-20">
             <div className="mb-12 flex flex-col items-center text-center">
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/30 bg-accent text-primary">
                     <FileHeart className="h-8 w-8" />
                 </div>
-                <h1 className="text-4xl font-extrabold text-white sm:text-5xl">Community Guidelines</h1>
-                <p className="mt-4 text-slate-400">Rules for medical professionals using Somatic.</p>
+
+                <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+                    Community Guidelines
+                </h1>
+
+                <p className="mt-4 text-muted">
+                    Rules for medical professionals using Somatic.
+                </p>
             </div>
 
-            <div className="space-y-10 rounded-3xl border border-white/10 bg-[#0f172a]/80 p-8 sm:p-12 shadow-xl backdrop-blur-xl">
+            <div className="space-y-10 rounded-2xl border border-border bg-surface p-6 sm:p-10">
                 {pageContent.legal.guidelines.map((section, index) => (
-                    <div key={index} className="border-b border-white/5 pb-8 last:border-0 last:pb-0">
-                        <h2 className="mb-4 text-2xl font-bold text-white">{section.heading}</h2>
-                        <p className="text-lg text-slate-300 leading-relaxed">{section.text}</p>
+                    <div key={index} className="border-b border-border pb-8 last:border-0 last:pb-0">
+                        <h2 className="mb-4 text-2xl font-bold text-foreground">
+                            {section.heading}
+                        </h2>
+
+                        <p className="text-base leading-relaxed text-muted sm:text-lg">
+                            {section.text}
+                        </p>
                     </div>
                 ))}
             </div>

@@ -29,8 +29,7 @@ export default function FirstAidGuidePage() {
             item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.short_desc.toLowerCase().includes(searchQuery.toLowerCase());
 
-        const matchesCategory =
-            activeCategory === "All" || item.category === activeCategory;
+        const matchesCategory = activeCategory === "All" || item.category === activeCategory;
 
         return matchesSearch && matchesCategory;
     });
@@ -38,28 +37,28 @@ export default function FirstAidGuidePage() {
     const getSeverityColor = (severity: string) => {
         switch (severity) {
             case "high":
-                return "text-red-400 bg-red-500/10 border-red-500/20";
+                return "text-danger bg-danger/10 border-danger/20";
             case "medium":
-                return "text-orange-400 bg-orange-500/10 border-orange-500/20";
+                return "text-warning bg-warning/10 border-warning/20";
             case "low":
-                return "text-blue-400 bg-blue-500/10 border-blue-500/20";
+                return "text-info bg-info/10 border-info/20";
             default:
-                return "text-slate-400 bg-slate-800 border-slate-700";
+                return "text-muted bg-surface-secondary border-border";
         }
     };
 
     const getCategoryIcon = (category: string) => {
         switch (category) {
             case "Critical Emergencies":
-                return <HeartPulse className="h-5 w-5 text-red-400" />;
+                return <HeartPulse className="h-5 w-5 text-danger" />;
             case "Minor Injuries":
-                return <Bandage className="h-5 w-5 text-orange-400" />;
+                return <Bandage className="h-5 w-5 text-warning" />;
             case "General Illness":
-                return <Thermometer className="h-5 w-5 text-blue-400" />;
+                return <Thermometer className="h-5 w-5 text-info" />;
             case "Poisoning & Bites":
-                return <AlertTriangle className="h-5 w-5 text-purple-400" />;
+                return <AlertTriangle className="h-5 w-5 text-primary" />;
             default:
-                return <HeartPulse className="h-5 w-5" />;
+                return <HeartPulse className="h-5 w-5 text-primary" />;
         }
     };
 
@@ -68,35 +67,24 @@ export default function FirstAidGuidePage() {
         setSelectedImageIndex(null);
     };
 
-    const openImage = (index: number) => {
-        setSelectedImageIndex(index);
-    };
-
-    const closeImage = () => {
-        setSelectedImageIndex(null);
-    };
+    const openImage = (index: number) => setSelectedImageIndex(index);
+    const closeImage = () => setSelectedImageIndex(null);
 
     const showPreviousImage = () => {
-        if (!selectedItem?.img_urls?.length || selectedImageIndex === null) {
-            return;
-        }
+        if (!selectedItem?.img_urls?.length || selectedImageIndex === null) return;
 
         setSelectedImageIndex((prev) => {
             if (prev === null) return null;
-
             const total = selectedItem.img_urls?.length || 0;
             return prev > 0 ? prev - 1 : total - 1;
         });
     };
 
     const showNextImage = () => {
-        if (!selectedItem?.img_urls?.length || selectedImageIndex === null) {
-            return;
-        }
+        if (!selectedItem?.img_urls?.length || selectedImageIndex === null) return;
 
         setSelectedImageIndex((prev) => {
             if (prev === null) return null;
-
             const total = selectedItem.img_urls?.length || 0;
             return prev < total - 1 ? prev + 1 : 0;
         });
@@ -114,17 +102,11 @@ export default function FirstAidGuidePage() {
         if (selectedImageIndex === null) return;
 
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Escape") {
-                closeImage();
-                return;
-            }
-
+            if (event.key === "Escape") closeImage();
             if (event.key === "ArrowLeft") {
                 event.preventDefault();
                 showPreviousImage();
-                return;
             }
-
             if (event.key === "ArrowRight") {
                 event.preventDefault();
                 showNextImage();
@@ -132,59 +114,57 @@ export default function FirstAidGuidePage() {
         };
 
         document.addEventListener("keydown", handleKeyDown);
-
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown);
-        };
+        return () => document.removeEventListener("keydown", handleKeyDown);
     }, [selectedImageIndex, selectedItem]);
 
     return (
-        <div className="w-full max-w-5xl mx-auto space-y-6 p-4 pt-20 text-slate-200 sm:space-y-8 sm:p-6 sm:pt-24 lg:p-8 lg:pt-8">
+        <div className="mx-auto w-full max-w-5xl space-y-6 p-4 pt-20 text-foreground sm:space-y-8 sm:p-6 sm:pt-24 lg:p-8 lg:pt-8">
             <div className="flex flex-col gap-4">
                 <div>
-                    <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">
-                        <div className="shrink-0 rounded-xl border border-red-500/20 bg-red-500/10 p-2.5">
-                            <ShieldAlert className="h-6 w-6 text-red-400" />
+                    <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                        <div className="shrink-0 rounded-xl border border-danger/20 bg-danger/10 p-2.5">
+                            <ShieldAlert className="h-6 w-6 text-danger" />
                         </div>
                         Emergency & First-Aid Guide
                     </h1>
 
-                    <p className="mt-2 text-sm text-slate-400 sm:text-base">
+                    <p className="mt-2 text-sm text-muted sm:text-base">
                         Zero-latency offline access for critical triage steps and home care protocols.
                     </p>
                 </div>
 
-                <div className="flex items-start gap-3 rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-4">
-                    <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-yellow-500" />
+                <div className="flex items-start gap-3 rounded-xl border border-warning/30 bg-warning/10 p-4">
+                    <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
 
-                    <p className="text-sm leading-relaxed text-yellow-200">
-                        <strong className="font-bold">Medical Disclaimer:</strong> This guide is for informational and first-aid purposes only. It does not replace professional medical advice, diagnosis, or treatment. In a severe emergency, call your local emergency services immediately.
+                    <p className="text-sm leading-relaxed text-foreground">
+                        <strong className="font-bold text-warning">Medical Disclaimer:</strong>{" "}
+                        This guide is for informational and first-aid purposes only. It does not replace professional medical advice, diagnosis, or treatment. In a severe emergency, call your local emergency services immediately.
                     </p>
                 </div>
             </div>
 
-            <div className="flex flex-col items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-[#131C31] p-4 shadow-lg md:flex-row">
+            <div className="flex flex-col items-center justify-between gap-4 rounded-2xl border border-border bg-surface p-4 md:flex-row">
                 <div className="relative w-full md:max-w-md">
-                    <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                    <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
                     <input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search for symptoms or injuries..."
-                        className="w-full rounded-xl border border-slate-700 bg-[#0B1120] py-2.5 pl-10 pr-4 text-sm text-white outline-none focus:border-blue-500"
+                        className="w-full rounded-xl border border-border bg-background py-2.5 pl-10 pr-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
                     />
                 </div>
 
-                <div className="custom-scrollbar flex w-full gap-2 overflow-x-auto pb-2 md:w-auto md:pb-0">
+                <div className="flex w-full gap-2 overflow-x-auto pb-2 md:w-auto md:pb-0">
                     {categories.map((category) => (
                         <button
                             key={category}
                             type="button"
                             onClick={() => setActiveCategory(category)}
                             className={`whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition ${activeCategory === category
-                                ? "bg-blue-600 text-white shadow-md"
-                                : "border border-slate-700 bg-[#0B1120] text-slate-400 hover:bg-slate-800 hover:text-white"
+                                    ? "bg-primary text-primary-foreground"
+                                    : "border border-border bg-surface-secondary text-muted hover:bg-accent hover:text-accent-foreground"
                                 }`}
                         >
                             {category}
@@ -194,11 +174,9 @@ export default function FirstAidGuidePage() {
             </div>
 
             {filteredData.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-800 bg-[#131C31] p-16">
-                    <Search className="mb-4 h-10 w-10 text-slate-600" />
-                    <p className="text-lg font-medium text-slate-400">
-                        No matching guides found.
-                    </p>
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface p-16">
+                    <Search className="mb-4 h-10 w-10 text-muted-foreground" />
+                    <p className="text-lg font-medium text-muted">No matching guides found.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 items-stretch gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -206,27 +184,25 @@ export default function FirstAidGuidePage() {
                         <div
                             key={item.id}
                             onClick={() => setSelectedItem(item as FirstAidItem)}
-                            className="flex h-full cursor-pointer flex-col rounded-2xl border border-slate-800 bg-[#131C31] p-5 shadow-lg transition-all duration-200 hover:border-slate-600 hover:bg-slate-800"
+                            className="flex h-full cursor-pointer flex-col rounded-2xl border border-border bg-surface p-5 transition-all duration-200 hover:border-primary/40 hover:bg-surface-secondary"
                         >
                             <div className="mb-3 flex gap-4">
-                                <div className="h-fit shrink-0 rounded-xl border border-slate-700 bg-[#0B1120] p-3">
+                                <div className="h-fit shrink-0 rounded-xl border border-border bg-surface-secondary p-3">
                                     {getCategoryIcon(item.category)}
                                 </div>
 
                                 <div>
-                                    <h2 className="mb-1 text-lg font-bold leading-tight text-white">
+                                    <h2 className="mb-1 text-lg font-bold leading-tight text-foreground">
                                         {item.title}
                                     </h2>
 
-                                    <span
-                                        className={`inline-block rounded border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getSeverityColor(item.severity)}`}
-                                    >
+                                    <span className={`inline-block rounded border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getSeverityColor(item.severity)}`}>
                                         {item.severity}
                                     </span>
                                 </div>
                             </div>
 
-                            <p className="mt-auto line-clamp-3 text-sm text-slate-400">
+                            <p className="mt-auto line-clamp-3 text-sm text-muted">
                                 {item.short_desc}
                             </p>
                         </div>
@@ -236,28 +212,26 @@ export default function FirstAidGuidePage() {
 
             {selectedItem && (
                 <div className="fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/70 p-4 backdrop-blur-sm duration-200">
-                    <div className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border border-slate-700 bg-[#0B1120] shadow-2xl">
-                        <div className="flex shrink-0 items-start justify-between border-b border-slate-800 p-5">
+                    <div className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border border-border bg-background shadow-2xl">
+                        <div className="flex shrink-0 items-start justify-between border-b border-border p-5">
                             <div className="flex gap-4">
-                                <div className="h-fit shrink-0 rounded-xl border border-slate-700 bg-[#131C31] p-3">
+                                <div className="h-fit shrink-0 rounded-xl border border-border bg-surface p-3">
                                     {getCategoryIcon(selectedItem.category)}
                                 </div>
 
                                 <div>
-                                    <h2 className="mb-1 text-xl font-bold text-white">
+                                    <h2 className="mb-1 text-xl font-bold text-foreground">
                                         {selectedItem.title}
                                     </h2>
 
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs font-semibold text-slate-400">
+                                        <span className="text-xs font-semibold text-muted">
                                             {selectedItem.category}
                                         </span>
 
-                                        <span className="h-1 w-1 rounded-full bg-slate-600" />
+                                        <span className="h-1 w-1 rounded-full bg-muted-foreground" />
 
-                                        <span
-                                            className={`rounded border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getSeverityColor(selectedItem.severity)}`}
-                                        >
+                                        <span className={`rounded border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getSeverityColor(selectedItem.severity)}`}>
                                             {selectedItem.severity}
                                         </span>
                                     </div>
@@ -267,18 +241,18 @@ export default function FirstAidGuidePage() {
                             <button
                                 type="button"
                                 onClick={closeGuide}
-                                className="rounded-lg bg-slate-800 p-1 text-slate-400 transition hover:text-white"
+                                className="rounded-lg bg-surface-secondary p-1 text-muted transition hover:bg-accent hover:text-foreground"
                                 aria-label="Close guide"
                             >
                                 <X className="h-6 w-6" />
                             </button>
                         </div>
 
-                        <div className="custom-scrollbar space-y-6 overflow-y-auto p-5 sm:p-6">
+                        <div className="space-y-6 overflow-y-auto p-5 sm:p-6">
                             {selectedItem.img_urls && selectedItem.img_urls.length > 0 && (
                                 <div>
-                                    <h4 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                                        <ImageIcon className="h-4 w-4 text-blue-400" />
+                                    <h4 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted">
+                                        <ImageIcon className="h-4 w-4 text-primary" />
                                         Reference Images
                                     </h4>
 
@@ -288,7 +262,7 @@ export default function FirstAidGuidePage() {
                                                 key={`${imageUrl}-${index}`}
                                                 type="button"
                                                 onClick={() => openImage(index)}
-                                                className="group overflow-hidden rounded-xl border border-slate-800 bg-[#131C31] text-left"
+                                                className="group overflow-hidden rounded-xl border border-border bg-surface-secondary text-left"
                                             >
                                                 <div className="relative">
                                                     <img
@@ -305,7 +279,7 @@ export default function FirstAidGuidePage() {
                                                     </div>
                                                 </div>
 
-                                                <div className="border-t border-slate-800 px-3 py-2 text-xs text-slate-500">
+                                                <div className="border-t border-border px-3 py-2 text-xs text-muted-foreground">
                                                     Image {index + 1} of {selectedItem.img_urls?.length}
                                                 </div>
                                             </button>
@@ -314,13 +288,13 @@ export default function FirstAidGuidePage() {
                                 </div>
                             )}
 
-                            <p className="rounded-xl border border-slate-800 bg-[#131C31] p-4 text-sm text-slate-300">
+                            <p className="rounded-xl border border-border bg-surface-secondary p-4 text-sm text-muted">
                                 {selectedItem.short_desc}
                             </p>
 
                             <div>
-                                <h4 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                                    <HeartPulse className="h-4 w-4 text-blue-400" />
+                                <h4 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted">
+                                    <HeartPulse className="h-4 w-4 text-primary" />
                                     Action Steps
                                 </h4>
 
@@ -328,15 +302,13 @@ export default function FirstAidGuidePage() {
                                     {selectedItem.steps.map((step, idx) => (
                                         <li
                                             key={idx}
-                                            className="flex gap-4 rounded-xl border border-slate-800/50 bg-[#131C31]/50 p-3 text-sm text-slate-300"
+                                            className="flex gap-4 rounded-xl border border-border bg-surface-secondary p-3 text-sm text-muted"
                                         >
-                                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-blue-500/20 bg-blue-500/10 text-sm font-bold text-blue-400 shadow-inner">
+                                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-accent text-sm font-bold text-primary">
                                                 {idx + 1}
                                             </span>
 
-                                            <span className="mt-1 leading-relaxed">
-                                                {step}
-                                            </span>
+                                            <span className="mt-1 leading-relaxed">{step}</span>
                                         </li>
                                     ))}
                                 </ol>
@@ -344,8 +316,8 @@ export default function FirstAidGuidePage() {
 
                             {selectedItem.video_urls && selectedItem.video_urls.length > 0 && (
                                 <div>
-                                    <h4 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                                        <Video className="h-4 w-4 text-red-400" />
+                                    <h4 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted">
+                                        <Video className="h-4 w-4 text-danger" />
                                         Video References
                                     </h4>
 
@@ -356,9 +328,9 @@ export default function FirstAidGuidePage() {
                                                 href={videoUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center gap-3 rounded-xl border border-slate-800 bg-[#131C31] p-3 text-sm text-blue-400 transition hover:border-blue-500/30 hover:bg-blue-500/5 hover:text-blue-300"
+                                                className="flex items-center gap-3 rounded-xl border border-border bg-surface-secondary p-3 text-sm text-primary transition hover:border-primary/40 hover:bg-accent"
                                             >
-                                                <Video className="h-5 w-5 shrink-0 text-red-400" />
+                                                <Video className="h-5 w-5 shrink-0 text-danger" />
                                                 <span>Watch Video {index + 1}</span>
                                             </a>
                                         ))}
@@ -367,18 +339,15 @@ export default function FirstAidGuidePage() {
                             )}
 
                             {selectedItem.warnings.length > 0 && (
-                                <div className="mt-6 rounded-xl border border-red-500/20 bg-red-500/10 p-5">
-                                    <h4 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-red-400">
+                                <div className="mt-6 rounded-xl border border-danger/20 bg-danger/10 p-5">
+                                    <h4 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-danger">
                                         <ShieldAlert className="h-5 w-5" />
                                         Important Warnings
                                     </h4>
 
                                     <ul className="list-disc space-y-2 pl-5">
                                         {selectedItem.warnings.map((warn, idx) => (
-                                            <li
-                                                key={idx}
-                                                className="text-sm font-medium leading-relaxed text-red-200/90"
-                                            >
+                                            <li key={idx} className="text-sm font-medium leading-relaxed text-foreground">
                                                 {warn}
                                             </li>
                                         ))}
@@ -387,11 +356,11 @@ export default function FirstAidGuidePage() {
                             )}
                         </div>
 
-                        <div className="flex shrink-0 justify-end rounded-b-2xl border-t border-slate-800 bg-[#0B1120] p-4">
+                        <div className="flex shrink-0 justify-end border-t border-border bg-surface p-4">
                             <button
                                 type="button"
                                 onClick={closeGuide}
-                                className="rounded-xl bg-slate-800 px-6 py-2 text-sm font-bold text-white transition hover:bg-slate-700"
+                                className="rounded-xl bg-surface-secondary px-6 py-2 text-sm font-bold text-foreground transition hover:bg-accent"
                             >
                                 Close Guide
                             </button>
@@ -429,10 +398,7 @@ export default function FirstAidGuidePage() {
                         <ChevronLeft className="h-7 w-7" />
                     </button>
 
-                    <div
-                        className="relative flex h-full w-full items-center justify-center"
-                        onClick={(event) => event.stopPropagation()}
-                    >
+                    <div className="relative flex h-full w-full items-center justify-center" onClick={(event) => event.stopPropagation()}>
                         <img
                             src={selectedItem.img_urls[selectedImageIndex]}
                             alt={`${selectedItem.title} reference ${selectedImageIndex + 1}`}

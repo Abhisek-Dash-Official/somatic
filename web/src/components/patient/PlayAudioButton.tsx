@@ -1,4 +1,5 @@
 "use client";
+
 import { Volume2 } from "lucide-react";
 
 export default function PlayAudioButton({ text, lang }: { text: string; lang: string }) {
@@ -7,14 +8,26 @@ export default function PlayAudioButton({ text, lang }: { text: string; lang: st
             alert("Screen reader not supported.");
             return;
         }
+
         window.speechSynthesis.cancel();
+
         const utterance = new SpeechSynthesisUtterance(text);
 
         const langMap: Record<string, string> = {
-            english: "en-US", hindi: "hi-IN", bengali: "bn-IN", telugu: "te-IN",
-            marathi: "mr-IN", tamil: "ta-IN", urdu: "ur-IN", gujarati: "gu-IN",
-            kannada: "kn-IN", malayalam: "ml-IN", odia: "or-IN", punjabi: "pa-IN",
+            english: "en-US",
+            hindi: "hi-IN",
+            bengali: "bn-IN",
+            telugu: "te-IN",
+            marathi: "mr-IN",
+            tamil: "ta-IN",
+            urdu: "ur-IN",
+            gujarati: "gu-IN",
+            kannada: "kn-IN",
+            malayalam: "ml-IN",
+            odia: "or-IN",
+            punjabi: "pa-IN",
         };
+
         utterance.lang = langMap[lang.toLowerCase()] || "en-US";
         window.speechSynthesis.speak(utterance);
     };
@@ -23,9 +36,10 @@ export default function PlayAudioButton({ text, lang }: { text: string; lang: st
         <button
             type="button"
             onClick={playAudio}
-            className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition"
+            className="flex items-center gap-1 text-xs text-primary transition hover:text-primary-hover"
         >
-            <Volume2 className="w-4 h-4" /> Listen
+            <Volume2 className="h-4 w-4" />
+            Listen
         </button>
     );
 }

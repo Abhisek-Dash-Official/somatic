@@ -3,7 +3,25 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
-import { User, Mail, Phone, MapPin, Calendar, Weight, ShieldCheck, Loader2, Save, AlertTriangle, CheckCircle2, Lock, Stethoscope, HeartPulse, Plus, X, Shield } from "lucide-react";
+import { toast } from "react-toastify";
+import {
+    User,
+    Mail,
+    Phone,
+    MapPin,
+    Calendar,
+    Weight,
+    ShieldCheck,
+    Loader2,
+    Save,
+    AlertTriangle,
+    Lock,
+    Stethoscope,
+    HeartPulse,
+    Plus,
+    X,
+    Shield,
+} from "lucide-react";
 import AvatarSelector from "@/components/profile/AvatarSelector";
 import DeleteAccountSection from "@/components/profile/DeleteAccountSection";
 
@@ -36,11 +54,7 @@ export default function Profile() {
     const { user, fetchUser, isLoading } = useUserStore();
 
     const [saving, setSaving] = useState(false);
-    const [successMsg, setSuccessMsg] = useState("");
-    const [errorMsg, setErrorMsg] = useState("");
-
-    const [somaticPolicy, setSomaticPolicy] =
-        useState<SomaticPolicy | null>(null);
+    const [somaticPolicy, setSomaticPolicy] = useState<SomaticPolicy | null>(null);
     const [policyLoading, setPolicyLoading] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -89,9 +103,7 @@ export default function Profile() {
                     contact_no: profile.contact_no || "",
                     address: profile.address || "",
                     date_of_birth: profile.date_of_birth
-                        ? new Date(profile.date_of_birth)
-                            .toISOString()
-                            .split("T")[0]
+                        ? new Date(profile.date_of_birth).toISOString().split("T")[0]
                         : "",
                     weight_kg: profile.weight_kg?.toString() || "",
                     avatar_id: profile.avatar_id || "1",
@@ -105,17 +117,12 @@ export default function Profile() {
                     type: profile.insurance?.type || "",
                     provider_name: profile.insurance?.provider_name || "",
                     policy_number: profile.insurance?.policy_number || "",
-                    policy_holder_name:
-                        profile.insurance?.policy_holder_name || "",
+                    policy_holder_name: profile.insurance?.policy_holder_name || "",
                 });
             }
         } catch (error) {
             console.error("Profile fetch error:", error);
-            setErrorMsg(
-                error instanceof Error
-                    ? error.message
-                    : "Failed to fetch profile data",
-            );
+            toast.error(error instanceof Error ? error.message : "Failed to fetch profile data");
         } finally {
             setPolicyLoading(false);
         }
@@ -123,27 +130,19 @@ export default function Profile() {
 
     useEffect(() => {
         if (!user) return;
-
         fetchProfileData();
     }, [user]);
 
     const updateField = (field: string, value: string) => {
-        setFormData((prev) => ({
-            ...prev,
-            [field]: value,
-        }));
+        setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
     const handleInsuranceTypeChange = (type: string) => {
         if (type === "somatic") {
             if (!somaticPolicy) {
-                setErrorMsg(
-                    "No SOMATIC insurance policy is linked to your account. Please purchase or activate a SOMATIC insurance plan first.",
-                );
+                toast.error("No SOMATIC insurance policy is linked to your account. Please purchase or activate a SOMATIC insurance plan first.");
                 return;
             }
-
-            setErrorMsg("");
 
             setInsurance({
                 type: "somatic",
@@ -156,17 +155,9 @@ export default function Profile() {
         }
 
         if (type === "external") {
-            setErrorMsg("");
-
-            setInsurance((prev) => ({
-                ...prev,
-                type: "external",
-            }));
-
+            setInsurance((prev) => ({ ...prev, type: "external" }));
             return;
         }
-
-        setErrorMsg("");
 
         setInsurance({
             type: "",
@@ -181,11 +172,7 @@ export default function Profile() {
 
         if (!value) return;
 
-        if (
-            !allergies.some(
-                (item) => item.toLowerCase() === value.toLowerCase(),
-            )
-        ) {
+        if (!allergies.some((item) => item.toLowerCase() === value.toLowerCase())) {
             setAllergies((prev) => [...prev, value]);
         }
 
@@ -201,11 +188,7 @@ export default function Profile() {
 
         if (!value) return;
 
-        if (
-            !diseases.some(
-                (item) => item.toLowerCase() === value.toLowerCase(),
-            )
-        ) {
+        if (!diseases.some((item) => item.toLowerCase() === value.toLowerCase())) {
             setDiseases((prev) => [...prev, value]);
         }
 
@@ -216,14 +199,10 @@ export default function Profile() {
         setDiseases((prev) => prev.filter((_, i) => i !== index));
     };
 
-    const handleSubmit = async (
-        e: React.FormEvent<HTMLFormElement>,
-    ) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setSaving(true);
-        setSuccessMsg("");
-        setErrorMsg("");
 
         try {
             const payload: Record<string, unknown> = {
@@ -250,8 +229,7 @@ export default function Profile() {
                         ? {
                             provider_name: insurance.provider_name,
                             policy_number: insurance.policy_number,
-                            policy_holder_name:
-                                insurance.policy_holder_name,
+                            policy_holder_name: insurance.policy_holder_name,
                         }
                         : {}),
                 }
@@ -276,9 +254,7 @@ export default function Profile() {
                 throw new Error(data.error || "Failed to update profile");
             }
 
-            setSuccessMsg(
-                data.message || "Profile updated successfully.",
-            );
+            toast.success(data.message || "Profile updated successfully.");
 
             setFormData((prev) => ({
                 ...prev,
@@ -290,12 +266,7 @@ export default function Profile() {
             await fetchProfileData();
         } catch (error) {
             console.error("Profile update error:", error);
-
-            setErrorMsg(
-                error instanceof Error
-                    ? error.message
-                    : "Failed to update profile",
-            );
+            toast.error(error instanceof Error ? error.message : "Failed to update profile");
         } finally {
             setSaving(false);
         }
@@ -304,16 +275,16 @@ export default function Profile() {
     if (isLoading && !user) {
         return (
             <div className="flex min-h-100 items-center justify-center">
-                <Loader2 className="h-7 w-7 animate-spin text-purple-400" />
+                <Loader2 className="h-7 w-7 animate-spin text-primary" />
             </div>
         );
     }
 
     if (!user) {
         return (
-            <div className="rounded-2xl border border-white/10 bg-[#0f172a] p-8 text-center">
-                <AlertTriangle className="mx-auto mb-3 h-8 w-8 text-amber-400" />
-                <p className="text-gray-300">Unable to load profile.</p>
+            <div className="rounded-xl border border-border bg-surface p-8 text-center">
+                <AlertTriangle className="mx-auto mb-3 h-8 w-8 text-warning" />
+                <p className="text-muted">Unable to load profile.</p>
             </div>
         );
     }
@@ -322,31 +293,24 @@ export default function Profile() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Profile Header */}
-            <div className="rounded-2xl border border-white/10 bg-[#0f172a] p-6">
+            <div className="rounded-xl border border-border bg-surface p-6">
                 <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
                     <AvatarSelector
                         currentAvatarId={formData.avatar_id}
-                        onSelect={(id) =>
-                            setFormData((prev) => ({
-                                ...prev,
-                                avatar_id: id,
-                            }))
-                        }
+                        onSelect={(id) => setFormData((prev) => ({ ...prev, avatar_id: id }))}
                         isAdmin={user.role === "admin"}
                     />
 
                     <div>
-                        <h1 className="text-2xl font-semibold text-white">
+                        <h1 className="text-2xl font-semibold text-foreground">
                             Profile
                         </h1>
 
-                        <p className="mt-1 text-sm text-gray-400">
-                            Manage your personal information and account
-                            settings.
+                        <p className="mt-1 text-sm text-muted">
+                            Manage your personal information and account settings.
                         </p>
 
-                        <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-purple-400/20 bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300">
+                        <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
                             <ShieldCheck className="h-3.5 w-3.5" />
                             {roleLabel}
                         </div>
@@ -354,206 +318,151 @@ export default function Profile() {
                 </div>
             </div>
 
-            {/* Messages */}
-            {successMsg && (
-                <div className="flex items-center gap-3 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
-                    <CheckCircle2 className="h-5 w-5 shrink-0" />
-                    {successMsg}
-                </div>
-            )}
-
-            {errorMsg && (
-                <div className="flex items-center gap-3 rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                    <AlertTriangle className="h-5 w-5 shrink-0" />
-                    {errorMsg}
-                </div>
-            )}
-
-            {/* General Information */}
-            <section className="rounded-2xl border border-white/10 bg-[#0f172a] p-6">
+            <section className="rounded-xl border border-border bg-surface p-6">
                 <div className="mb-6">
                     <div className="flex items-center gap-2">
-                        <User className="h-5 w-5 text-purple-400" />
-                        <h2 className="text-lg font-semibold text-white">
+                        <User className="h-5 w-5 text-primary" />
+                        <h2 className="text-lg font-semibold text-foreground">
                             General Information
                         </h2>
                     </div>
 
-                    <p className="mt-1 text-sm text-gray-400">
+                    <p className="mt-1 text-sm text-muted">
                         Your basic personal and contact information.
                     </p>
                 </div>
 
                 <div className="grid gap-5 md:grid-cols-2">
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-300">
+                        <label className="mb-2 block text-sm font-medium text-foreground">
                             Username
                         </label>
 
                         <div className="relative">
-                            <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                            <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
                             <input
                                 type="text"
                                 value={formData.username}
-                                onChange={(e) =>
-                                    updateField(
-                                        "username",
-                                        e.target.value,
-                                    )
-                                }
-                                className="w-full rounded-xl border border-white/10 bg-white/3 py-3 pl-10 pr-4 text-sm text-white outline-none transition focus:border-purple-500/50"
+                                onChange={(e) => updateField("username", e.target.value)}
+                                className="w-full rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-primary"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-300">
+                        <label className="mb-2 block text-sm font-medium text-foreground">
                             Email
                         </label>
 
                         <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
                             <input
                                 type="email"
                                 value={user.email}
                                 disabled
-                                className="w-full cursor-not-allowed rounded-xl border border-white/10 bg-white/2 py-3 pl-10 pr-4 text-sm text-gray-500 outline-none"
+                                className="w-full cursor-not-allowed rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-muted outline-none"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-300">
+                        <label className="mb-2 block text-sm font-medium text-foreground">
                             Contact Number
                         </label>
 
                         <div className="relative">
-                            <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                            <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
                             <input
                                 type="tel"
                                 value={formData.contact_no}
-                                onChange={(e) =>
-                                    updateField(
-                                        "contact_no",
-                                        e.target.value,
-                                    )
-                                }
+                                onChange={(e) => updateField("contact_no", e.target.value)}
                                 placeholder="10 digit mobile number"
-                                className="w-full rounded-xl border border-white/10 bg-white/3 py-3 pl-10 pr-4 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-purple-500/50"
+                                className="w-full rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-300">
+                        <label className="mb-2 block text-sm font-medium text-foreground">
                             Date of Birth
                         </label>
 
                         <div className="relative">
-                            <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                            <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
                             <input
                                 type="date"
                                 value={formData.date_of_birth}
-                                onChange={(e) =>
-                                    updateField(
-                                        "date_of_birth",
-                                        e.target.value,
-                                    )
-                                }
-                                className="w-full rounded-xl border border-white/10 bg-white/3 py-3 pl-10 pr-4 text-sm text-white outline-none transition focus:border-purple-500/50"
+                                onChange={(e) => updateField("date_of_birth", e.target.value)}
+                                className="w-full rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-primary"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-300">
+                        <label className="mb-2 block text-sm font-medium text-foreground">
                             Weight (kg)
                         </label>
 
                         <div className="relative">
-                            <Weight className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                            <Weight className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
                             <input
                                 type="number"
                                 min="1"
                                 step="0.1"
                                 value={formData.weight_kg}
-                                onChange={(e) =>
-                                    updateField(
-                                        "weight_kg",
-                                        e.target.value,
-                                    )
-                                }
+                                onChange={(e) => updateField("weight_kg", e.target.value)}
                                 placeholder="e.g. 65"
-                                className="w-full rounded-xl border border-white/10 bg-white/3 py-3 pl-10 pr-4 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-purple-500/50"
+                                className="w-full rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                             />
                         </div>
                     </div>
 
-                    <InfoItem
-                        label="Member Since"
-                        value={formatDate(user.created_at)}
-                    />
+                    <InfoItem label="Member Since" value={formatDate(user.created_at)} />
 
                     <div className="md:col-span-2">
-                        <label className="mb-2 block text-sm font-medium text-gray-300">
+                        <label className="mb-2 block text-sm font-medium text-foreground">
                             Address
                         </label>
 
                         <div className="relative">
-                            <MapPin className="absolute left-3 top-3.5 h-4 w-4 text-gray-500" />
+                            <MapPin className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
 
                             <textarea
                                 value={formData.address}
-                                onChange={(e) =>
-                                    updateField(
-                                        "address",
-                                        e.target.value,
-                                    )
-                                }
+                                onChange={(e) => updateField("address", e.target.value)}
                                 rows={3}
                                 placeholder="Enter your address"
-                                className="w-full resize-none rounded-xl border border-white/10 bg-white/3 py-3 pl-10 pr-4 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-purple-500/50"
+                                className="w-full resize-none rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                             />
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Doctor Information */}
-            {(user.role === "doctor" ||
-                user.role === "assistant_doctor") &&
+            {(user.role === "doctor" || user.role === "assistant_doctor") &&
                 user.doctor_info && (
-                    <section className="rounded-2xl border border-white/10 bg-[#0f172a] p-6">
+                    <section className="rounded-xl border border-border bg-surface p-6">
                         <div className="mb-6">
                             <div className="flex items-center gap-2">
-                                <Stethoscope className="h-5 w-5 text-purple-400" />
-                                <h2 className="text-lg font-semibold text-white">
+                                <Stethoscope className="h-5 w-5 text-primary" />
+                                <h2 className="text-lg font-semibold text-foreground">
                                     Professional Information
                                 </h2>
                             </div>
 
-                            <p className="mt-1 text-sm text-gray-400">
-                                Your professional information is managed by
-                                the system.
+                            <p className="mt-1 text-sm text-muted">
+                                Your professional information is managed by the system.
                             </p>
                         </div>
 
                         <div className="grid gap-5 md:grid-cols-2">
-                            <InfoItem
-                                label="Registration Number"
-                                value={user.doctor_info.reg_no}
-                            />
-
-                            <InfoItem
-                                label="Qualification"
-                                value={user.doctor_info.qualification}
-                            />
-
+                            <InfoItem label="Registration Number" value={user.doctor_info.reg_no} />
+                            <InfoItem label="Qualification" value={user.doctor_info.qualification} />
                             <InfoItem
                                 label="Experience"
                                 value={
@@ -562,18 +471,14 @@ export default function Profile() {
                                         : undefined
                                 }
                             />
-
                             <InfoItem
                                 label="Department"
                                 value={
                                     user.doctor_info.department_id
-                                        ? String(
-                                            user.doctor_info.department_id,
-                                        )
+                                        ? String(user.doctor_info.department_id)
                                         : undefined
                                 }
                             />
-
                             <InfoItem
                                 label="Case Acceptance"
                                 value={
@@ -586,35 +491,31 @@ export default function Profile() {
                     </section>
                 )}
 
-            {/* Medical Profile */}
             {user.role === "patient" && (
-                <section className="rounded-2xl border border-white/10 bg-[#0f172a] p-6">
+                <section className="rounded-xl border border-border bg-surface p-6">
                     <div className="mb-6">
                         <div className="flex items-center gap-2">
-                            <HeartPulse className="h-5 w-5 text-purple-400" />
-                            <h2 className="text-lg font-semibold text-white">
+                            <HeartPulse className="h-5 w-5 text-primary" />
+                            <h2 className="text-lg font-semibold text-foreground">
                                 Medical Profile
                             </h2>
                         </div>
 
-                        <p className="mt-1 text-sm text-gray-400">
-                            Keep your medical information updated for safer
-                            emergency assistance.
+                        <p className="mt-1 text-sm text-muted">
+                            Keep your medical information updated for safer emergency assistance.
                         </p>
                     </div>
 
                     <div className="space-y-6">
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-300">
+                            <label className="mb-2 block text-sm font-medium text-foreground">
                                 Blood Group
                             </label>
 
                             <select
                                 value={bloodGrp}
-                                onChange={(e) =>
-                                    setBloodGrp(e.target.value)
-                                }
-                                className="w-full rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-sm text-white outline-none transition focus:border-purple-500/50"
+                                onChange={(e) => setBloodGrp(e.target.value)}
+                                className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
                             >
                                 <option value="">Select blood group</option>
 
@@ -631,7 +532,6 @@ export default function Profile() {
                             items={allergies}
                             input={allergyInput}
                             setInput={setAllergyInput}
-                            setItems={setAllergies}
                             onAdd={addAllergy}
                             onRemove={removeAllergy}
                             placeholder="e.g. Penicillin"
@@ -642,7 +542,6 @@ export default function Profile() {
                             items={diseases}
                             input={diseaseInput}
                             setInput={setDiseaseInput}
-                            setItems={setDiseases}
                             onAdd={addDisease}
                             onRemove={removeDisease}
                             placeholder="e.g. Diabetes"
@@ -651,58 +550,44 @@ export default function Profile() {
                 </section>
             )}
 
-            {/* Insurance */}
-            <section className="rounded-2xl border border-white/10 bg-[#0f172a] p-6">
+            <section className="rounded-xl border border-border bg-surface p-6">
                 <div className="mb-6">
                     <div className="flex items-center gap-2">
-                        <Shield className="h-5 w-5 text-purple-400" />
-                        <h2 className="text-lg font-semibold text-white">
+                        <Shield className="h-5 w-5 text-primary" />
+                        <h2 className="text-lg font-semibold text-foreground">
                             Insurance
                         </h2>
                     </div>
 
-                    <p className="mt-1 text-sm text-gray-400">
-                        Manage your insurance information for emergency
-                        paperwork and assistance.
+                    <p className="mt-1 text-sm text-muted">
+                        Manage your insurance information for emergency paperwork and assistance.
                     </p>
                 </div>
 
                 <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-300">
+                    <label className="mb-2 block text-sm font-medium text-foreground">
                         Insurance Type
                     </label>
 
                     <select
                         value={insurance.type}
-                        onChange={(e) =>
-                            handleInsuranceTypeChange(e.target.value)
-                        }
-                        className="w-full rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-sm text-white outline-none transition focus:border-purple-500/50"
+                        onChange={(e) => handleInsuranceTypeChange(e.target.value)}
+                        className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
                     >
                         <option value="">No Insurance</option>
-
-                        <option value="external">
-                            External Insurance
-                        </option>
-
-                        <option
-                            value="somatic"
-                            disabled={
-                                policyLoading || !somaticPolicy
-                            }
-                        >
+                        <option value="external">External Insurance</option>
+                        <option value="somatic" disabled={policyLoading || !somaticPolicy}>
                             SOMATIC Insurance
                             {!somaticPolicy ? " (No Active Policy)" : ""}
                         </option>
                     </select>
                 </div>
 
-                {/* External Insurance */}
                 {insurance.type === "external" && (
                     <div className="mt-5 space-y-5">
                         <div className="grid gap-5 md:grid-cols-2">
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-300">
+                                <label className="mb-2 block text-sm font-medium text-foreground">
                                     Insurance Provider
                                 </label>
 
@@ -716,12 +601,12 @@ export default function Profile() {
                                         }))
                                     }
                                     placeholder="e.g. Star Health"
-                                    className="w-full rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-purple-500/50"
+                                    className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                                 />
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-300">
+                                <label className="mb-2 block text-sm font-medium text-foreground">
                                     Policy Number
                                 </label>
 
@@ -735,12 +620,12 @@ export default function Profile() {
                                         }))
                                     }
                                     placeholder="Enter policy number"
-                                    className="w-full rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-purple-500/50"
+                                    className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                                 />
                             </div>
 
                             <div className="md:col-span-2">
-                                <label className="mb-2 block text-sm font-medium text-gray-300">
+                                <label className="mb-2 block text-sm font-medium text-foreground">
                                     Policy Holder Name
                                 </label>
 
@@ -750,43 +635,39 @@ export default function Profile() {
                                     onChange={(e) =>
                                         setInsurance((prev) => ({
                                             ...prev,
-                                            policy_holder_name:
-                                                e.target.value,
+                                            policy_holder_name: e.target.value,
                                         }))
                                     }
                                     placeholder="Enter policy holder name"
-                                    className="w-full rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-purple-500/50"
+                                    className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                                 />
                             </div>
                         </div>
 
-                        <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-4">
+                        <div className="rounded-lg border border-warning/20 bg-warning/10 p-4">
                             <div className="flex gap-3">
-                                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" />
+                                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
 
-                                <p className="text-xs leading-5 text-amber-200">
-                                    External insurance information is provided
-                                    by you and is not verified by SOMATIC.
-                                    Please make sure the information is
-                                    accurate.
+                                <p className="text-xs leading-5 text-warning">
+                                    External insurance information is provided by you and is not verified by SOMATIC. Please make sure the information is accurate.
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex flex-col gap-3 rounded-lg border border-border bg-surface-secondary p-4 sm:flex-row sm:items-center sm:justify-between">
                             <div>
-                                <p className="text-sm font-medium text-white">
+                                <p className="text-sm font-medium text-foreground">
                                     Want SOMATIC Insurance?
                                 </p>
 
-                                <p className="mt-1 text-xs text-gray-400">
+                                <p className="mt-1 text-xs text-muted">
                                     View available SOMATIC insurance plans.
                                 </p>
                             </div>
 
                             <Link
                                 href="/insurance"
-                                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-purple-400/20 bg-purple-500/10 px-4 py-2 text-sm font-medium text-purple-300 transition hover:bg-purple-500/20"
+                                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition hover:bg-primary/10"
                             >
                                 View SOMATIC Plans
                             </Link>
@@ -794,146 +675,100 @@ export default function Profile() {
                     </div>
                 )}
 
-                {/* SOMATIC Insurance */}
                 {insurance.type === "somatic" && (
                     <div className="mt-5">
                         {somaticPolicy ? (
-                            <div className="rounded-xl border border-emerald-400/20 bg-emerald-500/6 p-5">
+                            <div className="rounded-lg border border-success/20 bg-success/5 p-5">
                                 <div className="mb-5 flex items-start justify-between gap-4">
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <ShieldCheck className="h-5 w-5 text-emerald-400" />
+                                            <ShieldCheck className="h-5 w-5 text-success" />
 
-                                            <h3 className="font-medium text-white">
+                                            <h3 className="font-medium text-foreground">
                                                 SOMATIC Insurance
                                             </h3>
                                         </div>
 
-                                        <p className="mt-1 text-xs text-gray-400">
-                                            Your verified SOMATIC insurance
-                                            policy.
+                                        <p className="mt-1 text-xs text-muted">
+                                            Your verified SOMATIC insurance policy.
                                         </p>
                                     </div>
 
                                     <span
                                         className={`rounded-full px-3 py-1 text-xs font-medium ${somaticPolicy.status === "active"
-                                            ? "bg-emerald-500/10 text-emerald-300"
-                                            : "bg-amber-500/10 text-amber-300"
+                                                ? "bg-success/10 text-success"
+                                                : "bg-warning/10 text-warning"
                                             }`}
                                     >
-                                        {formatStatus(
-                                            somaticPolicy.status,
-                                        )}
+                                        {formatStatus(somaticPolicy.status)}
                                     </span>
                                 </div>
 
                                 <div className="grid gap-4 sm:grid-cols-2">
-                                    <InfoItem
-                                        label="Plan"
-                                        value={
-                                            somaticPolicy.plan_id?.name
-                                        }
-                                    />
-
-                                    <InfoItem
-                                        label="Policy Number"
-                                        value={
-                                            somaticPolicy.policy_number
-                                        }
-                                    />
-
+                                    <InfoItem label="Plan" value={somaticPolicy.plan_id?.name} />
+                                    <InfoItem label="Policy Number" value={somaticPolicy.policy_number} />
                                     <InfoItem
                                         label="Coverage"
                                         value={
-                                            somaticPolicy.plan_id
-                                                ?.coverage_amount !==
-                                                undefined
-                                                ? `₹${somaticPolicy.plan_id.coverage_amount.toLocaleString(
-                                                    "en-IN",
-                                                )}`
+                                            somaticPolicy.plan_id?.coverage_amount !== undefined
+                                                ? `₹${somaticPolicy.plan_id.coverage_amount.toLocaleString("en-IN")}`
                                                 : undefined
                                         }
                                     />
-
                                     <InfoItem
                                         label="Premium"
                                         value={
-                                            somaticPolicy.plan_id
-                                                ?.premium_amount !==
-                                                undefined
-                                                ? `₹${somaticPolicy.plan_id.premium_amount.toLocaleString(
-                                                    "en-IN",
-                                                )} / ${formatFrequency(
-                                                    somaticPolicy.plan_id
-                                                        .premium_frequency,
-                                                )}`
+                                            somaticPolicy.plan_id?.premium_amount !== undefined
+                                                ? `₹${somaticPolicy.plan_id.premium_amount.toLocaleString("en-IN")} / ${formatFrequency(somaticPolicy.plan_id.premium_frequency)}`
                                                 : undefined
                                         }
                                     />
-
-                                    <InfoItem
-                                        label="Valid From"
-                                        value={formatDate(
-                                            somaticPolicy.start_date,
-                                        )}
-                                    />
-
-                                    <InfoItem
-                                        label="Valid Until"
-                                        value={formatDate(
-                                            somaticPolicy.expiry_date,
-                                        )}
-                                    />
+                                    <InfoItem label="Valid From" value={formatDate(somaticPolicy.start_date)} />
+                                    <InfoItem label="Valid Until" value={formatDate(somaticPolicy.expiry_date)} />
                                 </div>
 
                                 {somaticPolicy.plan_id?.features &&
-                                    somaticPolicy.plan_id.features.length >
-                                    0 && (
-                                        <div className="mt-5 border-t border-white/10 pt-5">
-                                            <p className="mb-3 text-sm font-medium text-gray-300">
+                                    somaticPolicy.plan_id.features.length > 0 && (
+                                        <div className="mt-5 border-t border-border pt-5">
+                                            <p className="mb-3 text-sm font-medium text-foreground">
                                                 Plan Features
                                             </p>
 
                                             <div className="flex flex-wrap gap-2">
-                                                {somaticPolicy.plan_id.features.map(
-                                                    (feature, index) => (
-                                                        <span
-                                                            key={index}
-                                                            className="rounded-full border border-white/10 bg-white/3 px-3 py-1.5 text-xs text-gray-300"
-                                                        >
-                                                            {feature}
-                                                        </span>
-                                                    ),
-                                                )}
+                                                {somaticPolicy.plan_id.features.map((feature, index) => (
+                                                    <span
+                                                        key={index}
+                                                        className="rounded-full border border-border bg-surface-secondary px-3 py-1.5 text-xs text-muted"
+                                                    >
+                                                        {feature}
+                                                    </span>
+                                                ))}
                                             </div>
                                         </div>
                                     )}
 
-                                <div className="mt-5 flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2.5 text-xs text-emerald-300">
+                                <div className="mt-5 flex items-center gap-2 rounded-lg bg-success/10 px-3 py-2.5 text-xs text-success">
                                     <ShieldCheck className="h-4 w-4 shrink-0" />
-                                    This policy is linked to your SOMATIC
-                                    account and its details cannot be edited
-                                    from your profile.
+                                    This policy is linked to your SOMATIC account and its details cannot be edited from your profile.
                                 </div>
                             </div>
                         ) : (
-                            <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-4">
+                            <div className="rounded-lg border border-warning/20 bg-warning/10 p-4">
                                 <div className="flex gap-3">
-                                    <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" />
+                                    <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
 
                                     <div>
-                                        <p className="text-sm font-medium text-amber-200">
+                                        <p className="text-sm font-medium text-warning">
                                             No SOMATIC policy found
                                         </p>
 
-                                        <p className="mt-1 text-xs leading-5 text-amber-200/70">
-                                            Please purchase or activate a
-                                            SOMATIC insurance plan first.
+                                        <p className="mt-1 text-xs leading-5 text-warning/70">
+                                            Please purchase or activate a SOMATIC insurance plan first.
                                         </p>
 
                                         <Link
                                             href="/insurance"
-                                            className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-amber-300 hover:text-amber-200"
+                                            className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-warning transition hover:text-warning/80"
                                         >
                                             View Insurance Plans →
                                         </Link>
@@ -944,23 +779,21 @@ export default function Profile() {
                     </div>
                 )}
 
-                {/* No Insurance */}
                 {!insurance.type && (
-                    <div className="mt-5 flex flex-col gap-4 rounded-xl border border-white/10 bg-white/3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="mt-5 flex flex-col gap-4 rounded-lg border border-border bg-surface-secondary p-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p className="text-sm font-medium text-white">
+                            <p className="text-sm font-medium text-foreground">
                                 No insurance selected
                             </p>
 
-                            <p className="mt-1 text-xs text-gray-400">
-                                Add external insurance details or get a
-                                SOMATIC insurance plan.
+                            <p className="mt-1 text-xs text-muted">
+                                Add external insurance details or get a SOMATIC insurance plan.
                             </p>
                         </div>
 
                         <Link
                             href="/insurance"
-                            className="inline-flex shrink-0 items-center justify-center rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-500"
+                            className="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
                         >
                             Get SOMATIC Insurance
                         </Link>
@@ -968,74 +801,61 @@ export default function Profile() {
                 )}
             </section>
 
-            {/* Security */}
-            <section className="rounded-2xl border border-white/10 bg-[#0f172a] p-6">
+            <section className="rounded-xl border border-border bg-surface p-6">
                 <div className="mb-6">
                     <div className="flex items-center gap-2">
-                        <Lock className="h-5 w-5 text-purple-400" />
+                        <Lock className="h-5 w-5 text-primary" />
 
-                        <h2 className="text-lg font-semibold text-white">
+                        <h2 className="text-lg font-semibold text-foreground">
                             Security
                         </h2>
                     </div>
 
-                    <p className="mt-1 text-sm text-gray-400">
+                    <p className="mt-1 text-sm text-muted">
                         Change your account password.
                     </p>
                 </div>
 
                 <div className="grid gap-5 md:grid-cols-2">
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-300">
+                        <label className="mb-2 block text-sm font-medium text-foreground">
                             Current Password
                         </label>
 
                         <input
                             type="password"
                             value={formData.currentPassword}
-                            onChange={(e) =>
-                                updateField(
-                                    "currentPassword",
-                                    e.target.value,
-                                )
-                            }
+                            onChange={(e) => updateField("currentPassword", e.target.value)}
                             placeholder="Enter current password"
-                            className="w-full rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-purple-500/50"
+                            className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                         />
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-300">
+                        <label className="mb-2 block text-sm font-medium text-foreground">
                             New Password
                         </label>
 
                         <input
                             type="password"
                             value={formData.newPassword}
-                            onChange={(e) =>
-                                updateField(
-                                    "newPassword",
-                                    e.target.value,
-                                )
-                            }
+                            onChange={(e) => updateField("newPassword", e.target.value)}
                             placeholder="Enter new password"
-                            className="w-full rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-purple-500/50"
+                            className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                         />
                     </div>
                 </div>
 
-                <p className="mt-3 text-xs text-gray-500">
-                    Leave both fields empty if you do not want to change your
-                    password.
+                <p className="mt-3 text-xs text-muted-foreground">
+                    Leave both fields empty if you do not want to change your password.
                 </p>
             </section>
 
-            {/* Save */}
             <div className="flex justify-end">
                 <button
                     type="submit"
                     disabled={saving}
-                    className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-3 text-sm font-medium text-white transition hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
                 >
                     {saving ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -1047,24 +867,16 @@ export default function Profile() {
                 </button>
             </div>
 
-            {/* Delete Account */}
             <DeleteAccountSection />
         </form>
     );
 }
 
-function InfoItem({
-    label,
-    value,
-}: {
-    label: string;
-    value?: string;
-}) {
+function InfoItem({ label, value }: { label: string; value?: string }) {
     return (
-        <div className="rounded-xl border border-white/10 bg-white/2 p-4">
-            <p className="text-xs text-gray-500">{label}</p>
-
-            <p className="mt-1 text-sm font-medium text-gray-200">
+        <div className="rounded-lg border border-border bg-surface-secondary p-4">
+            <p className="text-xs text-muted-foreground">{label}</p>
+            <p className="mt-1 text-sm font-medium text-foreground">
                 {value || "Not provided"}
             </p>
         </div>
@@ -1084,14 +896,13 @@ function TagInput({
     items: string[];
     input: string;
     setInput: React.Dispatch<React.SetStateAction<string>>;
-    setItems: React.Dispatch<React.SetStateAction<string[]>>;
     onAdd: () => void;
     onRemove: (index: number) => void;
     placeholder: string;
 }) {
     return (
         <div>
-            <label className="mb-2 block text-lg font-medium text-gray-300">
+            <label className="mb-2 block text-sm font-medium text-foreground">
                 {label}
             </label>
 
@@ -1107,14 +918,14 @@ function TagInput({
                         }
                     }}
                     placeholder={placeholder}
-                    className="w-full rounded-xl border border-white/10 bg-white/3 px-4 py-4 text-base text-white outline-none transition placeholder:text-gray-500 focus:border-purple-500/50"
+                    className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                 />
 
                 {input.trim() && (
                     <button
                         type="button"
                         onClick={onAdd}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-purple-400 transition hover:bg-purple-500/10 hover:text-purple-300"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-primary transition hover:bg-accent hover:text-primary-hover"
                     >
                         <Plus className="h-5 w-5" />
                     </button>
@@ -1122,18 +933,18 @@ function TagInput({
             </div>
 
             {items.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-3">
+                <div className="mt-4 flex flex-wrap gap-2">
                     {items.map((item, index) => (
                         <span
                             key={`${item}-${index}`}
-                            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/3 px-4 py-2 text-sm text-gray-300"
+                            className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-secondary px-3 py-2 text-sm text-muted"
                         >
                             {item}
 
                             <button
                                 type="button"
                                 onClick={() => onRemove(index)}
-                                className="text-gray-500 transition hover:text-red-400"
+                                className="text-muted-foreground transition hover:text-danger"
                             >
                                 <X className="h-4 w-4" />
                             </button>

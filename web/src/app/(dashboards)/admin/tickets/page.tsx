@@ -74,35 +74,35 @@ export default function AdminTicketsPage() {
     if (loading) {
         return (
             <div className="flex min-h-[60vh] items-center justify-center">
-                <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
             </div>
         );
     }
 
     return (
-        <div className="space-y-6 sm:space-y-8 p-4 pt-20 sm:p-6 sm:pt-24 lg:p-8 lg:pt-8 w-full max-w-7xl mx-auto text-slate-200">
-
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+        <div className="w-full max-w-7xl mx-auto space-y-6 p-4 pt-20 text-foreground sm:space-y-8 sm:p-6 sm:pt-24 lg:p-8 lg:pt-8">
+            <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
                 <div className="flex flex-col gap-1">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <div className="p-2.5 bg-blue-500/10 rounded-xl border border-blue-500/20 shrink-0">
-                            <TicketIcon className="h-6 w-6 text-blue-400" />
+                    <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                        <div className="shrink-0 rounded-xl border border-primary/20 bg-primary/10 p-2.5">
+                            <TicketIcon className="h-6 w-6 text-primary" />
                         </div>
                         Support Tickets
                     </h1>
-                    <p className="text-sm sm:text-base text-slate-400 mt-1">
+
+                    <p className="mt-1 text-sm text-muted sm:text-base">
                         Manage and resolve feedback submitted by users.
                     </p>
                 </div>
 
-                <div className="flex bg-[#131C31] border border-slate-800 p-1 rounded-xl shrink-0">
+                <div className="flex shrink-0 rounded-xl border border-border bg-surface p-1">
                     {["All", "Open", "Resolved"].map((f) => (
                         <button
                             key={f}
                             onClick={() => setFilter(f as any)}
-                            className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${filter === f
-                                    ? "bg-blue-600 text-white shadow-md"
-                                    : "text-slate-400 hover:text-white hover:bg-slate-800"
+                            className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all ${filter === f
+                                ? "bg-primary text-primary-foreground"
+                                : "text-muted hover:bg-accent hover:text-foreground"
                                 }`}
                         >
                             {f}
@@ -111,11 +111,11 @@ export default function AdminTicketsPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {filteredTickets.length === 0 ? (
-                    <div className="col-span-full flex flex-col items-center justify-center p-12 bg-[#131C31] border border-slate-800 rounded-2xl border-dashed">
-                        <ShieldAlert className="h-12 w-12 text-slate-600 mb-4" />
-                        <p className="text-lg font-medium text-slate-400">No tickets found.</p>
+                    <div className="col-span-full flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-surface p-12">
+                        <ShieldAlert className="mb-4 h-12 w-12 text-muted-foreground" />
+                        <p className="text-lg font-medium text-muted">No tickets found.</p>
                     </div>
                 ) : (
                     filteredTickets.map((ticket) => {
@@ -124,56 +124,63 @@ export default function AdminTicketsPage() {
                         return (
                             <div
                                 key={ticket._id}
-                                className="bg-[#131C31] border border-slate-800 rounded-2xl p-6 shadow-lg flex flex-col justify-between hover:border-slate-700 transition-colors"
+                                className="flex flex-col justify-between rounded-xl border border-border bg-surface p-6 transition-colors hover:border-primary/30"
                             >
                                 <div>
-                                    <div className="flex justify-between items-start gap-4 mb-4">
-                                        <div className="flex flex-wrap gap-2 items-center">
-                                            <span className={`px-2.5 py-1 text-xs font-bold rounded-md border uppercase tracking-wider ${isOpen
-                                                    ? "bg-orange-500/10 text-orange-400 border-orange-500/20"
-                                                    : "bg-green-500/10 text-green-400 border-green-500/20"
-                                                }`}>
+                                    <div className="mb-4 flex items-start justify-between gap-4">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <span
+                                                className={`rounded-md border px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${isOpen
+                                                    ? "border-warning/20 bg-warning/10 text-warning"
+                                                    : "border-success/20 bg-success/10 text-success"
+                                                    }`}
+                                            >
                                                 {ticket.status}
                                             </span>
-                                            <span className="bg-slate-800 text-slate-300 px-2.5 py-1 text-xs font-semibold rounded-md">
+
+                                            <span className="rounded-md bg-surface-secondary px-2.5 py-1 text-xs font-semibold text-muted">
                                                 {ticket.ticket_type}
                                             </span>
                                         </div>
-                                        <span className="text-xs text-slate-500 font-mono whitespace-nowrap">
+
+                                        <span className="whitespace-nowrap font-mono text-xs text-muted-foreground">
                                             {new Date(ticket.created_at).toLocaleDateString()}
                                         </span>
                                     </div>
 
-                                    <div className="mb-4 bg-[#0B1120] border border-slate-800/50 rounded-xl p-4">
-                                        <div className="flex items-center gap-2 mb-3 text-sm">
-                                            <User className="h-4 w-4 text-slate-500" />
-                                            <span className="font-semibold text-slate-200">
+                                    <div className="mb-4 rounded-lg border border-border bg-surface-secondary p-4">
+                                        <div className="mb-3 flex items-center gap-2 text-sm">
+                                            <User className="h-4 w-4 text-muted-foreground" />
+                                            <span className="font-semibold text-foreground">
                                                 {ticket.reported_by_user_id?.username || "Unknown User"}
                                             </span>
-                                            <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 capitalize">
+
+                                            <span className="rounded bg-accent px-2 py-0.5 text-xs text-muted capitalize">
                                                 {ticket.reported_by_user_id?.role || "N/A"}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-xs text-slate-500 mb-4 border-b border-slate-800/50 pb-3">
+
+                                        <div className="mb-4 flex items-center gap-2 border-b border-border pb-3 text-xs text-muted-foreground">
                                             <Mail className="h-3.5 w-3.5" />
                                             {ticket.reported_by_user_id?.email || "No email available"}
                                         </div>
+
                                         <div className="flex items-start gap-2">
-                                            <MessageSquare className="h-4 w-4 text-blue-400 shrink-0 mt-0.5" />
-                                            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                            <MessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                                            <p className="whitespace-pre-wrap text-sm leading-relaxed text-muted">
                                                 {ticket.message}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="pt-2 border-t border-slate-800">
+                                <div className="border-t border-border pt-2">
                                     <button
                                         onClick={() => handleStatusToggle(ticket._id, ticket.status)}
                                         disabled={actionId === ticket._id}
-                                        className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all border disabled:opacity-50 ${isOpen
-                                                ? "bg-green-500/10 hover:bg-green-500/20 text-green-400 border-green-500/20 hover:border-green-500/30"
-                                                : "bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border-orange-500/20 hover:border-orange-500/30"
+                                        className={`flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 font-semibold transition-all disabled:opacity-50 ${isOpen
+                                            ? "border-success/20 bg-success/10 text-success hover:bg-success/15"
+                                            : "border-warning/20 bg-warning/10 text-warning hover:bg-warning/15"
                                             }`}
                                     >
                                         {actionId === ticket._id ? (

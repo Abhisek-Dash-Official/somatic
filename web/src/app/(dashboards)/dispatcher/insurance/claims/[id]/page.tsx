@@ -95,17 +95,11 @@ export default function DispatcherInsuranceClaimDetailPage({ params }: { params:
 
             const body: Record<string, any> = { action };
 
-            if (action === "reject") {
-                body.rejection_reason = rejectionReason.trim();
-            }
+            if (action === "reject") body.rejection_reason = rejectionReason.trim();
 
-            if (action === "partially_approve") {
-                body.approved_amount = Number(approvedAmount);
-            }
+            if (action === "partially_approve") body.approved_amount = Number(approvedAmount);
 
-            if (action === "approve") {
-                body.approved_amount = Number(claim.claimed_amount || 0);
-            }
+            if (action === "approve") body.approved_amount = Number(claim.claimed_amount || 0);
 
             if (action === "documents_required") {
                 body.required_documents = requiredDocuments
@@ -116,9 +110,7 @@ export default function DispatcherInsuranceClaimDetailPage({ params }: { params:
 
             const res = await fetch(`/api/dispatcher/insurance/claims/${claim._id}`, {
                 method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
             });
 
@@ -143,20 +135,20 @@ export default function DispatcherInsuranceClaimDetailPage({ params }: { params:
 
     if (loading) {
         return (
-            <div className="flex min-h-[60vh] items-center justify-center bg-[#0b1220]">
-                <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
+            <div className="flex min-h-[60vh] items-center justify-center bg-background">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
         );
     }
 
     if (!claim) {
         return (
-            <div className="min-h-[60vh] bg-[#0b1220] p-4 md:p-6">
-                <div className="mx-auto max-w-xl rounded-xl border border-slate-700/60 bg-[#111827] p-8 text-center">
-                    <h1 className="text-xl font-bold text-white">Claim Not Found</h1>
+            <div className="min-h-[60vh] bg-background p-4 text-foreground md:p-6">
+                <div className="mx-auto max-w-xl rounded-xl border border-border bg-surface p-8 text-center">
+                    <h1 className="text-xl font-bold text-foreground">Claim Not Found</h1>
                     <Link
                         href="/dispatcher/insurance/claims"
-                        className="mt-5 inline-flex rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-purple-500"
+                        className="mt-5 inline-flex rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
                     >
                         Back to Claims
                     </Link>
@@ -169,19 +161,19 @@ export default function DispatcherInsuranceClaimDetailPage({ params }: { params:
     const canSettle = ["approved", "partially_approved"].includes(claim.status);
 
     return (
-        <div className="min-h-screen bg-[#0b1220] p-4 md:p-6">
+        <div className="min-h-screen bg-background p-4 text-foreground md:p-6">
             <div className="mx-auto max-w-6xl space-y-6">
                 <div className="flex items-center gap-3">
                     <Link
                         href="/dispatcher/insurance/claims"
-                        className="rounded-lg border border-slate-700/60 bg-[#111827] p-2 text-slate-400 transition hover:border-slate-600 hover:text-white"
+                        className="rounded-lg border border-border bg-surface p-2 text-muted transition hover:bg-accent hover:text-foreground"
                     >
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
 
                     <div>
-                        <h1 className="text-2xl font-bold text-white">Insurance Claim Review</h1>
-                        <p className="mt-1 text-sm text-slate-400">
+                        <h1 className="text-2xl font-bold text-foreground">Insurance Claim Review</h1>
+                        <p className="mt-1 text-sm text-muted">
                             {claim.claim_number || claim._id.toString()}
                         </p>
                     </div>
@@ -189,86 +181,88 @@ export default function DispatcherInsuranceClaimDetailPage({ params }: { params:
 
                 <div className="grid gap-6 lg:grid-cols-3">
                     <div className="space-y-6 lg:col-span-2">
-                        <section className="rounded-xl border border-slate-700/60 bg-[#111827] p-6">
-                            <h2 className="font-semibold text-white">Patient Information</h2>
+                        <section className="rounded-xl border border-border bg-surface p-6">
+                            <h2 className="font-semibold text-foreground">Patient Information</h2>
 
                             <div className="mt-5 grid gap-4 sm:grid-cols-2">
                                 <div>
-                                    <p className="text-xs text-slate-500">Name</p>
-                                    <p className="mt-1 text-sm text-slate-200">{claim.user_id?.username || "—"}</p>
+                                    <p className="text-xs text-muted">Name</p>
+                                    <p className="mt-1 text-sm text-foreground">{claim.user_id?.username || "—"}</p>
                                 </div>
 
                                 <div>
-                                    <p className="text-xs text-slate-500">Email</p>
-                                    <p className="mt-1 text-sm text-slate-200">{claim.user_id?.email || "—"}</p>
+                                    <p className="text-xs text-muted">Email</p>
+                                    <p className="mt-1 text-sm text-foreground">{claim.user_id?.email || "—"}</p>
                                 </div>
 
                                 <div>
-                                    <p className="text-xs text-slate-500">Contact</p>
-                                    <p className="mt-1 text-sm text-slate-200">{claim.user_id?.contact_no || "—"}</p>
+                                    <p className="text-xs text-muted">Contact</p>
+                                    <p className="mt-1 text-sm text-foreground">{claim.user_id?.contact_no || "—"}</p>
                                 </div>
 
                                 <div>
-                                    <p className="text-xs text-slate-500">Policy</p>
-                                    <p className="mt-1 text-sm text-slate-200">
+                                    <p className="text-xs text-muted">Policy</p>
+                                    <p className="mt-1 text-sm text-foreground">
                                         {claim.policy_id?.policy_number || claim.policy_id?._id?.toString() || "—"}
                                     </p>
                                 </div>
                             </div>
                         </section>
 
-                        <section className="rounded-xl border border-slate-700/60 bg-[#111827] p-6">
-                            <h2 className="font-semibold text-white">Claim Information</h2>
+                        <section className="rounded-xl border border-border bg-surface p-6">
+                            <h2 className="font-semibold text-foreground">Claim Information</h2>
 
                             <div className="mt-5 grid gap-4 sm:grid-cols-2">
                                 <div>
-                                    <p className="text-xs text-slate-500">Claim Type</p>
-                                    <p className="mt-1 text-sm capitalize text-slate-200">{claim.claim_type}</p>
+                                    <p className="text-xs text-muted">Claim Type</p>
+                                    <p className="mt-1 text-sm capitalize text-foreground">{claim.claim_type}</p>
                                 </div>
 
                                 <div>
-                                    <p className="text-xs text-slate-500">Incident Type</p>
-                                    <p className="mt-1 text-sm capitalize text-slate-200">{claim.incident_type || "—"}</p>
+                                    <p className="text-xs text-muted">Incident Type</p>
+                                    <p className="mt-1 text-sm capitalize text-foreground">{claim.incident_type || "—"}</p>
                                 </div>
 
                                 <div>
-                                    <p className="text-xs text-slate-500">Incident Date</p>
-                                    <p className="mt-1 text-sm text-slate-200">
+                                    <p className="text-xs text-muted">Incident Date</p>
+                                    <p className="mt-1 text-sm text-foreground">
                                         {claim.incident_date ? new Date(claim.incident_date).toLocaleDateString("en-IN") : "—"}
                                     </p>
                                 </div>
 
                                 <div>
-                                    <p className="text-xs text-slate-500">Treatment Date</p>
-                                    <p className="mt-1 text-sm text-slate-200">
+                                    <p className="text-xs text-muted">Treatment Date</p>
+                                    <p className="mt-1 text-sm text-foreground">
                                         {claim.treatment_date ? new Date(claim.treatment_date).toLocaleDateString("en-IN") : "—"}
                                     </p>
                                 </div>
 
                                 <div>
-                                    <p className="text-xs text-slate-500">Admission Date</p>
-                                    <p className="mt-1 text-sm text-slate-200">
+                                    <p className="text-xs text-muted">Admission Date</p>
+                                    <p className="mt-1 text-sm text-foreground">
                                         {claim.admission_date ? new Date(claim.admission_date).toLocaleDateString("en-IN") : "—"}
                                     </p>
                                 </div>
 
                                 <div>
-                                    <p className="text-xs text-slate-500">Discharge Date</p>
-                                    <p className="mt-1 text-sm text-slate-200">
+                                    <p className="text-xs text-muted">Discharge Date</p>
+                                    <p className="mt-1 text-sm text-foreground">
                                         {claim.discharge_date ? new Date(claim.discharge_date).toLocaleDateString("en-IN") : "—"}
                                     </p>
                                 </div>
                             </div>
                         </section>
 
-                        <section className="rounded-xl border border-slate-700/60 bg-[#111827] p-6">
+                        <section className="rounded-xl border border-border bg-surface p-6">
                             <div className="flex items-center gap-2">
-                                <FileText className="h-5 w-5 text-purple-400" />
-                                <h2 className="font-semibold text-white">Submitted Documents</h2>
+                                <FileText className="h-5 w-5 text-primary" />
+                                <h2 className="font-semibold text-foreground">Submitted Documents</h2>
                             </div>
 
                             {!claim.documents?.length ? (
-                                <p className="mt-4 text-sm text-slate-500">No documents have been submitted.</p>
+                                <p className="mt-4 text-sm text-muted">
+                                    No documents have been submitted.
+                                </p>
                             ) : (
                                 <div className="mt-4 space-y-2">
                                     {claim.documents.map((document, index) => (
@@ -277,29 +271,29 @@ export default function DispatcherInsuranceClaimDetailPage({ params }: { params:
                                             href={document.file_url}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="flex items-center justify-between rounded-lg border border-slate-700/60 bg-[#172033] px-4 py-3 transition hover:border-slate-600"
+                                            className="flex items-center justify-between rounded-lg border border-border bg-surface-secondary px-4 py-3 transition hover:bg-accent"
                                         >
                                             <div>
-                                                <p className="text-sm font-medium capitalize text-slate-200">
+                                                <p className="text-sm font-medium capitalize text-foreground">
                                                     {document.type.replaceAll("_", " ")}
                                                 </p>
-                                                <p className="mt-1 text-xs text-slate-500">
+                                                <p className="mt-1 text-xs text-muted">
                                                     {new Date(document.uploaded_at).toLocaleDateString("en-IN")}
                                                 </p>
                                             </div>
 
-                                            <span className="text-xs font-medium text-purple-400">View</span>
+                                            <span className="text-xs font-medium text-primary">View</span>
                                         </a>
                                     ))}
                                 </div>
                             )}
 
                             {!!claim.required_documents?.length && (
-                                <div className="mt-5 rounded-lg border border-orange-500/20 bg-orange-500/5 p-4">
-                                    <p className="text-sm font-medium text-orange-300">Required Documents</p>
+                                <div className="mt-5 rounded-lg border border-warning/20 bg-warning/10 p-4">
+                                    <p className="text-sm font-medium text-warning">Required Documents</p>
                                     <ul className="mt-2 space-y-1">
                                         {claim.required_documents.map((document, index) => (
-                                            <li key={`${document}-${index}`} className="text-sm text-slate-400">
+                                            <li key={`${document}-${index}`} className="text-sm text-muted">
                                                 • {document}
                                             </li>
                                         ))}
@@ -310,56 +304,56 @@ export default function DispatcherInsuranceClaimDetailPage({ params }: { params:
                     </div>
 
                     <aside className="h-fit space-y-6 lg:sticky lg:top-6">
-                        <section className="rounded-xl border border-slate-700/60 bg-[#111827] p-6">
-                            <h2 className="font-semibold text-white">Claim Amount</h2>
+                        <section className="rounded-xl border border-border bg-surface p-6">
+                            <h2 className="font-semibold text-foreground">Claim Amount</h2>
 
                             <div className="mt-5 space-y-4">
                                 <div className="flex justify-between gap-4 text-sm">
-                                    <span className="text-slate-500">Estimated</span>
-                                    <span className="text-slate-200">₹{Number(claim.estimated_amount || 0).toLocaleString("en-IN")}</span>
+                                    <span className="text-muted">Estimated</span>
+                                    <span className="text-foreground">₹{Number(claim.estimated_amount || 0).toLocaleString("en-IN")}</span>
                                 </div>
 
                                 <div className="flex justify-between gap-4 text-sm">
-                                    <span className="text-slate-500">Claimed</span>
-                                    <span className="font-semibold text-white">₹{Number(claim.claimed_amount || 0).toLocaleString("en-IN")}</span>
+                                    <span className="text-muted">Claimed</span>
+                                    <span className="font-semibold text-foreground">₹{Number(claim.claimed_amount || 0).toLocaleString("en-IN")}</span>
                                 </div>
 
-                                <div className="flex justify-between gap-4 border-t border-slate-700/60 pt-4 text-sm">
-                                    <span className="text-slate-500">Approved</span>
-                                    <span className="font-semibold text-emerald-400">₹{Number(claim.approved_amount || 0).toLocaleString("en-IN")}</span>
+                                <div className="flex justify-between gap-4 border-t border-border pt-4 text-sm">
+                                    <span className="text-muted">Approved</span>
+                                    <span className="font-semibold text-success">₹{Number(claim.approved_amount || 0).toLocaleString("en-IN")}</span>
                                 </div>
                             </div>
                         </section>
 
                         {canReview && (
-                            <section className="rounded-xl border border-slate-700/60 bg-[#111827] p-6">
-                                <h2 className="font-semibold text-white">Claim Actions</h2>
+                            <section className="rounded-xl border border-border bg-surface p-6">
+                                <h2 className="font-semibold text-foreground">Claim Actions</h2>
 
                                 <button
                                     type="button"
                                     disabled={submitting}
                                     onClick={() => updateClaim("under_review")}
-                                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 px-4 py-3 text-sm font-medium text-blue-400 transition hover:bg-blue-500/20 disabled:opacity-50"
+                                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 text-sm font-medium text-primary transition hover:bg-primary/15 disabled:opacity-50"
                                 >
                                     {activeAction === "under_review" && <Loader2 className="h-4 w-4 animate-spin" />}
                                     Move to Review
                                 </button>
 
                                 <div className="mt-4">
-                                    <label className="text-xs text-slate-400">Required Documents</label>
+                                    <label className="text-xs text-muted">Required Documents</label>
                                     <textarea
                                         value={requiredDocuments}
                                         onChange={(e) => setRequiredDocuments(e.target.value)}
                                         rows={3}
                                         placeholder={"Hospital bill\nDischarge summary"}
-                                        className="mt-2 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-orange-500"
+                                        className="mt-2 w-full rounded-lg border border-border bg-surface-secondary px-3 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-warning focus:ring-4 focus:ring-warning/10"
                                     />
 
                                     <button
                                         type="button"
                                         disabled={submitting}
                                         onClick={() => updateClaim("documents_required")}
-                                        className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-sm font-medium text-orange-400 transition hover:bg-orange-500/20 disabled:opacity-50"
+                                        className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-4 py-3 text-sm font-medium text-warning transition hover:bg-warning/15 disabled:opacity-50"
                                     >
                                         {activeAction === "documents_required" && <Loader2 className="h-4 w-4 animate-spin" />}
                                         Request Documents
@@ -370,28 +364,28 @@ export default function DispatcherInsuranceClaimDetailPage({ params }: { params:
                                     type="button"
                                     disabled={submitting}
                                     onClick={() => updateClaim("approve")}
-                                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-50"
+                                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:opacity-50"
                                 >
                                     {activeAction === "approve" ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
                                     Approve Claim
                                 </button>
 
                                 <div className="mt-4">
-                                    <label className="text-xs text-slate-400">Partial Approved Amount</label>
+                                    <label className="text-xs text-muted">Partial Approved Amount</label>
                                     <input
                                         type="number"
                                         min="1"
                                         value={approvedAmount}
                                         onChange={(e) => setApprovedAmount(e.target.value)}
                                         placeholder="₹0"
-                                        className="mt-2 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-cyan-500"
+                                        className="mt-2 w-full rounded-lg border border-border bg-surface-secondary px-3 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-info focus:ring-4 focus:ring-info/10"
                                     />
 
                                     <button
                                         type="button"
                                         disabled={submitting}
                                         onClick={() => updateClaim("partially_approve")}
-                                        className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-4 py-3 text-sm font-medium text-cyan-400 transition hover:bg-cyan-500/20 disabled:opacity-50"
+                                        className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-info/30 bg-info/10 px-4 py-3 text-sm font-medium text-info transition hover:bg-info/15 disabled:opacity-50"
                                     >
                                         {activeAction === "partially_approve" && <Loader2 className="h-4 w-4 animate-spin" />}
                                         Partially Approve
@@ -399,20 +393,20 @@ export default function DispatcherInsuranceClaimDetailPage({ params }: { params:
                                 </div>
 
                                 <div className="mt-4">
-                                    <label className="text-xs text-slate-400">Rejection Reason</label>
+                                    <label className="text-xs text-muted">Rejection Reason</label>
                                     <textarea
                                         value={rejectionReason}
                                         onChange={(e) => setRejectionReason(e.target.value)}
                                         rows={3}
                                         placeholder="Enter reason for rejection..."
-                                        className="mt-2 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-red-500"
+                                        className="mt-2 w-full rounded-lg border border-border bg-surface-secondary px-3 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-danger focus:ring-4 focus:ring-danger/10"
                                     />
 
                                     <button
                                         type="button"
                                         disabled={submitting}
                                         onClick={() => updateClaim("reject")}
-                                        className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-400 transition hover:bg-red-500/20 disabled:opacity-50"
+                                        className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-sm font-medium text-danger transition hover:bg-danger/15 disabled:opacity-50"
                                     >
                                         {activeAction === "reject" ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
                                         Reject Claim
@@ -422,9 +416,9 @@ export default function DispatcherInsuranceClaimDetailPage({ params }: { params:
                         )}
 
                         {canSettle && (
-                            <section className="rounded-xl border border-slate-700/60 bg-[#111827] p-6">
-                                <h2 className="font-semibold text-white">Settlement</h2>
-                                <p className="mt-2 text-sm leading-6 text-slate-500">
+                            <section className="rounded-xl border border-border bg-surface p-6">
+                                <h2 className="font-semibold text-foreground">Settlement</h2>
+                                <p className="mt-2 text-sm leading-6 text-muted">
                                     Once the approved amount has been processed, mark this claim as settled.
                                 </p>
 
@@ -432,7 +426,7 @@ export default function DispatcherInsuranceClaimDetailPage({ params }: { params:
                                     type="button"
                                     disabled={submitting}
                                     onClick={() => updateClaim("settle")}
-                                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-purple-500 disabled:opacity-50"
+                                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:opacity-50"
                                 >
                                     {activeAction === "settle" && <Loader2 className="h-4 w-4 animate-spin" />}
                                     Mark as Settled

@@ -132,6 +132,7 @@ export default function AdminUsersPage() {
 
     const executeConfirmedAction = async () => {
         setActionLoading(true);
+
         try {
             const res = await fetch("/api/admin/users", {
                 method: "PATCH",
@@ -157,30 +158,31 @@ export default function AdminUsersPage() {
     };
 
     return (
-        <div className="space-y-6 sm:space-y-8 p-4 pt-20 sm:p-6 sm:pt-24 lg:p-8 lg:pt-8 w-full max-w-7xl mx-auto text-slate-200">
-
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="w-full max-w-7xl mx-auto space-y-6 p-4 pt-20 text-foreground sm:space-y-8 sm:p-6 sm:pt-24 lg:p-8 lg:pt-8">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <div className="p-2.5 bg-blue-500/10 rounded-xl border border-blue-500/20 shrink-0">
-                            <Users className="h-6 w-6 text-blue-400" />
+                    <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                        <div className="shrink-0 rounded-xl border border-primary/20 bg-primary/10 p-2.5">
+                            <Users className="h-6 w-6 text-primary" />
                         </div>
                         User Management
                     </h1>
-                    <p className="text-sm sm:text-base text-slate-400 mt-1">
+
+                    <p className="mt-1 text-sm text-muted sm:text-base">
                         Manage platform users, roles, statuses, and permissions.
                     </p>
                 </div>
 
                 <button
                     onClick={() => setIsCreateOpen(true)}
-                    className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-semibold transition shadow-lg shrink-0"
+                    className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 font-semibold text-primary-foreground transition hover:bg-primary-hover"
                 >
-                    <UserPlus className="h-5 w-5" /> Add New User
+                    <UserPlus className="h-5 w-5" />
+                    Add New User
                 </button>
             </div>
 
-            <div className="flex bg-[#131C31] border border-slate-800 p-1.5 rounded-2xl w-fit flex-wrap">
+            <div className="flex w-fit flex-wrap rounded-xl border border-border bg-surface p-1.5">
                 {[
                     { id: "patient", label: "Patients", icon: Activity },
                     { id: "doctor", label: "Doctors", icon: Stethoscope },
@@ -189,40 +191,41 @@ export default function AdminUsersPage() {
                     { id: "admin", label: "Admins", icon: Shield },
                 ].map((tab) => {
                     const Icon = tab.icon;
+
                     return (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-semibold text-sm transition-all ${activeTab === tab.id
-                                ? "bg-blue-600 text-white shadow-md"
-                                : "text-slate-400 hover:text-white hover:bg-slate-800/50"
+                            className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all sm:px-6 ${activeTab === tab.id
+                                ? "bg-primary text-primary-foreground"
+                                : "text-muted hover:bg-accent hover:text-foreground"
                                 }`}
                         >
-                            <Icon className="h-4 w-4" /> {tab.label}
+                            <Icon className="h-4 w-4" />
+                            {tab.label}
                         </button>
                     );
                 })}
             </div>
 
-            <div className="bg-[#131C31] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col lg:flex-row gap-4 justify-between items-center">
-
+            <div className="flex flex-col items-center justify-between gap-4 rounded-xl border border-border bg-surface p-4 sm:p-5 lg:flex-row">
                 <div className="relative w-full lg:w-80">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                    <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
                     <input
                         type="text"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         placeholder="Search by username or email..."
-                        className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-white text-sm focus:border-blue-500 outline-none"
+                        className="w-full rounded-lg border border-border bg-surface-secondary py-2.5 pl-10 pr-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
                     />
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
-
+                <div className="flex w-full flex-wrap items-center justify-end gap-3 lg:w-auto">
                     <select
                         value={statusFilter}
                         onChange={e => setStatusFilter(e.target.value)}
-                        className="bg-[#0B1120] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
+                        className="rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
                     >
                         <option value="all">All Statuses</option>
                         <option value="active">Active</option>
@@ -234,13 +237,17 @@ export default function AdminUsersPage() {
                         <select
                             value={bloodGroupFilter}
                             onChange={e => setBloodGroupFilter(e.target.value)}
-                            className="bg-[#0B1120] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
+                            className="rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
                         >
                             <option value="">All Blood Groups</option>
-                            <option value="A+">A+</option><option value="A-">A-</option>
-                            <option value="B+">B+</option><option value="B-">B-</option>
-                            <option value="O+">O+</option><option value="O-">O-</option>
-                            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
                         </select>
                     )}
 
@@ -249,7 +256,7 @@ export default function AdminUsersPage() {
                             <select
                                 value={departmentFilter}
                                 onChange={e => setDepartmentFilter(e.target.value)}
-                                className="bg-[#0B1120] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
+                                className="rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
                             >
                                 <option value="">All Departments</option>
                                 {departments.map(d => (
@@ -260,7 +267,7 @@ export default function AdminUsersPage() {
                             <select
                                 value={acceptingFilter}
                                 onChange={e => setAcceptingFilter(e.target.value)}
-                                className="bg-[#0B1120] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
+                                className="rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
                             >
                                 <option value="">All Availability</option>
                                 <option value="true">Accepting Cases</option>
@@ -272,47 +279,52 @@ export default function AdminUsersPage() {
                     <select
                         value={sortBy}
                         onChange={e => setSortBy(e.target.value)}
-                        className="bg-[#0B1120] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
+                        className="rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
                     >
                         <option value="created_at">Sort by Date</option>
                         <option value="username">Sort by Name</option>
-                        {(activeTab === "doctor" || activeTab === "assistant_doctor") && <option value="experience">Sort by Experience</option>}
+                        {(activeTab === "doctor" || activeTab === "assistant_doctor") && (
+                            <option value="experience">Sort by Experience</option>
+                        )}
                     </select>
 
                     <button
                         onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
-                        className="bg-[#0B1120] border border-slate-700 rounded-xl py-2.5 px-3.5 text-slate-300 hover:text-white text-sm font-semibold transition"
+                        className="rounded-lg border border-border bg-surface-secondary px-3.5 py-2.5 text-sm font-semibold text-muted transition hover:bg-accent hover:text-foreground"
                     >
                         {sortOrder === "asc" ? "↑ Asc" : "↓ Desc"}
                     </button>
-
                 </div>
             </div>
 
             {loading ? (
                 <div className="flex min-h-[40vh] items-center justify-center">
-                    <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
+                    <Loader2 className="h-10 w-10 animate-spin text-primary" />
                 </div>
             ) : users.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-16 bg-[#131C31] border border-slate-800 rounded-2xl border-dashed">
-                    <AlertTriangle className="h-12 w-12 text-slate-600 mb-4" />
-                    <p className="text-lg font-medium text-slate-400">No users found.</p>
+                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-surface p-16">
+                    <AlertTriangle className="mb-4 h-12 w-12 text-muted-foreground" />
+                    <p className="text-lg font-medium text-muted">No users found.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {users.map((u) => {
                         const isSelf = u._id === currentUser?.id;
 
                         return (
                             <div
                                 key={u._id}
-                                className={`bg-[#131C31] border rounded-2xl p-5 shadow-lg flex flex-col justify-between transition-all ${u.is_delete ? "border-red-900/50 opacity-60" : u.is_ban ? "border-yellow-900/50" : "border-slate-800 hover:border-slate-700"
+                                className={`flex flex-col justify-between rounded-xl border bg-surface p-5 transition-all ${u.is_delete
+                                    ? "border-danger/30 opacity-60"
+                                    : u.is_ban
+                                        ? "border-warning/30"
+                                        : "border-border hover:border-primary/30"
                                     }`}
                             >
                                 <div>
-                                    <div className="flex items-start justify-between gap-3 mb-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/30 overflow-hidden shrink-0">
+                                    <div className="mb-4 flex items-start justify-between gap-3">
+                                        <div className="flex min-w-0 items-center gap-3">
+                                            <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-primary/20 bg-primary/10">
                                                 <img
                                                     src={`/avatars/avatar-${u.avatar_id || "1"}.png`}
                                                     alt="Avatar"
@@ -320,70 +332,81 @@ export default function AdminUsersPage() {
                                                     onError={(e) => { (e.target as HTMLImageElement).src = "/avatars/avatar-1.png"; }}
                                                 />
                                             </div>
+
                                             <div className="min-w-0">
-                                                <h3 className="font-bold text-white text-base truncate">{u.username}</h3>
-                                                <p className="text-xs text-slate-400 truncate">{u.email}</p>
+                                                <h3 className="truncate text-base font-bold text-foreground">{u.username}</h3>
+                                                <p className="truncate text-xs text-muted">{u.email}</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-wrap gap-2 mb-4">
-                                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider ${u.role === 'admin' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
-                                                u.role === 'dispatcher' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' :
-                                                    (u.role === 'doctor' || u.role === 'assistant_doctor') ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20' :
-                                                        'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                                            }`}>
+                                    <div className="mb-4 flex flex-wrap gap-2">
+                                        <span
+                                            className={`rounded border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${u.role === "admin"
+                                                ? "border-danger/20 bg-danger/10 text-danger"
+                                                : u.role === "dispatcher"
+                                                    ? "border-warning/20 bg-warning/10 text-warning"
+                                                    : u.role === "doctor" || u.role === "assistant_doctor"
+                                                        ? "border-primary/20 bg-primary/10 text-primary"
+                                                        : "border-info/20 bg-info/10 text-info"
+                                                }`}
+                                        >
                                             {u.role.replace("_", " ")}
                                         </span>
 
                                         {u.is_delete ? (
-                                            <span className="px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/20">
+                                            <span className="rounded border border-danger/20 bg-danger/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-danger">
                                                 Deleted
                                             </span>
                                         ) : u.is_ban ? (
-                                            <span className="px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                                            <span className="rounded border border-warning/20 bg-warning/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-warning">
                                                 Banned
                                             </span>
                                         ) : (
-                                            <span className="px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider bg-green-500/10 text-green-400 border border-green-500/20">
+                                            <span className="rounded border border-success/20 bg-success/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
                                                 Active
                                             </span>
                                         )}
                                     </div>
 
-                                    <div className="space-y-1.5 mb-6 text-xs text-slate-300 border-t border-slate-800 pt-3">
-                                        <div className="flex justify-between">
-                                            <span className="text-slate-500">Contact:</span>
-                                            <span className="font-mono">{u.contact_no || "N/A"}</span>
+                                    <div className="mb-6 space-y-1.5 border-t border-border pt-3 text-xs text-muted">
+                                        <div className="flex justify-between gap-3">
+                                            <span className="text-muted-foreground">Contact:</span>
+                                            <span className="font-mono text-foreground">{u.contact_no || "N/A"}</span>
                                         </div>
+
                                         {u.role === "patient" && (
-                                            <div className="flex justify-between">
-                                                <span className="text-slate-500">Blood Group:</span>
-                                                <span className="font-mono text-blue-400">{u.patient_info?.blood_grp || "N/A"}</span>
+                                            <div className="flex justify-between gap-3">
+                                                <span className="text-muted-foreground">Blood Group:</span>
+                                                <span className="font-mono text-info">{u.patient_info?.blood_grp || "N/A"}</span>
                                             </div>
                                         )}
+
                                         {(u.role === "doctor" || u.role === "assistant_doctor") && (
                                             <>
-                                                <div className="flex justify-between">
-                                                    <span className="text-slate-500">Experience:</span>
-                                                    <span className="font-mono">{u.doctor_info?.experience ?? 0} yrs</span>
+                                                <div className="flex justify-between gap-3">
+                                                    <span className="text-muted-foreground">Experience:</span>
+                                                    <span className="font-mono text-foreground">{u.doctor_info?.experience ?? 0} yrs</span>
                                                 </div>
-                                                <div className="flex justify-between">
-                                                    <span className="text-slate-500">Department:</span>
-                                                    <span className="font-mono text-teal-400 truncate max-w-30">{u.doctor_info?.department_id?.name || "Unassigned"}</span>
+
+                                                <div className="flex justify-between gap-3">
+                                                    <span className="text-muted-foreground">Department:</span>
+                                                    <span className="max-w-30 truncate font-mono text-primary">
+                                                        {u.doctor_info?.department_id?.name || "Unassigned"}
+                                                    </span>
                                                 </div>
                                             </>
                                         )}
                                     </div>
                                 </div>
 
-                                <div className="space-y-2 pt-3 border-t border-slate-800">
+                                <div className="space-y-2 border-t border-border pt-3">
                                     <div className="flex items-center gap-2">
                                         <select
                                             disabled={isSelf}
                                             value={u.role}
                                             onChange={e => handleRoleChange(u._id, e.target.value)}
-                                            className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-1.5 px-2 text-xs text-white focus:border-blue-500 outline-none disabled:opacity-40"
+                                            className="w-full rounded-lg border border-border bg-surface-secondary px-2 py-1.5 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 disabled:opacity-40"
                                         >
                                             <option value="patient">Patient</option>
                                             <option value="doctor">Doctor</option>
@@ -403,9 +426,9 @@ export default function AdminUsersPage() {
                                                 value: !u.is_ban,
                                             })}
                                             title={u.is_ban ? "Unban User" : "Ban User"}
-                                            className={`p-2 rounded-xl border transition disabled:opacity-40 shrink-0 ${u.is_ban
-                                                ? "bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500/20"
-                                                : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20"
+                                            className={`shrink-0 rounded-lg border p-2 transition disabled:opacity-40 ${u.is_ban
+                                                ? "border-success/20 bg-success/10 text-success hover:bg-success/15"
+                                                : "border-warning/20 bg-warning/10 text-warning hover:bg-warning/15"
                                                 }`}
                                         >
                                             {u.is_ban ? <ShieldAlert className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
@@ -422,17 +445,21 @@ export default function AdminUsersPage() {
                                                 value: !u.is_delete,
                                             })}
                                             title={u.is_delete ? "Restore User" : "Soft Delete User"}
-                                            className={`p-2 rounded-xl border transition disabled:opacity-40 shrink-0 ${u.is_delete
-                                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
-                                                : "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20"
+                                            className={`shrink-0 rounded-lg border p-2 transition disabled:opacity-40 ${u.is_delete
+                                                ? "border-success/20 bg-success/10 text-success hover:bg-success/15"
+                                                : "border-danger/20 bg-danger/10 text-danger hover:bg-danger/15"
                                                 }`}
                                         >
                                             {u.is_delete ? <RotateCcw className="h-4 w-4" /> : <Trash2 className="h-4 w-4" />}
                                         </button>
                                     </div>
-                                    {isSelf && <p className="text-[10px] text-center text-slate-500 italic">Self-actions restricted</p>}
-                                </div>
 
+                                    {isSelf && (
+                                        <p className="text-center text-[10px] italic text-muted-foreground">
+                                            Self-actions restricted
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                         );
                     })}
@@ -440,19 +467,23 @@ export default function AdminUsersPage() {
             )}
 
             {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-3 pt-4">
+                <div className="flex items-center justify-center gap-3 pt-4">
                     <button
                         disabled={page === 1}
                         onClick={() => setPage(p => Math.max(p - 1, 1))}
-                        className="px-4 py-2 bg-[#131C31] border border-slate-800 rounded-xl text-sm font-semibold text-slate-300 disabled:opacity-40 hover:bg-slate-800 transition"
+                        className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-semibold text-muted transition hover:bg-accent hover:text-foreground disabled:opacity-40"
                     >
                         Previous
                     </button>
-                    <span className="text-sm font-mono text-slate-400">Page {page} of {totalPages}</span>
+
+                    <span className="font-mono text-sm text-muted">
+                        Page <span className="text-foreground">{page}</span> of {totalPages}
+                    </span>
+
                     <button
                         disabled={page === totalPages}
                         onClick={() => setPage(p => Math.min(p + 1, totalPages))}
-                        className="px-4 py-2 bg-[#131C31] border border-slate-800 rounded-xl text-sm font-semibold text-slate-300 disabled:opacity-40 hover:bg-slate-800 transition"
+                        className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-semibold text-muted transition hover:bg-accent hover:text-foreground disabled:opacity-40"
                     >
                         Next
                     </button>
@@ -473,7 +504,6 @@ export default function AdminUsersPage() {
                 onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
                 onConfirm={executeConfirmedAction}
             />
-
         </div>
     );
 }

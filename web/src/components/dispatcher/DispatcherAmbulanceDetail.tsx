@@ -15,6 +15,7 @@ import {
     Send,
     XCircle,
     Activity,
+    ChevronRight
 } from "lucide-react";
 
 type RequestData = {
@@ -243,9 +244,9 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
 
     if (loading) {
         return (
-            <main className="min-h-screen bg-[#0b1220] px-4 py-8 text-white">
+            <main className="min-h-screen bg-background px-4 py-8 text-foreground">
                 <div className="mx-auto flex max-w-7xl items-center justify-center py-32">
-                    <Loader2 className="h-7 w-7 animate-spin text-blue-400" />
+                    <Loader2 className="h-7 w-7 animate-spin text-primary" />
                 </div>
             </main>
         );
@@ -253,11 +254,14 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
 
     if (!request) {
         return (
-            <main className="min-h-screen bg-[#0b1220] px-4 py-8 text-white">
-                <div className="mx-auto max-w-7xl rounded-2xl border border-slate-800 bg-[#111827] p-10 text-center">
-                    <XCircle className="mx-auto h-10 w-10 text-red-400" />
+            <main className="min-h-screen bg-background px-4 py-8 text-foreground">
+                <div className="mx-auto max-w-7xl rounded-xl border border-border bg-surface p-10 text-center">
+                    <XCircle className="mx-auto h-10 w-10 text-danger" />
                     <h1 className="mt-4 text-xl font-semibold">Ambulance request not found</h1>
-                    <Link href="/dispatcher/ambulances" className="mt-5 inline-flex rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-medium">
+                    <Link
+                        href="/dispatcher/ambulances"
+                        className="mt-5 inline-flex rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
+                    >
                         Back to Requests
                     </Link>
                 </div>
@@ -266,32 +270,39 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
     }
 
     return (
-        <main className="min-h-screen bg-[#0b1220] px-4 py-6 text-white sm:px-6 lg:px-8">
+        <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
-                <Link href="/dispatcher/ambulances" className="mb-5 inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white">
+                <Link
+                    href="/dispatcher/ambulances"
+                    className="mb-5 inline-flex items-center gap-2 text-sm text-muted transition hover:text-foreground"
+                >
                     <ArrowLeft className="h-4 w-4" />
                     Back to Ambulance Requests
                 </Link>
 
                 <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/10">
-                            <Ambulance className="h-6 w-6 text-red-400" />
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-danger/20 bg-danger/10">
+                            <Ambulance className="h-6 w-6 text-danger" />
                         </div>
 
                         <div>
-                            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Emergency Coordination</p>
-                            <h1 className="text-2xl font-bold sm:text-3xl">{request.patient_info?.username || "Patient"}</h1>
+                            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                Emergency Coordination
+                            </p>
+                            <h1 className="text-2xl font-bold sm:text-3xl">
+                                {request.patient_info?.username || "Patient"}
+                            </h1>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-300">
+                        <span className="rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
                             {statusLabels[status] || status}
                         </span>
 
                         {request.ai_draft?.is_emergency && (
-                            <span className="rounded-full border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-300">
+                            <span className="rounded-full border border-danger/20 bg-danger/10 px-4 py-2 text-sm font-medium text-danger">
                                 Emergency
                             </span>
                         )}
@@ -300,17 +311,19 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
 
                 <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
                     <div className="space-y-5">
-                        <section className="rounded-2xl border border-slate-800 bg-[#111827] p-5">
-                            <div className="mb-5 flex flex-wrap gap-2 items-center justify-between">
+                        <section className="rounded-xl border border-border bg-surface p-5">
+                            <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
                                 <div>
                                     <h2 className="text-lg font-semibold">Patient Information</h2>
-                                    <p className="mt-1 text-sm text-slate-500">Details required for emergency coordination.</p>
+                                    <p className="mt-1 text-sm text-muted">
+                                        Details required for emergency coordination.
+                                    </p>
                                 </div>
 
                                 {request.patient_info?.contact_no && (
                                     <a
                                         href={`tel:${request.patient_info.contact_no}`}
-                                        className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium transition hover:bg-blue-500"
+                                        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
                                     >
                                         <Phone className="h-4 w-4" />
                                         Call Patient
@@ -331,31 +344,38 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
                             </div>
                         </section>
 
-                        <section className="rounded-2xl border border-red-500/20 bg-[#111827] p-5">
+                        <section className="rounded-xl border border-danger/20 bg-surface p-5">
                             <div className="mb-4 flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10">
-                                    <Activity className="h-5 w-5 text-red-400" />
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-danger/10">
+                                    <Activity className="h-5 w-5 text-danger" />
                                 </div>
                                 <div>
                                     <h2 className="font-semibold">Clinical Context</h2>
-                                    <p className="text-sm text-slate-500">Quick context for the dispatcher.</p>
+                                    <p className="text-sm text-muted">Quick context for the dispatcher.</p>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
                                 <div>
-                                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Symptoms</p>
-                                    <p className="rounded-xl border border-slate-800 bg-[#0b1220] p-3 text-sm leading-6 text-slate-200">
+                                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                        Symptoms
+                                    </p>
+                                    <p className="rounded-lg border border-border bg-background p-3 text-sm leading-6 text-foreground">
                                         {request.ai_draft?.translated_symptoms || "No symptoms available"}
                                     </p>
                                 </div>
 
                                 {request.ai_draft?.chief_complaints?.length ? (
                                     <div>
-                                        <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Chief Complaints</p>
+                                        <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                            Chief Complaints
+                                        </p>
                                         <div className="flex flex-wrap gap-2">
                                             {request.ai_draft.chief_complaints.map((complaint, index) => (
-                                                <span key={index} className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-xs text-red-300">
+                                                <span
+                                                    key={index}
+                                                    className="rounded-full border border-danger/20 bg-danger/10 px-3 py-1.5 text-xs text-danger"
+                                                >
                                                     {complaint}
                                                 </span>
                                             ))}
@@ -365,32 +385,57 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
                             </div>
                         </section>
 
-                        <section className="rounded-2xl border border-slate-800 bg-[#111827] p-5">
+                        <section className="rounded-xl border border-border bg-surface p-5">
                             <div className="mb-5 flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10">
-                                    <MapPin className="h-5 w-5 text-red-400" />
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                    <MapPin className="h-5 w-5 text-primary" />
                                 </div>
                                 <div>
                                     <h2 className="font-semibold">Patient Pickup Location</h2>
-                                    <p className="text-sm text-slate-500">Enter the current location provided by the patient.</p>
+                                    <p className="text-sm text-muted">
+                                        Enter the current location provided by the patient.
+                                    </p>
                                 </div>
                             </div>
 
                             <div className="grid gap-4">
-                                <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Current address / landmark" className="h-12 rounded-xl border border-slate-800 bg-[#0b1220] px-4 text-sm outline-none focus:border-blue-500" />
+                                <input
+                                    value={address}
+                                    onChange={(e) => setAddress(e.target.value)}
+                                    placeholder="Current address / landmark"
+                                    className="h-12 rounded-lg border border-border bg-surface-secondary px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                />
 
                                 <div className="grid gap-4 sm:grid-cols-2">
-                                    <input value={latitude} onChange={(e) => setLatitude(e.target.value)} placeholder="Latitude" className="h-12 rounded-xl border border-slate-800 bg-[#0b1220] px-4 text-sm outline-none focus:border-blue-500" />
-                                    <input value={longitude} onChange={(e) => setLongitude(e.target.value)} placeholder="Longitude" className="h-12 rounded-xl border border-slate-800 bg-[#0b1220] px-4 text-sm outline-none focus:border-blue-500" />
+                                    <input
+                                        value={latitude}
+                                        onChange={(e) => setLatitude(e.target.value)}
+                                        placeholder="Latitude"
+                                        className="h-12 rounded-lg border border-border bg-surface-secondary px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                    />
+                                    <input
+                                        value={longitude}
+                                        onChange={(e) => setLongitude(e.target.value)}
+                                        placeholder="Longitude"
+                                        className="h-12 rounded-lg border border-border bg-surface-secondary px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                    />
                                 </div>
 
                                 <div className="flex flex-wrap gap-3">
-                                    <button onClick={saveLocation} disabled={locationLoading} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium transition hover:bg-blue-500 disabled:opacity-50">
+                                    <button
+                                        onClick={saveLocation}
+                                        disabled={locationLoading}
+                                        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:opacity-50"
+                                    >
                                         {locationLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4" />}
                                         Save Location
                                     </button>
 
-                                    <button onClick={findHospitals} disabled={hospitalLoading} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium transition hover:bg-slate-700 disabled:opacity-50">
+                                    <button
+                                        onClick={findHospitals}
+                                        disabled={hospitalLoading}
+                                        className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground disabled:opacity-50"
+                                    >
                                         {hospitalLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Hospital className="h-4 w-4" />}
                                         Find Nearby Hospitals
                                     </button>
@@ -399,10 +444,12 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
                         </section>
 
                         {hospitals.length > 0 && (
-                            <section className="rounded-2xl border border-slate-800 bg-[#111827] p-5">
+                            <section className="rounded-xl border border-border bg-surface p-5">
                                 <div className="mb-5">
                                     <h2 className="text-lg font-semibold">Nearby Hospitals</h2>
-                                    <p className="mt-1 text-sm text-slate-500">Select a hospital after confirming emergency support by phone.</p>
+                                    <p className="mt-1 text-sm text-muted">
+                                        Select a hospital after confirming emergency support by phone.
+                                    </p>
                                 </div>
 
                                 <div className="grid gap-3">
@@ -410,20 +457,25 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
                                         <button
                                             key={hospital._id}
                                             onClick={() => setSelectedHospital(hospital._id)}
-                                            className={`w-full rounded-xl border p-4 text-left transition ${selectedHospital === hospital._id ? "border-blue-500 bg-blue-500/10" : "border-slate-800 bg-[#0b1220] hover:border-slate-700"}`}
+                                            className={`w-full rounded-lg border p-4 text-left transition ${selectedHospital === hospital._id
+                                                ? "border-primary bg-primary/10"
+                                                : "border-border bg-background hover:border-primary/30 hover:bg-surface-secondary"
+                                                }`}
                                         >
                                             <div className="flex items-start justify-between gap-4">
                                                 <div>
-                                                    <p className="font-medium text-slate-100">{hospital.name}</p>
-                                                    <p className="mt-1 text-sm text-slate-500">{hospital.address}</p>
-                                                    <div className="mt-3 space-y-1.5 text-xs text-slate-400">
+                                                    <p className="font-medium text-foreground">{hospital.name}</p>
+                                                    <p className="mt-1 text-sm text-muted">{hospital.address}</p>
+                                                    <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
                                                         {hospital.contact?.phone && <p>Phone: {hospital.contact.phone}</p>}
                                                         {hospital.contact?.emergency_phone && <p>Emergency: {hospital.contact.emergency_phone}</p>}
                                                         {hospital.contact?.email && <p>Email: {hospital.contact.email}</p>}
                                                     </div>
                                                 </div>
 
-                                                {selectedHospital === hospital._id && <CheckCircle2 className="h-5 w-5 shrink-0 text-blue-400" />}
+                                                {selectedHospital === hospital._id && (
+                                                    <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
+                                                )}
                                             </div>
                                         </button>
                                     ))}
@@ -432,7 +484,7 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
                                 <button
                                     disabled={!selectedHospital || actionLoading}
                                     onClick={() => performAction("select_hospital", { hospital_id: selectedHospital })}
-                                    className="mt-4 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-medium transition hover:bg-violet-500 disabled:opacity-40"
+                                    className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:opacity-40"
                                 >
                                     <Hospital className="h-4 w-4" />
                                     Select Hospital
@@ -442,32 +494,32 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
                     </div>
 
                     <aside className="space-y-5">
-                        <section className="rounded-2xl border border-slate-800 bg-[#111827] p-5">
+                        <section className="rounded-xl border border-border bg-surface p-5">
                             <h2 className="mb-4 font-semibold">Coordination</h2>
 
                             <div className="space-y-3">
                                 <button
                                     onClick={() => performAction("contact_patient")}
                                     disabled={actionLoading}
-                                    className="flex w-full items-center justify-between rounded-xl border border-slate-800 bg-[#0b1220] px-4 py-3 text-sm transition hover:border-blue-500/40"
+                                    className="flex w-full items-center justify-between rounded-lg border border-border bg-background px-4 py-3 text-sm transition hover:border-primary/40 hover:bg-surface-secondary"
                                 >
                                     <span className="flex items-center gap-3">
-                                        <Phone className="h-4 w-4 text-blue-400" />
+                                        <Phone className="h-4 w-4 text-primary" />
                                         Update Status: Patient Contacted
                                     </span>
-                                    <ChevronIcon />
+                                    <ChevronRight />
                                 </button>
 
                                 <button
                                     onClick={() => performAction("confirm_hospital")}
                                     disabled={!request.ambulance_dispatch?.receiving_hospital?.hospital_id || actionLoading}
-                                    className="flex w-full items-center justify-between rounded-xl border border-slate-800 bg-[#0b1220] px-4 py-3 text-sm transition hover:border-emerald-500/40 disabled:opacity-40"
+                                    className="flex w-full items-center justify-between rounded-lg border border-border bg-background px-4 py-3 text-sm transition hover:border-success/40 hover:bg-surface-secondary disabled:opacity-40"
                                 >
                                     <span className="flex items-center gap-3">
-                                        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                                        <CheckCircle2 className="h-4 w-4 text-success" />
                                         Update Status: Hospital Confirmed
                                     </span>
-                                    <ChevronIcon />
+                                    <ChevronRight />
                                 </button>
 
                                 <button
@@ -476,13 +528,13 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
                                         performAction("dispatch");
                                     }}
                                     disabled={!request.ambulance_dispatch?.hospital_confirmation?.confirmed || actionLoading}
-                                    className="flex w-full items-center justify-between rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium transition hover:bg-blue-500 disabled:opacity-40"
+                                    className="flex w-full items-center justify-between rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:opacity-40"
                                 >
                                     <span className="flex items-center gap-3">
                                         <Send className="h-4 w-4" />
                                         Update Status: Ambulance Dispatched
                                     </span>
-                                    <ChevronIcon />
+                                    <ChevronRight />
                                 </button>
 
                                 <button
@@ -491,44 +543,69 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
                                         performAction("arrived");
                                     }}
                                     disabled={status !== "dispatched" || actionLoading}
-                                    className="flex w-full items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300 transition hover:bg-emerald-500/15 disabled:opacity-40"
+                                    className="flex w-full items-center justify-between rounded-lg border border-success/20 bg-success/10 px-4 py-3 text-sm text-success transition hover:bg-success/15 disabled:opacity-40"
                                 >
                                     <span className="flex items-center gap-3">
                                         <CheckCircle2 className="h-4 w-4" />
                                         Update Status: Ambulance Arrived
                                     </span>
-                                    <ChevronIcon />
+                                    <ChevronRight />
                                 </button>
                             </div>
                         </section>
 
-                        <section className="rounded-2xl border border-slate-800 bg-[#111827] p-5">
+                        <section className="rounded-xl border border-border bg-surface p-5">
                             <div className="mb-4 flex items-center gap-3">
-                                <Ambulance className="h-5 w-5 text-blue-400" />
+                                <Ambulance className="h-5 w-5 text-primary" />
                                 <h2 className="font-semibold">Ambulance Details</h2>
                             </div>
 
                             <div className="space-y-3">
-                                <input value={ambulanceName} onChange={(e) => setAmbulanceName(e.target.value)} placeholder="Service name" className="h-11 w-full rounded-xl border border-slate-800 bg-[#0b1220] px-3 text-sm outline-none focus:border-blue-500" />
-                                <input value={ambulanceContact} onChange={(e) => setAmbulanceContact(e.target.value)} placeholder="Driver / service contact" className="h-11 w-full rounded-xl border border-slate-800 bg-[#0b1220] px-3 text-sm outline-none focus:border-blue-500" />
-                                <input value={vehicleNo} onChange={(e) => setVehicleNo(e.target.value)} placeholder="Vehicle number" className="h-11 w-full rounded-xl border border-slate-800 bg-[#0b1220] px-3 text-sm outline-none focus:border-blue-500" />
+                                <input
+                                    value={ambulanceName}
+                                    onChange={(e) => setAmbulanceName(e.target.value)}
+                                    placeholder="Service name"
+                                    className="h-11 w-full rounded-lg border border-border bg-surface-secondary px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                />
+                                <input
+                                    value={ambulanceContact}
+                                    onChange={(e) => setAmbulanceContact(e.target.value)}
+                                    placeholder="Driver / service contact"
+                                    className="h-11 w-full rounded-lg border border-border bg-surface-secondary px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                />
+                                <input
+                                    value={vehicleNo}
+                                    onChange={(e) => setVehicleNo(e.target.value)}
+                                    placeholder="Vehicle number"
+                                    className="h-11 w-full rounded-lg border border-border bg-surface-secondary px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                />
 
                                 <button
                                     onClick={() => {
                                         if (!validateAmbulanceDetails()) return;
-                                        performAction("ambulance_details", { name: ambulanceName, contact_no: ambulanceContact, vehicle_no: vehicleNo });
+                                        performAction("ambulance_details", {
+                                            name: ambulanceName,
+                                            contact_no: ambulanceContact,
+                                            vehicle_no: vehicleNo,
+                                        });
                                     }}
                                     disabled={actionLoading}
-                                    className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium transition hover:bg-slate-700 disabled:opacity-50"
+                                    className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground disabled:opacity-50"
                                 >
                                     Save Ambulance Details
                                 </button>
                             </div>
                         </section>
 
-                        <section className="rounded-2xl border border-red-500/10 bg-red-500/3 p-5">
-                            <h2 className="font-semibold text-red-300">Cancel Request</h2>
-                            <textarea value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} placeholder="Reason for cancellation..." className="mt-3 min-h-24 w-full resize-none rounded-xl border border-red-500/10 bg-[#0b1220] p-3 text-sm outline-none focus:border-red-500/40" />
+                        <section className="rounded-xl border border-danger/20 bg-danger/10 p-5">
+                            <h2 className="font-semibold text-danger">Cancel Request</h2>
+
+                            <textarea
+                                value={cancelReason}
+                                onChange={(e) => setCancelReason(e.target.value)}
+                                placeholder="Reason for cancellation..."
+                                className="mt-3 min-h-24 w-full resize-none rounded-lg border border-danger/20 bg-background p-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-danger focus:ring-4 focus:ring-danger/10"
+                            />
 
                             <button
                                 onClick={() => {
@@ -539,20 +616,22 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
                                     performAction("cancel", { reason: cancelReason });
                                 }}
                                 disabled={actionLoading}
-                                className="mt-3 w-full rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm font-medium text-red-300 transition hover:bg-red-500/15 disabled:opacity-50"
+                                className="mt-3 w-full rounded-lg border border-danger/20 bg-danger/10 px-4 py-2.5 text-sm font-medium text-danger transition hover:bg-danger/15 disabled:opacity-50"
                             >
                                 Cancel Ambulance Request
                             </button>
                         </section>
 
-                        <section className="rounded-2xl border border-slate-800 bg-[#111827] p-5">
+                        <section className="rounded-xl border border-border bg-surface p-5">
                             <h2 className="mb-4 font-semibold">Timeline</h2>
 
                             <div className="space-y-4">
                                 <TimelineItem label="Request Created" date={request.ambulance_dispatch?.requested_at} />
                                 <TimelineItem label="Ambulance Dispatched" date={request.ambulance_dispatch?.dispatched_at} />
                                 <TimelineItem label="Ambulance Arrived" date={request.ambulance_dispatch?.arrived_at} />
-                                {request.ambulance_dispatch?.cancelled_at && <TimelineItem label="Request Cancelled" date={request.ambulance_dispatch.cancelled_at} />}
+                                {request.ambulance_dispatch?.cancelled_at && (
+                                    <TimelineItem label="Request Cancelled" date={request.ambulance_dispatch.cancelled_at} />
+                                )}
                             </div>
                         </section>
                     </aside>
@@ -564,9 +643,9 @@ export default function DispatcherAmbulanceDetail({ consultationId }: { consulta
 
 function Info({ label, value }: { label: string; value: string }) {
     return (
-        <div className="rounded-xl border border-slate-800 bg-[#0b1220] p-3">
-            <p className="text-xs text-slate-500">{label}</p>
-            <p className="mt-1 truncate text-sm font-medium text-slate-200">{value}</p>
+        <div className="rounded-lg border border-border bg-surface-secondary p-3">
+            <p className="text-xs text-muted-foreground">{label}</p>
+            <p className="mt-1 truncate text-sm font-medium text-foreground">{value}</p>
         </div>
     );
 }
@@ -574,20 +653,16 @@ function Info({ label, value }: { label: string; value: string }) {
 function TimelineItem({ label, date }: { label: string; date?: string }) {
     return (
         <div className="flex gap-3">
-            <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-500/10">
-                <Clock3 className="h-3.5 w-3.5 text-blue-400" />
+            <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                <Clock3 className="h-3.5 w-3.5 text-primary" />
             </div>
 
             <div>
-                <p className="text-sm font-medium text-slate-200">{label}</p>
-                <p className="mt-0.5 text-xs text-slate-500">
+                <p className="text-sm font-medium text-foreground">{label}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
                     {date ? new Date(date).toLocaleString("en-IN") : "Pending"}
                 </p>
             </div>
         </div>
     );
-}
-
-function ChevronIcon() {
-    return <span className="text-slate-500">›</span>;
 }

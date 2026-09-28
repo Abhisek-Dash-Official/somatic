@@ -55,12 +55,12 @@ const statusLabels: Record<string, string> = {
 };
 
 const statusStyles: Record<string, string> = {
-    pending: "border-amber-500/20 bg-amber-500/10 text-amber-300",
-    contacting_patient: "border-blue-500/20 bg-blue-500/10 text-blue-300",
-    hospital_selected: "border-violet-500/20 bg-violet-500/10 text-violet-300",
-    dispatched: "border-cyan-500/20 bg-cyan-500/10 text-cyan-300",
-    arrived: "border-emerald-500/20 bg-emerald-500/10 text-emerald-300",
-    cancelled: "border-red-500/20 bg-red-500/10 text-red-300",
+    pending: "border-warning/20 bg-warning/10 text-warning",
+    contacting_patient: "border-info/20 bg-info/10 text-info",
+    hospital_selected: "border-primary/20 bg-primary/10 text-primary",
+    dispatched: "border-info/20 bg-info/10 text-info",
+    arrived: "border-success/20 bg-success/10 text-success",
+    cancelled: "border-danger/20 bg-danger/10 text-danger",
 };
 
 export default function DispatcherAmbulances() {
@@ -121,29 +121,29 @@ export default function DispatcherAmbulances() {
     };
 
     return (
-        <main className="min-h-screen bg-[#0b1220] px-4 py-6 text-white sm:px-6 lg:px-8">
+        <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
                 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/10">
-                            <Ambulance className="h-6 w-6 text-red-400" />
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-danger/20 bg-danger/10">
+                            <Ambulance className="h-6 w-6 text-danger" />
                         </div>
 
                         <div>
                             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Ambulance Requests</h1>
-                            <p className="mt-1 text-sm text-slate-400">Manage emergency ambulance coordination.</p>
+                            <p className="mt-1 text-sm text-muted">Manage emergency ambulance coordination.</p>
                         </div>
                     </div>
 
-                    <div className="rounded-xl border border-slate-800 bg-[#111827] px-4 py-2 text-xs text-slate-400">
+                    <div className="rounded-lg border border-border bg-surface px-4 py-2 text-xs text-muted">
                         Auto refresh · 15s
                     </div>
                 </div>
 
-                <div className="mb-5 rounded-2xl border border-slate-800 bg-[#111827] p-3 shadow-xl shadow-black/10">
+                <div className="mb-5 rounded-xl border border-border bg-surface p-3">
                     <div className="flex flex-col gap-3 lg:flex-row">
                         <div className="relative flex-1">
-                            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <input
                                 value={search}
                                 onChange={(e) => {
@@ -151,7 +151,7 @@ export default function DispatcherAmbulances() {
                                     setPage(1);
                                 }}
                                 placeholder="Search patient, contact, location or hospital..."
-                                className="h-12 w-full rounded-xl border border-slate-800 bg-[#0b1220] pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-blue-500"
+                                className="h-12 w-full rounded-lg border border-border bg-surface-secondary pl-11 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
                             />
                         </div>
 
@@ -161,7 +161,7 @@ export default function DispatcherAmbulances() {
                                 setStatus(e.target.value);
                                 setPage(1);
                             }}
-                            className="h-12 rounded-xl border border-slate-800 bg-[#0b1220] px-4 text-sm text-slate-200 outline-none focus:border-blue-500 lg:w-56"
+                            className="h-12 rounded-lg border border-border bg-surface-secondary px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 lg:w-56"
                         >
                             <option value="active">Active</option>
                             <option value="pending">Pending</option>
@@ -178,16 +178,16 @@ export default function DispatcherAmbulances() {
                 {loading ? (
                     <div className="grid gap-4">
                         {[1, 2, 3].map((item) => (
-                            <div key={item} className="h-40 animate-pulse rounded-2xl border border-slate-800 bg-[#111827]" />
+                            <div key={item} className="h-40 animate-pulse rounded-xl border border-border bg-surface" />
                         ))}
                     </div>
                 ) : requests.length === 0 ? (
-                    <div className="rounded-2xl border border-slate-800 bg-[#111827] px-6 py-20 text-center">
-                        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-800">
-                            <Ambulance className="h-6 w-6 text-slate-500" />
+                    <div className="rounded-xl border border-border bg-surface px-6 py-20 text-center">
+                        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-surface-secondary">
+                            <Ambulance className="h-6 w-6 text-muted-foreground" />
                         </div>
-                        <h2 className="text-lg font-semibold text-slate-200">No ambulance requests</h2>
-                        <p className="mt-1 text-sm text-slate-500">There are no requests matching your current filters.</p>
+                        <h2 className="text-lg font-semibold text-foreground">No ambulance requests</h2>
+                        <p className="mt-1 text-sm text-muted">There are no requests matching your current filters.</p>
                     </div>
                 ) : (
                     <div className="grid gap-4">
@@ -199,23 +199,23 @@ export default function DispatcherAmbulances() {
                                 <Link
                                     key={request._id}
                                     href={`/dispatcher/ambulances/${request._id}`}
-                                    className="group rounded-2xl border border-slate-800 bg-[#111827] p-5 transition hover:border-blue-500/40 hover:bg-[#131d2e]"
+                                    className="group rounded-xl border border-border bg-surface p-5 transition hover:border-primary/40 hover:bg-surface-secondary"
                                 >
                                     <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                                         <div className="min-w-0 flex-1">
                                             <div className="mb-3 flex flex-wrap items-center gap-2">
-                                                <span className={`rounded-full border px-3 py-1 text-xs font-medium ${statusStyles[ambulanceStatus] || "border-slate-700 bg-slate-800 text-slate-300"}`}>
+                                                <span className={`rounded-full border px-3 py-1 text-xs font-medium ${statusStyles[ambulanceStatus] || "border-border bg-surface-secondary text-muted"}`}>
                                                     {statusLabels[ambulanceStatus] || ambulanceStatus}
                                                 </span>
 
                                                 {request.ai_draft?.is_emergency && (
-                                                    <span className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-xs font-medium text-red-300">
+                                                    <span className="rounded-full border border-danger/20 bg-danger/10 px-3 py-1 text-xs font-medium text-danger">
                                                         Emergency
                                                     </span>
                                                 )}
 
                                                 {request.department_info?.name && (
-                                                    <span className="rounded-full border border-slate-700 bg-slate-800/70 px-3 py-1 text-xs text-slate-400">
+                                                    <span className="rounded-full border border-border bg-surface-secondary px-3 py-1 text-xs text-muted">
                                                         {request.department_info.name}
                                                     </span>
                                                 )}
@@ -223,48 +223,56 @@ export default function DispatcherAmbulances() {
 
                                             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                                                 <div>
-                                                    <p className="mb-1 text-xs text-slate-500">Patient</p>
+                                                    <p className="mb-1 text-xs text-muted-foreground">Patient</p>
                                                     <div className="flex items-center gap-2">
-                                                        <UserRound className="h-4 w-4 text-blue-400" />
-                                                        <p className="truncate text-sm font-semibold text-slate-100">{patient?.username || "Unknown Patient"}</p>
+                                                        <UserRound className="h-4 w-4 text-primary" />
+                                                        <p className="truncate text-sm font-semibold text-foreground">
+                                                            {patient?.username || "Unknown Patient"}
+                                                        </p>
                                                     </div>
                                                 </div>
 
                                                 <div>
-                                                    <p className="mb-1 text-xs text-slate-500">Contact</p>
+                                                    <p className="mb-1 text-xs text-muted-foreground">Contact</p>
                                                     <div className="flex items-center gap-2">
-                                                        <Phone className="h-4 w-4 text-slate-500" />
-                                                        <p className="text-sm text-slate-300">{patient?.contact_no || "Not available"}</p>
+                                                        <Phone className="h-4 w-4 text-muted-foreground" />
+                                                        <p className="text-sm text-muted">{patient?.contact_no || "Not available"}</p>
                                                     </div>
                                                 </div>
 
                                                 <div>
-                                                    <p className="mb-1 text-xs text-slate-500">Location</p>
+                                                    <p className="mb-1 text-xs text-muted-foreground">Location</p>
                                                     <div className="flex items-center gap-2">
-                                                        <MapPin className="h-4 w-4 text-red-400" />
-                                                        <p className="truncate text-sm text-slate-300">{request.ambulance_dispatch?.patient_location?.address || "Location not added"}</p>
+                                                        <MapPin className="h-4 w-4 text-danger" />
+                                                        <p className="truncate text-sm text-muted">
+                                                            {request.ambulance_dispatch?.patient_location?.address || "Location not added"}
+                                                        </p>
                                                     </div>
                                                 </div>
 
                                                 <div>
-                                                    <p className="mb-1 text-xs text-slate-500">Requested</p>
+                                                    <p className="mb-1 text-xs text-muted-foreground">Requested</p>
                                                     <div className="flex items-center gap-2">
-                                                        <Clock3 className="h-4 w-4 text-slate-500" />
-                                                        <p className="text-sm text-slate-300">{formatTime(request.ambulance_dispatch?.requested_at || request.created_at)}</p>
+                                                        <Clock3 className="h-4 w-4 text-muted-foreground" />
+                                                        <p className="text-sm text-muted">
+                                                            {formatTime(request.ambulance_dispatch?.requested_at || request.created_at)}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             {request.ambulance_dispatch?.receiving_hospital?.name && (
-                                                <div className="mt-4 border-t border-slate-800 pt-4">
-                                                    <p className="text-xs text-slate-500">Receiving Hospital</p>
-                                                    <p className="mt-1 text-sm font-medium text-slate-200">{request.ambulance_dispatch.receiving_hospital.name}</p>
+                                                <div className="mt-4 border-t border-border pt-4">
+                                                    <p className="text-xs text-muted-foreground">Receiving Hospital</p>
+                                                    <p className="mt-1 text-sm font-medium text-foreground">
+                                                        {request.ambulance_dispatch.receiving_hospital.name}
+                                                    </p>
                                                 </div>
                                             )}
                                         </div>
 
-                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-700 bg-slate-800/60 transition group-hover:border-blue-500/40 group-hover:bg-blue-500/10">
-                                            <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-blue-400" />
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-surface-secondary transition group-hover:border-primary/40 group-hover:bg-primary/10">
+                                            <ChevronRight className="h-5 w-5 text-muted group-hover:text-primary" />
                                         </div>
                                     </div>
                                 </Link>
@@ -278,19 +286,19 @@ export default function DispatcherAmbulances() {
                         <button
                             disabled={page === 1}
                             onClick={() => setPage((value) => value - 1)}
-                            className="rounded-xl border border-slate-800 bg-[#111827] px-4 py-2 text-sm text-slate-300 transition hover:border-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
+                            className="rounded-lg border border-border bg-surface px-4 py-2 text-sm text-muted transition hover:border-primary/30 hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             Previous
                         </button>
 
-                        <span className="rounded-xl border border-slate-800 bg-[#111827] px-4 py-2 text-sm text-slate-400">
+                        <span className="rounded-lg border border-border bg-surface px-4 py-2 text-sm text-muted">
                             {page} / {totalPages}
                         </span>
 
                         <button
                             disabled={page === totalPages}
                             onClick={() => setPage((value) => value + 1)}
-                            className="rounded-xl border border-slate-800 bg-[#111827] px-4 py-2 text-sm text-slate-300 transition hover:border-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
+                            className="rounded-lg border border-border bg-surface px-4 py-2 text-sm text-muted transition hover:border-primary/30 hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             Next
                         </button>

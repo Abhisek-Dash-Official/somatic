@@ -73,21 +73,24 @@ export default function CreateUserModal({ isOpen, onClose, onSuccess }: Props) {
         }
     };
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
-            <div className="w-full max-w-xl bg-[#0B1120] border border-slate-700 rounded-2xl shadow-2xl p-6 my-8 max-h-[90vh] flex flex-col">
+    const inputClass = "w-full rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10";
+    const labelClass = "text-xs font-medium text-muted";
 
-                <div className="flex justify-between items-center mb-6 border-b border-slate-800 pb-4 shrink-0">
-                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                        <UserPlus className="h-5 w-5 text-blue-400" /> Create New User
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm">
+            <div className="my-8 flex max-h-[90vh] w-full max-w-xl flex-col rounded-xl border border-border bg-surface p-6">
+                <div className="mb-6 flex shrink-0 items-center justify-between border-b border-border pb-4">
+                    <h3 className="flex items-center gap-2 text-lg font-bold text-foreground">
+                        <UserPlus className="h-5 w-5 text-primary" />
+                        Create New User
                     </h3>
-                    <button onClick={onClose} className="text-slate-400 hover:text-white">
+                    <button onClick={onClose} className="text-muted hover:text-foreground">
                         <X className="h-5 w-5" />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto custom-scrollbar flex-1 pr-1">
-                    <div className="flex justify-center mb-4">
+                <form onSubmit={handleSubmit} className="custom-scrollbar flex-1 space-y-4 overflow-y-auto pr-1">
+                    <div className="mb-4 flex justify-center">
                         <AvatarSelector
                             currentAvatarId={formData.avatar_id}
                             onSelect={(id) => setFormData({ ...formData, avatar_id: id })}
@@ -95,48 +98,25 @@ export default function CreateUserModal({ isOpen, onClose, onSuccess }: Props) {
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-300">Username</label>
-                            <input
-                                type="text"
-                                required
-                                value={formData.username}
-                                onChange={e => setFormData({ ...formData, username: e.target.value })}
-                                className="w-full bg-[#131C31] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
-                            />
+                            <label className={labelClass}>Username</label>
+                            <input type="text" required value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} className={inputClass} />
                         </div>
                         <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-300">Email Address</label>
-                            <input
-                                type="email"
-                                required
-                                value={formData.email}
-                                onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                className="w-full bg-[#131C31] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
-                            />
+                            <label className={labelClass}>Email Address</label>
+                            <input type="email" required value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className={inputClass} />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-300">Password</label>
-                            <input
-                                type="password"
-                                required
-                                minLength={6}
-                                value={formData.password}
-                                onChange={e => setFormData({ ...formData, password: e.target.value })}
-                                className="w-full bg-[#131C31] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
-                            />
+                            <label className={labelClass}>Password</label>
+                            <input type="password" required minLength={6} value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} className={inputClass} />
                         </div>
                         <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-300">Role</label>
-                            <select
-                                value={formData.role}
-                                onChange={e => setFormData({ ...formData, role: e.target.value })}
-                                className="w-full bg-[#131C31] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
-                            >
+                            <label className={labelClass}>Role</label>
+                            <select value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })} className={inputClass}>
                                 <option value="patient">Patient</option>
                                 <option value="doctor">Doctor</option>
                                 <option value="assistant_doctor">Assistant Doctor</option>
@@ -146,36 +126,21 @@ export default function CreateUserModal({ isOpen, onClose, onSuccess }: Props) {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-300">Contact No (10 digits)</label>
-                            <input
-                                type="text"
-                                pattern="^[0-9]{10}$"
-                                value={formData.contact_no}
-                                onChange={e => setFormData({ ...formData, contact_no: e.target.value })}
-                                className="w-full bg-[#131C31] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
-                            />
+                            <label className={labelClass}>Contact No (10 digits)</label>
+                            <input type="text" pattern="^[0-9]{10}$" value={formData.contact_no} onChange={e => setFormData({ ...formData, contact_no: e.target.value })} className={inputClass} />
                         </div>
                         <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-300">Address</label>
-                            <input
-                                type="text"
-                                value={formData.address}
-                                onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                className="w-full bg-[#131C31] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
-                            />
+                            <label className={labelClass}>Address</label>
+                            <input type="text" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className={inputClass} />
                         </div>
                     </div>
 
                     {formData.role === "patient" && (
                         <div className="space-y-1">
-                            <label className="text-xs font-medium text-slate-300">Blood Group</label>
-                            <select
-                                value={formData.blood_grp}
-                                onChange={e => setFormData({ ...formData, blood_grp: e.target.value })}
-                                className="w-full bg-[#131C31] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
-                            >
+                            <label className={labelClass}>Blood Group</label>
+                            <select value={formData.blood_grp} onChange={e => setFormData({ ...formData, blood_grp: e.target.value })} className={inputClass}>
                                 <option value="">Select Group</option>
                                 <option value="A+">A+</option><option value="A-">A-</option>
                                 <option value="B+">B+</option><option value="B-">B-</option>
@@ -186,59 +151,34 @@ export default function CreateUserModal({ isOpen, onClose, onSuccess }: Props) {
                     )}
 
                     {(formData.role === "doctor" || formData.role === "assistant_doctor") && (
-                        <div className="space-y-4 pt-2 border-t border-slate-800">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-4 border-t border-border pt-2">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div className="space-y-1">
-                                    <label className="text-xs font-medium text-slate-300">Medical Reg No</label>
-                                    <input
-                                        type="text"
-                                        value={formData.reg_no}
-                                        onChange={e => setFormData({ ...formData, reg_no: e.target.value })}
-                                        className="w-full bg-[#131C31] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
-                                    />
+                                    <label className={labelClass}>Medical Reg No</label>
+                                    <input type="text" value={formData.reg_no} onChange={e => setFormData({ ...formData, reg_no: e.target.value })} className={inputClass} />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-medium text-slate-300">Experience (Years)</label>
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        value={formData.experience}
-                                        onChange={e => setFormData({ ...formData, experience: Number(e.target.value) })}
-                                        className="w-full bg-[#131C31] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
-                                    />
+                                    <label className={labelClass}>Experience (Years)</label>
+                                    <input type="number" min="0" value={formData.experience} onChange={e => setFormData({ ...formData, experience: Number(e.target.value) })} className={inputClass} />
                                 </div>
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-medium text-slate-300">Qualifications</label>
-                                <input
-                                    type="text"
-                                    value={formData.qualification}
-                                    onChange={e => setFormData({ ...formData, qualification: e.target.value })}
-                                    placeholder="e.g. MBBS, MD"
-                                    className="w-full bg-[#131C31] border border-slate-700 rounded-xl py-2.5 px-3 text-white text-sm focus:border-blue-500 outline-none"
-                                />
+                                <label className={labelClass}>Qualifications</label>
+                                <input type="text" value={formData.qualification} onChange={e => setFormData({ ...formData, qualification: e.target.value })} placeholder="e.g. MBBS, MD" className={inputClass} />
                             </div>
                         </div>
                     )}
 
-                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-800 shrink-0">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 rounded-xl text-slate-400 hover:text-white text-sm font-semibold transition"
-                        >
+                    <div className="flex shrink-0 justify-end gap-3 border-t border-border pt-4">
+                        <button type="button" onClick={onClose} className="rounded-lg px-4 py-2 text-sm font-semibold text-muted transition hover:bg-accent hover:text-foreground">
                             Cancel
                         </button>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-xl text-sm font-bold transition disabled:opacity-50"
-                        >
-                            {loading && <Loader2 className="h-4 w-4 animate-spin" />} Create User
+                        <button type="submit" disabled={loading} className="flex items-center gap-2 rounded-lg bg-primary px-6 py-2 text-sm font-bold text-primary-foreground transition hover:bg-primary-hover disabled:opacity-50">
+                            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                            Create User
                         </button>
                     </div>
                 </form>
-
             </div>
         </div>
     );

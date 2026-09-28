@@ -165,25 +165,31 @@ export default function NewInsuranceClaimPage() {
         }
     };
 
+    const fieldClass =
+        "mt-2 w-full rounded-lg border border-border bg-surface-secondary px-3 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10";
+
     if (loading) {
         return (
-            <div className="flex min-h-[60vh] items-center justify-center bg-[#0b1220]">
-                <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
+            <div className="flex min-h-[60vh] items-center justify-center bg-background">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
         );
     }
 
     if (!policies.length) {
         return (
-            <div className="min-h-[60vh] bg-[#0b1220] p-4 md:p-6">
-                <div className="mx-auto max-w-xl rounded-xl border border-slate-700/60 bg-[#111827] p-8 text-center">
-                    <ShieldCheck className="mx-auto h-12 w-12 text-slate-600" />
-                    <h1 className="mt-4 text-xl font-bold text-white">No Active Insurance Policy</h1>
-                    <p className="mt-2 text-sm leading-6 text-slate-400">
+            <div className="min-h-[60vh] bg-background p-4 md:p-6">
+                <div className="mx-auto max-w-xl rounded-xl border border-border bg-surface p-8 text-center">
+                    <ShieldCheck className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <h1 className="mt-4 text-xl font-bold text-foreground">No Active Insurance Policy</h1>
+                    <p className="mt-2 text-sm leading-6 text-muted">
                         You need an active insurance policy before submitting a claim.
                     </p>
 
-                    <Link href="/patient/insurance" className="mt-6 inline-flex rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-purple-500">
+                    <Link
+                        href="/patient/insurance"
+                        className="mt-6 inline-flex rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
+                    >
                         View Insurance
                     </Link>
                 </div>
@@ -192,71 +198,74 @@ export default function NewInsuranceClaimPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#0b1220] p-4 md:p-6">
+        <div className="min-h-screen bg-background p-4 text-foreground md:p-6">
             <div className="mx-auto max-w-5xl space-y-6">
                 <div className="flex items-center gap-3">
-                    <Link href="/patient/insurance" className="rounded-lg border border-slate-700/60 bg-[#111827] p-2 text-slate-400 transition hover:border-slate-600 hover:text-white">
+                    <Link
+                        href="/patient/insurance"
+                        className="rounded-lg border border-border bg-surface p-2 text-muted transition hover:border-primary/40 hover:text-foreground"
+                    >
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
 
                     <div>
-                        <h1 className="text-2xl font-bold text-white">File Insurance Claim</h1>
-                        <p className="mt-1 text-sm text-slate-400">Submit your medical claim for review.</p>
+                        <h1 className="text-2xl font-bold text-foreground">File Insurance Claim</h1>
+                        <p className="mt-1 text-sm text-muted">Submit your medical claim for review.</p>
                     </div>
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-3">
                     <div className="space-y-6 lg:col-span-2">
-                        <section className="rounded-xl border border-slate-700/60 bg-[#111827] p-6">
+                        <section className="rounded-xl border border-border bg-surface p-6">
                             <div className="flex items-center gap-2">
-                                <ShieldCheck className="h-5 w-5 text-purple-400" />
-                                <h2 className="font-semibold text-white">Insurance Policy</h2>
+                                <ShieldCheck className="h-5 w-5 text-primary" />
+                                <h2 className="font-semibold text-foreground">Insurance Policy</h2>
                             </div>
 
                             <select
                                 value={policyId}
                                 onChange={(e) => setPolicyId(e.target.value)}
-                                className="mt-4 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none focus:border-purple-500"
+                                className={fieldClass}
                             >
                                 {policies.map((policy) => (
-                                    <option key={policy._id} value={policy._id}>
+                                    <option key={policy._id} value={policy._id} className="bg-surface text-foreground">
                                         {policy.policy_number || policy._id} — {policy.plan_id?.name || "Insurance Plan"}
                                     </option>
                                 ))}
                             </select>
                         </section>
 
-                        <section className="rounded-xl border border-slate-700/60 bg-[#111827] p-6">
+                        <section className="rounded-xl border border-border bg-surface p-6">
                             <div className="flex items-center gap-2">
-                                <FileText className="h-5 w-5 text-purple-400" />
-                                <h2 className="font-semibold text-white">Claim Information</h2>
+                                <FileText className="h-5 w-5 text-primary" />
+                                <h2 className="font-semibold text-foreground">Claim Information</h2>
                             </div>
 
                             <div className="mt-5 grid gap-4 sm:grid-cols-2">
                                 <div>
-                                    <label className="text-xs text-slate-400">Claim Type</label>
+                                    <label className="text-xs text-muted-foreground">Claim Type</label>
                                     <select
                                         value={claimType}
                                         required
                                         onChange={(e) => setClaimType(e.target.value as "cashless" | "reimbursement")}
-                                        className="mt-2 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none focus:border-purple-500"
+                                        className={fieldClass}
                                     >
-                                        <option value="cashless">Cashless</option>
-                                        <option value="reimbursement">Reimbursement</option>
+                                        <option value="cashless" className="bg-surface text-foreground">Cashless</option>
+                                        <option value="reimbursement" className="bg-surface text-foreground">Reimbursement</option>
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label className="text-xs text-slate-400">Incident Type</label>
+                                    <label className="text-xs text-muted-foreground">Incident Type</label>
                                     <select
                                         value={incidentType}
                                         required
                                         onChange={(e) => setIncidentType(e.target.value)}
-                                        className="mt-2 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none focus:border-purple-500"
+                                        className={fieldClass}
                                     >
-                                        <option value="">Select incident</option>
+                                        <option value="" className="bg-surface text-foreground">Select incident</option>
                                         {incidentTypes.map((item) => (
-                                            <option key={item.value} value={item.value}>
+                                            <option key={item.value} value={item.value} className="bg-surface text-foreground">
                                                 {item.label}
                                             </option>
                                         ))}
@@ -264,51 +273,51 @@ export default function NewInsuranceClaimPage() {
                                 </div>
 
                                 <div>
-                                    <label className="text-xs text-slate-400">Incident Date</label>
+                                    <label className="text-xs text-muted-foreground">Incident Date</label>
                                     <input
                                         type="date"
                                         value={incidentDate}
                                         required
                                         onChange={(e) => setIncidentDate(e.target.value)}
-                                        className="mt-2 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none focus:border-purple-500"
+                                        className={fieldClass}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="text-xs text-slate-400">Treatment Date</label>
+                                    <label className="text-xs text-muted-foreground">Treatment Date</label>
                                     <input
                                         type="date"
                                         required
                                         value={treatmentDate}
                                         onChange={(e) => setTreatmentDate(e.target.value)}
-                                        className="mt-2 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none focus:border-purple-500"
+                                        className={fieldClass}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="text-xs text-slate-400">Admission Date</label>
+                                    <label className="text-xs text-muted-foreground">Admission Date</label>
                                     <input
                                         type="date"
                                         required
                                         value={admissionDate}
                                         onChange={(e) => setAdmissionDate(e.target.value)}
-                                        className="mt-2 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none focus:border-purple-500"
+                                        className={fieldClass}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="text-xs text-slate-400">Discharge Date</label>
+                                    <label className="text-xs text-muted-foreground">Discharge Date</label>
                                     <input
                                         type="date"
                                         required
                                         value={dischargeDate}
                                         onChange={(e) => setDischargeDate(e.target.value)}
-                                        className="mt-2 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none focus:border-purple-500"
+                                        className={fieldClass}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="text-xs text-slate-400">Estimated Amount</label>
+                                    <label className="text-xs text-muted-foreground">Estimated Amount</label>
                                     <input
                                         type="number"
                                         min="0"
@@ -316,12 +325,12 @@ export default function NewInsuranceClaimPage() {
                                         value={estimatedAmount}
                                         onChange={(e) => setEstimatedAmount(e.target.value)}
                                         placeholder="₹0"
-                                        className="mt-2 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-purple-500"
+                                        className={fieldClass}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="text-xs text-slate-400">Claimed Amount</label>
+                                    <label className="text-xs text-muted-foreground">Claimed Amount</label>
                                     <input
                                         type="number"
                                         min="1"
@@ -329,30 +338,30 @@ export default function NewInsuranceClaimPage() {
                                         value={claimedAmount}
                                         onChange={(e) => setClaimedAmount(e.target.value)}
                                         placeholder="₹0"
-                                        className="mt-2 w-full rounded-lg border border-slate-700/60 bg-[#172033] px-3 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-purple-500"
+                                        className={fieldClass}
                                     />
                                 </div>
                             </div>
                         </section>
                     </div>
 
-                    <aside className="h-fit rounded-xl border border-slate-700/60 bg-[#111827] p-6 lg:sticky lg:top-6">
-                        <h2 className="font-semibold text-white">Claim Summary</h2>
+                    <aside className="h-fit rounded-xl border border-border bg-surface p-6 lg:sticky lg:top-6">
+                        <h2 className="font-semibold text-foreground">Claim Summary</h2>
 
                         <div className="mt-5 space-y-4 text-sm">
                             <div className="flex justify-between gap-4">
-                                <span className="text-slate-500">Type</span>
-                                <span className="capitalize text-slate-200">{claimType}</span>
+                                <span className="text-muted">Type</span>
+                                <span className="capitalize text-foreground">{claimType}</span>
                             </div>
 
                             <div className="flex justify-between gap-4">
-                                <span className="text-slate-500">Incident</span>
-                                <span className="capitalize text-slate-200">{incidentType || "Not selected"}</span>
+                                <span className="text-muted">Incident</span>
+                                <span className="capitalize text-foreground">{incidentType || "Not selected"}</span>
                             </div>
 
-                            <div className="border-t border-slate-700/60 pt-4">
-                                <p className="text-xs text-slate-500">Claimed Amount</p>
-                                <p className="mt-1 text-2xl font-bold text-white">
+                            <div className="border-t border-border pt-4">
+                                <p className="text-xs text-muted">Claimed Amount</p>
+                                <p className="mt-1 text-2xl font-bold text-foreground">
                                     ₹{Number(claimedAmount || 0).toLocaleString("en-IN")}
                                 </p>
                             </div>
@@ -362,13 +371,13 @@ export default function NewInsuranceClaimPage() {
                             type="button"
                             disabled={submitting}
                             onClick={handleSubmit}
-                            className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
                             Submit Claim
                         </button>
 
-                        <p className="mt-4 text-center text-xs leading-5 text-slate-500">
+                        <p className="mt-4 text-center text-xs leading-5 text-muted">
                             Your claim will be reviewed by the SOMATIC insurance team.
                         </p>
                     </aside>

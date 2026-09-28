@@ -1,6 +1,7 @@
 import { pageContent } from "@/config/content";
-import { BookOpen } from "lucide-react";
+import { ArrowUpRight, BookOpen } from "lucide-react";
 import { Metadata } from "next";
+import Link from "next/link";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -10,39 +11,65 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
     return (
-        <div className="container mx-auto px-4 py-20 sm:px-6 max-w-6xl">
-            <div className="mb-16 flex flex-col items-center text-center">
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                    <BookOpen className="h-8 w-8" />
-                </div>
-                <h1 className="mb-4 text-4xl font-extrabold text-white sm:text-5xl">
-                    Latest Updates & <span className="text-blue-400">Insights</span>
-                </h1>
-                <p className="max-w-2xl text-lg text-slate-400">
-                    Discover how AI is transforming Ayush healthcare, read our technical deep-dives, and stay updated with our platform.
-                </p>
-            </div>
+        <main className="bg-background text-foreground">
+            <div className="mx-auto max-w-6xl px-5 py-14 sm:px-6 sm:py-20 lg:py-24">
+                {/* HEADER */}
+                <section className="border-b border-border pb-12 sm:pb-16">
+                    <div className="flex items-start gap-4">
+                        <div className="mt-1 hidden h-9 w-9 items-center justify-center bg-accent text-accent-foreground sm:flex">
+                            <BookOpen className="h-4 w-4" />
+                        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {pageContent.blog.map((post) => (
-                    <div
-                        key={post.id}
-                        className="group flex flex-col justify-between rounded-3xl border border-white/10 bg-[#0f172a]/60 p-8 transition-all hover:bg-white/5 hover:border-blue-500/30 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]"
-                    >
                         <div>
-                            <div className="mb-4 inline-block rounded-full bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-400">
-                                {post.date}
-                            </div>
-                            <h3 className="mb-4 text-2xl font-bold text-white leading-snug">
-                                {post.title}
-                            </h3>
-                            <p className="mb-8 text-base text-slate-400 leading-relaxed">
-                                {post.excerpt}
+                            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                                Somatic journal
+                            </p>
+
+                            <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+                                Latest updates & insights.
+                            </h1>
+
+                            <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg">
+                                Discover how AI is transforming Ayush healthcare, explore technical deep-dives, and follow the work behind Somatic.
                             </p>
                         </div>
                     </div>
-                ))}
+                </section>
+
+                {/* POSTS */}
+                <section className="pt-10 sm:pt-14">
+                    <div className="divide-y divide-border border-y border-border">
+                        {pageContent.blog.map((post, index) => (
+                            <article
+                                key={post.id}
+                                className="group grid gap-5 py-7 sm:grid-cols-[90px_1fr_auto] sm:items-start sm:gap-8 sm:py-9"
+                            >
+                                <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                    {String(index + 1).padStart(2, "0")}
+                                </div>
+
+                                <div>
+                                    <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-primary">
+                                        {post.date}
+                                    </p>
+
+                                    <h2 className="max-w-2xl text-xl font-bold leading-snug tracking-tight transition-colors group-hover:text-primary sm:text-2xl">
+                                        {post.title}
+                                    </h2>
+
+                                    <p className="mt-3 max-w-2xl text-sm leading-6 text-muted sm:text-base">
+                                        {post.excerpt}
+                                    </p>
+                                </div>
+
+                                <div className="flex items-center text-muted transition-colors group-hover:text-primary">
+                                    <ArrowUpRight className="h-5 w-5" />
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                </section>
             </div>
-        </div>
+        </main>
     );
 }
