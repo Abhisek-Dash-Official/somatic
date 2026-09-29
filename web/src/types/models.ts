@@ -548,3 +548,47 @@ export interface IHealthArticle {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface ISubscriptionPlan {
+  _id?: string;
+  name: string;
+  description?: string;
+  price: number;
+  currency: string;
+  duration_days: number;
+  features: string[];
+  token_limit: number;
+  is_active: boolean;
+  created_at?: Date | string;
+  updated_at?: Date | string;
+}
+
+export interface ISubscription {
+  _id?: string;
+  user_id: string | any;
+  plan_id: string | any;
+  plan_name: string;
+  status: "pending" | "active" | "expired" | "cancelled";
+  price: number;
+  currency: string;
+  token_limit: number;
+  tokens_used: number;
+  start_date?: Date | string;
+  end_date?: Date | string;
+  created_at?: Date | string;
+  updated_at?: Date | string;
+}
+
+export interface IAiUsage {
+  _id?: string;
+  user_id: string | any;
+  subscription_id?: string | any;
+  feature: "soma_ai" | "consultation_analysis" | "consultation_translation";
+  ai_model: string;
+  tokens_prompt: number;
+  tokens_completion: number;
+  tokens_total: number;
+  response_time_sec?: number;
+  reference_id?: string | any;
+  created_at?: Date | string;
+}
