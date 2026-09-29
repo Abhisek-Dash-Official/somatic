@@ -433,7 +433,11 @@ export interface IInsurancePlan extends Document {
 export interface ITransaction {
   _id?: string;
   user_id: string | any;
-  transaction_type: "insurance_premium" | "shop_order" | "lab_booking";
+  transaction_type:
+    | "insurance_premium"
+    | "shop_order"
+    | "lab_booking"
+    | "subscription";
   reference_id: string | any;
   amount: number;
   currency?: string;
