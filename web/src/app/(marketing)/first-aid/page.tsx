@@ -163,8 +163,8 @@ export default function FirstAidGuidePage() {
                             type="button"
                             onClick={() => setActiveCategory(category)}
                             className={`whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition ${activeCategory === category
-                                    ? "bg-primary text-primary-foreground"
-                                    : "border border-border bg-surface-secondary text-muted hover:bg-accent hover:text-accent-foreground"
+                                ? "bg-primary text-primary-foreground"
+                                : "border border-border bg-surface-secondary text-muted hover:bg-accent hover:text-accent-foreground"
                                 }`}
                         >
                             {category}

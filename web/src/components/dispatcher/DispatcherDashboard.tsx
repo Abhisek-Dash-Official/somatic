@@ -277,11 +277,11 @@ export default function DispatcherDashboard() {
                                 <div className="flex items-center justify-between gap-3">
                                     <div className="min-w-0">
                                         <p className="wrap-break-word text-sm font-semibold sm:text-base">
-                                            Lab Tests & Diagnostics
+                                            Lab Tests & Home Collection
                                         </p>
 
                                         <p className="mt-1 wrap-break-word text-xs text-muted">
-                                            Manage test bookings and diagnostic services
+                                            Manage lab tests and home sample collection
                                         </p>
                                     </div>
 

@@ -9,7 +9,7 @@ export const navLinks = {
   moreNav: [
     { title: "Soma AI", href: "/chat" },
     { title: "Insurance", href: "/patient/insurance" },
-    { title: "Lab Tests & Diagnostics", href: "/labs" },
+    { title: "Lab Tests", href: "/labs" },
     { title: "Learn", href: "/learn" },
     { title: "Blog", href: "/blog" },
     { title: "Contact", href: "/contact" },
@@ -40,8 +40,8 @@ export const navLinks = {
       icon: "ShieldCheck",
     },
     {
-      title: "Lab Tests & Diagnostics",
-      description: "Access diagnostic testing and laboratory services",
+      title: "Lab Tests",
+      description: "Book lab tests with convenient home sample collection",
       image: "/portal/labs.jpg",
       hrefByRole: {
         patient: "/patient/labs",
@@ -191,7 +191,7 @@ export const navLinks = {
         icon: "ClipboardList",
       },
       {
-        title: "Lab Test & Diagnotics",
+        title: "Lab Test",
         href: "/admin/labs",
         icon: "Microscope",
       },

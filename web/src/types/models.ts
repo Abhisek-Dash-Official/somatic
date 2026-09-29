@@ -431,7 +431,7 @@ export interface IInsurancePlan extends Document {
 export interface ITransaction {
   _id?: string;
   user_id: string | any;
-  transaction_type: "insurance_premium" | "shop_order";
+  transaction_type: "insurance_premium" | "shop_order" | "lab_booking";
   reference_id: string | any;
   amount: number;
   currency?: string;
@@ -453,4 +453,96 @@ export interface ITransaction {
   metadata?: Record<string, any>;
   created_at?: Date | string;
   updated_at?: Date | string;
+}
+
+export interface ILabBooking {
+  booking_number: string;
+
+  patient_id: mongoose.Types.ObjectId;
+
+  tests: {
+    test_id: mongoose.Types.ObjectId;
+    name: string;
+    type: "test" | "package";
+    price: number;
+  }[];
+
+  subtotal: number;
+  collection_fee: number;
+  discount: number;
+  total_amount: number;
+
+  payment_status:
+    | "pending"
+    | "paid"
+    | "failed"
+    | "refunded"
+    | "partially_refunded";
+
+  collection_address: {
+    address_line: string;
+    city: string;
+    state: string;
+    pincode: string;
+    landmark?: string;
+  };
+
+  scheduled_date: Date;
+  scheduled_slot: string;
+
+  collector_id?: mongoose.Types.ObjectId;
+
+  status:
+    | "booked"
+    | "collection_scheduled"
+    | "sample_collected"
+    | "processing"
+    | "report_ready"
+    | "completed"
+    | "cancelled";
+
+  sample_collected_at?: Date;
+  processing_started_at?: Date;
+  report_ready_at?: Date;
+  completed_at?: Date;
+  cancelled_at?: Date;
+
+  cancellation_reason?: string;
+
+  results: {
+    test_id: mongoose.Types.ObjectId;
+    test_name: string;
+    parameters: {
+      name: string;
+      value: string;
+      unit?: string;
+      reference_range?: string;
+      status: "normal" | "high" | "low" | "critical" | "abnormal";
+    }[];
+  }[];
+
+  results_entered_by?: mongoose.Types.ObjectId;
+  results_entered_at?: Date;
+
+  notes?: string;
+
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface IHealthArticle {
+  title: string;
+  slug: string;
+  description: string;
+  category: "medicines" | "diseases" | "health" | "everyday_healthcare";
+  tags: string[];
+  content: string;
+  cover_image?: string;
+  author?: string;
+  read_time?: number;
+  is_featured: boolean;
+  is_published: boolean;
+  published_at?: Date;
+  created_at: Date;
+  updated_at: Date;
 }

@@ -257,20 +257,18 @@ export default function EHRDownloadButton({ consultation }: { consultation: any 
         .rx-box {
             border: 1px solid var(--line);
             border-radius: 8px;
-            padding: 14px 16px 10px 64px;
+            padding: 14px 16px 10px 56px;
             position: relative;
         }
 
         .rx-symbol {
             position: absolute;
             left: 14px;
-            top: 10px;
-            font-size: 30px;
-            font-weight: 800;
-            font-style: italic;
+            top: 6px;
+            font-size: 34px;
+            font-weight: 700;
             color: var(--primary);
             font-family: Georgia, 'Times New Roman', serif;
-            letter-spacing: -1px;
         }
 
         .med-list { list-style: none; margin: 0; padding: 0; }
@@ -457,7 +455,7 @@ export default function EHRDownloadButton({ consultation }: { consultation: any 
             <div class="section">
                 <h2 class="section-title">Prescribed Medicines</h2>
                 <div class="rx-box">
-                    <span class="rx-symbol">Rx</span>
+                    <span class="rx-symbol">&#8478;</span>
                     <ul class="med-list">${meds}</ul>
                 </div>
             </div>

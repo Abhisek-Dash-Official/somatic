@@ -16,7 +16,7 @@ const TransactionSchema = new Schema<ITransactionDocument>(
 
     transaction_type: {
       type: String,
-      enum: ["insurance_premium", "shop_order"],
+      enum: ["insurance_premium", "shop_order", "lab_booking"],
       required: true,
       index: true,
     },
