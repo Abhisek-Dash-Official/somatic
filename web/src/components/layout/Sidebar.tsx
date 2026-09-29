@@ -9,14 +9,14 @@ import {
     LayoutDashboard, Building2, Users, Ticket, Hourglass, Ambulance,
     Settings, Stethoscope, User, PlusCircle, ClipboardList, Hospital,
     LogOut, Logs, UserShield, Pill, Droplets, MoreHorizontal, ShieldCheck,
-    Microscope, ShoppingBag, CreditCard
+    Microscope, ShoppingBag, CreditCard, Crown
 } from "lucide-react";
 
 const IconMap: Record<string, any> = {
     LayoutDashboard, Building2, Users, Ticket, Hourglass, Ambulance,
     Settings, Stethoscope, User, PlusCircle, ClipboardList, Hospital,
     Logs, LogOut, UserShield, Pill, Droplets, MoreHorizontal, ShieldCheck,
-    Microscope, ShoppingBag, CreditCard
+    Microscope, ShoppingBag, CreditCard, Crown
 };
 
 export default function Sidebar() {

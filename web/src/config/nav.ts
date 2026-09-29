@@ -171,6 +171,11 @@ export const navLinks = {
         href: "/admin/transactions",
         icon: "CreditCard",
       },
+      {
+        title: "Subscriptions",
+        href: "/admin/subscriptions",
+        icon: "Crown",
+      },
       { title: "Hospitals", href: "/admin/hospitals", icon: "Hospital" },
       { title: "Insurance", href: "/admin/insurance", icon: "ShieldCheck" },
       { title: "Labs", href: "/admin/labs", icon: "Microscope" },
