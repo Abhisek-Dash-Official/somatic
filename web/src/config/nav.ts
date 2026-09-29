@@ -7,6 +7,7 @@ export const navLinks = {
   ],
 
   moreNav: [
+    { title: "My Orders", href: "/shop/orders" },
     { title: "Portal", href: "/portal" },
     { title: "Insurance", href: "/patient/insurance" },
     { title: "Lab Tests", href: "/labs" },
