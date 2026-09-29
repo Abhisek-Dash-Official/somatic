@@ -221,7 +221,7 @@ export default function Header() {
             </div>
 
             {isMobileMenuOpen && (
-                <div className="absolute left-0 top-full w-full border-b border-border bg-surface shadow-xl md:hidden">
+                <div className="absolute left-0 top-full max-h-[calc(100vh-4rem)] w-full overflow-y-auto bg-surface shadow-xl md:hidden">
                     <nav className="flex flex-col p-4">
                         <div className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                             Main Menu
