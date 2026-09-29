@@ -9,14 +9,14 @@ import {
     LayoutDashboard, Building2, Users, Ticket, Hourglass, Ambulance,
     Settings, Stethoscope, User, PlusCircle, ClipboardList, Hospital,
     LogOut, Logs, UserShield, Pill, Droplets, MoreHorizontal, ShieldCheck,
-    Microscope
+    Microscope, ShoppingBag, CreditCard
 } from "lucide-react";
 
 const IconMap: Record<string, any> = {
     LayoutDashboard, Building2, Users, Ticket, Hourglass, Ambulance,
     Settings, Stethoscope, User, PlusCircle, ClipboardList, Hospital,
     Logs, LogOut, UserShield, Pill, Droplets, MoreHorizontal, ShieldCheck,
-    Microscope
+    Microscope, ShoppingBag, CreditCard
 };
 
 export default function Sidebar() {
@@ -48,8 +48,8 @@ export default function Sidebar() {
                                 key={link.title}
                                 href={link.href}
                                 className={`group flex items-center gap-3 rounded-xl border px-3 py-3 text-sm font-medium transition-colors ${isActive
-                                        ? "border-primary/20 bg-accent text-accent-foreground"
-                                        : "border-transparent text-muted hover:bg-surface-secondary hover:text-foreground"
+                                    ? "border-primary/20 bg-accent text-accent-foreground"
+                                    : "border-transparent text-muted hover:bg-surface-secondary hover:text-foreground"
                                     }`}
                             >
                                 {Icon && (
@@ -86,8 +86,8 @@ export default function Sidebar() {
                             href={link.href}
                             aria-label={link.title}
                             className={`flex h-12 w-12 items-center justify-center rounded-xl transition-colors ${isActive
-                                    ? "bg-accent text-primary"
-                                    : "text-muted hover:bg-surface-secondary hover:text-foreground"
+                                ? "bg-accent text-primary"
+                                : "text-muted hover:bg-surface-secondary hover:text-foreground"
                                 }`}
                         >
                             {Icon && <Icon className="h-6 w-6" />}
@@ -101,8 +101,8 @@ export default function Sidebar() {
                         onClick={() => setShowMore((prev) => !prev)}
                         aria-label="More"
                         className={`flex h-12 w-12 items-center justify-center rounded-xl transition-colors ${showMore || isMoreActive
-                                ? "bg-accent text-primary"
-                                : "text-muted hover:bg-surface-secondary hover:text-foreground"
+                            ? "bg-accent text-primary"
+                            : "text-muted hover:bg-surface-secondary hover:text-foreground"
                             }`}
                     >
                         <MoreHorizontal className="h-6 w-6" />
@@ -122,8 +122,8 @@ export default function Sidebar() {
                                 href={link.href}
                                 onClick={() => setShowMore(false)}
                                 className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors ${isActive
-                                        ? "bg-accent text-primary"
-                                        : "text-muted hover:bg-surface-secondary hover:text-foreground"
+                                    ? "bg-accent text-primary"
+                                    : "text-muted hover:bg-surface-secondary hover:text-foreground"
                                     }`}
                             >
                                 {Icon && <Icon className="h-5 w-5" />}
