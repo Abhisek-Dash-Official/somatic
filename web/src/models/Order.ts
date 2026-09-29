@@ -9,17 +9,37 @@ const OrderItemSchema = new Schema(
   {
     item_type: {
       type: String,
-      enum: ["medicine", "blood"],
+      enum: ["Medicine", "BloodBank"],
       required: true,
     },
     item_id: {
       type: Schema.Types.ObjectId,
       required: true,
-      refPath: "items.item_type", // Dynamic reference (Medicine or BloodBank)
+      refPath: "items.item_type",
     },
-    blood_group: { type: String }, // Used only for blood orders
-    quantity: { type: Number, required: true, min: 1 },
-    unit_price: { type: Number, required: true, min: 0 },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    manufacturer: {
+      type: String,
+      trim: true,
+    },
+    blood_group: {
+      type: String,
+      trim: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    unit_price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
   },
   { _id: false },
 );
@@ -30,20 +50,37 @@ const OrderSchema = new Schema<IOrderDocument>(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
-    items: [OrderItemSchema],
-    total_amount: { type: Number, required: true, min: 0 },
+
+    items: {
+      type: [OrderItemSchema],
+      required: true,
+      validate: {
+        validator: (items: unknown[]) => items.length > 0,
+        message: "Order must contain at least one item",
+      },
+    },
+
+    total_amount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
 
     payment_method: {
       type: String,
       enum: ["COD", "ONLINE"],
       required: true,
     },
+
     payment_status: {
       type: String,
-      enum: ["pending", "paid", "failed"],
+      enum: ["pending", "paid", "failed", "refunded"],
       default: "pending",
+      index: true,
     },
+
     order_status: {
       type: String,
       enum: [
@@ -55,17 +92,40 @@ const OrderSchema = new Schema<IOrderDocument>(
         "cancelled",
       ],
       default: "placed",
+      index: true,
     },
 
     shipping_address: {
-      street: { type: String, required: true },
-      city: { type: String, required: true },
-      state: { type: String, required: true },
-      pincode: { type: String, required: true },
+      street: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+
+      city: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+
+      state: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+
+      pincode: {
+        type: String,
+        required: true,
+        trim: true,
+      },
     },
   },
   {
-    timestamps: { createdAt: "placed_at", updatedAt: "updated_at" },
+    timestamps: {
+      createdAt: "placed_at",
+      updatedAt: "updated_at",
+    },
   },
 );
 

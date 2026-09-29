@@ -249,9 +249,12 @@ export default function CartPage() {
                                     </p>
                                 </div>
 
-                                <button className="w-full rounded-lg bg-primary py-3.5 text-base font-bold text-primary-foreground transition hover:bg-primary-hover active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:py-4 sm:text-lg">
+                                <Link
+                                    href="/shop/payment"
+                                    className="block w-full rounded-lg bg-primary py-3.5 text-center text-base font-bold text-primary-foreground transition hover:bg-primary-hover active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:py-4 sm:text-lg"
+                                >
                                     Proceed to checkout
-                                </button>
+                                </Link>
 
                                 <div className="mt-5 flex items-center justify-center gap-2 text-xs text-muted sm:text-sm">
                                     <ShieldCheck size={18} className="text-primary" />

@@ -241,6 +241,8 @@ export interface IBloodBank {
 export interface IOrderItem {
   item_type: "Medicine" | "BloodBank";
   item_id: string | any; // Reference to Medicine or BloodBank ID
+  name: string;
+  manufacturer: string;
   blood_group?: string; // Only required if item_type is "BloodBank"
   quantity: number;
   unit_price: number;

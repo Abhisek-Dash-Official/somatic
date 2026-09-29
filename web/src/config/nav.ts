@@ -1,15 +1,16 @@
 export const navLinks = {
   mainNav: [
-    { title: "About", href: "/about" },
+    { title: "SOMA AI", href: "/chat" },
     { title: "First Aid", href: "/first-aid" },
     { title: "Shop", href: "/shop" },
     { title: "Cart", href: "/shop/cart" },
   ],
 
   moreNav: [
-    { title: "Soma AI", href: "/chat" },
+    { title: "Portal", href: "/portal" },
     { title: "Insurance", href: "/patient/insurance" },
     { title: "Lab Tests", href: "/labs" },
+    { title: "Medical Reports", href: "/reports" },
     { title: "Learn", href: "/learn" },
     { title: "Blog", href: "/blog" },
     { title: "Contact", href: "/contact" },
@@ -27,6 +28,13 @@ export const navLinks = {
         patient: "/patient",
       },
       icon: "LayoutDashboard",
+    },
+    {
+      title: "Shop",
+      description: "Medicines, blood banks and healthcare essentials",
+      image: "/portal/shop.jpeg",
+      href: "/shop",
+      icon: "ShoppingBag",
     },
     {
       title: "Insurance",
@@ -51,6 +59,13 @@ export const navLinks = {
       icon: "Microscope",
     },
     {
+      title: "Medical Reports",
+      description: "Understand your medical reports with AI-assisted analysis",
+      image: "/portal/medical-reports.webp",
+      href: "/reports",
+      icon: "FileSearch",
+    },
+    {
       title: "First Aid",
       description: "Find quick guidance for common emergency situations",
       image: "/portal/first-aid.jpg",
@@ -58,11 +73,12 @@ export const navLinks = {
       icon: "HeartPulse",
     },
     {
-      title: "Shop",
-      description: "Medicines, blood banks and healthcare essentials",
-      image: "/portal/shop.jpeg",
-      href: "/shop",
-      icon: "ShoppingBag",
+      title: "SOMA AI",
+      description:
+        "Get AI-powered health guidance and understand your symptoms",
+      image: "/portal/soma-ai.avif",
+      href: "/chat",
+      icon: "Sparkles",
     },
     {
       title: "Learn",
@@ -71,6 +87,13 @@ export const navLinks = {
       image: "/portal/learn.jpeg",
       href: "/learn",
       icon: "BookOpen",
+    },
+    {
+      title: "Subscription",
+      description: "Manage your SOMA AI and consultation access",
+      image: "/portal/subscription.jpg",
+      href: "/subscription",
+      icon: "Crown",
     },
   ],
   accountMenu: {

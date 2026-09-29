@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Activity, AlertTriangle, ArrowRight, BookOpen, HeartPulse, LayoutDashboard, Microscope, ShieldCheck, ShoppingBag, Sparkles, User } from "lucide-react";
+import { Activity, AlertTriangle, ArrowRight, BookOpen, HeartPulse, LayoutDashboard, Microscope, ShieldCheck, ShoppingBag, Sparkles, User, FileSearch, Crown } from "lucide-react";
 import { navLinks } from "@/config/nav";
 import { useUserStore } from "@/store/useUserStore";
+import QRScannerBtn from "@/components/patient/QRScannerBtn";
 
-const iconMap = { LayoutDashboard, ShieldCheck, Microscope, HeartPulse, ShoppingBag, BookOpen };
+const iconMap = { LayoutDashboard, ShieldCheck, Microscope, HeartPulse, ShoppingBag, BookOpen, FileSearch, Sparkles, Crown };
 
 const suggestions = [
     "Create a health routine",
@@ -209,6 +210,19 @@ export default function PortalPage() {
                         </div>
                     </div>
                 </section>
+                <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row">
+                    <div>
+                        <h3 className="font-semibold text-foreground">
+                            Visiting a Hospital?
+                        </h3>
+
+                        <p className="mt-1 text-sm text-muted">
+                            Scan the hospital QR code to quickly prefill your information for a faster consultation.
+                        </p>
+                    </div>
+
+                    <QRScannerBtn className="w-full sm:w-auto" />
+                </div>
             </div>
         </main>
     );
