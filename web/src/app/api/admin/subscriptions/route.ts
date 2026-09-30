@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
         .populate("user_id", "username email contact_no avatar_id")
         .populate(
           "plan_id",
-          "name description price currency duration_days features token_limit",
+          "name description price currency duration_days features supported_features token_limit",
         )
         .sort({ created_at: -1 })
         .lean();
@@ -126,6 +126,7 @@ export async function POST(req: NextRequest) {
       currency,
       duration_days,
       features,
+      supported_features,
       token_limit,
       is_active,
     } = body;
@@ -176,12 +177,21 @@ export async function POST(req: NextRequest) {
       price: Number(price),
       currency: currency?.trim()?.toUpperCase() || "INR",
       duration_days: Number(duration_days),
+
       features: Array.isArray(features)
         ? features
             .filter((feature): feature is string => typeof feature === "string")
             .map((feature) => feature.trim())
             .filter(Boolean)
         : [],
+
+      supported_features: Array.isArray(supported_features)
+        ? supported_features
+            .filter((feature): feature is string => typeof feature === "string")
+            .map((feature) => feature.trim())
+            .filter(Boolean)
+        : [],
+
       token_limit: Number(token_limit),
       is_active: is_active !== false,
     });
@@ -197,6 +207,7 @@ export async function POST(req: NextRequest) {
         currency: plan.currency,
         duration_days: plan.duration_days,
         token_limit: plan.token_limit,
+        supported_features: plan.supported_features,
       },
     });
 

@@ -22,7 +22,12 @@ const AiUsageSchema = new Schema<IAiUsageDocument>(
 
     feature: {
       type: String,
-      enum: ["soma_ai", "consultation_analysis", "consultation_translation"],
+      enum: [
+        "soma_ai",
+        "consultation_analysis",
+        "consultation_translation",
+        "medical_report_analysis",
+      ],
       required: true,
       index: true,
     },

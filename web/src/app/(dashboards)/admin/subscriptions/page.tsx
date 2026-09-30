@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Check, ChevronLeft, ChevronRight, Crown, Edit3, Loader2, Plus, Search, Users, X } from "lucide-react";
 import { toast } from "react-toastify";
+import { supportedAIFeatureOptions } from "@/config/aiFeatures"
 
 type Plan = {
     _id: string;
@@ -12,7 +13,7 @@ type Plan = {
     price: number;
     currency: string;
     duration_days: number;
-    features: string[];
+    features: string[]; supported_features: string[];
     token_limit: number;
     is_active: boolean;
     subscriber_count: number;
@@ -29,8 +30,19 @@ type Subscriber = {
     start_date?: string;
     end_date?: string;
     created_at?: string;
-    user_id: { _id: string; username: string; email: string; contact_no?: string };
-    plan_id?: { _id: string; name: string; price: number; currency: string; duration_days: number };
+    user_id: {
+        _id: string;
+        username: string;
+        email: string;
+        contact_no?: string;
+    };
+    plan_id?: {
+        _id: string;
+        name: string;
+        price: number;
+        currency: string;
+        duration_days: number;
+    };
 };
 
 type FormState = {
@@ -41,6 +53,7 @@ type FormState = {
     duration_days: string;
     token_limit: string;
     features: string;
+    supported_features: string[];
     is_active: boolean;
 };
 
@@ -52,11 +65,15 @@ const emptyForm: FormState = {
     duration_days: "30",
     token_limit: "100000",
     features: "",
+    supported_features: [],
     is_active: true,
 };
 
 const formatAmount = (amount: number, currency = "INR") =>
-    new Intl.NumberFormat("en-IN", { style: "currency", currency }).format(amount);
+    new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency,
+    }).format(amount);
 
 const formatDate = (date?: string) =>
     date
@@ -87,16 +104,20 @@ export default function AdminSubscriptionsPage() {
     const [saving, setSaving] = useState(false);
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
-    const [pagination, setPagination] = useState({ total: 0, total_pages: 1 });
+    const [pagination, setPagination] = useState({
+        total: 0,
+        total_pages: 1,
+    });
 
     const fetchData = async () => {
         setLoading(true);
 
         try {
             if (tab === "plans") {
-                const res = await fetch("/api/admin/subscriptions?view=plans", {
-                    cache: "no-store",
-                });
+                const res = await fetch(
+                    "/api/admin/subscriptions?view=plans",
+                    { cache: "no-store" },
+                );
 
                 const data = await res.json();
 
@@ -110,17 +131,22 @@ export default function AdminSubscriptionsPage() {
                     view: "subscribers",
                     page: String(page),
                     limit: "10",
-                    ...(search.trim() ? { search: search.trim() } : {}),
+                    ...(search.trim()
+                        ? { search: search.trim() }
+                        : {}),
                 });
 
-                const res = await fetch(`/api/admin/subscriptions?${params}`, {
-                    cache: "no-store",
-                });
+                const res = await fetch(
+                    `/api/admin/subscriptions?${params}`,
+                    { cache: "no-store" },
+                );
 
                 const data = await res.json();
 
                 if (!res.ok) {
-                    throw new Error(data.message || "Failed to fetch subscribers");
+                    throw new Error(
+                        data.message || "Failed to fetch subscribers",
+                    );
                 }
 
                 setSubscribers(data.subscribers || []);
@@ -156,9 +182,19 @@ export default function AdminSubscriptionsPage() {
             duration_days: String(plan.duration_days),
             token_limit: String(plan.token_limit),
             features: plan.features.join("\n"),
+            supported_features: plan.supported_features || [],
             is_active: plan.is_active,
         });
         setModal(true);
+    };
+
+    const toggleSupportedFeature = (feature: string) => {
+        setForm((current) => ({
+            ...current,
+            supported_features: current.supported_features.includes(feature)
+                ? current.supported_features.filter((item) => item !== feature)
+                : [...current.supported_features, feature],
+        }));
     };
 
     const savePlan = async () => {
@@ -182,6 +218,11 @@ export default function AdminSubscriptionsPage() {
             return;
         }
 
+        if (form.supported_features.length === 0) {
+            toast.error("Select at least one supported feature");
+            return;
+        }
+
         setSaving(true);
 
         try {
@@ -196,6 +237,7 @@ export default function AdminSubscriptionsPage() {
                     .split("\n")
                     .map((item) => item.trim())
                     .filter(Boolean),
+                supported_features: form.supported_features,
                 is_active: form.is_active,
             };
 
@@ -217,6 +259,7 @@ export default function AdminSubscriptionsPage() {
             }
 
             setModal(false);
+
             toast.success(
                 editingPlan
                     ? "Subscription plan updated successfully"
@@ -233,16 +276,23 @@ export default function AdminSubscriptionsPage() {
 
     const togglePlan = async (plan: Plan) => {
         try {
-            const res = await fetch(`/api/admin/subscriptions/${plan._id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ is_active: !plan.is_active }),
-            });
+            const res = await fetch(
+                `/api/admin/subscriptions/${plan._id}`,
+                {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        is_active: !plan.is_active,
+                    }),
+                },
+            );
 
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data.message || "Failed to update plan");
+                throw new Error(
+                    data.message || "Failed to update plan",
+                );
             }
 
             toast.success(
@@ -264,11 +314,15 @@ export default function AdminSubscriptionsPage() {
                     <div>
                         <div className="mb-2 flex items-center gap-2 text-primary">
                             <Crown className="h-5 w-5" />
-                            <span className="text-sm font-medium">Subscription Management</span>
+                            <span className="text-sm font-medium">
+                                Subscription Management
+                            </span>
                         </div>
+
                         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
                             Subscriptions
                         </h1>
+
                         <p className="mt-1 text-sm text-muted">
                             Manage subscription plans and view subscribed users.
                         </p>
@@ -316,6 +370,7 @@ export default function AdminSubscriptionsPage() {
                 {tab === "subscribers" && (
                     <div className="mb-5 flex max-w-md items-center gap-2 rounded-lg border border-border bg-surface px-3">
                         <Search className="h-4 w-4 text-muted" />
+
                         <input
                             value={search}
                             onChange={(e) => {
@@ -336,7 +391,9 @@ export default function AdminSubscriptionsPage() {
                     plans.length === 0 ? (
                         <div className="rounded-xl border border-border bg-surface p-10 text-center">
                             <Crown className="mx-auto h-8 w-8 text-muted" />
-                            <p className="mt-3 font-medium">No subscription plans</p>
+                            <p className="mt-3 font-medium">
+                                No subscription plans
+                            </p>
                             <p className="mt-1 text-sm text-muted">
                                 Create your first subscription plan.
                             </p>
@@ -350,9 +407,13 @@ export default function AdminSubscriptionsPage() {
                                 >
                                     <div className="flex items-start justify-between gap-3">
                                         <div>
-                                            <h2 className="font-semibold">{plan.name}</h2>
+                                            <h2 className="font-semibold">
+                                                {plan.name}
+                                            </h2>
+
                                             <p className="mt-1 text-sm text-muted">
-                                                {plan.description || "No description"}
+                                                {plan.description ||
+                                                    "No description"}
                                             </p>
                                         </div>
 
@@ -362,14 +423,20 @@ export default function AdminSubscriptionsPage() {
                                                 : "bg-muted/10 text-muted"
                                                 }`}
                                         >
-                                            {plan.is_active ? "Active" : "Inactive"}
+                                            {plan.is_active
+                                                ? "Active"
+                                                : "Inactive"}
                                         </span>
                                     </div>
 
                                     <div className="mt-5 flex items-end gap-1">
                                         <span className="text-2xl font-semibold">
-                                            {formatAmount(plan.price, plan.currency)}
+                                            {formatAmount(
+                                                plan.price,
+                                                plan.currency,
+                                            )}
                                         </span>
+
                                         <span className="pb-1 text-xs text-muted">
                                             / {plan.duration_days} days
                                         </span>
@@ -377,14 +444,20 @@ export default function AdminSubscriptionsPage() {
 
                                     <div className="mt-4 grid grid-cols-2 gap-3">
                                         <div className="rounded-lg bg-surface-secondary p-3">
-                                            <p className="text-xs text-muted">Token limit</p>
+                                            <p className="text-xs text-muted">
+                                                Token limit
+                                            </p>
+
                                             <p className="mt-1 font-medium">
                                                 {plan.token_limit.toLocaleString()}
                                             </p>
                                         </div>
 
                                         <div className="rounded-lg bg-surface-secondary p-3">
-                                            <p className="text-xs text-muted">Subscribers</p>
+                                            <p className="text-xs text-muted">
+                                                Subscribers
+                                            </p>
+
                                             <p className="mt-1 flex items-center gap-1 font-medium">
                                                 <Users className="h-3.5 w-3.5" />
                                                 {plan.subscriber_count}
@@ -392,17 +465,45 @@ export default function AdminSubscriptionsPage() {
                                         </div>
                                     </div>
 
+                                    {plan.supported_features?.length > 0 && (
+                                        <div className="mt-4">
+                                            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted">
+                                                Supported Features
+                                            </p>
+
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {plan.supported_features.map(
+                                                    (feature) => (
+                                                        <span
+                                                            key={feature}
+                                                            className="rounded-md bg-accent px-2 py-1 text-xs font-medium text-accent-foreground"
+                                                        >
+                                                            {supportedAIFeatureOptions.find(
+                                                                (item) =>
+                                                                    item.value ===
+                                                                    feature,
+                                                            )?.label ||
+                                                                feature}
+                                                        </span>
+                                                    ),
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {plan.features.length > 0 && (
                                         <div className="mt-4 space-y-2">
-                                            {plan.features.map((feature, index) => (
-                                                <div
-                                                    key={index}
-                                                    className="flex gap-2 text-sm text-muted"
-                                                >
-                                                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                                                    <span>{feature}</span>
-                                                </div>
-                                            ))}
+                                            {plan.features.map(
+                                                (feature, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="flex gap-2 text-sm text-muted"
+                                                    >
+                                                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                                                        <span>{feature}</span>
+                                                    </div>
+                                                ),
+                                            )}
                                         </div>
                                     )}
 
@@ -419,7 +520,9 @@ export default function AdminSubscriptionsPage() {
                                             onClick={() => togglePlan(plan)}
                                             className="rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-surface-secondary"
                                         >
-                                            {plan.is_active ? "Disable" : "Enable"}
+                                            {plan.is_active
+                                                ? "Disable"
+                                                : "Enable"}
                                         </button>
                                     </div>
                                 </div>
@@ -432,12 +535,22 @@ export default function AdminSubscriptionsPage() {
                             <table className="min-w-225 w-full text-left">
                                 <thead className="border-b border-border bg-surface-secondary">
                                     <tr className="text-xs uppercase tracking-wide text-muted">
-                                        <th className="px-5 py-3 font-medium">User</th>
-                                        <th className="px-5 py-3 font-medium">Plan</th>
-                                        <th className="px-5 py-3 font-medium">Amount</th>
-                                        <th className="px-5 py-3 font-medium">Status</th>
-                                        <th className="px-5 py-3 font-medium">Period</th>
-                                        <th className="px-5 py-3 font-medium"></th>
+                                        <th className="px-5 py-3 font-medium">
+                                            User
+                                        </th>
+                                        <th className="px-5 py-3 font-medium">
+                                            Plan
+                                        </th>
+                                        <th className="px-5 py-3 font-medium">
+                                            Amount
+                                        </th>
+                                        <th className="px-5 py-3 font-medium">
+                                            Status
+                                        </th>
+                                        <th className="px-5 py-3 font-medium">
+                                            Period
+                                        </th>
+                                        <th className="px-5 py-3 font-medium" />
                                     </tr>
                                 </thead>
 
@@ -449,10 +562,14 @@ export default function AdminSubscriptionsPage() {
                                         >
                                             <td className="px-5 py-4">
                                                 <p className="font-medium">
-                                                    {subscription.user_id?.username || "Unknown"}
+                                                    {subscription.user_id
+                                                        ?.username ||
+                                                        "Unknown"}
                                                 </p>
+
                                                 <p className="mt-0.5 text-xs text-muted">
-                                                    {subscription.user_id?.email || "—"}
+                                                    {subscription.user_id
+                                                        ?.email || "—"}
                                                 </p>
                                             </td>
 
@@ -460,8 +577,10 @@ export default function AdminSubscriptionsPage() {
                                                 <p className="font-medium">
                                                     {subscription.plan_name}
                                                 </p>
+
                                                 <p className="mt-0.5 text-xs text-muted">
-                                                    {subscription.token_limit.toLocaleString()} tokens
+                                                    {subscription.token_limit.toLocaleString()}{" "}
+                                                    tokens
                                                 </p>
                                             </td>
 
@@ -483,8 +602,13 @@ export default function AdminSubscriptionsPage() {
                                             </td>
 
                                             <td className="px-5 py-4 text-sm text-muted">
-                                                {formatDate(subscription.start_date)} —{" "}
-                                                {formatDate(subscription.end_date)}
+                                                {formatDate(
+                                                    subscription.start_date,
+                                                )}{" "}
+                                                —{" "}
+                                                {formatDate(
+                                                    subscription.end_date,
+                                                )}
                                             </td>
 
                                             <td className="px-5 py-4 text-right">
@@ -516,15 +640,21 @@ export default function AdminSubscriptionsPage() {
                                 <div className="flex gap-2">
                                     <button
                                         disabled={page === 1}
-                                        onClick={() => setPage((p) => p - 1)}
+                                        onClick={() =>
+                                            setPage((p) => p - 1)
+                                        }
                                         className="rounded-lg border border-border p-2 disabled:cursor-not-allowed disabled:opacity-40"
                                     >
                                         <ChevronLeft className="h-4 w-4" />
                                     </button>
 
                                     <button
-                                        disabled={page >= pagination.total_pages}
-                                        onClick={() => setPage((p) => p + 1)}
+                                        disabled={
+                                            page >= pagination.total_pages
+                                        }
+                                        onClick={() =>
+                                            setPage((p) => p + 1)
+                                        }
                                         className="rounded-lg border border-border p-2 disabled:cursor-not-allowed disabled:opacity-40"
                                     >
                                         <ChevronRight className="h-4 w-4" />
@@ -546,6 +676,7 @@ export default function AdminSubscriptionsPage() {
                                         ? "Edit Subscription Plan"
                                         : "Create Subscription Plan"}
                                 </h2>
+
                                 <p className="mt-0.5 text-xs text-muted">
                                     Configure access and token limits.
                                 </p>
@@ -564,10 +695,14 @@ export default function AdminSubscriptionsPage() {
                                 <label className="mb-1.5 block text-sm font-medium">
                                     Name
                                 </label>
+
                                 <input
                                     value={form.name}
                                     onChange={(e) =>
-                                        setForm({ ...form, name: e.target.value })
+                                        setForm({
+                                            ...form,
+                                            name: e.target.value,
+                                        })
                                     }
                                     className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                 />
@@ -577,6 +712,7 @@ export default function AdminSubscriptionsPage() {
                                 <label className="mb-1.5 block text-sm font-medium">
                                     Description
                                 </label>
+
                                 <textarea
                                     value={form.description}
                                     onChange={(e) =>
@@ -595,6 +731,7 @@ export default function AdminSubscriptionsPage() {
                                     <label className="mb-1.5 block text-sm font-medium">
                                         Price
                                     </label>
+
                                     <input
                                         type="number"
                                         min="0"
@@ -613,6 +750,7 @@ export default function AdminSubscriptionsPage() {
                                     <label className="mb-1.5 block text-sm font-medium">
                                         Currency
                                     </label>
+
                                     <input
                                         value={form.currency}
                                         onChange={(e) =>
@@ -631,6 +769,7 @@ export default function AdminSubscriptionsPage() {
                                     <label className="mb-1.5 block text-sm font-medium">
                                         Duration (days)
                                     </label>
+
                                     <input
                                         type="number"
                                         min="1"
@@ -649,6 +788,7 @@ export default function AdminSubscriptionsPage() {
                                     <label className="mb-1.5 block text-sm font-medium">
                                         Token limit
                                     </label>
+
                                     <input
                                         type="number"
                                         min="0"
@@ -665,9 +805,61 @@ export default function AdminSubscriptionsPage() {
                             </div>
 
                             <div>
+                                <div className="mb-2">
+                                    <label className="block text-sm font-medium">
+                                        Supported Features
+                                    </label>
+
+                                    <p className="mt-1 text-xs text-muted">
+                                        Select the AI capabilities included in
+                                        this plan.
+                                    </p>
+                                </div>
+
+                                <div className="grid gap-2 sm:grid-cols-2">
+                                    {supportedAIFeatureOptions.map((feature) => {
+                                        const selected =
+                                            form.supported_features.includes(
+                                                feature.value,
+                                            );
+
+                                        return (
+                                            <button
+                                                key={feature.value}
+                                                type="button"
+                                                onClick={() =>
+                                                    toggleSupportedFeature(
+                                                        feature.value,
+                                                    )
+                                                }
+                                                className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 text-left text-sm transition ${selected
+                                                    ? "border-primary bg-primary/10 text-primary"
+                                                    : "border-border hover:bg-surface-secondary"
+                                                    }`}
+                                            >
+                                                <span
+                                                    className={`flex h-4 w-4 items-center justify-center rounded border ${selected
+                                                        ? "border-primary bg-primary text-primary-foreground"
+                                                        : "border-border"
+                                                        }`}
+                                                >
+                                                    {selected && (
+                                                        <Check className="h-3 w-3" />
+                                                    )}
+                                                </span>
+
+                                                {feature.label}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            <div>
                                 <label className="mb-1.5 block text-sm font-medium">
                                     Features
                                 </label>
+
                                 <textarea
                                     value={form.features}
                                     onChange={(e) =>
@@ -682,7 +874,9 @@ export default function AdminSubscriptionsPage() {
                                     }
                                     className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
                                 />
+
                                 <p className="mt-1 text-xs text-muted">
+                                    Human-readable benefits shown to users.
                                     One feature per line.
                                 </p>
                             </div>
@@ -719,7 +913,10 @@ export default function AdminSubscriptionsPage() {
                                 {saving && (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                 )}
-                                {editingPlan ? "Save Changes" : "Create Plan"}
+
+                                {editingPlan
+                                    ? "Save Changes"
+                                    : "Create Plan"}
                             </button>
                         </div>
                     </div>

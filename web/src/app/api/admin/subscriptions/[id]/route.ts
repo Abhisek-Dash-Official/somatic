@@ -48,7 +48,7 @@ export async function GET(
       )
       .populate(
         "plan_id",
-        "name description price currency duration_days features token_limit",
+        "name description price currency duration_days features supported_features token_limit",
       )
       .lean();
 
@@ -109,6 +109,7 @@ export async function PATCH(
       "currency",
       "duration_days",
       "features",
+      "supported_features",
       "token_limit",
       "is_active",
     ];
@@ -176,6 +177,15 @@ export async function PATCH(
     if (updates.features !== undefined) {
       updates.features = Array.isArray(updates.features)
         ? updates.features
+            .filter((feature): feature is string => typeof feature === "string")
+            .map((feature) => feature.trim())
+            .filter(Boolean)
+        : [];
+    }
+
+    if (updates.supported_features !== undefined) {
+      updates.supported_features = Array.isArray(updates.supported_features)
+        ? updates.supported_features
             .filter((feature): feature is string => typeof feature === "string")
             .map((feature) => feature.trim())
             .filter(Boolean)

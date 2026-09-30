@@ -42,6 +42,13 @@ const SubscriptionPlanSchema = new Schema<ISubscriptionPlanDocument>(
       default: [],
     },
 
+    supported_features: {
+      // e.g. soma_ai, consultation_analysis, consultation_translation, medical_report_analysis
+      type: [String],
+      default: [],
+      index: true,
+    },
+
     token_limit: {
       type: Number,
       required: true,

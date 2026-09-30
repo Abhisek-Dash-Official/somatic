@@ -114,3 +114,7 @@ body {
 *::-webkit-scrollbar-thumb:hover {
   background-color: var(--muted-foreground);
 }
+
+button {
+  cursor: pointer !important;
+}

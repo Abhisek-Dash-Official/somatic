@@ -561,6 +561,7 @@ export interface ISubscriptionPlan {
   currency: string;
   duration_days: number;
   features: string[];
+  supported_features: string[];
   token_limit: number;
   is_active: boolean;
   created_at?: Date | string;
@@ -587,7 +588,11 @@ export interface IAiUsage {
   _id?: string;
   user_id: string | any;
   subscription_id?: string | any;
-  feature: "soma_ai" | "consultation_analysis" | "consultation_translation";
+  feature:
+    | "soma_ai"
+    | "consultation_analysis"
+    | "consultation_translation"
+    | "medical_report_analysis";
   ai_model: string;
   tokens_prompt: number;
   tokens_completion: number;
