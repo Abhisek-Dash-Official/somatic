@@ -8,6 +8,7 @@ export const navLinks = {
 
   moreNav: [
     { title: "My Orders", href: "/shop/orders" },
+    { title: "My Subscriptions", href: "/subscription" },
     { title: "Portal", href: "/portal" },
     { title: "Insurance", href: "/patient/insurance" },
     { title: "Lab Tests", href: "/labs" },
@@ -235,4 +236,7 @@ export const navLinks = {
       { title: "Profile", href: "/patient/profile", icon: "User" },
     ],
   },
+  somaAiNav: [
+    { id: "chat", title: "Chats", href: "/chat", icon: "MessageSquare" },
+  ],
 };

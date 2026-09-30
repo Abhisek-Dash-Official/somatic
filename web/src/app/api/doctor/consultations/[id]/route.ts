@@ -181,9 +181,7 @@ export async function PATCH(req: Request, { params }: Props) {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
-                    "x-internal-secret":
-                      process.env.INTERNAL_API_SECRET ||
-                      "my_super_secret_key_123",
+                    "x-internal-secret": process.env.INTERNAL_API_SECRET || "",
                   },
                   body: JSON.stringify({
                     texts: textsToTranslate,
