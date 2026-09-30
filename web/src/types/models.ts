@@ -601,3 +601,13 @@ export interface IAiUsage {
   reference_id?: string | any;
   created_at?: Date | string;
 }
+
+export interface IFreeAiQuota extends Document {
+  feature: "consultation_analysis";
+  token_limit: number;
+  tokens_used: number;
+  period_start: Date;
+  period_end: Date;
+  created_at: Date;
+  updated_at: Date;
+}

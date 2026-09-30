@@ -5,6 +5,7 @@ import dbConnect from "@/lib/db";
 import Consultation from "@/models/Consultation";
 import SystemSetting from "@/models/SystemSetting";
 import User from "@/models/User";
+import AiUsage from "@/models/AiUsage";
 import { createSystemLog } from "@/lib/logger";
 
 type Props = { params: Promise<{ id: string }> };
@@ -199,9 +200,24 @@ export async function PATCH(req: Request, { params }: Props) {
                 trans_summary = translatedData.summary || null;
                 trans_ayurveda = translatedData.ayurveda || null;
 
-                console.log(
-                  `[TRANSLATION SUCCESS] Batch translation done using ${aiModel}!`,
+                const tokensPrompt = Number(translatedData.tokens_prompt || 0);
+                const tokensCompletion = Number(
+                  translatedData.tokens_completion || 0,
                 );
+                const tokensTotal = Number(translatedData.tokens_total || 0);
+
+                await AiUsage.create({
+                  user_id: consultation.patient_id,
+                  feature: "consultation_translation",
+                  ai_model: translatedData.ai_model || aiModel,
+                  tokens_prompt: tokensPrompt,
+                  tokens_completion: tokensCompletion,
+                  tokens_total: tokensTotal,
+                  response_time_sec: Number(
+                    translatedData.response_time_sec || 0,
+                  ),
+                  reference_id: consultation._id,
+                });
 
                 await createSystemLog({
                   actor_id: session.user.id,
@@ -211,10 +227,12 @@ export async function PATCH(req: Request, { params }: Props) {
                   details: {
                     ai_model: translatedData.ai_model || aiModel,
                     target_language: targetLang,
-                    tokens_prompt: translatedData.tokens_prompt || 0,
-                    tokens_completion: translatedData.tokens_completion || 0,
-                    tokens_total: translatedData.tokens_total || 0,
-                    response_time_sec: translatedData.response_time_sec || 0,
+                    tokens_prompt: tokensPrompt,
+                    tokens_completion: tokensCompletion,
+                    tokens_total: tokensTotal,
+                    response_time_sec: Number(
+                      translatedData.response_time_sec || 0,
+                    ),
                   },
                 });
               } else {

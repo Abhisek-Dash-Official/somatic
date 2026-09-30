@@ -139,7 +139,7 @@ export default function NewConsultationForm() {
                     render: data.error || "Failed to create consultation",
                     type: "error",
                     isLoading: false,
-                    autoClose: 4000,
+                    autoClose: 5000,
                 });
             }
         } catch {
@@ -147,7 +147,7 @@ export default function NewConsultationForm() {
                 render: "Server timeout or network error.",
                 type: "error",
                 isLoading: false,
-                autoClose: 4000,
+                autoClose: 5000,
             });
         } finally {
             setLoading(false);
@@ -202,8 +202,8 @@ export default function NewConsultationForm() {
                         type="button"
                         onClick={toggleListening}
                         className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold transition ${isListening
-                                ? "bg-danger/10 text-danger"
-                                : "bg-surface-secondary text-muted hover:text-foreground"
+                            ? "bg-danger/10 text-danger"
+                            : "bg-surface-secondary text-muted hover:text-foreground"
                             }`}
                     >
                         <Mic className={`h-3 w-3 ${isListening ? "animate-pulse" : ""}`} />
