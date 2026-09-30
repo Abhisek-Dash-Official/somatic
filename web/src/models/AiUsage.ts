@@ -27,6 +27,7 @@ const AiUsageSchema = new Schema<IAiUsageDocument>(
         "consultation_analysis",
         "consultation_translation",
         "medical_report_analysis",
+        "soma_ai_translation",
       ],
       required: true,
       index: true,

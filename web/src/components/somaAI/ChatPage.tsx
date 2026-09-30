@@ -7,6 +7,7 @@ import ChatSidebar from "./ChatSidebar";
 import ChatMessages from "./ChatMsgs";
 import ChatInput from "./ChatInput";
 import SomaFeatureUnavailable from "./FeatureUnavailable";
+import AITranslation, { type TranslationConversation } from "./AITranslation";
 
 export type Conversation = {
     _id: string;
@@ -56,8 +57,9 @@ export default function ChatPage({ tab = "chat" }: Props) {
     const [loadingList, setLoadingList] = useState(true);
     const [error, setError] = useState("");
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [deleteConversationModal, setDeleteConversationModal] =
-        useState<Conversation | null>(null);
+    const [deleteConversationModal, setDeleteConversationModal] = useState<Conversation | null>(null);
+    const [selectedTranslation, setSelectedTranslation] = useState<TranslationConversation | null>(null);
+    const [translationResetKey, setTranslationResetKey] = useState(0);
 
     useEffect(() => {
         if (!isFetched) fetchUser();
@@ -90,6 +92,8 @@ export default function ChatPage({ tab = "chat" }: Props) {
         setMessages([greeting]);
         setInput("");
         setError("");
+        setSelectedTranslation(null);
+        setTranslationResetKey((key) => key + 1);
         setSidebarOpen(false);
     };
 
@@ -106,10 +110,51 @@ export default function ChatPage({ tab = "chat" }: Props) {
             await assertOk(res, "Failed to load conversation.");
 
             const data = await res.json();
+            const conversation = data.conversation;
+            const messages = data.messages || [];
 
-            setConversationId(data.conversation._id);
+            const isTranslation =
+                conversation.summary?.startsWith("[translation]") ||
+                conversation.title?.startsWith("Translate to ");
+
+            setConversationId(conversation._id);
+
+            if (isTranslation) {
+                const reversedMessages = [...messages].reverse();
+
+                const userMessage = reversedMessages.find(
+                    (m: { role: string }) => m.role === "user",
+                );
+
+                const assistantMessage = reversedMessages.find(
+                    (m: { role: string }) => m.role === "assistant",
+                );
+
+                const targetLanguage = conversation.summary?.startsWith("[translation]")
+                    ? conversation.summary.replace("[translation]", "").trim() || "Hindi"
+                    : conversation.title?.match(/^Translate to ([^:]+):/)?.[1] || "Hindi";
+
+                const userText =
+                    userMessage?.content?.replace(
+                        /^\[Translate to [^\]]+\]\n\n/,
+                        "",
+                    ) || "";
+
+                setSelectedTranslation({
+                    id: conversation._id,
+                    userText,
+                    assistantText: assistantMessage?.content || "",
+                    targetLanguage,
+                });
+
+                setSidebarOpen(false);
+                return;
+            }
+
+            setSelectedTranslation(null);
+
             setMessages(
-                data.messages.map(
+                messages.map(
                     (m: {
                         _id: string;
                         role: "user" | "assistant";
@@ -335,9 +380,19 @@ export default function ChatPage({ tab = "chat" }: Props) {
                                 disabled={isStreaming}
                             />
                         </>
-                    ) : (
-                        <SomaFeatureUnavailable />
-                    )}
+                    ) :
+                        tab === "translation" ? (
+                            <AITranslation
+                                selectedConversation={selectedTranslation}
+                                resetKey={translationResetKey}
+                                onConversationCreated={(id) => {
+                                    setConversationId(id);
+                                    loadConversations();
+                                }}
+                            />
+                        ) : (
+                            <SomaFeatureUnavailable />
+                        )}
                 </section>
             </main>
 

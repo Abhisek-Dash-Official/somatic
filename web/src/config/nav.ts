@@ -238,5 +238,11 @@ export const navLinks = {
   },
   somaAiNav: [
     { id: "chat", title: "Chats", href: "/chat", icon: "MessageSquare" },
+    {
+      id: "translation",
+      title: "AI Translation",
+      href: "/chat?tab=translation",
+      icon: "Languages",
+    },
   ],
 };

@@ -8,6 +8,7 @@ type Props = {
     onChange: (value: string) => void;
     onSend: () => void;
     disabled: boolean;
+    inpPlaceholder?: string;
 };
 
 const isTouch = () => window.matchMedia("(pointer: coarse)").matches;
@@ -17,6 +18,7 @@ export default function ChatInput({
     onChange,
     onSend,
     disabled,
+    inpPlaceholder = "Ask SOMA about your health...",
 }: Props) {
     const ref = useRef<HTMLTextAreaElement>(null);
 
@@ -54,7 +56,7 @@ export default function ChatInput({
                         }}
                         rows={1}
                         maxLength={5000}
-                        placeholder="Ask SOMA about your health..."
+                        placeholder={inpPlaceholder}
                         className="max-h-32 min-h-10 flex-1 resize-none bg-transparent px-3 py-2.5 text-base text-foreground outline-none placeholder:text-muted sm:text-sm"
                     />
 
