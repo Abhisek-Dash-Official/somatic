@@ -2,21 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-    Ambulance,
-    ArrowRight,
-    Building2,
-    CheckCircle2,
-    Clock3,
-    Loader2,
-    MapPin,
-    Phone,
-    Truck,
-    User,
-    XCircle,
-    ShieldCheck,
-    FlaskConical,
-} from "lucide-react";
+import { Ambulance, ArrowRight, Building2, CheckCircle2, Clock3, Loader2, MapPin, Phone, Truck, User, XCircle, ShieldCheck, FlaskConical, ShoppingBag } from "lucide-react";
 import { useUserStore } from "@/store/useUserStore";
 
 interface DashboardData {
@@ -185,74 +171,85 @@ export default function DispatcherDashboard() {
                     </div>
 
                     <div className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:rounded-2xl sm:p-6">
-                        <h2 className="text-base font-bold sm:text-lg">Quick Actions</h2>
+                        <div className="mb-5 sm:mb-6">
+                            <h2 className="text-base font-bold sm:text-lg">Quick Actions</h2>
 
-                        <p className="mb-5 mt-1 text-xs text-muted sm:mb-6 sm:text-sm">
-                            Access dispatcher operations directly.
-                        </p>
+                            <p className="mt-1 text-xs text-muted sm:text-sm">
+                                Access dispatcher operations directly.
+                            </p>
+                        </div>
 
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-                            <Link
-                                href="/dispatcher/ambulances"
-                                className="group min-w-0 rounded-lg border border-warning/20 bg-warning/10 p-4 transition hover:bg-warning/15 sm:rounded-xl sm:p-5"
-                            >
-                                <Ambulance className="mb-3 h-6 w-6 text-warning sm:mb-4 sm:h-7 sm:w-7" />
+                        <div className="divide-y divide-border overflow-hidden rounded-xl border border-border">
+                            {[
+                                {
+                                    href: "/dispatcher/ambulances",
+                                    title: "Ambulance Requests",
+                                    description: "Coordinate emergency transport",
+                                    icon: Ambulance,
+                                    iconClass: "text-warning bg-warning/10 border-warning/20",
+                                },
+                                {
+                                    href: "/dispatcher/consultations",
+                                    title: "Consultations",
+                                    description: "Monitor doctor case activity",
+                                    icon: User,
+                                    iconClass: "text-primary bg-primary/10 border-primary/20",
+                                },
+                                {
+                                    href: "/dispatcher/labs",
+                                    title: "Lab Tests & Home Collection",
+                                    description: "Manage lab tests and home sample collection",
+                                    icon: FlaskConical,
+                                    iconClass: "text-info bg-info/10 border-info/20",
+                                },
+                                {
+                                    href: "/dispatcher/orders",
+                                    title: "Orders",
+                                    description: "Manage medicine and blood pouch orders",
+                                    icon: ShoppingBag,
+                                    iconClass: "text-primary bg-primary/10 border-primary/20",
+                                },
+                            ].map(({ href, title, description, icon: Icon, iconClass }) => (
+                                <Link
+                                    key={href}
+                                    href={href}
+                                    className="group flex min-w-0 items-center gap-3 bg-surface p-3.5 transition hover:bg-surface-secondary sm:gap-4 sm:p-4"
+                                >
+                                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border sm:h-11 sm:w-11 ${iconClass}`}>
+                                        <Icon className="h-5 w-5 sm:h-5.5 sm:w-5.5" />
+                                    </div>
 
-                                <div className="flex items-center justify-between gap-3">
-                                    <div className="min-w-0">
-                                        <p className="wrap-break-word text-sm font-semibold sm:text-base">
-                                            Ambulance Requests
+                                    <div className="min-w-0 flex-1">
+                                        <p className="truncate text-sm font-semibold sm:text-base">
+                                            {title}
                                         </p>
 
-                                        <p className="mt-1 wrap-break-word text-xs text-muted">
-                                            Coordinate emergency transport
+                                        <p className="mt-0.5 truncate text-xs text-muted sm:text-sm">
+                                            {description}
                                         </p>
                                     </div>
 
-                                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition group-hover:text-foreground" />
-                                </div>
-                            </Link>
+                                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-foreground sm:h-5 sm:w-5" />
+                                </Link>
+                            ))}
 
-                            <Link
-                                href="/dispatcher/consultations"
-                                className="group min-w-0 rounded-lg border border-primary/20 bg-primary/10 p-4 transition hover:bg-primary/15 sm:rounded-xl sm:p-5"
-                            >
-                                <User className="mb-3 h-6 w-6 text-primary sm:mb-4 sm:h-7 sm:w-7" />
-
-                                <div className="flex items-center justify-between gap-3">
-                                    <div className="min-w-0">
-                                        <p className="wrap-break-word text-sm font-semibold sm:text-base">
-                                            Consultations
-                                        </p>
-
-                                        <p className="mt-1 wrap-break-word text-xs text-muted">
-                                            Monitor doctor case activity
-                                        </p>
-                                    </div>
-
-                                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition group-hover:text-foreground" />
-                                </div>
-                            </Link>
-
-                            <div className="min-w-0 rounded-lg border border-success/20 bg-success/10 p-4 transition sm:rounded-xl sm:p-5">
-                                <ShieldCheck className="mb-3 h-6 w-6 text-success sm:mb-4 sm:h-7 sm:w-7" />
-
-                                <div className="flex items-center justify-between gap-3">
-                                    <div className="min-w-0">
-                                        <p className="wrap-break-word text-sm font-semibold sm:text-base">
-                                            Insurance
-                                        </p>
-
-                                        <p className="mt-1 wrap-break-word text-xs text-muted">
-                                            Manage proposals and claims
-                                        </p>
-                                    </div>
+                            <div className="flex min-w-0 flex-wrap items-center gap-3 bg-surface p-3.5 sm:gap-4 sm:p-4">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-success/20 bg-success/10 text-success sm:h-11 sm:w-11">
+                                    <ShieldCheck className="h-5 w-5 sm:h-5.5 sm:w-5.5" />
                                 </div>
 
-                                <div className="mt-4 grid grid-cols-2 gap-2">
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-semibold sm:text-base">Insurance</p>
+
+                                    <p className="mt-0.5 truncate text-xs text-muted sm:text-sm">
+                                        Manage proposals and claims
+                                    </p>
+                                </div>
+
+                                <div className="flex flex-wrap w-full shrink-0 gap-2 sm:w-auto">
                                     <Link
                                         href="/dispatcher/insurance"
-                                        className="group inline-flex items-center justify-center gap-1.5 rounded-lg border border-success/20 bg-success/10 px-3 py-2 text-xs font-medium text-success transition hover:bg-success/15"
+                                        className="group inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-success/20 bg-success/10 px-3 py-2 text-xs font-medium text-success transition hover:bg-success/15 sm:flex-none"
                                     >
                                         Proposals
                                         <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
@@ -260,34 +257,13 @@ export default function DispatcherDashboard() {
 
                                     <Link
                                         href="/dispatcher/insurance/claims"
-                                        className="group inline-flex items-center justify-center gap-1.5 rounded-lg border border-success/20 bg-success/10 px-3 py-2 text-xs font-medium text-success transition hover:bg-success/15"
+                                        className="group inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-success/20 bg-success/10 px-3 py-2 text-xs font-medium text-success transition hover:bg-success/15 sm:flex-none"
                                     >
                                         Claims
                                         <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
                                     </Link>
                                 </div>
                             </div>
-
-                            <Link
-                                href="/dispatcher/labs"
-                                className="group min-w-0 rounded-lg border border-info/20 bg-info/10 p-4 transition hover:bg-info/15 sm:rounded-xl sm:p-5"
-                            >
-                                <FlaskConical className="mb-3 h-6 w-6 text-info sm:mb-4 sm:h-7 sm:w-7" />
-
-                                <div className="flex items-center justify-between gap-3">
-                                    <div className="min-w-0">
-                                        <p className="wrap-break-word text-sm font-semibold sm:text-base">
-                                            Lab Tests & Home Collection
-                                        </p>
-
-                                        <p className="mt-1 wrap-break-word text-xs text-muted">
-                                            Manage lab tests and home sample collection
-                                        </p>
-                                    </div>
-
-                                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition group-hover:text-foreground" />
-                                </div>
-                            </Link>
                         </div>
                     </div>
                 </div>

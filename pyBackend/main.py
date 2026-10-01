@@ -1,19 +1,24 @@
-import os
 import json
+import os
 import time
 import traceback
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Header
-from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
 from dotenv import load_dotenv
+from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi.responses import StreamingResponse
 from groq import AsyncGroq
+from pydantic import BaseModel
 
-from prompts import get_medical_prompt, get_translation_prompt, get_soma_system_prompt, get_soma_summary_prompt
-from rag import retrieve_relevant_context, initialize_knowledge_base
+from prompts import (
+    get_medical_prompt,
+    get_translation_prompt,
+    get_soma_system_prompt,
+    get_soma_summary_prompt,
+)
+from rag import initialize_knowledge_base, retrieve_relevant_context
+from report_utils import process_medical_report
 
 
 load_dotenv()
@@ -34,13 +39,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Somatic Secure RAG AI Microservice",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
-app_url = os.getenv(
-    "NEXT_PUBLIC_APP_URL",
-    "http://localhost:3000"
-)
+app_url = os.getenv("NEXT_PUBLIC_APP_URL", "http://localhost:3000")
 
 app.add_middleware(
     CORSMiddleware,
@@ -77,23 +79,21 @@ class AIDraftResponse(BaseModel):
 @app.post("/api/analyze-symptoms", response_model=AIDraftResponse)
 async def analyze_symptoms(
     payload: PatientInput,
-    x_internal_secret: str = Header(None)
+    x_internal_secret: str = Header(None),
 ):
     if x_internal_secret != INTERNAL_API_SECRET:
         raise HTTPException(
             status_code=403,
-            detail="Forbidden: Invalid or missing internal secret token."
+            detail="Forbidden: Invalid or missing internal secret token.",
         )
 
     if not client:
         raise HTTPException(
             status_code=500,
-            detail="Groq API Key is missing."
+            detail="Groq API Key is missing.",
         )
 
-    retrieved_context = retrieve_relevant_context(
-        payload.symptoms_raw_text
-    )
+    retrieved_context = retrieve_relevant_context(payload.symptoms_raw_text)
 
     default_base_prompt = (
         "You are an expert AI medical assistant trained in both "
@@ -102,11 +102,7 @@ async def analyze_symptoms(
         "provided reference context."
     )
 
-    base_prompt = (
-        payload.custom_system_prompt
-        if payload.custom_system_prompt
-        else default_base_prompt
-    )
+    base_prompt = payload.custom_system_prompt or default_base_prompt
 
     prompt = get_medical_prompt(
         base_prompt=base_prompt,
@@ -114,52 +110,30 @@ async def analyze_symptoms(
         weight_kg=payload.weight_kg,
         symptoms_raw_text=payload.symptoms_raw_text,
         retrieved_context=retrieved_context,
-        available_departments=payload.available_departments
+        available_departments=payload.available_departments,
     )
 
     try:
-        model_name = (
-            payload.ai_model_override
-            or "openai/gpt-oss-120b"
-        )
-
+        model_name = payload.ai_model_override or "openai/gpt-oss-120b"
         start_time = time.perf_counter()
 
         response = await client.chat.completions.create(
             model=model_name,
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
+            messages=[{"role": "user", "content": prompt}],
             response_format={"type": "json_object"},
-            temperature=0.2
+            temperature=0.2,
         )
 
-        response_time_sec = round(
-            time.perf_counter() - start_time,
-            3
-        )
-
+        response_time_sec = round(time.perf_counter() - start_time, 3)
         usage = getattr(response, "usage", None)
 
-        tokens_prompt = (
-            getattr(usage, "prompt_tokens", 0)
-            if usage else 0
-        )
-
-        tokens_completion = (
-            getattr(usage, "completion_tokens", 0)
-            if usage else 0
-        )
+        tokens_prompt = getattr(usage, "prompt_tokens", 0) if usage else 0
+        tokens_completion = getattr(usage, "completion_tokens", 0) if usage else 0
 
         clean_json = response.choices[0].message.content.strip()
 
         if clean_json.startswith("```"):
-            clean_json = "\n".join(
-                clean_json.split("\n")[1:-1]
-            )
+            clean_json = "\n".join(clean_json.split("\n")[1:-1])
 
         parsed_data = json.loads(clean_json)
 
@@ -172,10 +146,7 @@ async def analyze_symptoms(
 
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 class BatchTranslationRequest(BaseModel):
@@ -187,70 +158,45 @@ class BatchTranslationRequest(BaseModel):
 @app.post("/api/translate-batch")
 async def translate_batch_text(
     payload: BatchTranslationRequest,
-    x_internal_secret: str = Header(None)
+    x_internal_secret: str = Header(None),
 ):
     if x_internal_secret != INTERNAL_API_SECRET:
-        raise HTTPException(
-            status_code=403,
-            detail="Forbidden"
-        )
+        raise HTTPException(status_code=403, detail="Forbidden")
 
     if not client:
         raise HTTPException(
             status_code=500,
-            detail="Groq API Key is missing."
+            detail="Groq API Key is missing.",
         )
 
     prompt = get_translation_prompt(payload.texts, payload.target_language)
 
     try:
-        model_name = (
-            payload.ai_model_override
-            or "openai/gpt-oss-120b"
-        )
-
+        model_name = payload.ai_model_override or "openai/gpt-oss-120b"
         start_time = time.perf_counter()
 
         response = await client.chat.completions.create(
             model=model_name,
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
+            messages=[{"role": "user", "content": prompt}],
             response_format={"type": "json_object"},
-            temperature=0.1
+            temperature=0.1,
         )
 
-        response_time_sec = round(
-            time.perf_counter() - start_time,
-            3
-        )
-
+        response_time_sec = round(time.perf_counter() - start_time, 3)
         usage = getattr(response, "usage", None)
 
-        tokens_prompt = (
-            getattr(usage, "prompt_tokens", 0)
-            if usage else 0
-        )
-
-        tokens_completion = (
-            getattr(usage, "completion_tokens", 0)
-            if usage else 0
-        )
-
+        tokens_prompt = getattr(usage, "prompt_tokens", 0) if usage else 0
+        tokens_completion = getattr(usage, "completion_tokens", 0) if usage else 0
         tokens_total = (
             getattr(usage, "total_tokens", 0)
-            if usage else 0
+            if usage
+            else tokens_prompt + tokens_completion
         )
 
         clean_json = response.choices[0].message.content.strip()
 
         if clean_json.startswith("```"):
-            clean_json = "\n".join(
-                clean_json.split("\n")[1:-1]
-            )
+            clean_json = "\n".join(clean_json.split("\n")[1:-1])
 
         translated_dict = json.loads(clean_json)
 
@@ -265,10 +211,8 @@ async def translate_batch_text(
 
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 class SomaChatMessage(BaseModel):
     role: str
@@ -302,10 +246,7 @@ async def soma_chat(
             detail="At least one message is required.",
         )
 
-    model_name = (
-        payload.ai_model_override or "openai/gpt-oss-120b"
-    )
-
+    model_name = payload.ai_model_override or "openai/gpt-oss-120b"
     base_system_prompt = get_soma_system_prompt()
 
     if payload.custom_system_prompt:
@@ -317,12 +258,7 @@ async def soma_chat(
     else:
         system_prompt = base_system_prompt
 
-    messages = [
-        {
-            "role": "system",
-            "content": system_prompt,
-        }
-    ]
+    messages = [{"role": "system", "content": system_prompt}]
 
     if payload.conversation_summary.strip():
         messages.append(
@@ -355,10 +291,7 @@ async def soma_chat(
     latest_user_message = ""
 
     for message in reversed(payload.messages):
-        if (
-            message.role == "user"
-            and message.content.strip()
-        ):
+        if message.role == "user" and message.content.strip():
             latest_user_message = message.content.strip()
             break
 
@@ -420,18 +353,10 @@ async def soma_chat(
                 3,
             )
 
-            tokens_prompt = (
-                getattr(usage, "prompt_tokens", 0)
-                if usage
-                else 0
-            )
-
+            tokens_prompt = getattr(usage, "prompt_tokens", 0) if usage else 0
             tokens_completion = (
-                getattr(usage, "completion_tokens", 0)
-                if usage
-                else 0
+                getattr(usage, "completion_tokens", 0) if usage else 0
             )
-
             tokens_total = (
                 getattr(usage, "total_tokens", 0)
                 if usage
@@ -439,7 +364,6 @@ async def soma_chat(
             )
 
             assistant_response = "".join(full_response).strip()
-
             conversation_summary = ""
 
             if assistant_response:
@@ -448,72 +372,48 @@ async def soma_chat(
                     latest_user_message=latest_user_message,
                     latest_assistant_response=assistant_response,
                 )
-                
-                summary_response = (
-                    await client.chat.completions.create(
-                        model=model_name,
-                        messages=[
-                            {
-                                "role": "system",
-                                "content": (
-                                    "You create concise factual "
-                                    "conversation memory for a "
-                                    "healthcare assistant. "
-                                    "Never invent facts."
-                                ),
-                            },
-                            {
-                                "role": "user",
-                                "content": summary_prompt,
-                            },
-                        ],
-                        temperature=0.1,
-                        max_completion_tokens=200,
-                    )
+
+                summary_response = await client.chat.completions.create(
+                    model=model_name,
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": (
+                                "You create concise factual "
+                                "conversation memory for a "
+                                "healthcare assistant. "
+                                "Never invent facts."
+                            ),
+                        },
+                        {
+                            "role": "user",
+                            "content": summary_prompt,
+                        },
+                    ],
+                    temperature=0.1,
+                    max_completion_tokens=200,
                 )
 
                 conversation_summary = (
-                    summary_response.choices[0]
-                    .message.content.strip()
+                    summary_response.choices[0].message.content.strip()
                 )
 
-                summary_usage = getattr(
-                    summary_response,
-                    "usage",
-                    None,
-                )
+                summary_usage = getattr(summary_response, "usage", None)
 
                 summary_prompt_tokens = (
-                    getattr(
-                        summary_usage,
-                        "prompt_tokens",
-                        0,
-                    )
+                    getattr(summary_usage, "prompt_tokens", 0)
                     if summary_usage
                     else 0
                 )
-
                 summary_completion_tokens = (
-                    getattr(
-                        summary_usage,
-                        "completion_tokens",
-                        0,
-                    )
+                    getattr(summary_usage, "completion_tokens", 0)
                     if summary_usage
                     else 0
                 )
-
                 summary_total_tokens = (
-                    getattr(
-                        summary_usage,
-                        "total_tokens",
-                        0,
-                    )
+                    getattr(summary_usage, "total_tokens", 0)
                     if summary_usage
-                    else (
-                        summary_prompt_tokens
-                        + summary_completion_tokens
-                    )
+                    else summary_prompt_tokens + summary_completion_tokens
                 )
 
                 tokens_prompt += summary_prompt_tokens
@@ -560,9 +460,77 @@ async def soma_chat(
         },
     )
 
+
+@app.post("/api/analyze-medical-report")
+async def analyze_medical_report(
+    file: UploadFile = File(...),
+    ai_model_override: str = Form("openai/gpt-oss-120b"),
+    x_internal_secret: str = Header(None),
+):
+    if x_internal_secret != INTERNAL_API_SECRET:
+        raise HTTPException(
+            status_code=403,
+            detail="Forbidden",
+        )
+
+    if not client:
+        raise HTTPException(
+            status_code=500,
+            detail="Groq API Key is missing.",
+        )
+
+    if not file.filename:
+        raise HTTPException(
+            status_code=400,
+            detail="Uploaded file must have a filename.",
+        )
+
+    try:
+        file_bytes = await file.read()
+
+        if not file_bytes:
+            raise HTTPException(
+                status_code=400,
+                detail="Uploaded report is empty.",
+            )
+
+        if len(file_bytes) > 20 * 1024 * 1024:
+            raise HTTPException(
+                status_code=400,
+                detail="The report must be smaller than 20 MB.",
+            )
+
+        result = await process_medical_report(
+            client=client,
+            file_name=file.filename,
+            content_type=file.content_type or "",
+            file_bytes=file_bytes,
+            ai_model_override=ai_model_override,
+        )
+
+        return result
+
+    except HTTPException:
+        raise
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=400,
+            detail=str(e),
+        )
+
+    except Exception:
+        traceback.print_exc()
+
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to analyze the medical report.",
+        )
+
+
 @app.get("/")
 def read_root():
     return {
         "status": "ok",
-        "message": "Secure Somatic AI Microservice is active"
+        "message": "Secure Somatic AI Microservice is active",
     }

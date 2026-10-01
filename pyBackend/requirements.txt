@@ -65,11 +65,14 @@ pydantic==2.13.4
 pydantic-settings==2.15.0
 pydantic_core==2.46.4
 Pygments==2.21.0
+pymupdf==1.28.2
 pyparsing==3.3.2
+pypdf==6.19.0
 PyPika==0.51.1
 pyproject_hooks==1.2.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.3
+python-multipart==0.0.32
 PyYAML==6.0.3
 referencing==0.37.0
 regex==2026.7.19
