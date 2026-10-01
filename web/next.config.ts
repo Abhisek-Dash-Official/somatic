@@ -32,6 +32,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "tse2.mm.bing.net",
       },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
+      {
+        protocol: "https",
+        hostname: "api.dicebear.com",
+      },
     ],
   },
 };

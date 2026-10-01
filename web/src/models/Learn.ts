@@ -14,7 +14,7 @@ const AuthorSchema = new Schema(
   { _id: false },
 );
 
-const LearnSchema = new Schema(
+const LearnSchema = new Schema<ILearnDocument>(
   {
     title: { type: String, required: true, trim: true },
     slug: {
@@ -43,5 +43,13 @@ const LearnSchema = new Schema(
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } },
 );
+
+LearnSchema.index({ category: 1 });
+LearnSchema.index({ status: 1 });
+LearnSchema.index({ "author.name": 1 });
+LearnSchema.index({ tags: 1 });
+LearnSchema.index({ is_medically_reviewed: 1 });
+LearnSchema.index({ created_at: -1 });
+LearnSchema.index({ views: -1 });
 
 export default models.Learn || model("Learn", LearnSchema);
