@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, MessageSquare, MoreHorizontal, Pencil, Plus, Search, Sparkles, Trash2, X, Languages } from "lucide-react";
+import { ChevronLeft, MessageSquare, MoreHorizontal, Pencil, Plus, Search, Sparkles, Trash2, X, Languages, FileSearch } from "lucide-react";
 import { navLinks } from "@/config/nav";
 
-const iconMap = { MessageSquare, Languages };
+const iconMap = { MessageSquare, Languages, FileSearch };
 
 type Conversation = { _id: string; title: string; summary: string; last_message_at: string; created_at: string };
 type Props = {
