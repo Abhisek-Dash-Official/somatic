@@ -292,8 +292,8 @@ export default function SubscriptionPlans({
                         <div
                             key={plan._id}
                             className={`relative flex flex-col border bg-surface p-6 ${isPopular
-                                    ? "border-primary shadow-lg shadow-primary/10"
-                                    : "border-border"
+                                ? "border-primary shadow-lg shadow-primary/10"
+                                : "border-border"
                                 }`}
                         >
                             {isPopular && (
@@ -339,6 +339,21 @@ export default function SubscriptionPlans({
 
                             <div className="mt-6 flex-1 border-t border-border pt-5">
                                 <p className="mb-4 text-sm font-medium text-foreground">
+                                    Supported Features
+                                </p>
+
+                                <div className="flex flex-wrap gap-2">
+                                    {(plan.supported_features || []).map((feature) => (
+                                        <span
+                                            key={feature}
+                                            className="rounded-lg bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                                        >
+                                            {feature}
+                                        </span>
+                                    ))}
+                                </div>
+
+                                <p className="mb-4 mt-7 text-sm font-medium text-foreground">
                                     Included
                                 </p>
 

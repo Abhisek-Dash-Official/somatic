@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import ChatPage from "@/components/somaAI/ChatPage";
-import Header from "@/components/layout/Header";
 
 export const metadata: Metadata = {
     title: "SOMA AI | SOMATIC",
@@ -14,9 +13,6 @@ export default async function Page({ searchParams }: Props) {
     const tab = params.tab || "chat";
 
     return (
-        <>
-            <Header />
-            <ChatPage tab={tab} />
-        </>
+        <ChatPage tab={tab} />
     );
 }

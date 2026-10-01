@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/db";
+import dbConnect from "@/lib/db";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 import Learn from "@/models/Learn";
+import Subscription from "@/models/Subscription";
+import SubscriptionPlan from "@/models/SubscriptionPlan";
 
 const SORT_FIELDS = {
   created_at: "created_at",
@@ -18,9 +22,62 @@ function escapeRegex(value: string) {
 
 export async function GET(request: NextRequest) {
   try {
-    await connectDB();
-
+    SubscriptionPlan;
     const { searchParams } = new URL(request.url);
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await dbConnect();
+    const userId = session.user.id;
+
+    if (!userId) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Authentication required",
+        },
+        { status: 401 },
+      );
+    }
+
+    const subscription = await Subscription.findOne({
+      user_id: userId,
+      status: "active",
+    })
+      .populate({
+        path: "plan_id",
+        select: "supported_features",
+      })
+      .lean();
+
+    if (!subscription) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Active subscription required",
+        },
+        { status: 403 },
+      );
+    }
+
+    const plan = subscription.plan_id as {
+      supported_features?: string[];
+    } | null;
+
+    const supportedFeatures = plan?.supported_features || [];
+
+    if (!supportedFeatures.includes("learn")) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Your subscription does not support Learn.",
+        },
+        { status: 403 },
+      );
+    }
 
     const search = searchParams.get("search")?.trim() || "";
     const category = searchParams.get("category")?.trim() || "";
@@ -33,10 +90,12 @@ export async function GET(request: NextRequest) {
 
     const page =
       Number.isFinite(pageParam) && pageParam > 0 ? Math.floor(pageParam) : 1;
+
     const limit =
       Number.isFinite(limitParam) && limitParam > 0
         ? Math.min(Math.floor(limitParam), 50)
         : 12;
+
     const skip = (page - 1) * limit;
 
     const sortByParam = searchParams.get("sortBy") || "created_at";
@@ -94,7 +153,10 @@ export async function GET(request: NextRequest) {
         .select(
           "title slug desc content cover_image category tags expert_summary read_time status author is_medically_reviewed reviewed_by views created_at updated_at",
         )
-        .sort({ [sortBy]: sortOrder, _id: sortOrder })
+        .sort({
+          [sortBy]: sortOrder,
+          _id: sortOrder,
+        })
         .skip(skip)
         .limit(limit)
         .lean(),

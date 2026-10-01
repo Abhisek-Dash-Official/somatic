@@ -24,7 +24,7 @@ export async function GET() {
       .sort({ end_date: -1 })
       .populate({
         path: "plan_id",
-        select: "features",
+        select: "features supported_features",
       })
       .lean();
 
@@ -36,6 +36,7 @@ export async function GET() {
       subscription: {
         ...subscription,
         features: subscription.plan_id?.features || [],
+        supported_features: subscription.plan_id?.supported_features || [],
       },
     });
   } catch (error) {

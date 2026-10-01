@@ -1,15 +1,6 @@
 "use client";
 
-import {
-    AlertTriangle,
-    CalendarDays,
-    Check,
-    Clock3,
-    Coins,
-    ShieldCheck,
-    Sparkles,
-    X,
-} from "lucide-react";
+import { AlertTriangle, CalendarDays, Check, Clock3, Coins, ShieldCheck, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -22,6 +13,7 @@ type Subscription = {
     token_limit: number;
     tokens_used: number;
     features: string[];
+    supported_features: string[];
     start_date?: string;
     end_date?: string;
 };
@@ -43,10 +35,7 @@ const formatDate = (date?: string) =>
 const formatTokens = (value: number) =>
     new Intl.NumberFormat("en-IN").format(value);
 
-export default function CurrentSubscription({
-    subscription,
-    onViewPlans,
-}: Props) {
+export default function CurrentSubscription({ subscription, onViewPlans }: Props) {
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
     const [cancelling, setCancelling] = useState(false);
 
@@ -203,6 +192,25 @@ export default function CurrentSubscription({
 
                 <div className="p-6 sm:p-8">
                     <div className="flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-primary" />
+
+                        <h3 className="font-semibold text-foreground">
+                            Supported Features
+                        </h3>
+                    </div>
+
+                    <div className="mt-5 flex flex-wrap gap-2">
+                        {(subscription.supported_features || []).map((feature) => (
+                            <span
+                                key={feature}
+                                className="rounded-lg bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                            >
+                                {feature}
+                            </span>
+                        ))}
+                    </div>
+
+                    <div className="mt-8 flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-primary" />
 
                         <h3 className="font-semibold text-foreground">

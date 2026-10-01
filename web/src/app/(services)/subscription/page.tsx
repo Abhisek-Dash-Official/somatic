@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import SubscriptionPage from "@/components/subscription/SubscriptionPage";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
     title: "Subscription",
@@ -10,9 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-    return <>
-        <Header />
-        <SubscriptionPage />;
-        <Footer />
-    </>
+    return <SubscriptionPage />;
 }
