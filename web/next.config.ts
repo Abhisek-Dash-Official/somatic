@@ -8,6 +8,30 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "irme.in",
+      },
+      {
+        protocol: "https",
+        hostname: "th.bing.com",
+      },
+      {
+        protocol: "https",
+        hostname: "en-media.thebetterindia.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.helsenorge.no",
+      },
+      {
+        protocol: "https",
+        hostname: "tse1.mm.bing.net",
+      },
+      {
+        protocol: "https",
+        hostname: "tse2.mm.bing.net",
+      },
     ],
   },
 };
