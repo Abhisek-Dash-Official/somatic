@@ -611,3 +611,28 @@ export interface IFreeAiQuota extends Document {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface IAuthor {
+  name: string;
+  credentials?: string;
+  avatar?: string;
+}
+
+export interface ILearn {
+  title: string;
+  slug: string;
+  desc: string;
+  content: string;
+  cover_image: string;
+  category: string;
+  tags?: string[];
+  expert_summary?: string;
+  read_time: number;
+  status: "draft" | "published" | "archived";
+  author: IAuthor;
+  is_medically_reviewed?: boolean;
+  reviewed_by?: string;
+  views?: number;
+  created_at?: Date;
+  updated_at?: Date;
+}
