@@ -3,10 +3,11 @@
 import Script from "next/script";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { ArrowLeft, CalendarDays, Check, Clock3, FlaskConical, Home, Loader2, MapPin, X } from "lucide-react";
 import type { ILabBookingDocument } from "@/models/LabBooking";
 import { toast } from "react-toastify";
+import LabEHRDownloadButton from "@/components/lab-tests/LabEHRDownloadButton";
 
 declare global {
     interface Window {
@@ -25,7 +26,6 @@ const timeline = [
 
 export default function LabBookingDetailsPage() {
     const params = useParams();
-    const router = useRouter();
     const id = String(params.id);
 
     const [booking, setBooking] = useState<ILabBookingDocument | null>(null);
@@ -43,7 +43,9 @@ export default function LabBookingDetailsPage() {
             const response = await fetch(`/api/lab-bookings/${id}`, { cache: "no-store" });
             const result = await response.json();
 
-            if (!response.ok || !result.success) throw new Error(result.error || "Booking not found.");
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || "Booking not found.");
+            }
 
             setBooking(result.data);
         } catch (error) {
@@ -68,9 +70,13 @@ export default function LabBookingDetailsPage() {
 
             const result = await response.json();
 
-            if (!response.ok || !result.success) throw new Error(result.error || "Failed to start payment.");
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || "Failed to start payment.");
+            }
 
-            if (!window.Razorpay) throw new Error("Payment gateway is still loading. Please try again.");
+            if (!window.Razorpay) {
+                throw new Error("Payment gateway is still loading. Please try again.");
+            }
 
             const razorpay = new window.Razorpay({
                 key: result.data.key_id,
@@ -80,7 +86,11 @@ export default function LabBookingDetailsPage() {
                 description: `Lab booking ${booking.booking_number}`,
                 order_id: result.data.order_id,
                 theme: { color: "#08a9b5" },
-                handler: async (payment: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+                handler: async (payment: {
+                    razorpay_order_id: string;
+                    razorpay_payment_id: string;
+                    razorpay_signature: string;
+                }) => {
                     try {
                         const verifyResponse = await fetch(`/api/lab-bookings/${booking._id}/payment/verify`, {
                             method: "POST",
@@ -133,7 +143,9 @@ export default function LabBookingDetailsPage() {
 
             const result = await response.json();
 
-            if (!response.ok || !result.success) throw new Error(result.error || "Failed to cancel booking.");
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || "Failed to cancel booking.");
+            }
 
             setBooking(result.data);
             setShowCancelConfirm(false);
@@ -147,10 +159,20 @@ export default function LabBookingDetailsPage() {
         }
     }
 
-    if (loading) return <main className="min-h-screen bg-background px-5 py-16 text-center text-sm text-muted">Loading booking...</main>;
+    if (loading) {
+        return (
+            <main className="min-h-screen bg-background px-5 py-16 text-center text-sm text-muted">
+                Loading booking...
+            </main>
+        );
+    }
 
     if (error && !booking) {
-        return <main className="min-h-screen bg-background px-5 py-16 text-center text-sm text-danger">{error}</main>;
+        return (
+            <main className="min-h-screen bg-background px-5 py-16 text-center text-sm text-danger">
+                {error}
+            </main>
+        );
     }
 
     if (!booking) return null;
@@ -164,32 +186,51 @@ export default function LabBookingDetailsPage() {
             <main className="min-h-screen bg-background text-foreground">
                 <div className="mx-auto max-w-6xl px-5 py-8 lg:px-8">
                     <Link href="/lab-tests/bookings" className="inline-flex items-center gap-2 text-sm text-muted hover:text-primary">
-                        <ArrowLeft className="h-4 w-4" />My bookings
+                        <ArrowLeft className="h-4 w-4" />
+                        My bookings
                     </Link>
 
                     <div className="mt-8 flex flex-col gap-5 border-b border-border pb-6 md:flex-row md:items-end md:justify-between">
                         <div>
                             <p className="text-xs text-primary">{booking.booking_number}</p>
                             <h1 className="mt-2 text-2xl font-semibold">Lab booking</h1>
-                            <p className="mt-2 text-sm text-muted">{booking.tests.length} {booking.tests.length === 1 ? "test" : "tests"}</p>
+                            <p className="mt-2 text-sm text-muted">
+                                {booking.tests.length} {booking.tests.length === 1 ? "test" : "tests"}
+                            </p>
                         </div>
 
                         <div className="flex flex-wrap gap-2">
+                            {booking.results?.length > 0 && (
+                                <LabEHRDownloadButton booking={booking} />
+                            )}
+
                             {booking.payment_method === "online" && booking.payment_status !== "paid" && booking.status !== "cancelled" && (
-                                <button disabled={actionLoading} onClick={payOnline} className="bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50">
+                                <button
+                                    disabled={actionLoading}
+                                    onClick={payOnline}
+                                    className="bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
+                                >
                                     {actionLoading ? "Processing..." : "Pay now"}
                                 </button>
                             )}
 
                             {["booked", "collection_scheduled"].includes(booking.status) && booking.payment_status !== "paid" && (
-                                <button disabled={actionLoading} onClick={() => setShowCancelConfirm(true)} className="border border-danger/40 px-4 py-2.5 text-sm text-danger hover:bg-danger/10 disabled:opacity-50">
+                                <button
+                                    disabled={actionLoading}
+                                    onClick={() => setShowCancelConfirm(true)}
+                                    className="border border-danger/40 px-4 py-2.5 text-sm text-danger hover:bg-danger/10 disabled:opacity-50"
+                                >
                                     Cancel booking
                                 </button>
                             )}
                         </div>
                     </div>
 
-                    {error && <div className="mt-5 border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>}
+                    {error && (
+                        <div className="mt-5 border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+                            {error}
+                        </div>
+                    )}
 
                     <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_320px]">
                         <div>
@@ -203,11 +244,23 @@ export default function LabBookingDetailsPage() {
 
                                         return (
                                             <div key={item.key} className="relative pb-7 last:pb-0">
-                                                <span className={`absolute -left-7.75 top-0 flex h-5 w-5 items-center justify-center border ${active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-transparent"}`}>
+                                                <span
+                                                    className={`absolute -left-7.75 top-0 flex h-5 w-5 items-center justify-center border ${active
+                                                            ? "border-primary bg-primary text-primary-foreground"
+                                                            : "border-border bg-background text-transparent"
+                                                        }`}
+                                                >
                                                     {active && <Check className="h-3 w-3" />}
                                                 </span>
 
-                                                <p className={`text-sm ${current ? "font-semibold text-primary" : active ? "text-foreground" : "text-muted-foreground"}`}>
+                                                <p
+                                                    className={`text-sm ${current
+                                                            ? "font-semibold text-primary"
+                                                            : active
+                                                                ? "text-foreground"
+                                                                : "text-muted-foreground"
+                                                        }`}
+                                                >
                                                     {item.label}
                                                 </p>
                                             </div>
@@ -220,9 +273,15 @@ export default function LabBookingDetailsPage() {
                                 <section className="mt-8 border border-danger/30 bg-danger/10 p-5">
                                     <div className="flex items-start gap-3">
                                         <X className="h-5 w-5 text-danger" />
+
                                         <div>
                                             <h2 className="text-sm font-semibold text-danger">Booking cancelled</h2>
-                                            {booking.cancellation_reason && <p className="mt-1 text-sm text-muted">{booking.cancellation_reason}</p>}
+
+                                            {booking.cancellation_reason && (
+                                                <p className="mt-1 text-sm text-muted">
+                                                    {booking.cancellation_reason}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 </section>
@@ -233,12 +292,22 @@ export default function LabBookingDetailsPage() {
 
                                 <div className="mt-4 border-t border-border">
                                     {booking.tests.map((test) => (
-                                        <div key={String(test.test_id)} className="flex items-center justify-between border-b border-border py-4">
+                                        <div
+                                            key={String(test.test_id)}
+                                            className="flex items-center justify-between border-b border-border py-4"
+                                        >
                                             <div>
                                                 <p className="text-sm font-medium">{test.name}</p>
-                                                <p className="mt-1 flex items-center gap-1.5 text-xs text-muted"><FlaskConical className="h-3.5 w-3.5" />{test.type}</p>
+
+                                                <p className="mt-1 flex items-center gap-1.5 text-xs text-muted">
+                                                    <FlaskConical className="h-3.5 w-3.5" />
+                                                    {test.type}
+                                                </p>
                                             </div>
-                                            <p className="text-sm">₹{test.price.toLocaleString("en-IN")}</p>
+
+                                            <p className="text-sm">
+                                                ₹{test.price.toLocaleString("en-IN")}
+                                            </p>
                                         </div>
                                     ))}
                                 </div>
@@ -246,12 +315,21 @@ export default function LabBookingDetailsPage() {
 
                             {booking.results?.length > 0 && (
                                 <section className="mt-10">
-                                    <h2 className="text-base font-semibold">Results</h2>
+                                    <div className="flex items-center justify-between gap-4">
+                                        <h2 className="text-base font-semibold">Results</h2>
+
+                                        <LabEHRDownloadButton booking={booking} />
+                                    </div>
 
                                     {booking.results.map((result) => (
-                                        <div key={String(result.test_id)} className="mt-5 border border-border bg-surface">
+                                        <div
+                                            key={String(result.test_id)}
+                                            className="mt-5 border border-border bg-surface"
+                                        >
                                             <div className="border-b border-border px-4 py-4">
-                                                <h3 className="text-sm font-semibold">{result.test_name}</h3>
+                                                <h3 className="text-sm font-semibold">
+                                                    {result.test_name}
+                                                </h3>
                                             </div>
 
                                             <div className="overflow-x-auto">
@@ -265,14 +343,39 @@ export default function LabBookingDetailsPage() {
                                                             <th className="px-4 py-3 font-medium">Status</th>
                                                         </tr>
                                                     </thead>
+
                                                     <tbody>
                                                         {result.parameters.map((parameter, index) => (
-                                                            <tr key={`${parameter.name}-${index}`} className="border-b border-border last:border-0">
-                                                                <td className="px-4 py-3">{parameter.name}</td>
-                                                                <td className="px-4 py-3">{parameter.value}</td>
-                                                                <td className="px-4 py-3 text-muted">{parameter.unit}</td>
-                                                                <td className="px-4 py-3 text-muted">{parameter.reference_range}</td>
-                                                                <td className={`px-4 py-3 capitalize ${parameter.status === "normal" ? "text-success" : parameter.status === "critical" ? "text-danger" : "text-warning"}`}>{parameter.status}</td>
+                                                            <tr
+                                                                key={`${parameter.name}-${index}`}
+                                                                className="border-b border-border last:border-0"
+                                                            >
+                                                                <td className="px-4 py-3">
+                                                                    {parameter.name}
+                                                                </td>
+
+                                                                <td className="px-4 py-3">
+                                                                    {parameter.value}
+                                                                </td>
+
+                                                                <td className="px-4 py-3 text-muted">
+                                                                    {parameter.unit}
+                                                                </td>
+
+                                                                <td className="px-4 py-3 text-muted">
+                                                                    {parameter.reference_range}
+                                                                </td>
+
+                                                                <td
+                                                                    className={`px-4 py-3 capitalize ${parameter.status === "normal"
+                                                                            ? "text-success"
+                                                                            : parameter.status === "critical"
+                                                                                ? "text-danger"
+                                                                                : "text-warning"
+                                                                        }`}
+                                                                >
+                                                                    {parameter.status}
+                                                                </td>
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -291,19 +394,36 @@ export default function LabBookingDetailsPage() {
                                 <div className="mt-4 space-y-4 text-sm">
                                     <div className="flex gap-3">
                                         <CalendarDays className="h-4 w-4 shrink-0 text-primary" />
+
                                         <div>
-                                            <p>{new Date(booking.scheduled_date).toLocaleDateString("en-IN")}</p>
-                                            <p className="mt-1 text-xs text-muted">{booking.scheduled_slot}</p>
+                                            <p>
+                                                {new Date(booking.scheduled_date).toLocaleDateString("en-IN")}
+                                            </p>
+
+                                            <p className="mt-1 text-xs text-muted">
+                                                {booking.scheduled_slot}
+                                            </p>
                                         </div>
                                     </div>
 
                                     <div className="flex gap-3">
                                         <MapPin className="h-4 w-4 shrink-0 text-primary" />
+
                                         <div className="text-muted">
-                                            <p className="text-foreground">{booking.collection_address.address_line}</p>
-                                            <p>{booking.collection_address.city}, {booking.collection_address.state}</p>
+                                            <p className="text-foreground">
+                                                {booking.collection_address.address_line}
+                                            </p>
+
+                                            <p>
+                                                {booking.collection_address.city},{" "}
+                                                {booking.collection_address.state}
+                                            </p>
+
                                             <p>{booking.collection_address.pincode}</p>
-                                            {booking.collection_address.landmark && <p>{booking.collection_address.landmark}</p>}
+
+                                            {booking.collection_address.landmark && (
+                                                <p>{booking.collection_address.landmark}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -320,43 +440,75 @@ export default function LabBookingDetailsPage() {
                                 <div className="mt-4 space-y-3 text-sm">
                                     <div className="flex justify-between">
                                         <span className="text-muted">Method</span>
-                                        <span>{booking.payment_method === "online" ? "Online" : "Cash on collection"}</span>
+
+                                        <span>
+                                            {booking.payment_method === "online"
+                                                ? "Online"
+                                                : "Cash on collection"}
+                                        </span>
                                     </div>
 
                                     <div className="flex justify-between">
                                         <span className="text-muted">Status</span>
-                                        <span className={booking.payment_status === "paid" ? "text-success" : "text-warning"}>
-                                            {booking.payment_status === "paid" ? "Paid" : "Pending"}
+
+                                        <span
+                                            className={
+                                                booking.payment_status === "paid"
+                                                    ? "text-success"
+                                                    : "text-warning"
+                                            }
+                                        >
+                                            {booking.payment_status === "paid"
+                                                ? "Paid"
+                                                : "Pending"}
                                         </span>
                                     </div>
 
                                     <div className="flex justify-between border-t border-border pt-3 text-base font-semibold">
                                         <span>Total</span>
-                                        <span>₹{booking.total_amount.toLocaleString("en-IN")}</span>
+
+                                        <span>
+                                            ₹{booking.total_amount.toLocaleString("en-IN")}
+                                        </span>
                                     </div>
                                 </div>
 
-                                {booking.payment_method === "cash_on_collection" && booking.payment_status !== "paid" && (
-                                    <p className="mt-4 border-t border-border pt-4 text-xs leading-5 text-muted">
-                                        Please keep the amount ready. Payment will be collected when the sample is collected at your home.
-                                    </p>
-                                )}
+                                {booking.payment_method === "cash_on_collection" &&
+                                    booking.payment_status !== "paid" && (
+                                        <p className="mt-4 border-t border-border pt-4 text-xs leading-5 text-muted">
+                                            Please keep the amount ready. Payment will be collected when
+                                            the sample is collected at your home.
+                                        </p>
+                                    )}
 
-                                {booking.payment_method === "online" && booking.payment_status !== "paid" && (
-                                    <button disabled={actionLoading} onClick={payOnline} className="mt-5 flex w-full items-center justify-center gap-2 bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50">
-                                        {actionLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-                                        Pay ₹{booking.total_amount.toLocaleString("en-IN")}
-                                    </button>
-                                )}
+                                {booking.payment_method === "online" &&
+                                    booking.payment_status !== "paid" && (
+                                        <button
+                                            disabled={actionLoading}
+                                            onClick={payOnline}
+                                            className="mt-5 flex w-full items-center justify-center gap-2 bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
+                                        >
+                                            {actionLoading && (
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                            )}
+
+                                            Pay ₹{booking.total_amount.toLocaleString("en-IN")}
+                                        </button>
+                                    )}
                             </section>
 
                             {booking.status === "processing" && (
                                 <div className="border border-border bg-surface p-5">
                                     <div className="flex gap-3">
                                         <Clock3 className="h-5 w-5 text-primary" />
+
                                         <div>
                                             <p className="text-sm font-medium">Report processing</p>
-                                            <p className="mt-1 text-xs leading-5 text-muted">Your sample is being processed. The report will appear here once ready.</p>
+
+                                            <p className="mt-1 text-xs leading-5 text-muted">
+                                                Your sample is being processed. The report will appear
+                                                here once ready.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -372,22 +524,36 @@ export default function LabBookingDetailsPage() {
                         <div className="flex items-start justify-between gap-4">
                             <div>
                                 <h2 className="text-lg font-semibold">Cancel booking?</h2>
+
                                 <p className="mt-2 text-sm leading-6 text-muted">
-                                    Are you sure you want to cancel this lab booking? This action cannot be undone.
+                                    Are you sure you want to cancel this lab booking? This action
+                                    cannot be undone.
                                 </p>
                             </div>
 
-                            <button onClick={() => setShowCancelConfirm(false)} disabled={actionLoading} className="text-muted hover:text-foreground">
+                            <button
+                                onClick={() => setShowCancelConfirm(false)}
+                                disabled={actionLoading}
+                                className="text-muted hover:text-foreground"
+                            >
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
 
                         <div className="mt-6 flex justify-end gap-3">
-                            <button onClick={() => setShowCancelConfirm(false)} disabled={actionLoading} className="border border-border px-4 py-2.5 text-sm text-muted hover:text-foreground disabled:opacity-50">
+                            <button
+                                onClick={() => setShowCancelConfirm(false)}
+                                disabled={actionLoading}
+                                className="border border-border px-4 py-2.5 text-sm text-muted hover:text-foreground disabled:opacity-50"
+                            >
                                 Keep booking
                             </button>
 
-                            <button onClick={cancelBooking} disabled={actionLoading} className="flex items-center gap-2 bg-danger px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50">
+                            <button
+                                onClick={cancelBooking}
+                                disabled={actionLoading}
+                                className="flex items-center gap-2 bg-danger px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
+                            >
                                 {actionLoading && <Loader2 className="h-4 w-4 animate-spin" />}
                                 Cancel booking
                             </button>

@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/db";
 import LabBooking from "@/models/LabBooking";
+import User from "@/models/User";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -11,6 +12,7 @@ interface RouteParams {
 
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
+    User;
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
@@ -34,7 +36,9 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     const booking = await LabBooking.findOne({
       _id: id,
       patient_id: new mongoose.Types.ObjectId(session.user.id),
-    }).lean();
+    })
+      .populate("patient_id", "username email contact_no")
+      .lean();
 
     if (!booking) {
       return NextResponse.json(
