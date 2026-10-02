@@ -4,7 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, Lock, Loader2, Activity } from "lucide-react";
+import { Activity, ArrowRight, Lock, Loader2, Mail, ShieldCheck } from "lucide-react";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -19,11 +19,7 @@ export default function LoginPage() {
         setError("");
 
         try {
-            const res = await signIn("credentials", {
-                email,
-                password,
-                redirect: false,
-            });
+            const res = await signIn("credentials", { email, password, redirect: false });
 
             if (res?.error) {
                 setError("Invalid email or password");
@@ -31,7 +27,7 @@ export default function LoginPage() {
                 router.push("/");
                 router.refresh();
             }
-        } catch (err) {
+        } catch {
             setError("Something went wrong. Please try again.");
         } finally {
             setLoading(false);
@@ -39,69 +35,134 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="animate-in fade-in zoom-in duration-500">
-            <div className="mb-8 flex flex-col items-center">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.15)] backdrop-blur-md">
-                    <Activity className="h-8 w-8" />
-                </div>
-                <h1 className="text-3xl font-bold tracking-tight text-white">Welcome Back</h1>
-                <p className="mt-2 text-sm text-slate-400">Sign in to your Somatic account</p>
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
-                {error && (
-                    <div className="mb-6 rounded-lg bg-red-500/10 p-3 text-sm text-red-400 border border-red-500/20 text-center">
-                        {error}
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-5">
+        <main className="min-h-[calc(100vh-4rem)] bg-background px-4 py-10 text-foreground sm:px-6 lg:py-16">
+            <div className="mx-auto grid w-full max-w-5xl border border-border bg-surface lg:grid-cols-[0.9fr_1.1fr]">
+                <section className="hidden border-r border-border bg-surface-secondary p-10 lg:flex lg:flex-col lg:justify-between">
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-slate-300">Email Address</label>
-                        <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
-                            <input
-                                type="email"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full rounded-xl border border-white/10 bg-black/20 py-3 pl-10 pr-4 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                placeholder="user@gmail.com"
-                            />
+                        <div className="mb-10 flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center border border-primary/30 bg-accent text-primary">
+                                <Activity className="h-5 w-5" />
+                            </div>
+                            <span className="text-xl font-bold tracking-tight">SOMATIC</span>
+                        </div>
+
+                        <p className="mb-3 text-sm font-medium uppercase tracking-[0.18em] text-primary">
+                            Smarter Care. Healthier Tomorrow.
+                        </p>
+
+                        <h2 className="max-w-sm text-3xl font-semibold leading-tight text-foreground">
+                            From Emergency to Recovery — SOMATIC is with you at every step.
+                        </h2>
+
+                        <p className="mt-5 max-w-sm text-sm leading-6 text-muted">
+                            First aid, doctor consultations, lab tests, medical reports and everyday healthcare — all connected in one place.
+                        </p>
+                    </div>
+
+                    <div className="border-t border-border pt-6">
+                        <div className="flex items-start gap-3">
+                            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                            <div>
+                                <p className="text-sm font-medium text-foreground">Your Health. Our Priority.</p>
+                                <p className="mt-1 text-xs leading-5 text-muted">
+                                    One place for the care, guidance and healthcare services you need.
+                                </p>
+                            </div>
                         </div>
                     </div>
+                </section>
 
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-slate-300">Password</label>
-                        <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
-                            <input
-                                type="password"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full rounded-xl border border-white/10 bg-black/20 py-3 pl-10 pr-4 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                placeholder="••••••••"
-                            />
+                <section className="p-6 sm:p-10 lg:p-12">
+                    <div className="mb-8">
+                        <div className="mb-5 flex h-11 w-11 items-center justify-center border border-border bg-surface-secondary text-primary lg:hidden">
+                            <Activity className="h-5 w-5" />
                         </div>
+
+                        <p className="text-sm font-medium text-primary">Welcome back</p>
+                        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
+                            Sign in to SOMATIC
+                        </h1>
+                        <p className="mt-2 text-sm text-muted">
+                            Continue where you left off.
+                        </p>
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="flex w-full items-center justify-center rounded-xl bg-blue-600 py-3 font-semibold text-white transition-all hover:bg-blue-500 disabled:opacity-50"
-                    >
-                        {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Sign In"}
-                    </button>
-                </form>
+                    {error && (
+                        <div className="mb-6 flex items-start gap-3 border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+                            <span className="mt-0.5 h-1.5 w-1.5 shrink-0 bg-danger" />
+                            <p>{error}</p>
+                        </div>
+                    )}
 
-                <p className="mt-6 text-center text-sm text-slate-400">
-                    Don't have an account?{" "}
-                    <Link href="/register" className="font-semibold text-blue-400 hover:text-blue-300">
-                        Create one
-                    </Link>
-                </p>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label htmlFor="email" className="mb-2 block text-sm font-medium text-foreground">
+                                Email address
+                            </label>
+                            <div className="relative">
+                                <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-muted-foreground" />
+                                <input
+                                    id="email"
+                                    type="email"
+                                    required
+                                    autoComplete="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full border border-border bg-background py-3.5 pl-11 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                                    placeholder="you@example.com"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label htmlFor="password" className="mb-2 block text-sm font-medium text-foreground">
+                                Password
+                            </label>
+                            <div className="relative">
+                                <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-muted-foreground" />
+                                <input
+                                    id="password"
+                                    type="password"
+                                    required
+                                    autoComplete="current-password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full border border-border bg-background py-3.5 pl-11 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                                    placeholder="Enter your password"
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="flex w-full items-center justify-center gap-2 bg-primary py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {loading ? (
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : (
+                                <>
+                                    Sign In
+                                    <ArrowRight className="h-4 w-4" />
+                                </>
+                            )}
+                        </button>
+                    </form>
+
+                    <div className="my-7 flex items-center gap-4">
+                        <div className="h-px flex-1 bg-border" />
+                        <span className="text-xs text-muted-foreground">OR</span>
+                        <div className="h-px flex-1 bg-border" />
+                    </div>
+
+                    <p className="text-center text-sm text-muted">
+                        Don't have an account?{" "}
+                        <Link href="/register" className="font-medium text-primary transition-colors hover:text-primary-hover">
+                            Create one
+                        </Link>
+                    </p>
+                </section>
             </div>
-        </div>
+        </main>
     );
 }

@@ -24,6 +24,8 @@
   --danger: #ef4444;
   --info: #38bdf8;
 
+  --hero-overlay: rgba(7, 17, 22, 0.45);
+
   color-scheme: dark;
 }
 
@@ -50,6 +52,8 @@
   --warning: #d97706;
   --danger: #dc2626;
   --info: #2563eb;
+
+  --hero-overlay: rgba(244, 249, 250, 0.68);
 
   color-scheme: light;
 }
