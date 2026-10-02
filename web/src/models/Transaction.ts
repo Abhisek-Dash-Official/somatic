@@ -57,7 +57,7 @@ const TransactionSchema = new Schema<ITransactionDocument>(
 
     payment_gateway: {
       type: String,
-      enum: ["razorpay"],
+      enum: ["razorpay", "cash"],
       default: "razorpay",
     },
 

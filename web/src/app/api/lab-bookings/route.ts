@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/db";
 import LabTest from "@/models/LabTest";
 import LabBooking from "@/models/LabBooking";
+import Transaction from "@/models/Transaction";
 
 function generateBookingNumber() {
   const timestamp = Date.now().toString(36).toUpperCase();
@@ -26,12 +27,24 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
-
-    const { tests, collection_address, scheduled_date, scheduled_slot } = body;
+    const {
+      tests,
+      collection_address,
+      scheduled_date,
+      scheduled_slot,
+      payment_method,
+    } = body;
 
     if (!Array.isArray(tests) || tests.length === 0) {
       return NextResponse.json(
         { success: false, error: "At least one lab test is required." },
+        { status: 400 },
+      );
+    }
+
+    if (!["online", "cash_on_collection"].includes(payment_method)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid payment method." },
         { status: 400 },
       );
     }
@@ -80,14 +93,10 @@ export async function POST(request: NextRequest) {
 
     const collectionDate = new Date(scheduled_date);
 
-    if (Number.isNaN(collectionDate.getTime())) {
-      return NextResponse.json(
-        { success: false, error: "Invalid collection date." },
-        { status: 400 },
-      );
-    }
-
-    if (collectionDate < new Date()) {
+    if (
+      Number.isNaN(collectionDate.getTime()) ||
+      collectionDate <= new Date()
+    ) {
       return NextResponse.json(
         { success: false, error: "Collection date must be in the future." },
         { status: 400 },
@@ -136,6 +145,7 @@ export async function POST(request: NextRequest) {
       discount,
       total_amount: totalAmount,
       payment_status: "pending",
+      payment_method,
       collection_address: {
         address_line: collection_address.address_line.trim(),
         city: collection_address.city.trim(),
@@ -148,11 +158,35 @@ export async function POST(request: NextRequest) {
       status: "booked",
     });
 
+    const transaction = await Transaction.create({
+      user_id: new mongoose.Types.ObjectId(session.user.id),
+      transaction_type: "lab_booking",
+      reference_id: booking._id,
+      amount: totalAmount,
+      currency: "INR",
+      status: payment_method === "cash_on_collection" ? "pending" : "created",
+      payment_gateway:
+        payment_method === "cash_on_collection" ? "cash" : "razorpay",
+      metadata: {
+        booking_number: booking.booking_number,
+        payment_method,
+      },
+    });
+
+    booking.transaction_id = transaction._id;
+    await booking.save();
+
     return NextResponse.json(
       {
         success: true,
-        message: "Lab test booking created successfully.",
-        data: booking,
+        message:
+          payment_method === "cash_on_collection"
+            ? "Lab booking created successfully."
+            : "Lab booking created. Continue to payment.",
+        data: {
+          booking,
+          transaction,
+        },
       },
       { status: 201 },
     );
@@ -202,9 +236,7 @@ export async function GET(request: NextRequest) {
       "cancelled",
     ];
 
-    if (status && allowedStatuses.includes(status)) {
-      filter.status = status;
-    }
+    if (status && allowedStatuses.includes(status)) filter.status = status;
 
     const [bookings, total] = await Promise.all([
       LabBooking.find(filter)

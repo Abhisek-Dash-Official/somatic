@@ -196,7 +196,7 @@ export default function DispatcherDashboard() {
                                     iconClass: "text-primary bg-primary/10 border-primary/20",
                                 },
                                 {
-                                    href: "/dispatcher/labs",
+                                    href: "/dispatcher/lab-tests",
                                     title: "Lab Tests & Home Collection",
                                     description: "Manage lab tests and home sample collection",
                                     icon: FlaskConical,

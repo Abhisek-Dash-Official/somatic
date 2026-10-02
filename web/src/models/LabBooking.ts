@@ -213,6 +213,19 @@ const LabBookingSchema = new Schema<ILabBookingDocument>(
       type: String,
       trim: true,
     },
+
+    payment_method: {
+      type: String,
+      enum: ["online", "cash_on_collection"],
+      required: true,
+      index: true,
+    },
+
+    transaction_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Transaction",
+      index: true,
+    },
   },
   {
     timestamps: {

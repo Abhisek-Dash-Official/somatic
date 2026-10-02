@@ -449,7 +449,7 @@ export interface ITransaction {
     | "refunded"
     | "partially_refunded"
     | "cancelled";
-  payment_gateway?: "razorpay";
+  payment_gateway?: "razorpay" | "cash";
   gateway_order_id?: string;
   gateway_payment_id?: string;
   gateway_signature?: string;
@@ -550,6 +550,9 @@ export interface ILabBooking {
   results_entered_at?: Date;
 
   notes?: string;
+
+  payment_method: "online" | "cash_on_collection";
+  transaction_id: mongoose.Types.ObjectId;
 
   created_at: Date;
   updated_at: Date;
