@@ -102,13 +102,13 @@ export default function Footer() {
 
                 <div className="mt-16 flex flex-col items-center justify-between border-t border-[#1d343c] pt-8 text-center md:flex-row md:text-left">
                     <p className="mb-4 text-sm text-[#687d83] md:mb-0">
-                        &copy; {new Date().getFullYear()} {siteConfig.name}. A Smart India Hackathon Project.
+                        &copy; {new Date().getFullYear()} {siteConfig.name}. Smarter Care. Healthier Tomorrow.
                     </p>
 
                     <div className="flex flex-wrap justify-center gap-2">
-                        {siteConfig.keywords.slice(0, 4).map((keyword, i) => (
+                        {["AI Healthcare", "Doctor Consultation", "Lab Tests", "Patient Care"].map((keyword) => (
                             <span
-                                key={i}
+                                key={keyword}
                                 className="border border-[#1d343c] bg-[#0d1a20] px-3 py-1 text-xs text-[#91a5aa]"
                             >
                                 {keyword}

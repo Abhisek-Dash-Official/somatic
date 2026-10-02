@@ -2,364 +2,451 @@ export const pageContent = {
   about: {
     title: "About Somatic",
     subtitle:
-      "AI-Assisted Digital Healthcare Bridging Modern Triage with Holistic Insights",
+      "One connected healthcare platform for guidance, consultations, emergency support, diagnostics, medicines, and everyday care.",
     mission:
-      "Our mission is to support healthcare professionals through AI-assisted case taking and structured digital health records. Somatic organizes complex patient narratives, generates dual-modality clinical drafts, automates departmental routing, and facilitates end-to-end patient care from emergency ambulance dispatch to medical e-commerce.",
+      "Our mission is to make healthcare easier to access, understand, and navigate. Somatic brings essential healthcare services together in one platform, helping people find first-aid guidance, connect with healthcare professionals, book lab tests, understand medical reports, access medicines and blood-related services, manage insurance, and get AI-assisted health information.",
     vision:
-      "Our vision is to make healthcare more accessible, organized, and digitally secure by combining integrative medical practices with responsible AI technology, real-time hospital telemetry, and seamless telemedicine workflows.",
+      "Our vision is to build a connected healthcare experience where patients can move from an urgent health need to the right guidance, professional care, diagnostics, treatment support, and follow-up without having to navigate disconnected systems.",
     story:
-      "Somatic was engineered to solve the chronic bottlenecks of manual case taking, fragmented patient records, and delayed emergency routing in modern clinics. The platform provides a secure digital interface where patients can dictate symptoms in their local language. Behind the scenes, advanced LLMs process this data to prepare a structured preliminary case summary, automatically flagging potential SOS emergencies. Doctors review these drafts (with built-in screen reader support) and approve final prescriptions which are instantly reverse-translated for the patient. Beyond consultations, Somatic bridges the physical gap with real-time Ambulance Telemetry for ER preparation and a Universal Medical E-Commerce module for COD medicine and blood unit dispatch.",
+      "Somatic was built around a simple problem: healthcare journeys are often fragmented. A patient may need first-aid guidance during an emergency, struggle to find the right hospital or ambulance, spend time completing admission information, arrange medicines or blood, book diagnostic tests, understand a medical report, or simply find reliable health information. Somatic brings these experiences into one connected digital platform. Patients can use AI-assisted guidance, consultations, medical reports, lab services, insurance tools, healthcare commerce, educational content, and emergency-support workflows from a single place. Healthcare professionals get structured patient information and digital workflows that help them review cases and manage care more efficiently.",
     team: [
       {
         name: "Abhisek Dash",
         role: "Chief Technology Officer (CTO) & AI Lead",
-        bio: "Full-stack architect engineering Somatic's system design, UI/UX, and core codebase. Specializes in developing scalable Python-based backend logic and prototyping advanced AI models using the Gemini API to power the platform's intelligent clinical triage.",
+        bio: "Leads Somatic's technical architecture, full-stack development, AI integrations, and product engineering. Works across the platform's web application, backend services, healthcare workflows, and AI-assisted features.",
         image: "/members/abhisek-dash.png",
         linkedin: "https://www.linkedin.com/in/abhisek-dash-49904a371/",
         github: "https://github.com/Abhisek-Dash-Official/",
       },
       {
         name: "Jyotirmayee Behera",
-        role: "Lead Product Associate & Operations Coordinator",
-        bio: "Drives end-to-end operational efficiency, specializing in product curation, rich media sourcing, and stakeholder presentations. Acts as a strategic right hand in translating complex code architectures into comprehensive mind maps and actionable product workflows.",
-
+        role: "Product & Operations",
+        bio: "Supports product planning, operational workflows, healthcare content, research, presentations, and coordination across Somatic's different service areas.",
         image: "/members/Jyotirmayee.png",
         linkedin: "https://in.linkedin.com/",
         github: "https://github.com/",
       },
       {
         name: "Srishty Singh",
-        role: "Director of Medical Intelligence & Clinical Data",
-        bio: "Architects and oversees the platform's medical data strategy, product research, and high-fidelity drug databases. Spearheads the structural integration between AI execution layers and clinical data pipelines, ensuring absolute accuracy, cross-modality precision, and pre-clinical data readiness.",
+        role: "Medical Intelligence & Clinical Data",
+        bio: "Works on healthcare research, medical information, clinical data organization, and the integration of healthcare knowledge into Somatic's digital workflows.",
         image: "/members/srishty-singh.png",
         linkedin: "https://in.linkedin.com/",
-        github: "#",
+        github: "https://github.com/",
       },
       {
         name: "Shireen Fatima",
-        role: "Chief Information Security & Privacy Officer (CISPO)",
-        bio: "Commands the platform's global information security frameworks, enterprise data governance, and medical regulatory compliance. Directs end-to-end platform audit strategies to enforce strict medical data retention laws, zero-trust RBAC architecture, and bulletproof patient data isolation.",
+        role: "Information Security & Privacy",
+        bio: "Contributes to information security, privacy practices, access control, and responsible handling of healthcare-related data across the platform.",
         image: "/members/Shireen.png",
-        linkedin: "#",
+        linkedin: "https://in.linkedin.com/",
         github: "https://github.com/",
       },
       {
         name: "Baibhav",
-        role: "Lead Quality Assurance Assistant",
-        bio: "Assists with basic, routine system checks and surface-level functionality reviews. Supports the internal team by logging user interface feedback and maintaining standard quality verification checklists under direct supervision.",
+        role: "Quality Assurance",
+        bio: "Supports application testing, interface reviews, usability checks, and identification of issues across Somatic's user workflows.",
         image: "/members/baibhav.png",
         linkedin: "https://in.linkedin.com/",
-        github: "#",
+        github: "https://github.com/",
       },
       {
         name: "Priyanshu Sharma",
-        role: "Chief Commercial Officer (CCO)",
-        bio: "A dedicated commercial professional with strong communication skills focused on healthcare growth. Handles business development, manages relationships with hospitals and clinics, and drives daily sales operations to connect the company's products with the right medical partners.",
+        role: "Business & Partnerships",
+        bio: "Works on business development, healthcare partnerships, communication, and initiatives that help connect Somatic with healthcare providers and users.",
         image: "/members/priyanshu-sharma.png",
         linkedin: "https://in.linkedin.com/",
         github: "https://github.com/",
       },
     ],
   },
+
   contact: {
     email: "botlab.7acc@gmail.com",
     helpline: "+91 98765 43210",
     responseTime:
-      "Our standard SLA for support tickets is 24-48 hours. Urgent clinical workflow issues are prioritized.",
+      "Most support requests are reviewed within 24-48 hours. Urgent platform issues affecting active healthcare workflows may be prioritized.",
     description:
-      "Facing an issue or have a suggestion? Create a support ticket and our team will get back to you.",
+      "Have a question, found an issue, or have an idea for Somatic? Contact our team and we will help you with your request.",
     emergencyNotice:
-      "Note: The ticketing system is for technical and general platform support only. If you are experiencing a life-threatening medical emergency, please call your local emergency services (911/112) immediately.",
+      "Somatic is not a replacement for emergency services. If you are experiencing a life-threatening emergency, contact your local emergency services or go to the nearest appropriate medical facility immediately.",
   },
+
   faq: [
     {
-      question: "What exactly is Somatic?",
+      question: "What is Somatic?",
       answer:
-        "Somatic is a Smart Patient Case-Taking Platform specifically designed for Ayush healthcare professionals. It digitizes the entire clinical workflow, from symptom logging and Dosha analysis (Vata, Pitta, Kapha) to automated prescription generation using Artificial Intelligence.",
+        "Somatic is a connected digital healthcare platform that brings together AI-assisted health guidance, first-aid information, doctor consultations, medical reports, lab tests, medicines, blood-related services, insurance workflows, and healthcare education in one place.",
     },
     {
-      question: "How does the AI Dosha Analysis work?",
+      question: "What can I do with Somatic?",
       answer:
-        "Our system utilizes Medical Natural Language Processing (NLP) to parse patient symptoms and clinical observations. It maps these inputs against standard Ayurvedic diagnostic parameters to provide doctors with a real-time, data-backed Tridosha balance assessment.",
+        "Depending on the services available to you, Somatic can help you get first-aid guidance, start a doctor consultation, book lab tests, access medical reports, find healthcare resources, manage insurance-related workflows, order healthcare products, request blood-related services, and learn about health conditions and medicines.",
     },
     {
-      question: "Is patient data secure and compliant?",
+      question: "Does Somatic provide medical advice through AI?",
       answer:
-        "Security is our top priority. Somatic employs end-to-end encryption for all Electronic Health Records (EHR). We follow strict Role-Based Access Control (RBAC), ensuring that only authorized medical personnel can access sensitive patient data, aligning with NDHM and global healthcare data standards.",
+        "Somatic provides AI-assisted health information and workflow support. AI-generated information is intended to help users understand their situation and navigate available services. It does not replace examination, diagnosis, treatment, or professional medical judgment.",
     },
     {
-      question: "Can patients access their own consultation records?",
+      question: "Can I consult a doctor through Somatic?",
       answer:
-        "Yes. Somatic features a dedicated Patient Portal where individuals can view their past consultations, download prescriptions, and manage their demographic and medical profile securely.",
+        "Yes. Somatic provides a digital consultation workflow where patients can submit their health information and relevant symptoms for review by an available healthcare professional. AI may assist with organizing the information, while clinical decisions remain with the healthcare professional.",
     },
     {
-      question: "Does Somatic support Nadi Pariksha insights?",
+      question: "Can Somatic help during an emergency?",
       answer:
-        "While Nadi Pariksha is a physical examination, Somatic provides dedicated modules for doctors to input their Nadi Pariksha findings. The AI then correlates these findings with the patient's reported symptoms to generate a comprehensive clinical picture.",
+        "Somatic provides first-aid information and emergency-support workflows designed to help users navigate urgent situations. Depending on availability and location, the platform can also support hospital and ambulance-related workflows. Somatic should not be treated as a replacement for local emergency services.",
     },
     {
-      question: "Is this platform only for Ayurvedic doctors?",
+      question: "Can Somatic help me find a hospital or ambulance?",
       answer:
-        "While optimized for the Ministry of Ayush standards (Ayurveda, Yoga & Naturopathy, Unani, Siddha, and Homeopathy), the core EHR, symptom tracking, and telemedicine features are highly adaptable for conventional allopathic practitioners as well.",
+        "Somatic is designed to support hospital and ambulance discovery workflows. When the relevant service is available, the platform can help connect an emergency request with suitable healthcare resources and support the coordination process.",
     },
     {
-      question: "How does the automated prescription generator work?",
+      question: "Can I book lab tests through Somatic?",
       answer:
-        "Once the doctor completes the case-taking module, the platform compiles the diagnosis, prescribed herbs/medicines, and lifestyle recommendations into a standardized, legally compliant PDF prescription that can be shared instantly.",
+        "Yes. Somatic provides a lab-test booking workflow where users can select available tests or packages, choose a collection option and schedule a suitable collection slot. Home sample collection may be available for supported tests and locations.",
     },
     {
-      question: "How does the medical e-commerce module work?",
+      question: "Can I understand my medical reports with Somatic?",
       answer:
-        "Patients and hospitals can directly order prescribed medicines, rare anti-venoms, or request emergency blood units through our platform. Orders are fulfilled via a reliable Cash-on-Delivery (COD) dispatch system.",
+        "Somatic provides a medical-report experience designed to help users better understand uploaded or available medical information using AI-assisted explanations. These explanations are informational and should not replace interpretation by a qualified healthcare professional.",
+    },
+    {
+      question: "Does Somatic provide medicines and healthcare products?",
+      answer:
+        "Somatic includes a healthcare commerce experience for supported medicines, healthcare products, and related services. Product availability, delivery options, and ordering requirements may vary by location and product type.",
+    },
+    {
+      question: "Can Somatic help with blood requirements?",
+      answer:
+        "Somatic is designed to support blood-related request and availability workflows where the service is available. Actual blood availability, compatibility, cross-matching, transfusion decisions, and clinical administration remain the responsibility of authorized healthcare professionals and blood-bank facilities.",
+    },
+    {
+      question: "Does Somatic support insurance?",
+      answer:
+        "Somatic provides insurance-related workflows that can help users manage supported policies, coverage information, and claims. The exact services available depend on the insurance workflow and participating providers.",
+    },
+    {
+      question: "Is Somatic only for Ayurveda?",
+      answer:
+        "No. Somatic is designed as a broader digital healthcare platform. Some features may support integrative or traditional healthcare workflows, while the core platform also includes general healthcare services such as consultations, first aid, diagnostics, reports, emergency support, and healthcare commerce.",
+    },
+    {
+      question: "Is my health information secure?",
+      answer:
+        "Somatic is designed with access control, authenticated sessions, role-based permissions, and security-focused application practices to protect user information. Users should also protect their account credentials and avoid sharing private healthcare information through unsecured channels.",
+    },
+    {
+      question: "Can I access my previous consultations?",
+      answer:
+        "Yes. The Patient Portal provides access to supported consultation history and related healthcare information associated with your account.",
+    },
+    {
+      question: "Does Somatic replace a doctor?",
+      answer:
+        "No. Somatic is a healthcare technology platform. AI features are designed to assist users and healthcare professionals with information and workflow tasks, while diagnosis, treatment decisions, prescriptions, and other clinical decisions remain with qualified healthcare professionals.",
     },
   ],
+
   features: [
     {
-      title: "AI-Powered Symptom Extraction",
+      title: "AI-Assisted Health Guidance",
       description:
-        "Utilize advanced Google Gemini LLMs to instantly parse and structure complex patient narratives from both raw text and Web Speech API voice dictations.",
-      icon: "Mic",
+        "Get AI-assisted information to better understand symptoms, common health concerns, and available healthcare options while keeping professional medical care at the center.",
+      icon: "BrainCircuit",
     },
     {
-      title: "Intelligent Department Routing",
+      title: "First-Aid Guidance",
       description:
-        "Eliminate manual front-desk bottlenecks. The AI automatically analyzes the chief complaints and routes the case directly to the precise hospital department.",
-      icon: "Network",
+        "Access structured first-aid information for common urgent situations with clear steps designed to help users respond while seeking appropriate professional care.",
+      icon: "HeartPulse",
     },
     {
-      title: "Real-Time Emergency (SOS) Flagging",
+      title: "Doctor Consultations",
       description:
-        "Automatically detect acute, life-threatening keywords in patient inputs. The system instantly flags severe cases with an SOS badge for immediate departmental prioritization.",
-      icon: "AlertTriangle",
+        "Submit structured health information for digital consultation workflows and allow healthcare professionals to review cases and provide appropriate clinical guidance.",
+      icon: "Stethoscope",
     },
     {
-      title: "Advanced Case Queue Management",
+      title: "Emergency Hospital & Ambulance Support",
       description:
-        "Empower doctors with a conflict-free workflow. Securely 'Claim' cases to lock them for personal review, or use the 'Release' function to instantly return them to the department pool.",
-      icon: "ListChecks",
-    },
-    {
-      title: "Universal Medical E-Commerce",
-      description:
-        "A built-in shop module allowing patients and hospitals to order prescribed medicines, rare anti-venoms, and emergency blood units via a Cash-on-Delivery (COD) dispatch system.",
-      icon: "ShoppingCart",
-    },
-    {
-      title: "Ambulance & Live ER Telemetry",
-      description:
-        "If an ambulance is dispatched, the app maintains a Real-Time Sync, sharing the patient's vitals with the hospital so the ER is fully prepared before arrival.",
+        "Support urgent healthcare journeys by helping users navigate hospital and ambulance-related workflows when the relevant services are available.",
       icon: "Ambulance",
     },
     {
-      title: "Instant QR Code EHR Admission",
+      title: "Medical Report Assistance",
       description:
-        "When a patient physically reaches the hospital, a 2-second scan of their app's pre-saved QR Code instantly auto-fills their entire admission and insurance paperwork.",
+        "Use AI-assisted explanations to make medical reports and clinical information easier to understand before discussing them with a healthcare professional.",
+      icon: "FileSearch",
+    },
+    {
+      title: "Lab Test Booking",
+      description:
+        "Browse supported diagnostic tests and packages, select collection options, and schedule laboratory sample collection through the platform.",
+      icon: "Microscope",
+    },
+    {
+      title: "Digital Healthcare Commerce",
+      description:
+        "Access supported medicines, healthcare products, and related services through Somatic's digital healthcare commerce workflows.",
+      icon: "ShoppingBag",
+    },
+    {
+      title: "Insurance Management",
+      description:
+        "Manage supported insurance information and claim-related workflows from a centralized healthcare account.",
+      icon: "ShieldCheck",
+    },
+    {
+      title: "QR-Assisted Hospital Workflows",
+      description:
+        "Use QR-based workflows to help transfer available patient information into supported hospital or healthcare processes and reduce repetitive data entry.",
       icon: "QrCode",
     },
     {
-      title: "Audio Screen Reader Integration",
+      title: "Multilingual Healthcare Experience",
       description:
-        "Save time on reading. Doctors can use the built-in Screen Reader to listen to AI drafts, and patients can tap to hear their final translated instructions read aloud.",
-      icon: "Volume2",
+        "Support healthcare communication across languages through translation features that can help users understand important health information more comfortably.",
+      icon: "Languages",
     },
     {
-      title: "Seamless Reverse Translation",
+      title: "Healthcare Education",
       description:
-        "Doctors review cases in English, but the finalized digital prescription is automatically reverse-translated into the patient's preferred local language for complete understanding.",
-      icon: "Languages",
+        "Explore structured health, medicine, disease, and wellness content through Somatic's learning experience.",
+      icon: "BookOpen",
+    },
+    {
+      title: "Connected Patient Portal",
+      description:
+        "Manage consultations, lab bookings, reports, insurance, orders, subscriptions, and other supported healthcare services from one account.",
+      icon: "LayoutDashboard",
     },
   ],
 
   services: [
     {
-      title: "Automated Patient Intake & Triage",
+      title: "Digital Patient Care",
       description:
-        "Transform your hospital's waiting room. We replace manual paperwork with an intelligent, self-service digital intake that categorizes and prepares patients.",
-      icon: "UserPlus",
+        "Bring consultations, patient information, follow-ups, and healthcare activities into one connected digital experience.",
+      icon: "UserRound",
     },
     {
-      title: "Secure EHR Infrastructure",
+      title: "AI-Assisted Healthcare",
       description:
-        "Protect your patients' most valuable asset. We provide end-to-end, bank-grade AES-256 encrypted storage for electronic health records.",
-      icon: "Shield",
-    },
-
-    {
-      title: "Zero-Queue Dispatch Operations",
-      description:
-        "If all doctors are busy, authorized Assistant Doctors step in. If a case still sits pending, a dedicated Dispatcher actively intervenes to ensure immediate attention.",
-      icon: "Clock",
+        "Use responsible AI features to organize information, explain healthcare content, and support users and professionals throughout the healthcare journey.",
+      icon: "BrainCircuit",
     },
     {
-      title: "Emergency Transport Sync",
+      title: "Emergency Support",
       description:
-        "Upgrade your critical care response with integrated ambulance dispatch systems that sync live patient telemetry directly to your hospital's emergency room dashboard.",
-      icon: "Activity",
+        "Provide first-aid information and support hospital and ambulance workflows for urgent healthcare situations.",
+      icon: "Siren",
     },
     {
-      title: "Hospital Pharmacy Integration",
+      title: "Diagnostic Services",
       description:
-        "Connect your hospital's pharmacy and blood bank to our universal e-commerce module, allowing seamless COD dispatches directly to the patient's location.",
-      icon: "Package",
+        "Book supported lab tests and packages with convenient collection options and digital booking management.",
+      icon: "Microscope",
+    },
+    {
+      title: "Medical Reports",
+      description:
+        "Keep supported medical reports accessible and use AI-assisted explanations to make complex health information easier to understand.",
+      icon: "FileSearch",
+    },
+    {
+      title: "Healthcare Commerce",
+      description:
+        "Access supported medicines, healthcare products, and related healthcare services through one digital platform.",
+      icon: "ShoppingBag",
+    },
+    {
+      title: "Insurance Services",
+      description:
+        "Manage supported healthcare insurance information and claim workflows through your Somatic account.",
+      icon: "ShieldCheck",
+    },
+    {
+      title: "Healthcare Education",
+      description:
+        "Learn about diseases, medicines, first aid, wellness, and everyday healthcare through structured educational content.",
+      icon: "BookOpen",
     },
   ],
+
   legal: {
     terms: [
       {
         heading: "1. Acceptance of Terms and Platform Scope",
-        text: "By accessing, registering for, or utilizing the Somatic platform, its APIs, microservices, or any related digital infrastructure ('the Platform'), you expressly agree to be bound by these Terms of Service. Somatic operates as a software-as-a-service (SaaS) solution providing assistive digital triage, telemedicine routing, and clinical data management. Somatic is a technology provider and does not directly provide medical, clinical, or pharmaceutical services. We reserve the absolute right to modify these Terms at any time without prior notice. Your continued utilization of the Platform constitutes your irrevocable acceptance of the revised Terms.",
+        text: "By accessing or using Somatic, including its web application, APIs, services, and related digital features, you agree to these Terms of Service. Somatic is a healthcare technology platform that provides digital tools, information, workflow support, and connections to healthcare-related services. Specific services may vary by location, availability, user role, and participating providers.",
       },
       {
-        heading: "2. Absolute Medical Disclaimer and AI Limitations",
-        text: "THE SOMATIC PLATFORM AND ITS ARTIFICIAL INTELLIGENCE (AI) TRIAGE ENGINE DO NOT PROVIDE PROFESSIONAL MEDICAL ADVICE, DIAGNOSIS, OR TREATMENT. The Platform utilizes third-party Large Language Models (LLMs), including Google Gemini, to analyze patient-provided data and generate preliminary triage summaries, routing suggestions, and complementary Ayurvedic insights. AI systems are probabilistic and subject to algorithmic limitations and 'hallucinations'. Patients must not delay seeking professional medical care or alter prescribed treatments based on AI outputs.",
+        heading: "2. Healthcare and AI Disclaimer",
+        text: "Somatic and its AI-assisted features are not a substitute for professional medical advice, diagnosis, treatment, or emergency medical services. AI-generated information may be incomplete or inaccurate and should be independently verified when making healthcare decisions. Users should consult an appropriately qualified healthcare professional for diagnosis, treatment, prescriptions, or other clinical decisions.",
       },
       {
-        heading: "3. Emergency (SOS) Protocols and System Reliability",
-        text: "While the Platform incorporates an automated 'SOS / Medical Emergency' flagging system for severe keywords, this system is purely informational. IT IS NOT A SUBSTITUTE FOR EMERGENCY DISPATCH SERVICES. In the event of an acute, life-threatening medical emergency, patients must immediately contact local emergency services or proceed to the nearest hospital. Somatic disclaims all liability for adverse health outcomes arising from delayed physical medical care.",
+        heading: "3. Emergency Situations",
+        text: "Somatic may provide first-aid information and support emergency-related healthcare workflows, including hospital and ambulance coordination where available. These features do not replace local emergency services. In a life-threatening emergency, contact your local emergency service or seek immediate medical attention.",
       },
       {
-        heading: "4. Practitioner Obligations and Clinical Autonomy",
-        text: "Users registered as 'Doctors' warrant that they hold valid, active, and unrestricted medical licenses appropriate for their assigned jurisdiction and medical department. Practitioners acknowledge that AI-generated drafts are strictly assistive. The Practitioner bears sole responsibility to review patient inputs, verify attached reports, exercise independent clinical judgment, and modify the AI draft prior to issuing any prescription. By claiming a case and finalizing a prescription, the Practitioner assumes complete medical, legal, and ethical liability for that encounter.",
+        heading: "4. Healthcare Professional Responsibility",
+        text: "Healthcare professionals using Somatic remain responsible for their clinical decisions and professional obligations. AI-generated summaries, suggestions, or other assistive information must be reviewed and verified before being used in clinical decision-making.",
       },
       {
-        heading: "5. Account Security and Role-Based Access Control (RBAC)",
-        text: "You are solely responsible for maintaining the confidentiality of your account credentials. Somatic employs strict Role-Based Access Control (RBAC) to enforce data isolation between Patients, Doctors, and Administrators. Any unauthorized attempt to escalate privileges, access cross-departmental data, or utilize another user's account constitutes a severe violation of these Terms and will result in immediate account termination.",
+        heading: "5. Account Security and Access Control",
+        text: "Users are responsible for maintaining the security of their account credentials and devices. Somatic uses role-based access controls and authenticated workflows to restrict access to platform features and information according to the user's role and permissions.",
       },
       {
-        heading: "6. Acceptable Use and API Rate Limiting",
-        text: "To ensure system stability and equitable access, Somatic employs strict infrastructural safeguards, including Upstash Redis sliding-window rate limiting. You are prohibited from utilizing automated scripts, bots, scrapers, or unauthorized API calls to interact with the Platform. Any attempt to bypass rate limits, initiate DDoS attacks, or artificially inflate consultation queues will trigger permanent IP bans and potential legal action.",
+        heading: "6. Acceptable Use",
+        text: "Users must use Somatic lawfully and only for its intended purposes. Unauthorized access, abuse of platform services, attempts to bypass security controls, automated misuse, malicious activity, or interference with platform availability may result in account restrictions or termination.",
       },
       {
-        heading: "7. System Audit and Activity Logging",
-        text: "You expressly consent to the Platform's comprehensive System Audit Logger. Every action taken on the Platform—including session logins, case claims, case releases, AI draft modifications, and CSV exports—is immutably recorded in our MongoDB infrastructure with timestamps, IP addresses, and user identifiers. These audit logs are maintained for legal compliance and may be disclosed to regulatory bodies upon receipt of a valid legal order.",
+        heading: "7. Platform Availability",
+        text: "Somatic may occasionally experience maintenance, technical failures, third-party service interruptions, network issues, or other events that affect availability. Healthcare users should maintain appropriate alternative procedures for situations where digital services are unavailable.",
       },
       {
-        heading: "8. Intellectual Property Rights",
-        text: "All proprietary technology, frontend components, backend microservices, specialized AI prompt engineering, and UI/UX designs associated with Somatic remain the exclusive intellectual property of Somatic and its licensors. Users are granted a limited, non-exclusive, non-transferable license to access the Platform strictly for its intended clinical and administrative purposes.",
+        heading: "8. Intellectual Property",
+        text: "The Somatic name, branding, software, interface designs, original content, platform architecture, and related intellectual property belong to Somatic or their respective licensors. Users receive a limited right to access and use the platform for its intended purposes.",
       },
       {
-        heading: "9. Limitation of Liability",
-        text: "To the maximum extent permitted by applicable law, Somatic, its developers, and affiliates shall not be liable for any direct, indirect, punitive, incidental, special, or consequential damages, including but not limited to medical complications, data loss, or system downtime arising out of or in any way connected with the use or performance of the Platform.",
+        heading: "9. Third-Party Services",
+        text: "Certain Somatic features may depend on third-party services such as payment providers, AI providers, mapping services, communication services, healthcare providers, laboratories, delivery partners, or other integrations. Availability and terms for these services may be governed by their respective providers.",
       },
       {
-        heading: "10. Indemnification",
-        text: "You agree to indemnify, defend, and hold harmless Somatic and its affiliates from any claims, damages, liabilities, costs, or expenses (including legal fees) arising out of your use of the Platform, your violation of these Terms, medical malpractice claims, or your violation of any third-party privacy rights.",
+        heading: "10. Medical Products and Healthcare Commerce",
+        text: "Product availability, pricing, prescription requirements, delivery, and fulfillment may vary by product, location, provider, and applicable regulations. Somatic may act as a technology platform connecting users with supported healthcare commerce services and does not replace the responsibilities of licensed healthcare providers, pharmacies, laboratories, blood banks, or other regulated entities.",
       },
       {
-        heading: "11. Platform Modification and Termination",
-        text: "Somatic reserves the right to modify, suspend, or discontinue, temporarily or permanently, the Platform or any service to which it connects, with or without notice and without liability to you. We may terminate or suspend your account immediately, without prior notice, for conduct that we believe violates these Terms or is harmful to other users of the Platform.",
+        heading: "11. Blood and Emergency Healthcare Services",
+        text: "Blood availability and emergency healthcare resources are dynamic and cannot be guaranteed. Blood compatibility testing, cross-matching, transfusion decisions, and clinical administration must be performed by authorized healthcare professionals and appropriate healthcare facilities.",
       },
       {
-        heading: "12. Governing Law and Dispute Resolution",
-        text: "These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which Somatic's primary corporate entity is registered, without regard to its conflict of law provisions. Any legal action or proceeding arising under these Terms will be brought exclusively in the federal or state courts located in that jurisdiction.",
+        heading: "12. User-Provided Information",
+        text: "Users are responsible for providing information that is accurate and relevant to the services they use. Incorrect, incomplete, outdated, or misleading information may affect the quality of digital workflows and healthcare-related services.",
       },
       {
-        heading: "13. Medical E-Commerce and Blood Bank Logistics",
-        text: "The universal medical e-commerce module, including medicine delivery and emergency blood unit dispatch, operates on a best-effort basis. Somatic acts strictly as a technology intermediary connecting patients, hospitals, and registered blood banks. We do not manufacture medicines nor do we physically bank blood. Users acknowledge that blood unit availability is dynamic. The receiving hospital or Practitioner bears the absolute liability for conducting mandatory cross-matching and compatibility testing prior to any transfusion. Somatic is not liable for transit delays, stock-outs, or adverse reactions arising from administered products.",
+        heading: "13. Platform Changes",
+        text: "Somatic may add, modify, suspend, or discontinue features and services as the platform evolves. Changes may be introduced to improve functionality, security, reliability, compliance, or user experience.",
       },
       {
-        heading: "14. Cash-on-Delivery (COD) and Dispatch Protocols",
-        text: "Orders placed via the Cash-on-Delivery (COD) dispatch system constitute a binding intent to purchase. Somatic and its partnered dispatchers reserve the right to cancel orders or restrict COD privileges for users exhibiting fraudulent behavior, excessive cancellations, or abusive conduct toward delivery personnel. Ambulance dispatch ETAs are algorithmic estimates and are subject to real-world traffic and logistical constraints.",
+        heading: "14. Limitation of Liability",
+        text: "To the extent permitted by applicable law, Somatic and its technology providers are not responsible for losses arising from misuse of the platform, reliance on unverified AI-generated information, third-party service interruptions, inaccurate user-provided information, or delays and limitations outside the platform's reasonable control.",
+      },
+      {
+        heading: "15. Governing Law",
+        text: "These Terms are governed by the applicable laws and regulations of the jurisdiction in which the relevant Somatic operating entity is established, unless otherwise required by applicable law.",
       },
     ],
+
     privacy: [
       {
-        heading: "1. Scope and Definitions",
-        text: "This Privacy Policy governs the collection, processing, and storage of data by the Somatic platform. It applies to all users (Patients, Doctors, and Administrators). We are committed to maintaining the highest standards of data protection, ensuring compliance with global healthcare privacy frameworks regarding Protected Health Information (PHI) and Personally Identifiable Information (PII).",
+        heading: "1. Scope of This Privacy Policy",
+        text: "This Privacy Policy explains how Somatic may collect, use, store, and protect information when users access the platform and its healthcare-related services.",
       },
       {
-        heading: "2. Collection of PHI and PII",
-        text: "To provide our digital triage services, Somatic collects highly sensitive data. This includes patient demographics (age, weight), biological sex, detailed symptom descriptions, raw audio data via voice-to-text dictation, preferred prescription languages, and digital attachments (laboratory reports, radiological images). By submitting this data, you explicitly consent to its collection for the purpose of medical triage and departmental routing.",
+        heading: "2. Information We May Collect",
+        text: "Depending on the services used, Somatic may collect account information, contact details, demographic information, consultation information, health-related information submitted by users, medical reports or attachments, lab booking information, order information, insurance-related information, and other data necessary to provide requested services.",
       },
       {
-        heading: "3. Processing of Voice, Text, and Attachments",
-        text: "All raw text and voice dictations captured via the Web Speech API are processed to extract structured clinical data. External file attachments provided via links are stored securely and passed only to authorized Practitioners within the assigned department. We apply data minimization principles, processing only the information strictly necessary to execute core medical functionalities.",
+        heading: "3. Health Information",
+        text: "Health information submitted through Somatic is used to provide requested healthcare workflows, consultations, report assistance, lab services, and related platform functionality. Access is controlled according to user roles and the permissions required for the relevant service.",
       },
       {
-        heading: "4. Artificial Intelligence and Third-Party LLMs",
-        text: "Somatic utilizes third-party LLMs (such as Google Gemini APIs via our Python/FastAPI backend) to generate triage drafts. Patient PHI is utilized exclusively in an 'ephemeral' context for the sole purpose of generating the immediate consultation draft. Your health data is strictly prohibited from being utilized by Google or any other third party to train, fine-tune, or enhance public foundational AI models.",
+        heading: "4. AI Processing",
+        text: "Some Somatic features use third-party AI services to process information and generate assistive outputs. Where AI processing is used, information is sent to the relevant service only as required to provide that feature. Users should review the applicable service and privacy terms before submitting highly sensitive information.",
       },
       {
-        heading: "5. Data Encryption and Storage Infrastructure",
-        text: "All data transmitted between client devices, our Next.js edge servers, Python microservices, and MongoDB databases is encrypted in transit utilizing Transport Layer Security (TLS 1.3). All persisted PHI, electronic health records (EHR), and system audit logs are encrypted at rest utilizing Advanced Encryption Standard (AES-256).",
+        heading: "5. Data Security",
+        text: "Somatic uses technical and organizational security measures intended to protect information against unauthorized access, alteration, disclosure, or loss. No internet-based system can guarantee absolute security, so users should also protect their credentials and devices.",
       },
       {
-        heading: "6. System Logging and Data Auditing",
-        text: "Somatic implements a strict, immutable system logger to maintain medical accountability. Every session, API request, status change, and data export is time-stamped and recorded. These logs contain actor IDs, target IDs, and action payloads, ensuring a zero-trust environment where every interaction is traceable for clinical and legal auditing.",
+        heading: "6. Access Control and Account Permissions",
+        text: "Somatic uses authenticated sessions and role-based permissions to control access to platform functionality and healthcare information. Different users may have different levels of access depending on whether they are patients, healthcare professionals, dispatchers, administrators, or other authorized users.",
       },
       {
-        heading: "7. CSV Export and Offline Data Custody",
-        text: "The Platform allows authorized Doctors and Administrators to export consultation histories and system logs via CSV. UPON EXPORT, SOMATIC RELINQUISHES ALL LIABILITY OVER THE SECURITY OF THAT DATA. Practitioners are legally mandated to store exported PHI exclusively on encrypted, hospital-approved hardware and permanently destroy it when no longer required.",
+        heading: "7. System Logs and Security Monitoring",
+        text: "Somatic may maintain technical and activity logs to operate the platform, troubleshoot problems, monitor security, prevent abuse, investigate incidents, and maintain accountability for important platform actions.",
       },
       {
-        heading: "8. Non-Disclosure and Third-Party Sharing",
-        text: "Somatic does not sell, trade, or rent PHI to commercial third parties, advertisers, or data brokers. Data is accessible only to authorized medical staff within the relevant assigned department. We may disclose personal information only if required by law, court order, or regulatory authorities.",
+        heading: "8. Third-Party Service Providers",
+        text: "Somatic may work with third-party providers for services such as AI processing, payments, hosting, communication, delivery, laboratory services, mapping, analytics, or other infrastructure. Information may be shared with these providers only as necessary to provide the relevant service or meet legal obligations.",
       },
       {
-        heading: "9. Patient Rights and Data Access",
-        text: "Patients retain the right to access, rectify, or request the deletion of their personal health data stored on the Platform. However, such requests are subject to the legal data retention mandates required of medical institutions in your respective jurisdiction, which may legally supersede requests for immediate deletion.",
+        heading: "9. No Sale of Personal Health Information",
+        text: "Somatic does not intend to sell personal health information to advertisers or data brokers. Information may be disclosed when required to provide a requested service, protect platform users, prevent fraud or abuse, or comply with applicable legal obligations.",
       },
       {
-        heading: "10. Data Retention Policies",
-        text: "Consultation records, AI drafts, prescriptions, and system audit logs are retained securely on our MongoDB infrastructure for the maximum duration required by regional healthcare compliance laws (typically ranging from 5 to 7 years). Once the retention period expires, data is securely and permanently purged.",
+        heading: "10. Patient Access and Corrections",
+        text: "Subject to applicable law and platform capabilities, users may request access to or correction of personal information associated with their account. Certain healthcare records may be subject to legal or operational retention requirements.",
       },
       {
-        heading: "11. Technical Telemetry and Cookies",
-        text: "We collect non-identifiable technical metadata, including browser user agents, IP addresses, session durations, and interaction logs, strictly to monitor system performance, enforce Upstash rate limiting, and defend against cyber threats. We utilize secure, HTTP-only cookies solely for session authentication and RBAC enforcement.",
+        heading: "11. Data Retention",
+        text: "Information is retained for as long as reasonably necessary to provide requested services, maintain appropriate records, meet legal obligations, resolve disputes, prevent abuse, and support legitimate operational requirements.",
       },
       {
-        heading: "12. Updates to the Privacy Policy",
-        text: "We reserve the right to update this Privacy Policy as our technology, AI integrations, or regulatory obligations evolve. Users will be notified of significant changes via the Platform. Continued use of the Platform after such updates constitutes acceptance of the revised data handling practices.",
+        heading: "12. Cookies and Technical Information",
+        text: "Somatic may use cookies, session technologies, and technical information such as browser details, IP addresses, device information, and interaction data to authenticate users, maintain sessions, improve reliability, protect the platform, and understand how services are used.",
       },
       {
-        heading: "13. Physical Logistics and Dispatch Data Sharing",
-        text: "To facilitate the fulfillment of e-commerce orders, blood unit requests, and ambulance dispatches, Somatic must share specific PII (such as physical delivery addresses, real-time geolocation, and contact numbers) with authorized third-party dispatchers, ambulance drivers, and delivery personnel. This data is shared on a strictly need-to-know basis to ensure the successful physical delivery of critical care items or transport.",
+        heading: "13. Physical Healthcare Services",
+        text: "When users request services involving physical delivery, laboratory collection, ambulance transportation, medicines, or other healthcare logistics, relevant information such as contact details, delivery addresses, appointment details, or location information may need to be shared with authorized service providers to complete the requested service.",
+      },
+      {
+        heading: "14. Policy Updates",
+        text: "This Privacy Policy may be updated as Somatic's services, technology, and legal requirements evolve. Significant changes may be communicated through the platform or other appropriate channels.",
       },
     ],
+
     guidelines: [
       {
-        heading: "1. Clinical Independence and Standard of Care",
-        text: "The Somatic platform is an assistive tool. Medical Practitioners must exercise absolute clinical independence. The AI-generated drafts are intended to streamline workflow, not replace medical judgment. Doctors must adhere to their local medical council's standard of care when issuing final prescriptions and clinical advice.",
+        heading: "1. Use Somatic as a Healthcare Support Tool",
+        text: "Somatic is designed to support healthcare journeys, not replace professional medical care. Use AI-generated information as assistance and seek professional medical advice when appropriate.",
       },
       {
-        heading: "2. Smart Queue Etiquette (Claim and Release)",
-        text: "Departmental efficiency relies on responsible queue management. Practitioners should only click 'Claim Case' if they have immediate capacity to complete the review. If a Practitioner cannot finalize a claimed case, they are strictly mandated to instantly utilize the 'Release Case' function to return the patient to the active departmental pending queue.",
+        heading: "2. Seek Emergency Care When Needed",
+        text: "Do not rely solely on Somatic during a life-threatening emergency. Contact local emergency services or reach an appropriate medical facility immediately.",
       },
       {
-        heading: "3. Emergency (SOS) Prioritization",
-        text: "The AI microservice automatically flags high-risk keywords with an 'SOS / Medical Emergency' badge. Departmental staff must visually prioritize these flagged cases. However, Practitioners must remain vigilant, as AI algorithms may produce false negatives; clinical suspicion must dictate triage priority over algorithmic flagging.",
+        heading: "3. Provide Accurate Information",
+        text: "Provide clear and accurate symptoms, medical history, medications, reports, contact information, and other requested details. Better information helps the platform and healthcare professionals provide more relevant support.",
       },
       {
-        heading: "4. Integrative Medicine Application (Ayurvedic/Allopathic)",
-        text: "Somatic uniquely provides dual-modality insights. Practitioners must treat Allopathic pharmacological interventions as the primary medical directive. The Ayurvedic (Dosha) hints are complementary lifestyle suggestions. Doctors must cross-reference these holistic hints to ensure they do not contraindicate primary Allopathic treatments.",
+        heading: "4. Verify AI-Generated Information",
+        text: "AI systems can make mistakes. Always verify important health information, medication instructions, diagnoses, and treatment decisions with a qualified healthcare professional.",
       },
       {
-        heading: "5. Digital Prescription Standards",
-        text: "Final prescriptions generated on the Platform must adhere to strict pharmacological standards. Practitioners must explicitly define drug names, exact dosages (e.g., '500mg'), frequency (e.g., '1-0-1'), and duration. Vague or incomplete clinical instructions are strictly prohibited.",
+        heading: "5. Protect Your Account",
+        text: "Do not share your password, authentication codes, or account access with others. Log out from shared devices and report suspicious account activity promptly.",
       },
       {
-        heading: "6. Multilingual Communication",
-        text: "To ensure maximum patient adherence and safety, the Platform captures the patient's 'Preferred Prescription Language'. Whenever clinically feasible, Practitioners should utilize this language setting for written clinical instructions, diet plans, and follow-up advice.",
+        heading: "6. Use Healthcare Services Responsibly",
+        text: "Use consultation, ambulance, blood, lab, medicine, insurance, and other healthcare services only for genuine healthcare needs. Avoid fraudulent, abusive, or misleading requests.",
       },
       {
-        heading: "7. Patient Input Accuracy",
-        text: "Patients utilizing voice dictation or text inputs must provide clear, concise, and accurate symptom descriptions. Furthermore, any external laboratory reports or imagery links attached to the consultation must belong to the patient and be free of digital tampering or malicious software.",
+        heading: "7. Respect Healthcare Professionals",
+        text: "Keep communications professional and provide healthcare professionals with the information they need to review your case effectively.",
       },
       {
-        heading: "8. Offline Data Compliance",
-        text: "Authorized users exporting CSV files containing system logs or consultation data assume full legal custody of that PHI. Exported files must never be transferred via unsecured email, stored on public cloud drives, or left on unencrypted personal devices. Compliance with local data protection laws applies post-export.",
+        heading: "8. Protect Medical Records",
+        text: "Treat downloaded prescriptions, reports, consultation records, and other healthcare documents as sensitive information. Store and share them carefully.",
       },
       {
-        heading: "9. Zero-Trust Accountability",
-        text: "All users operate in a zero-trust environment. Every digital interaction, status change, and modification is permanently mapped to your user ID in the System Logs. Do not share credentials, and ensure sessions are logged out on shared hospital terminals to protect the integrity of the medical audit trail.",
+        heading: "9. Lab and Diagnostic Information",
+        text: "Lab results and diagnostic information should be interpreted in the appropriate clinical context. Use Somatic's report-assistance features as informational support and consult a healthcare professional for clinical interpretation.",
       },
       {
-        heading: "10. Professional Platform Conduct",
-        text: "All communications, including clinical notes and system interactions, must maintain a high standard of professional decorum. Abuse of the system, circumvention of role-based limits, or unprofessional conduct within the platform’s data fields will result in administrative review and account suspension.",
+        heading: "10. Medicine and Blood Requests",
+        text: "Medicine and blood-related requests should be based on genuine healthcare needs. Prescription requirements, availability, compatibility, and clinical decisions must be handled by the appropriate authorized professionals or facilities.",
       },
       {
-        heading: "11. E-Commerce & Blood Request Integrity",
-        text: "Practitioners utilizing the e-commerce module must prescribe medications based solely on objective clinical necessity. Inducing unnecessary orders or artificially inflating prescriptions for personal or platform gain is strictly prohibited. Emergency blood requests must only be initiated for verified clinical emergencies, ensuring that critical regional blood bank inventories are not depleted by non-urgent hoarding.",
+        heading: "11. Professional Clinical Responsibility",
+        text: "Healthcare professionals using Somatic remain responsible for reviewing patient information, verifying AI-assisted outputs, making clinical decisions, and following the professional standards applicable to their practice.",
+      },
+      {
+        heading: "12. Responsible Use of the Platform",
+        text: "Do not attempt to bypass access controls, manipulate healthcare records, abuse platform services, impersonate another user, or use Somatic for unlawful or harmful activities.",
       },
     ],
   },
