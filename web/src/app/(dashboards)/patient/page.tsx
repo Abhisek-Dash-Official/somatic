@@ -13,7 +13,7 @@ export default function PatientDashboardPage() {
         <>
             <PatientDashboardClient />
 
-            <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center justify-between gap-4 border border-border bg-surface p-5 sm:flex-row">
                 <div>
                     <h3 className="font-semibold text-foreground">
                         Visiting a Hospital?

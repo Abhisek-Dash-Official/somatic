@@ -4,17 +4,14 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Consultation from "@/models/Consultation";
 import User from "@/models/User";
-import Department from "@/models/Department";
 
-export async function GET(req: Request) {
-  Department;
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
     if (
       !session?.user?.id ||
-      (session.user.role !== "doctor" &&
-        session.user.role !== "assistant_doctor")
+      !["doctor", "assistant_doctor"].includes(session.user.role)
     ) {
       return NextResponse.json(
         { error: "Unauthorized access" },
@@ -23,6 +20,7 @@ export async function GET(req: Request) {
     }
 
     await dbConnect();
+
     const doctorId = session.user.id;
 
     const doctor = await User.findById(doctorId)
@@ -34,48 +32,81 @@ export async function GET(req: Request) {
     const departmentName =
       (doctor?.doctor_info?.department_id as any)?.name || "General";
 
-    const totalMyCases = await Consultation.countDocuments({
-      claimed_by_doctor_id: doctorId,
-    });
-    const myCompleted = await Consultation.countDocuments({
-      claimed_by_doctor_id: doctorId,
-      status: "completed",
-    });
-
-    const pendingQuery = {
-      status: { $ne: "completed" },
-      $or: [
-        {
-          assigned_department_id: doctorDeptId,
-          status: "pending_review",
-        },
-        {
-          claimed_by_doctor_id: session.user.id,
-        },
-      ],
-    };
-
-    const deptPending = await Consultation.countDocuments(pendingQuery);
-
-    const activeCases = await Consultation.find({
-      $or: [
-        pendingQuery,
-        { status: "in_review", claimed_by_doctor_id: doctorId },
-      ],
-    })
-      .select(
-        "_id status created_at ai_draft.is_emergency ai_draft.chief_complaints patient_input.age claimed_by_doctor_id assigned_department_id",
-      )
-      .sort({ "ai_draft.is_emergency": -1, status: -1, created_at: -1 })
-      .limit(10)
-      .lean();
+    const [
+      totalMyCases,
+      pendingMyCases,
+      inReviewMyCases,
+      completedMyCases,
+      emergencyMyCases,
+      departmentPending,
+      departmentEmergency,
+      activeCases,
+    ] = await Promise.all([
+      Consultation.countDocuments({ claimed_by_doctor_id: doctorId }),
+      Consultation.countDocuments({
+        claimed_by_doctor_id: doctorId,
+        status: "pending_review",
+      }),
+      Consultation.countDocuments({
+        claimed_by_doctor_id: doctorId,
+        status: "in_review",
+      }),
+      Consultation.countDocuments({
+        claimed_by_doctor_id: doctorId,
+        status: "completed",
+      }),
+      Consultation.countDocuments({
+        claimed_by_doctor_id: doctorId,
+        "ai_draft.is_emergency": true,
+        status: { $ne: "completed" },
+      }),
+      doctorDeptId
+        ? Consultation.countDocuments({
+            assigned_department_id: doctorDeptId,
+            status: "pending_review",
+            claimed_by_doctor_id: { $exists: false },
+          })
+        : 0,
+      doctorDeptId
+        ? Consultation.countDocuments({
+            assigned_department_id: doctorDeptId,
+            status: "pending_review",
+            "ai_draft.is_emergency": true,
+            claimed_by_doctor_id: { $exists: false },
+          })
+        : 0,
+      Consultation.find({
+        $or: [
+          { claimed_by_doctor_id: doctorId, status: { $ne: "completed" } },
+          ...(doctorDeptId
+            ? [
+                {
+                  assigned_department_id: doctorDeptId,
+                  status: "pending_review",
+                  claimed_by_doctor_id: { $exists: false },
+                },
+              ]
+            : []),
+        ],
+      })
+        .select(
+          "_id status created_at ai_draft.is_emergency ai_draft.chief_complaints patient_input.age claimed_by_doctor_id assigned_department_id",
+        )
+        .sort({ "ai_draft.is_emergency": -1, created_at: -1 })
+        .limit(10)
+        .lean(),
+    ]);
 
     return NextResponse.json(
       {
         stats: {
           total: totalMyCases,
-          pending: deptPending,
-          completed: myCompleted,
+          pending: pendingMyCases,
+          in_review: inReviewMyCases,
+          completed: completedMyCases,
+          emergency: emergencyMyCases,
+          department_pending: departmentPending,
+          department_emergency: departmentEmergency,
         },
         activeCases,
         isAcceptingCases: doctor?.doctor_info?.is_accepting_cases ?? false,
@@ -83,8 +114,9 @@ export async function GET(req: Request) {
       },
       { status: 200 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Doctor Dashboard API Error:", error);
+
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
