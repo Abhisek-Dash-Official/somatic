@@ -124,12 +124,6 @@ const LabBookingSchema = new Schema<ILabBookingDocument>(
       trim: true,
     },
 
-    collector_id: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      index: true,
-    },
-
     status: {
       type: String,
       enum: [

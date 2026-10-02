@@ -205,6 +205,7 @@ export const navLinks = {
         icon: "Hourglass",
       },
       { title: "Orders", href: "/dispatcher/orders", icon: "ShoppingBag" },
+      { title: "Labs", href: "/dispatcher/labs", icon: "Microscope" },
       {
         title: "Insurance",
         href: "/dispatcher/insurance",
@@ -235,7 +236,7 @@ export const navLinks = {
         href: "/patient/consultations",
         icon: "ClipboardList",
       },
-      { title: "Lab Test", href: "/admin/labs", icon: "Microscope" },
+      { title: "Lab Test", href: "/labs", icon: "Microscope" },
       { title: "Tickets", href: "/tickets", icon: "Ticket" },
       { title: "Profile", href: "/patient/profile", icon: "User" },
     ],

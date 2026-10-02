@@ -461,6 +461,27 @@ export interface ITransaction {
   updated_at?: Date | string;
 }
 
+export interface ILabTest {
+  name: string;
+  code?: string;
+  description?: string;
+  category: string;
+  type: "test" | "package";
+  price: number;
+  home_collection: boolean;
+  sample_type?: string;
+  preparation?: string;
+  report_time?: string;
+  parameters: {
+    name: string;
+    unit?: string;
+    reference_range?: string;
+  }[];
+  is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface ILabBooking {
   booking_number: string;
 
@@ -495,8 +516,6 @@ export interface ILabBooking {
 
   scheduled_date: Date;
   scheduled_slot: string;
-
-  collector_id?: mongoose.Types.ObjectId;
 
   status:
     | "booked"
