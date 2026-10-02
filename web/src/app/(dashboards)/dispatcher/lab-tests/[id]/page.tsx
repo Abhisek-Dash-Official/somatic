@@ -25,6 +25,20 @@ type TestResult = {
     parameters: ResultParameter[];
 };
 
+type LabTestParameter = {
+    name: string;
+    unit?: string;
+    reference_range?: string;
+};
+
+type BookingTest = {
+    test_id: unknown;
+    name: string;
+    type: "test" | "package";
+    price: number;
+    parameters?: LabTestParameter[];
+};
+
 const statusLabels: Record<ILabBookingDocument["status"], string> = {
     booked: "Booked",
     collection_scheduled: "Collection Scheduled",
@@ -52,6 +66,16 @@ function getObjectId(value: unknown) {
     }
 
     return String(value);
+}
+
+function createParameterFromDefault(parameter: LabTestParameter): ResultParameter {
+    return {
+        name: parameter.name || "",
+        value: "",
+        unit: parameter.unit || "",
+        reference_range: parameter.reference_range || "",
+        status: "normal",
+    };
 }
 
 function createEmptyParameter(): ResultParameter {
@@ -111,14 +135,20 @@ export default function DispatcherLabBookingDetailsPage() {
 
             const existingTestIds = new Set(savedResults.map((item) => item.test_id));
 
-            result.booking.tests.forEach((test: { test_id: unknown; name: string }) => {
+            result.booking.tests.forEach((test: BookingTest) => {
                 const testId = getObjectId(test.test_id);
 
                 if (!existingTestIds.has(testId)) {
+                    const defaultParameters =
+                        test.parameters?.map(createParameterFromDefault) || [];
+
                     savedResults.push({
                         test_id: testId,
                         test_name: test.name,
-                        parameters: [createEmptyParameter()],
+                        parameters:
+                            defaultParameters.length > 0
+                                ? defaultParameters
+                                : [createEmptyParameter()],
                     });
                 }
             });
@@ -401,7 +431,7 @@ export default function DispatcherLabBookingDetailsPage() {
                                         <div>
                                             <h2 className="font-semibold">Enter Lab Results</h2>
                                             <p className="mt-1 text-sm text-muted">
-                                                Add the parameters and enter the result for each test.
+                                                Default test parameters are pre-filled. Update them or add additional parameters as needed.
                                             </p>
                                         </div>
                                     </div>
@@ -414,7 +444,7 @@ export default function DispatcherLabBookingDetailsPage() {
                                                 <div>
                                                     <h3 className="text-sm font-semibold">{testResult.test_name}</h3>
                                                     <p className="mt-1 text-xs text-muted">
-                                                        Enter any parameters applicable to this test.
+                                                        Default parameters are loaded from the lab test configuration.
                                                     </p>
                                                 </div>
 
@@ -855,6 +885,7 @@ export default function DispatcherLabBookingDetailsPage() {
                             <p className="mt-2 text-xs text-muted">
                                 Notes are saved when the next booking action is performed.
                             </p>
+
                             <button
                                 type="button"
                                 disabled={actionLoading}

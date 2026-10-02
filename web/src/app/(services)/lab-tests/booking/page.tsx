@@ -47,7 +47,9 @@ export default function LabBookingPage() {
                         const response = await fetch(`/api/lab-tests/${id}`, { cache: "no-store" });
                         const result = await response.json();
 
-                        if (!response.ok || !result.success) throw new Error(result.error || "Failed to load test.");
+                        if (!response.ok || !result.success) {
+                            throw new Error(result.error || "Failed to load test.");
+                        }
 
                         return result.data as ILabTestDocument;
                     }),
@@ -74,49 +76,66 @@ export default function LabBookingPage() {
             setSubmitting(true);
             setError("");
 
-            if (!address.address_line || !address.city || !address.state || !address.pincode || !scheduledDate || !scheduledSlot) {
+            if (
+                !address.address_line ||
+                !address.city ||
+                !address.state ||
+                !address.pincode ||
+                !scheduledDate ||
+                !scheduledSlot
+            ) {
                 throw new Error("Please complete the collection address, date and time slot.");
             }
 
-            const response = await fetch("/api/lab-bookings", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    tests: tests.map((test) => ({ test_id: test._id })),
-                    collection_address: address,
-                    scheduled_date: scheduledDate,
-                    scheduled_slot: scheduledSlot,
-                    payment_method: paymentMethod,
-                }),
-            });
-
-            const result = await response.json();
-
-            if (!response.ok || !result.success) throw new Error(result.error || "Failed to create booking.");
-
-            const booking = result.data.booking;
+            const bookingData = {
+                tests: tests.map((test) => ({ test_id: test._id })),
+                collection_address: address,
+                scheduled_date: scheduledDate,
+                scheduled_slot: scheduledSlot,
+            };
 
             if (paymentMethod === "cash_on_collection") {
-                router.push(`/lab-tests/bookings/${booking._id}`);
+                const response = await fetch("/api/lab-bookings", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        ...bookingData,
+                        payment_method: "cash_on_collection",
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || "Failed to create booking.");
+                }
+
+                router.push(`/lab-tests/bookings/${result.data.booking._id}`);
                 return;
             }
 
-            const orderResponse = await fetch(`/api/lab-bookings/${booking._id}/payment/order`, {
+            const orderResponse = await fetch("/api/lab-bookings/payment/order", {
                 method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(bookingData),
             });
 
             const orderResult = await orderResponse.json();
 
-            if (!orderResponse.ok || !orderResult.success) throw new Error(orderResult.error || "Failed to start payment.");
+            if (!orderResponse.ok || !orderResult.success) {
+                throw new Error(orderResult.error || "Failed to start payment.");
+            }
 
-            if (!window.Razorpay) throw new Error("Payment gateway is still loading. Please try again.");
+            if (!window.Razorpay) {
+                throw new Error("Payment gateway is still loading. Please try again.");
+            }
 
             const options = {
                 key: orderResult.data.key_id,
                 amount: orderResult.data.amount,
                 currency: orderResult.data.currency,
                 name: "SOMATIC",
-                description: `Lab booking ${booking.booking_number}`,
+                description: "Lab test booking",
                 order_id: orderResult.data.order_id,
                 theme: {
                     color: "#08a9b5",
@@ -127,10 +146,13 @@ export default function LabBookingPage() {
                     razorpay_signature: string;
                 }) => {
                     try {
-                        const verifyResponse = await fetch(`/api/lab-bookings/${booking._id}/payment/verify`, {
+                        const verifyResponse = await fetch("/api/lab-bookings/payment/verify", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(payment),
+                            body: JSON.stringify({
+                                ...payment,
+                                ...bookingData,
+                            }),
                         });
 
                         const verifyResult = await verifyResponse.json();
@@ -140,7 +162,7 @@ export default function LabBookingPage() {
                             return;
                         }
 
-                        router.push(`/lab-tests/bookings/${booking._id}`);
+                        router.push(`/lab-tests/bookings/${verifyResult.data.booking._id}`);
                     } catch (error) {
                         setError(error instanceof Error ? error.message : "Payment verification failed.");
                     } finally {
@@ -148,7 +170,9 @@ export default function LabBookingPage() {
                     }
                 },
                 modal: {
-                    ondismiss: () => setSubmitting(false),
+                    ondismiss: () => {
+                        setSubmitting(false);
+                    },
                 },
             };
 
