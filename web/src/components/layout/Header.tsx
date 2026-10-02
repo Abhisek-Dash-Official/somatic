@@ -8,9 +8,9 @@ import { useUserStore } from "@/store/useUserStore";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { siteConfig } from "@/config/site";
 import { navLinks } from "@/config/nav";
-import { Menu, X, ChevronRight, ChevronDown, LogOut, Bell, User, LayoutDashboard, LogIn, UserPlus, Sun, Moon } from "lucide-react";
+import { Menu, X, ChevronRight, ChevronDown, LogOut, Bell, User, LayoutDashboard, LogIn, UserPlus, ShoppingCart } from "lucide-react";
 
-const accountIconMap: Record<string, any> = { Bell, LayoutDashboard, User, LogOut, LogIn, UserPlus };
+const accountIconMap: Record<string, any> = { Bell, LayoutDashboard, User, LogOut, LogIn, UserPlus, ShoppingCart };
 
 function AccountDropdown({ user, onClose }: { user: any; onClose: () => void }) {
     const links = user ? navLinks.accountMenu.authenticated : navLinks.accountMenu.guest;

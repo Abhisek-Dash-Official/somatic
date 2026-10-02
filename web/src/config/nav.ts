@@ -3,11 +3,11 @@ export const navLinks = {
     { title: "SOMA AI", href: "/chat" },
     { title: "First Aid", href: "/first-aid" },
     { title: "Shop", href: "/shop" },
-    { title: "Cart", href: "/shop/cart" },
+    { title: "Portal", href: "/portal" },
   ],
 
   moreNav: [
-    { title: "Portal", href: "/portal" },
+    { title: "My Cart", href: "/shop/cart" },
     { title: "My Orders", href: "/shop/orders" },
     { title: "My Subscriptions", href: "/subscription" },
     { title: "Lab Tests", href: "/labs" },
@@ -100,6 +100,12 @@ export const navLinks = {
   ],
   accountMenu: {
     authenticated: [
+      {
+        title: "My Cart",
+        href: "/shop/cart",
+        icon: "ShoppingCart",
+        danger: false,
+      },
       {
         title: "Notifications",
         href: "/notifications",
