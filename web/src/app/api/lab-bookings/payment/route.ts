@@ -73,6 +73,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     const transaction = await Transaction.findOne({
       _id: booking.transaction_id,
+      user_id: booking.patient_id,
       reference_id: booking._id,
       transaction_type: "lab_booking",
       payment_gateway: "cash",
@@ -85,11 +86,52 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       );
     }
 
+    if (transaction.status === "paid") {
+      if (booking.payment_status !== "paid") {
+        booking.payment_status = "paid";
+        await booking.save();
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: "Cash payment was already marked as paid.",
+        data: {
+          booking_id: booking._id,
+          payment_status: booking.payment_status,
+          transaction_id: transaction._id,
+        },
+      });
+    }
+
+    if (!["created", "pending"].includes(transaction.status)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Cash transaction cannot be marked as paid from ${transaction.status} state.`,
+        },
+        { status: 400 },
+      );
+    }
+
+    if (
+      transaction.amount !== booking.total_amount ||
+      transaction.currency !== "INR"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Cash transaction amount does not match booking amount.",
+        },
+        { status: 409 },
+      );
+    }
+
     transaction.status = "paid";
     transaction.paid_at = new Date();
     transaction.metadata = {
       ...((transaction.metadata as Record<string, unknown>) || {}),
       cash_collected_by: session.user.id,
+      cash_collected_role: role,
     };
 
     await transaction.save();

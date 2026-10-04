@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import mongoose from "mongoose";
-import crypto from "crypto";
-import Razorpay from "razorpay";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/db";
 import LabTest from "@/models/LabTest";
 import LabBooking from "@/models/LabBooking";
 import Transaction from "@/models/Transaction";
+import {
+  fetchRazorpayOrder,
+  fetchRazorpayPayment,
+  verifyRazorpaySignature,
+} from "@/lib/payment";
 
 function generateBookingNumber() {
   const timestamp = Date.now().toString(36).toUpperCase();
@@ -27,7 +30,6 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-
     const {
       razorpay_order_id,
       razorpay_payment_id,
@@ -40,10 +42,7 @@ export async function POST(request: NextRequest) {
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Incomplete payment verification data.",
-        },
+        { success: false, error: "Incomplete payment verification data." },
         { status: 400 },
       );
     }
@@ -109,31 +108,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const secret = process.env.RAZORPAY_KEY_SECRET;
-
-    if (!secret) {
-      return NextResponse.json(
-        { success: false, error: "Payment gateway is not configured." },
-        { status: 500 },
-      );
-    }
-
-    const expectedSignature = crypto
-      .createHmac("sha256", secret)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest("hex");
-
-    if (expectedSignature.length !== razorpay_signature.length) {
-      return NextResponse.json(
-        { success: false, error: "Payment verification failed." },
-        { status: 400 },
-      );
-    }
-
     if (
-      !crypto.timingSafeEqual(
-        Buffer.from(expectedSignature),
-        Buffer.from(razorpay_signature),
+      !verifyRazorpaySignature(
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
       )
     ) {
       return NextResponse.json(
@@ -142,27 +121,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const keyId = process.env.RAZORPAY_KEY_ID;
+    const [razorpayOrder, razorpayPayment] = await Promise.all([
+      fetchRazorpayOrder(razorpay_order_id),
+      fetchRazorpayPayment(razorpay_payment_id),
+    ]);
 
-    if (!keyId) {
-      return NextResponse.json(
-        { success: false, error: "Payment gateway is not configured." },
-        { status: 500 },
-      );
-    }
-
-    const razorpay = new Razorpay({
-      key_id: keyId,
-      key_secret: secret,
-    });
-
-    const razorpayOrder = await razorpay.orders.fetch(razorpay_order_id);
     const razorpayAmount = Number(razorpayOrder.amount);
+    const paymentAmount = Number(razorpayPayment.amount);
 
     if (
       razorpayOrder.currency !== "INR" ||
+      razorpayPayment.currency !== "INR" ||
       !Number.isFinite(razorpayAmount) ||
-      razorpayAmount <= 0
+      !Number.isFinite(paymentAmount) ||
+      razorpayAmount <= 0 ||
+      paymentAmount !== razorpayAmount
     ) {
       return NextResponse.json(
         { success: false, error: "Invalid payment order." },
@@ -170,7 +143,52 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (String(razorpayPayment.order_id) !== String(razorpay_order_id)) {
+      return NextResponse.json(
+        { success: false, error: "Payment does not belong to this order." },
+        { status: 400 },
+      );
+    }
+
+    if (razorpayPayment.status !== "captured") {
+      return NextResponse.json(
+        { success: false, error: "Payment has not been captured." },
+        { status: 400 },
+      );
+    }
+
     await connectDB();
+
+    const existingTransaction = await Transaction.findOne({
+      transaction_type: "lab_booking",
+      gateway_payment_id: razorpay_payment_id,
+    });
+
+    if (existingTransaction) {
+      const existingBooking = await LabBooking.findById(
+        existingTransaction.reference_id,
+      );
+
+      if (existingBooking) {
+        return NextResponse.json({
+          success: true,
+          message: "Payment was already verified.",
+          data: {
+            booking: existingBooking,
+            transaction: existingTransaction,
+          },
+        });
+      }
+
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Payment transaction already exists but booking was not found.",
+        },
+        { status: 409 },
+      );
+    }
 
     const labTests = await LabTest.find({
       _id: { $in: testIds },
@@ -214,28 +232,6 @@ export async function POST(request: NextRequest) {
         },
         { status: 400 },
       );
-    }
-
-    const existingTransaction = await Transaction.findOne({
-      transaction_type: "lab_booking",
-      gateway_payment_id: razorpay_payment_id,
-    });
-
-    if (existingTransaction) {
-      const existingBooking = await LabBooking.findById(
-        existingTransaction.reference_id,
-      );
-
-      if (existingBooking) {
-        return NextResponse.json({
-          success: true,
-          message: "Payment was already verified.",
-          data: {
-            booking: existingBooking,
-            transaction: existingTransaction,
-          },
-        });
-      }
     }
 
     const booking = await LabBooking.create({
@@ -298,10 +294,7 @@ export async function POST(request: NextRequest) {
     console.error("POST /api/lab-bookings/payment/verify error:", error);
 
     return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to verify payment and create booking.",
-      },
+      { success: false, error: "Failed to verify payment and create booking." },
       { status: 500 },
     );
   }

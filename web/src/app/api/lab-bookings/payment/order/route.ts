@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import mongoose from "mongoose";
-import Razorpay from "razorpay";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/db";
 import LabTest from "@/models/LabTest";
+import { createRazorpayOrder, getRazorpayKeyId } from "@/lib/payment";
 
 export async function POST(request: NextRequest) {
   try {
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
 
     if (
       Number.isNaN(collectionDate.getTime()) ||
-      collectionDate <= new Date()
+      collectionDate.getTime() <= Date.now()
     ) {
       return NextResponse.json(
         { success: false, error: "Collection date must be in the future." },
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
       )!;
 
       return {
-        test_id: String(test._id),
+        test_id: test._id,
         name: test.name,
         type: test.type,
         price: test.price,
@@ -116,35 +116,28 @@ export async function POST(request: NextRequest) {
     const discount = 0;
     const totalAmount = subtotal + collectionFee - discount;
 
-    const keyId = process.env.RAZORPAY_KEY_ID;
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
-
-    if (!keyId || !keySecret) {
+    if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
       return NextResponse.json(
-        { success: false, error: "Payment gateway is not configured." },
-        { status: 500 },
+        { success: false, error: "Invalid booking amount." },
+        { status: 400 },
       );
     }
 
-    const razorpay = new Razorpay({
-      key_id: keyId,
-      key_secret: keySecret,
-    });
-
-    const order = await razorpay.orders.create({
-      amount: Math.round(totalAmount * 100),
+    const order = await createRazorpayOrder({
+      amount: totalAmount,
       currency: "INR",
       receipt: `LAB-${Date.now()}`,
       notes: {
         user_id: String(session.user.id),
         payment_method: "online",
+        transaction_type: "lab_booking",
       },
     });
 
     return NextResponse.json({
       success: true,
       data: {
-        key_id: keyId,
+        key_id: getRazorpayKeyId(),
         order_id: order.id,
         amount: order.amount,
         currency: order.currency,

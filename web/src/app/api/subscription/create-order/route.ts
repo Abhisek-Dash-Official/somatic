@@ -1,16 +1,11 @@
 import { NextResponse } from "next/server";
-import Razorpay from "razorpay";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/db";
 import SubscriptionPlan from "@/models/SubscriptionPlan";
 import Subscription from "@/models/Subscription";
 import Transaction from "@/models/Transaction";
-
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+import { createRazorpayOrder, getRazorpayKeyId } from "@/lib/payment";
 
 export async function POST(req: Request) {
   try {
@@ -56,7 +51,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const amount = Math.round(Number(plan.price) * 100);
+    const amount = Number(plan.price);
 
     if (!Number.isFinite(amount) || amount <= 0) {
       return NextResponse.json(
@@ -80,38 +75,52 @@ export async function POST(req: Request) {
       user_id: session.user.id,
       transaction_type: "subscription",
       reference_id: subscription._id,
-      amount: plan.price,
+      amount,
       currency: plan.currency,
       status: "created",
       payment_gateway: "razorpay",
-    });
-
-    const order = await razorpay.orders.create({
-      amount,
-      currency: plan.currency,
-      receipt: transaction._id.toString(),
-      notes: {
-        subscription_id: subscription._id.toString(),
-        transaction_id: transaction._id.toString(),
-        user_id: session.user.id,
-        plan_id: plan._id.toString(),
+      metadata: {
+        subscription_id: String(subscription._id),
+        plan_id: String(plan._id),
+        plan_name: plan.name,
+        payment_purpose: "subscription_purchase",
       },
     });
 
-    transaction.gateway_order_id = order.id;
-    await transaction.save();
+    try {
+      const order = await createRazorpayOrder({
+        amount,
+        currency: plan.currency,
+        receipt: `SUB-${transaction._id}`,
+        notes: {
+          subscription_id: String(subscription._id),
+          transaction_id: String(transaction._id),
+          user_id: String(session.user.id),
+          plan_id: String(plan._id),
+          payment_purpose: "subscription_purchase",
+        },
+      });
 
-    return NextResponse.json({
-      order_id: order.id,
-      amount: order.amount,
-      currency: order.currency,
-      key_id: process.env.RAZORPAY_KEY_ID,
-      subscription_id: subscription._id,
-      transaction_id: transaction._id,
-      plan: {
-        name: plan.name,
-      },
-    });
+      transaction.gateway_order_id = order.id;
+      transaction.status = "pending";
+      await transaction.save();
+
+      return NextResponse.json({
+        order_id: order.id,
+        amount: order.amount,
+        currency: order.currency,
+        key_id: getRazorpayKeyId(),
+        subscription_id: subscription._id,
+        transaction_id: transaction._id,
+        plan: {
+          name: plan.name,
+        },
+      });
+    } catch (orderError) {
+      await Transaction.deleteOne({ _id: transaction._id });
+      await Subscription.deleteOne({ _id: subscription._id });
+      throw orderError;
+    }
   } catch (error) {
     console.error("Create subscription order error:", error);
 
