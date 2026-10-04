@@ -40,18 +40,16 @@ export default function NewInsuranceClaimPage() {
     useEffect(() => {
         const loadPolicies = async () => {
             try {
-                const res = await fetch("/api/insurance/policies");
-                const data = await res.json();
+                const response = await fetch("/api/insurance/policies");
+                const data = await response.json();
 
-                if (!res.ok) throw new Error(data.error || "Failed to fetch policies");
+                if (!response.ok) throw new Error(data.error || "Failed to fetch policies");
 
                 const activePolicies = (data.policies || []).filter((policy: Policy) => policy.status === "active");
 
                 setPolicies(activePolicies);
 
-                if (activePolicies.length) {
-                    setPolicyId(activePolicies[0]._id);
-                }
+                if (activePolicies.length > 0) setPolicyId(activePolicies[0]._id);
             } catch (error) {
                 toast.error(error instanceof Error ? error.message : "Failed to fetch policies");
             } finally {
@@ -65,11 +63,6 @@ export default function NewInsuranceClaimPage() {
     const handleSubmit = async () => {
         if (!policyId) {
             toast.warn("Please select an active insurance policy");
-            return;
-        }
-
-        if (!claimType) {
-            toast.warn("Please select the claim type");
             return;
         }
 
@@ -113,17 +106,22 @@ export default function NewInsuranceClaimPage() {
             return;
         }
 
-        if (new Date(treatmentDate) < new Date(incidentDate)) {
+        const incident = new Date(incidentDate);
+        const treatment = new Date(treatmentDate);
+        const admission = new Date(admissionDate);
+        const discharge = new Date(dischargeDate);
+
+        if (treatment < incident) {
             toast.warn("Treatment date cannot be before the incident date");
             return;
         }
 
-        if (new Date(admissionDate) < new Date(incidentDate)) {
+        if (admission < incident) {
             toast.warn("Admission date cannot be before the incident date");
             return;
         }
 
-        if (new Date(dischargeDate) < new Date(admissionDate)) {
+        if (discharge < admission) {
             toast.warn("Discharge date cannot be before the admission date");
             return;
         }
@@ -131,11 +129,9 @@ export default function NewInsuranceClaimPage() {
         try {
             setSubmitting(true);
 
-            const res = await fetch("/api/insurance/claims", {
+            const response = await fetch("/api/insurance/claims", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     policy_id: policyId,
                     claim_type: claimType,
@@ -149,15 +145,17 @@ export default function NewInsuranceClaimPage() {
                 }),
             });
 
-            const data = await res.json();
+            const data = await response.json();
 
-            if (!res.ok) {
-                throw new Error(data.error || "Failed to submit insurance claim");
-            }
+            if (!response.ok) throw new Error(data.error || "Failed to submit insurance claim");
 
             toast.success("Insurance claim submitted successfully");
 
-            window.location.href = `/patient/insurance/claims/${data.claim?._id}`;
+            if (data.claim?._id) {
+                window.location.href = `/patient/insurance/claims/${data.claim._id}`;
+            } else {
+                window.location.href = "/patient/insurance/claims";
+            }
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Failed to submit insurance claim");
         } finally {
@@ -165,8 +163,7 @@ export default function NewInsuranceClaimPage() {
         }
     };
 
-    const fieldClass =
-        "mt-2 w-full rounded-lg border border-border bg-surface-secondary px-3 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10";
+    const fieldClass = "mt-2 w-full rounded-lg border border-border bg-surface-secondary px-3 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10";
 
     if (loading) {
         return (
@@ -183,13 +180,10 @@ export default function NewInsuranceClaimPage() {
                     <ShieldCheck className="mx-auto h-12 w-12 text-muted-foreground" />
                     <h1 className="mt-4 text-xl font-bold text-foreground">No Active Insurance Policy</h1>
                     <p className="mt-2 text-sm leading-6 text-muted">
-                        You need an active insurance policy before submitting a claim.
+                        You need an active insurance policy before submitting a new claim. A lapsed policy must be revived before new claims can be submitted.
                     </p>
 
-                    <Link
-                        href="/patient/insurance"
-                        className="mt-6 inline-flex rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
-                    >
+                    <Link href="/patient/insurance" className="mt-6 inline-flex rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover">
                         View Insurance
                     </Link>
                 </div>
@@ -201,10 +195,7 @@ export default function NewInsuranceClaimPage() {
         <div className="min-h-screen bg-background p-4 text-foreground md:p-6">
             <div className="mx-auto max-w-5xl space-y-6">
                 <div className="flex items-center gap-3">
-                    <Link
-                        href="/patient/insurance"
-                        className="rounded-lg border border-border bg-surface p-2 text-muted transition hover:border-primary/40 hover:text-foreground"
-                    >
+                    <Link href="/patient/insurance/claims" className="rounded-lg border border-border bg-surface p-2 text-muted transition hover:border-primary/40 hover:text-foreground">
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
 
@@ -222,17 +213,22 @@ export default function NewInsuranceClaimPage() {
                                 <h2 className="font-semibold text-foreground">Insurance Policy</h2>
                             </div>
 
-                            <select
-                                value={policyId}
-                                onChange={(e) => setPolicyId(e.target.value)}
-                                className={fieldClass}
-                            >
+                            <select value={policyId} onChange={(event) => setPolicyId(event.target.value)} className={fieldClass}>
                                 {policies.map((policy) => (
                                     <option key={policy._id} value={policy._id} className="bg-surface text-foreground">
                                         {policy.policy_number || policy._id} — {policy.plan_id?.name || "Insurance Plan"}
                                     </option>
                                 ))}
                             </select>
+
+                            {policyId && (
+                                <div className="mt-3 text-xs text-muted">
+                                    Coverage:{" "}
+                                    <span className="font-medium text-foreground">
+                                        ₹{(policies.find((policy) => policy._id === policyId)?.plan_id?.coverage_amount || 0).toLocaleString("en-IN")}
+                                    </span>
+                                </div>
+                            )}
                         </section>
 
                         <section className="rounded-xl border border-border bg-surface p-6">
@@ -244,12 +240,7 @@ export default function NewInsuranceClaimPage() {
                             <div className="mt-5 grid gap-4 sm:grid-cols-2">
                                 <div>
                                     <label className="text-xs text-muted-foreground">Claim Type</label>
-                                    <select
-                                        value={claimType}
-                                        required
-                                        onChange={(e) => setClaimType(e.target.value as "cashless" | "reimbursement")}
-                                        className={fieldClass}
-                                    >
+                                    <select value={claimType} onChange={(event) => setClaimType(event.target.value as "cashless" | "reimbursement")} className={fieldClass}>
                                         <option value="cashless" className="bg-surface text-foreground">Cashless</option>
                                         <option value="reimbursement" className="bg-surface text-foreground">Reimbursement</option>
                                     </select>
@@ -257,12 +248,7 @@ export default function NewInsuranceClaimPage() {
 
                                 <div>
                                     <label className="text-xs text-muted-foreground">Incident Type</label>
-                                    <select
-                                        value={incidentType}
-                                        required
-                                        onChange={(e) => setIncidentType(e.target.value)}
-                                        className={fieldClass}
-                                    >
+                                    <select value={incidentType} onChange={(event) => setIncidentType(event.target.value)} className={fieldClass}>
                                         <option value="" className="bg-surface text-foreground">Select incident</option>
                                         {incidentTypes.map((item) => (
                                             <option key={item.value} value={item.value} className="bg-surface text-foreground">
@@ -274,72 +260,32 @@ export default function NewInsuranceClaimPage() {
 
                                 <div>
                                     <label className="text-xs text-muted-foreground">Incident Date</label>
-                                    <input
-                                        type="date"
-                                        value={incidentDate}
-                                        required
-                                        onChange={(e) => setIncidentDate(e.target.value)}
-                                        className={fieldClass}
-                                    />
+                                    <input type="date" value={incidentDate} onChange={(event) => setIncidentDate(event.target.value)} className={fieldClass} />
                                 </div>
 
                                 <div>
                                     <label className="text-xs text-muted-foreground">Treatment Date</label>
-                                    <input
-                                        type="date"
-                                        required
-                                        value={treatmentDate}
-                                        onChange={(e) => setTreatmentDate(e.target.value)}
-                                        className={fieldClass}
-                                    />
+                                    <input type="date" value={treatmentDate} onChange={(event) => setTreatmentDate(event.target.value)} className={fieldClass} />
                                 </div>
 
                                 <div>
                                     <label className="text-xs text-muted-foreground">Admission Date</label>
-                                    <input
-                                        type="date"
-                                        required
-                                        value={admissionDate}
-                                        onChange={(e) => setAdmissionDate(e.target.value)}
-                                        className={fieldClass}
-                                    />
+                                    <input type="date" value={admissionDate} onChange={(event) => setAdmissionDate(event.target.value)} className={fieldClass} />
                                 </div>
 
                                 <div>
                                     <label className="text-xs text-muted-foreground">Discharge Date</label>
-                                    <input
-                                        type="date"
-                                        required
-                                        value={dischargeDate}
-                                        onChange={(e) => setDischargeDate(e.target.value)}
-                                        className={fieldClass}
-                                    />
+                                    <input type="date" value={dischargeDate} onChange={(event) => setDischargeDate(event.target.value)} className={fieldClass} />
                                 </div>
 
                                 <div>
                                     <label className="text-xs text-muted-foreground">Estimated Amount</label>
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        required
-                                        value={estimatedAmount}
-                                        onChange={(e) => setEstimatedAmount(e.target.value)}
-                                        placeholder="₹0"
-                                        className={fieldClass}
-                                    />
+                                    <input type="number" min="0" value={estimatedAmount} onChange={(event) => setEstimatedAmount(event.target.value)} placeholder="₹0" className={fieldClass} />
                                 </div>
 
                                 <div>
                                     <label className="text-xs text-muted-foreground">Claimed Amount</label>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        required
-                                        value={claimedAmount}
-                                        onChange={(e) => setClaimedAmount(e.target.value)}
-                                        placeholder="₹0"
-                                        className={fieldClass}
-                                    />
+                                    <input type="number" min="1" value={claimedAmount} onChange={(event) => setClaimedAmount(event.target.value)} placeholder="₹0" className={fieldClass} />
                                 </div>
                             </div>
                         </section>
@@ -361,18 +307,11 @@ export default function NewInsuranceClaimPage() {
 
                             <div className="border-t border-border pt-4">
                                 <p className="text-xs text-muted">Claimed Amount</p>
-                                <p className="mt-1 text-2xl font-bold text-foreground">
-                                    ₹{Number(claimedAmount || 0).toLocaleString("en-IN")}
-                                </p>
+                                <p className="mt-1 text-2xl font-bold text-foreground">₹{Number(claimedAmount || 0).toLocaleString("en-IN")}</p>
                             </div>
                         </div>
 
-                        <button
-                            type="button"
-                            disabled={submitting}
-                            onClick={handleSubmit}
-                            className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
-                        >
+                        <button type="button" disabled={submitting} onClick={handleSubmit} className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50">
                             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
                             Submit Claim
                         </button>

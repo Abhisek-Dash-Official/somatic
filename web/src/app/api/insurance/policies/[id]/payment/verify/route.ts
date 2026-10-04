@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
-import crypto from "crypto";
-import Razorpay from "razorpay";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import InsurancePolicy from "@/models/InsurancePolicy";
 import Transaction from "@/models/Transaction";
+import SystemLog from "@/models/SystemLog";
+import { fetchRazorpayPayment, verifyRazorpaySignature } from "@/lib/payment";
+import { getGracePeriodEnd, getNextPaymentDate } from "@/lib/insurance";
 
-export async function POST(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+type RouteContext = { params: Promise<{ id: string }> };
+
+export async function POST(req: Request, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -26,7 +27,16 @@ export async function POST(
     }
 
     const { id } = await params;
-    const body = await _req.json();
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json(
+        { error: "Invalid insurance policy ID" },
+        { status: 400 },
+      );
+    }
+
+    const body = await req.json();
+
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -47,26 +57,6 @@ export async function POST(
       return NextResponse.json(
         { error: "Insurance policy not found" },
         { status: 404 },
-      );
-    }
-
-    if (policy.status !== "payment_pending") {
-      if (policy.status === "active") {
-        return NextResponse.json({
-          message: "Insurance policy is already active",
-          policy: {
-            _id: policy._id,
-            policy_number: policy.policy_number,
-            status: policy.status,
-            start_date: policy.start_date,
-            expiry_date: policy.expiry_date,
-          },
-        });
-      }
-
-      return NextResponse.json(
-        { error: "Insurance policy is not awaiting payment" },
-        { status: 400 },
       );
     }
 
@@ -92,41 +82,27 @@ export async function POST(
       });
     }
 
-    if (transaction.status !== "created" && transaction.status !== "pending") {
+    if (!["created", "pending"].includes(transaction.status)) {
       return NextResponse.json(
         { error: "This transaction cannot be verified" },
         { status: 400 },
       );
     }
 
-    const secret = process.env.RAZORPAY_KEY_SECRET;
-    const keyId = process.env.RAZORPAY_KEY_ID;
+    const validSignature = verifyRazorpaySignature(
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    );
 
-    if (!secret || !keyId) {
-      return NextResponse.json(
-        { error: "Payment gateway is not configured" },
-        { status: 500 },
-      );
-    }
-
-    const expectedSignature = crypto
-      .createHmac("sha256", secret)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest("hex");
-
-    if (expectedSignature !== razorpay_signature) {
+    if (!validSignature) {
       return NextResponse.json(
         { error: "Payment verification failed" },
         { status: 400 },
       );
     }
 
-    const razorpay = new Razorpay({
-      key_id: keyId,
-      key_secret: secret,
-    });
-
-    const payment = await razorpay.payments.fetch(razorpay_payment_id);
+    const payment = await fetchRazorpayPayment(razorpay_payment_id);
 
     if (payment.order_id !== transaction.gateway_order_id) {
       return NextResponse.json(
@@ -165,48 +141,135 @@ export async function POST(
       );
     }
 
-    if (
-      !Number.isFinite(Number(plan.policy_term_years)) ||
-      Number(plan.policy_term_years) <= 0
-    ) {
+    const policyTermYears = Number(plan.policy_term_years);
+
+    if (!Number.isFinite(policyTermYears) || policyTermYears <= 0) {
       return NextResponse.json(
         { error: "Invalid insurance policy term" },
         { status: 400 },
       );
     }
 
-    const startDate = new Date();
-    const expiryDate = new Date(startDate);
-    expiryDate.setFullYear(
-      expiryDate.getFullYear() + Number(plan.policy_term_years),
+    const metadata = (transaction.metadata || {}) as Record<string, any>;
+
+    const paymentPurpose =
+      metadata.payment_purpose ||
+      (policy.status === "active" ? "renewal_premium" : "initial_premium");
+
+    if (
+      !["initial_premium", "renewal_premium", "revival"].includes(
+        paymentPurpose,
+      )
+    ) {
+      return NextResponse.json(
+        { error: "Invalid payment purpose" },
+        { status: 400 },
+      );
+    }
+
+    const paymentDate = new Date();
+    const currentPaymentCount = Number(policy.premium_payments_completed || 0);
+    const paymentCount = currentPaymentCount + 1;
+
+    let policyStartDate = policy.start_date
+      ? new Date(policy.start_date)
+      : paymentDate;
+
+    let policyExpiryDate = policy.expiry_date
+      ? new Date(policy.expiry_date)
+      : paymentDate;
+
+    if (paymentPurpose === "initial_premium") {
+      policyStartDate = paymentDate;
+      policyExpiryDate = new Date(paymentDate);
+      policyExpiryDate.setFullYear(
+        policyExpiryDate.getFullYear() + policyTermYears,
+      );
+    }
+
+    if (
+      (paymentPurpose === "renewal_premium" || paymentPurpose === "revival") &&
+      (!policy.expiry_date || paymentDate >= new Date(policy.expiry_date))
+    ) {
+      return NextResponse.json(
+        { error: "This insurance policy term has ended" },
+        { status: 400 },
+      );
+    }
+
+    const nextPaymentDate = getNextPaymentDate(
+      paymentDate,
+      plan.premium_frequency,
     );
 
-    const policyNumber = `SOM-${startDate.getTime()}-${policy._id
-      .toString()
-      .slice(-6)
-      .toUpperCase()}`;
+    const policyNumber =
+      policy.policy_number ||
+      `SOM-${paymentDate.getTime()}-${policy._id
+        .toString()
+        .slice(-6)
+        .toUpperCase()}`;
 
     transaction.gateway_payment_id = razorpay_payment_id;
     transaction.gateway_signature = razorpay_signature;
     transaction.status = "paid";
-    transaction.paid_at = new Date();
+    transaction.paid_at = paymentDate;
     await transaction.save();
 
     policy.status = "active";
     policy.policy_number = policyNumber;
-    policy.start_date = startDate;
-    policy.expiry_date = expiryDate;
+    policy.start_date = policyStartDate;
+    policy.expiry_date = policyExpiryDate;
+    policy.last_payment_at = paymentDate;
+    policy.premium_payments_completed = paymentCount;
+
+    if (nextPaymentDate < policyExpiryDate) {
+      policy.next_payment_due_at = nextPaymentDate;
+      policy.grace_period_ends_at = getGracePeriodEnd(nextPaymentDate);
+    } else {
+      policy.next_payment_due_at = undefined;
+      policy.grace_period_ends_at = undefined;
+    }
+
+    if (paymentPurpose === "revival") {
+      policy.lapsed_at = undefined;
+      policy.revival_requested_at = undefined;
+      policy.revival_approved_at = undefined;
+    }
+
     await policy.save();
 
+    await SystemLog.create({
+      actor_id: session.user.id,
+      actor_role: session.user.role,
+      action_type: "INSURANCE_PAYMENT_VERIFIED",
+      target_id: policy._id,
+      details: {
+        transaction_id: transaction._id,
+        policy_number: policy.policy_number,
+        payment_purpose: paymentPurpose,
+        payment_id: razorpay_payment_id,
+        amount: transaction.amount,
+        premium_payment_number: paymentCount,
+      },
+    });
+
     return NextResponse.json({
-      message: "Insurance payment verified successfully",
+      message:
+        paymentPurpose === "revival"
+          ? "Insurance policy revived successfully"
+          : "Insurance payment verified successfully",
       transaction_id: transaction._id,
+      payment_purpose: paymentPurpose,
       policy: {
         _id: policy._id,
         policy_number: policy.policy_number,
         status: policy.status,
         start_date: policy.start_date,
         expiry_date: policy.expiry_date,
+        last_payment_at: policy.last_payment_at,
+        next_payment_due_at: policy.next_payment_due_at,
+        grace_period_ends_at: policy.grace_period_ends_at,
+        premium_payments_completed: policy.premium_payments_completed,
       },
     });
   } catch (error) {

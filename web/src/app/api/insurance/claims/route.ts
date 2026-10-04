@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import InsuranceClaim from "@/models/InsuranceClaim";
 import InsurancePolicy from "@/models/InsurancePolicy";
-import Hospital from "@/models/Hospital";
 import SystemLog from "@/models/SystemLog";
+import { syncInsurancePolicyStatus } from "@/lib/insurance";
 
 export async function POST(req: Request) {
   try {
@@ -37,9 +38,16 @@ export async function POST(req: Request) {
       documents,
     } = body;
 
-    if (!policy_id || !claim_type) {
+    if (!policy_id || !mongoose.Types.ObjectId.isValid(policy_id)) {
       return NextResponse.json(
-        { error: "Policy and claim type are required" },
+        { error: "Valid insurance policy is required" },
+        { status: 400 },
+      );
+    }
+
+    if (!claim_type) {
+      return NextResponse.json(
+        { error: "Claim type is required" },
         { status: 400 },
       );
     }
@@ -51,11 +59,32 @@ export async function POST(req: Request) {
       );
     }
 
-    if (documents && !Array.isArray(documents)) {
+    if (
+      incident_type &&
+      !["accident", "illness", "emergency", "other"].includes(incident_type)
+    ) {
+      return NextResponse.json(
+        { error: "Invalid incident type" },
+        { status: 400 },
+      );
+    }
+
+    if (documents !== undefined && !Array.isArray(documents)) {
       return NextResponse.json(
         { error: "Documents must be an array" },
         { status: 400 },
       );
+    }
+
+    if (documents) {
+      for (const document of documents) {
+        if (!document?.type?.trim() || !document?.file_url?.trim()) {
+          return NextResponse.json(
+            { error: "Each document must have a type and file URL" },
+            { status: 400 },
+          );
+        }
+      }
     }
 
     await dbConnect();
@@ -63,37 +92,125 @@ export async function POST(req: Request) {
     const policy = await InsurancePolicy.findOne({
       _id: policy_id,
       user_id: session.user.id,
-      status: "active",
     });
 
     if (!policy) {
       return NextResponse.json(
-        { error: "Active insurance policy not found" },
+        { error: "Insurance policy not found" },
         { status: 404 },
       );
     }
 
-    const amount = claimed_amount ?? estimated_amount;
+    await syncInsurancePolicyStatus(policy);
 
-    if (
-      amount !== undefined &&
-      (!Number.isFinite(Number(amount)) || Number(amount) <= 0)
-    ) {
+    if (policy.status !== "active") {
+      if (policy.status === "lapsed") {
+        return NextResponse.json(
+          {
+            error:
+              "This insurance policy has lapsed and cannot be used for new claims. Please request policy revival.",
+          },
+          { status: 400 },
+        );
+      }
+
+      if (policy.status === "revival_pending") {
+        return NextResponse.json(
+          {
+            error:
+              "Your insurance policy revival request is currently under review.",
+          },
+          { status: 400 },
+        );
+      }
+
+      if (policy.status === "payment_pending") {
+        return NextResponse.json(
+          {
+            error:
+              "Your insurance policy requires a premium payment before it can be used for claims.",
+          },
+          { status: 400 },
+        );
+      }
+
+      if (policy.status === "expired") {
+        return NextResponse.json(
+          {
+            error:
+              "This insurance policy has expired and cannot be used for claims.",
+          },
+          { status: 400 },
+        );
+      }
+
+      return NextResponse.json(
+        { error: "This insurance policy is not active" },
+        { status: 400 },
+      );
+    }
+
+    const now = new Date();
+
+    if (policy.expiry_date && now >= new Date(policy.expiry_date)) {
+      policy.status = "expired";
+      await policy.save();
+
+      return NextResponse.json(
+        {
+          error:
+            "This insurance policy has expired and cannot be used for claims.",
+        },
+        { status: 400 },
+      );
+    }
+
+    const estimated = Number(estimated_amount);
+    const claimed = Number(claimed_amount);
+
+    if (!Number.isFinite(estimated) || estimated <= 0) {
+      return NextResponse.json(
+        { error: "Estimated amount must be greater than zero" },
+        { status: 400 },
+      );
+    }
+
+    if (!Number.isFinite(claimed) || claimed <= 0) {
       return NextResponse.json(
         { error: "Claim amount must be greater than zero" },
         { status: 400 },
       );
     }
 
-    if (documents && documents.length > 0) {
-      for (const document of documents) {
-        if (!document?.type || !document?.file_url) {
-          return NextResponse.json(
-            { error: "Each document must have a type and file URL" },
-            { status: 400 },
-          );
-        }
+    if (claimed > estimated) {
+      return NextResponse.json(
+        { error: "Claim amount cannot be greater than the estimated amount" },
+        { status: 400 },
+      );
+    }
+
+    const dates = [
+      ["incident_date", incident_date],
+      ["treatment_date", treatment_date],
+      ["admission_date", admission_date],
+      ["discharge_date", discharge_date],
+    ];
+
+    for (const [name, value] of dates) {
+      if (value && Number.isNaN(new Date(value).getTime())) {
+        return NextResponse.json({ error: `Invalid ${name}` }, { status: 400 });
       }
+    }
+
+    if (
+      admission_date &&
+      discharge_date &&
+      new Date(discharge_date) < new Date(admission_date)
+    ) {
+      return NextResponse.json(
+        { error: "Discharge date cannot be before admission date" },
+        { status: 400 },
+      );
     }
 
     const claim = await InsuranceClaim.create({
@@ -105,8 +222,8 @@ export async function POST(req: Request) {
       treatment_date,
       admission_date,
       discharge_date,
-      estimated_amount,
-      claimed_amount: claimed_amount ?? estimated_amount,
+      estimated_amount: estimated,
+      claimed_amount: claimed,
       documents: documents || [],
       status: "submitted",
     });
@@ -127,6 +244,7 @@ export async function POST(req: Request) {
         policy_id: policy._id,
         claim_number: claim.claim_number,
         claim_type,
+        estimated_amount: claim.estimated_amount,
         claimed_amount: claim.claimed_amount,
       },
     });
@@ -140,6 +258,7 @@ export async function POST(req: Request) {
           policy_id: claim.policy_id,
           claim_type: claim.claim_type,
           status: claim.status,
+          estimated_amount: claim.estimated_amount,
           claimed_amount: claim.claimed_amount,
           created_at: claim.created_at,
         },
@@ -176,7 +295,7 @@ export async function GET() {
     const claims = await InsuranceClaim.find({
       user_id: session.user.id,
     })
-      .populate("policy_id", "policy_number status")
+      .populate("policy_id", "policy_number status start_date expiry_date")
       .sort({ created_at: -1 })
       .lean();
 

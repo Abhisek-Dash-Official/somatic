@@ -21,11 +21,11 @@ export async function GET(req: Request) {
       );
     }
 
+    await dbConnect();
+
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status");
     const search = searchParams.get("search")?.trim();
-
-    await dbConnect();
 
     const query: Record<string, any> = {};
 
@@ -34,16 +34,16 @@ export async function GET(req: Request) {
     }
 
     if (search) {
-      const users = await import("@/models/User").then(({ default: User }) =>
-        User.find({
-          $or: [
-            { username: { $regex: search, $options: "i" } },
-            { email: { $regex: search, $options: "i" } },
-          ],
-        }).select("_id"),
-      );
+      const User = (await import("@/models/User")).default;
 
-      const userIds = users.map((user: any) => user._id);
+      const users = await User.find({
+        $or: [
+          { username: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+      }).select("_id");
+
+      const userIds = users.map((user) => user._id);
 
       query.$or = [
         { claim_number: { $regex: search, $options: "i" } },

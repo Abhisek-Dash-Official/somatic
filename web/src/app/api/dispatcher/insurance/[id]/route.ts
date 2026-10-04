@@ -7,12 +7,13 @@ import InsurancePolicy from "@/models/InsurancePolicy";
 import SystemLog from "@/models/SystemLog";
 import "@/models/User";
 import "@/models/InsurancePlan";
+import { syncInsurancePolicyStatus } from "@/lib/insurance";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
 
-export async function GET(req: Request, { params }: RouteContext) {
+export async function GET(_req: Request, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -50,6 +51,8 @@ export async function GET(req: Request, { params }: RouteContext) {
         { status: 404 },
       );
     }
+
+    await syncInsurancePolicyStatus(policy);
 
     return NextResponse.json({ policy });
   } catch (error) {
@@ -125,9 +128,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
         plan_id: policy.plan_id,
         user_id: policy.user_id,
       };
-    }
-
-    if (action === "reject") {
+    } else {
       if (!rejection_reason?.trim()) {
         return NextResponse.json(
           { error: "Rejection reason is required" },

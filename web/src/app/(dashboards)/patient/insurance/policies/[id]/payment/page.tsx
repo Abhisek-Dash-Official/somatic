@@ -15,6 +15,11 @@ interface Policy {
     _id: string;
     policy_number?: string;
     status: string;
+    start_date?: string;
+    expiry_date?: string;
+    next_payment_due_at?: string;
+    last_payment_at?: string;
+    premium_payments_completed?: number;
     plan_id?: {
         _id: string;
         name: string;
@@ -32,7 +37,24 @@ interface PaymentOrder {
     currency: string;
     key_id: string;
     plan_name: string;
+    premium_frequency: string;
 }
+
+const formatDate = (date?: string) => {
+    if (!date) return "—";
+
+    return new Date(date).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+    });
+};
+
+const formatFrequency = (frequency?: string) => {
+    if (!frequency) return "—";
+
+    return frequency.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+};
 
 export default function InsurancePaymentPage({ params }: { params: Promise<{ id: string }> }) {
     const [policy, setPolicy] = useState<Policy | null>(null);
@@ -44,11 +66,10 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
         const loadPolicy = async () => {
             try {
                 const { id } = await params;
+                const response = await fetch(`/api/insurance/policies/${id}`);
+                const data = await response.json();
 
-                const res = await fetch(`/api/insurance/policies/${id}`);
-                const data = await res.json();
-
-                if (!res.ok) {
+                if (!response.ok) {
                     throw new Error(data.error || "Failed to fetch insurance policy");
                 }
 
@@ -64,8 +85,19 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
     }, [params]);
 
     useEffect(() => {
-        if (typeof window === "undefined" || window.Razorpay) {
+        if (typeof window === "undefined") return;
+
+        if (window.Razorpay) {
             setScriptLoaded(true);
+            return;
+        }
+
+        const existingScript = document.querySelector(
+            'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
+        );
+
+        if (existingScript) {
+            existingScript.addEventListener("load", () => setScriptLoaded(true));
             return;
         }
 
@@ -74,16 +106,26 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
         script.async = true;
         script.onload = () => setScriptLoaded(true);
         script.onerror = () => {
-            toast.error("Failed to load payment gateway");
             setScriptLoaded(false);
+            toast.error("Failed to load payment gateway");
         };
 
         document.body.appendChild(script);
-
-        return () => {
-            script.remove();
-        };
     }, []);
+
+    const isPaymentDue = (() => {
+        if (!policy) return false;
+
+        if (policy.status === "approved" || policy.status === "payment_pending") {
+            return true;
+        }
+
+        if (policy.status === "active" && policy.next_payment_due_at) {
+            return new Date(policy.next_payment_due_at) <= new Date();
+        }
+
+        return false;
+    })();
 
     const handlePayment = async () => {
         if (!policy) return;
@@ -93,21 +135,22 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
             return;
         }
 
-        if (policy.status !== "approved" && policy.status !== "payment_pending") {
-            toast.error("This policy is not ready for payment");
+        if (!isPaymentDue) {
+            toast.error("Your premium payment is not currently due");
             return;
         }
 
         try {
             setPaying(true);
 
-            const orderRes = await fetch(`/api/insurance/policies/${policy._id}/payment`, {
-                method: "POST",
-            });
+            const orderResponse = await fetch(
+                `/api/insurance/policies/${policy._id}/payment`,
+                { method: "POST" },
+            );
 
-            const orderData = await orderRes.json();
+            const orderData = await orderResponse.json();
 
-            if (!orderRes.ok) {
+            if (!orderResponse.ok) {
                 throw new Error(orderData.error || "Failed to create payment order");
             }
 
@@ -126,30 +169,40 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
                     razorpay_signature: string;
                 }) => {
                     try {
-                        const verifyRes = await fetch(`/api/insurance/policies/${policy._id}/payment/verify`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
+                        const verifyResponse = await fetch(
+                            `/api/insurance/policies/${policy._id}/payment/verify`,
+                            {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                }),
                             },
-                            body: JSON.stringify({
-                                razorpay_order_id: response.razorpay_order_id,
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_signature: response.razorpay_signature,
-                            }),
-                        });
+                        );
 
-                        const verifyData = await verifyRes.json();
+                        const verifyData = await verifyResponse.json();
 
-                        if (!verifyRes.ok) {
-                            throw new Error(verifyData.error || "Payment verification failed");
+                        if (!verifyResponse.ok) {
+                            throw new Error(
+                                verifyData.error || "Payment verification failed",
+                            );
                         }
 
-                        toast.success("Payment successful. Your insurance policy is now active.");
+                        toast.success(
+                            policy.status === "active"
+                                ? "Insurance premium payment successful."
+                                : "Insurance policy activated successfully.",
+                        );
 
                         window.location.href = `/patient/insurance/policies/${policy._id}`;
                     } catch (error) {
-                        toast.error(error instanceof Error ? error.message : "Payment verification failed");
-                    } finally {
+                        toast.error(
+                            error instanceof Error
+                                ? error.message
+                                : "Payment verification failed",
+                        );
                         setPaying(false);
                     }
                 },
@@ -160,7 +213,7 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
                     },
                 },
                 theme: {
-                    color: "#10b981",
+                    color: "#08a9b5",
                 },
             };
 
@@ -196,20 +249,28 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
         );
     }
 
-    if (policy.status === "active") {
+    const premium = Number(policy.plan_id?.premium_amount || 0);
+    const paymentCount = Number(policy.premium_payments_completed || 0);
+    const isRenewal = policy.status === "active" && paymentCount > 0;
+
+    if (
+        policy.status === "active" &&
+        !policy.next_payment_due_at
+    ) {
         return (
             <div className="min-h-[60vh] bg-background p-4 md:p-6">
                 <div className="mx-auto max-w-xl rounded-xl border border-border bg-surface p-8 text-center">
                     <CheckCircle2 className="mx-auto h-12 w-12 text-success" />
-                    <h1 className="mt-4 text-xl font-bold text-foreground">Policy Already Active</h1>
-                    <p className="mt-2 text-sm text-muted">
-                        This insurance policy has already been activated successfully.
+
+                    <h1 className="mt-4 text-xl font-bold text-foreground">
+                        Premium Payments Completed
+                    </h1>
+
+                    <p className="mt-2 text-sm leading-6 text-muted">
+                        All scheduled premium payments for this policy have been completed.
                     </p>
 
-                    <Link
-                        href={`/patient/insurance/policies/${policy._id}`}
-                        className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
-                    >
+                    <Link href={`/patient/insurance/policies/${policy._id}`} className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover">
                         View Policy
                     </Link>
                 </div>
@@ -217,20 +278,47 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
         );
     }
 
-    if (policy.status !== "approved" && policy.status !== "payment_pending") {
+    if (policy.status === "active" && policy.next_payment_due_at && !isPaymentDue) {
+        return (
+            <div className="min-h-[60vh] bg-background p-4 md:p-6">
+                <div className="mx-auto max-w-xl rounded-xl border border-border bg-surface p-8 text-center">
+                    <CheckCircle2 className="mx-auto h-12 w-12 text-success" />
+
+                    <h1 className="mt-4 text-xl font-bold text-foreground">
+                        Premium Payment Not Due Yet
+                    </h1>
+
+                    <p className="mt-2 text-sm leading-6 text-muted">
+                        Your next premium payment is due on{" "}
+                        <span className="font-medium text-foreground">
+                            {formatDate(policy.next_payment_due_at)}
+                        </span>
+                        .
+                    </p>
+
+                    <Link href={`/patient/insurance/policies/${policy._id}`} className="mt-6 inline-flex items-center gap-2 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-foreground">
+                        View Policy
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isPaymentDue) {
         return (
             <div className="min-h-[60vh] bg-background p-4 md:p-6">
                 <div className="mx-auto max-w-xl rounded-xl border border-border bg-surface p-8 text-center">
                     <ShieldCheck className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h1 className="mt-4 text-xl font-bold text-foreground">Payment Not Available</h1>
-                    <p className="mt-2 text-sm text-muted">
+
+                    <h1 className="mt-4 text-xl font-bold text-foreground">
+                        Payment Not Available
+                    </h1>
+
+                    <p className="mt-2 text-sm leading-6 text-muted">
                         This insurance policy is not currently ready for payment.
                     </p>
 
-                    <Link
-                        href={`/patient/insurance/policies/${policy._id}`}
-                        className="mt-6 inline-flex items-center gap-2 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-foreground"
-                    >
+                    <Link href={`/patient/insurance/policies/${policy._id}`} className="mt-6 inline-flex items-center gap-2 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-foreground">
                         View Policy
                     </Link>
                 </div>
@@ -238,21 +326,23 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
         );
     }
 
-    const premium = Number(policy.plan_id?.premium_amount || 0);
-
     return (
         <div className="min-h-screen space-y-6 bg-background p-4 text-foreground md:p-6">
             <div className="flex items-center gap-3">
-                <Link
-                    href={`/patient/insurance/policies/${policy._id}`}
-                    className="rounded-lg border border-border bg-surface p-2 text-muted transition hover:border-primary/40 hover:text-foreground"
-                >
+                <Link href={`/patient/insurance/policies/${policy._id}`} className="rounded-lg border border-border bg-surface p-2 text-muted transition hover:border-primary/40 hover:text-foreground">
                     <ArrowLeft className="h-4 w-4" />
                 </Link>
 
                 <div>
-                    <h1 className="text-2xl font-bold text-foreground">Insurance Premium Payment</h1>
-                    <p className="mt-1 text-sm text-muted">Complete your premium payment to activate the policy.</p>
+                    <h1 className="text-2xl font-bold text-foreground">
+                        {isRenewal ? "Insurance Premium Renewal" : "Insurance Premium Payment"}
+                    </h1>
+
+                    <p className="mt-1 text-sm text-muted">
+                        {isRenewal
+                            ? "Complete your scheduled premium payment to continue your insurance coverage."
+                            : "Complete your first premium payment to activate your insurance policy."}
+                    </p>
                 </div>
             </div>
 
@@ -268,6 +358,7 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
                                 <h2 className="text-lg font-semibold text-foreground">
                                     {policy.plan_id?.name || "Insurance Plan"}
                                 </h2>
+
                                 <p className="mt-1 text-sm text-muted">
                                     Policy ID: {policy._id}
                                 </p>
@@ -288,18 +379,55 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
                                     {policy.plan_id?.policy_term_years || 0} year{policy.plan_id?.policy_term_years !== 1 ? "s" : ""}
                                 </p>
                             </div>
+
+                            <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                                <p className="text-xs text-muted">Premium Frequency</p>
+                                <p className="mt-1 text-lg font-semibold text-foreground">
+                                    {formatFrequency(policy.plan_id?.premium_frequency)}
+                                </p>
+                            </div>
+
+                            <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                                <p className="text-xs text-muted">Premium Payment</p>
+                                <p className="mt-1 text-lg font-semibold text-foreground">
+                                    ₹{premium.toLocaleString("en-IN")}
+                                </p>
+                            </div>
                         </div>
                     </div>
+
+                    {isRenewal && policy.next_payment_due_at && (
+                        <div className="rounded-xl border border-border bg-surface p-6">
+                            <h2 className="font-semibold text-foreground">Premium Due</h2>
+
+                            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                                <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                                    <p className="text-xs text-muted">Previous Payment</p>
+                                    <p className="mt-1 font-semibold text-foreground">
+                                        {formatDate(policy.last_payment_at)}
+                                    </p>
+                                </div>
+
+                                <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                                    <p className="text-xs text-muted">Payment Due</p>
+                                    <p className="mt-1 font-semibold text-foreground">
+                                        {formatDate(policy.next_payment_due_at)}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="rounded-xl border border-border bg-surface p-6">
                         <h2 className="font-semibold text-foreground">Secure Payment</h2>
 
                         <div className="mt-4 flex items-start gap-3 rounded-lg border border-border bg-surface-secondary p-4">
                             <CreditCard className="mt-0.5 h-5 w-5 text-primary" />
+
                             <div>
                                 <p className="text-sm text-foreground">Payment powered by Razorpay</p>
                                 <p className="mt-1 text-xs leading-5 text-muted">
-                                    You will be redirected to the secure Razorpay checkout window to complete your payment.
+                                    Complete your premium payment through the secure Razorpay checkout.
                                 </p>
                             </div>
                         </div>
@@ -317,14 +445,17 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
 
                         <div className="flex justify-between gap-4">
                             <span className="text-muted">Frequency</span>
-                            <span className="capitalize text-foreground">
-                                {policy.plan_id?.premium_frequency?.replaceAll("_", " ") || "—"}
-                            </span>
+                            <span className="text-foreground">{formatFrequency(policy.plan_id?.premium_frequency)}</span>
+                        </div>
+
+                        <div className="flex justify-between gap-4">
+                            <span className="text-muted">Premium</span>
+                            <span className="font-medium text-foreground">₹{premium.toLocaleString("en-IN")}</span>
                         </div>
 
                         <div className="border-t border-border pt-4">
                             <div className="flex items-end justify-between gap-4">
-                                <span className="text-muted">Premium</span>
+                                <span className="text-muted">Amount Due</span>
                                 <span className="text-2xl font-bold text-foreground">
                                     ₹{premium.toLocaleString("en-IN")}
                                 </span>
@@ -339,11 +470,15 @@ export default function InsurancePaymentPage({ params }: { params: Promise<{ id:
                         className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {paying ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                        {paying ? "Processing..." : !scriptLoaded ? "Loading Payment..." : `Pay ₹${premium.toLocaleString("en-IN")}`}
+                        {paying
+                            ? "Processing..."
+                            : !scriptLoaded
+                                ? "Loading Payment..."
+                                : `Pay ₹${premium.toLocaleString("en-IN")}`}
                     </button>
 
                     <p className="mt-3 text-center text-xs leading-5 text-muted">
-                        Your policy becomes active only after successful payment verification.
+                        Payment is confirmed only after successful Razorpay verification.
                     </p>
                 </aside>
             </div>

@@ -2,16 +2,20 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Eye, Loader2, Search, ShieldCheck, UserRound, FileText } from "lucide-react";
+import { Eye, FileText, Loader2, Search, ShieldCheck, UserRound } from "lucide-react";
 import { toast } from "react-toastify";
 
 const statuses = [
     { value: "", label: "All Statuses" },
-    { value: "pending", label: "Pending" },
+    { value: "pending", label: "Pending Review" },
     { value: "approved", label: "Approved" },
     { value: "payment_pending", label: "Payment Pending" },
     { value: "active", label: "Active" },
+    { value: "revival_pending", label: "Revival Requested" },
+    { value: "lapsed", label: "Lapsed" },
     { value: "rejected", label: "Rejected" },
+    { value: "expired", label: "Expired" },
+    { value: "cancelled", label: "Cancelled" },
 ];
 
 const statusStyles: Record<string, string> = {
@@ -19,6 +23,8 @@ const statusStyles: Record<string, string> = {
     approved: "border-primary/20 bg-primary/10 text-primary",
     payment_pending: "border-warning/20 bg-warning/10 text-warning",
     active: "border-success/20 bg-success/10 text-success",
+    revival_pending: "border-warning/20 bg-warning/10 text-warning",
+    lapsed: "border-danger/20 bg-danger/10 text-danger",
     rejected: "border-danger/20 bg-danger/10 text-danger",
     expired: "border-border bg-surface-secondary text-muted",
     cancelled: "border-danger/20 bg-danger/10 text-danger",
@@ -56,13 +62,13 @@ export default function DispatcherInsurancePage() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data?.error || "Failed to fetch insurance proposals");
+                throw new Error(data?.error || "Failed to fetch insurance policies");
             }
 
             setPolicies(Array.isArray(data.policies) ? data.policies : []);
         } catch (error: any) {
             console.error("Dispatcher insurance list error:", error);
-            toast.error(error?.message || "Failed to load insurance proposals");
+            toast.error(error?.message || "Failed to load insurance policies");
         } finally {
             setLoading(false);
         }
@@ -89,16 +95,17 @@ export default function DispatcherInsurancePage() {
                             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                                 <ShieldCheck size={25} />
                             </div>
+
                             <div>
                                 <p className="text-sm font-medium text-primary">Dispatcher</p>
                                 <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
-                                    Insurance Proposals
+                                    Insurance Policies
                                 </h1>
                             </div>
                         </div>
 
                         <p className="mt-4 max-w-2xl text-sm leading-6 text-muted">
-                            Review insurance proposals submitted by patients and approve or reject them.
+                            Review insurance proposals, active policies and policy revival requests.
                         </p>
                     </div>
 
@@ -126,6 +133,7 @@ export default function DispatcherInsurancePage() {
                             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                             size={18}
                         />
+
                         <input
                             type="text"
                             value={search}
@@ -157,11 +165,13 @@ export default function DispatcherInsurancePage() {
                 ) : policies.length === 0 ? (
                     <div className="rounded-xl border border-border bg-surface p-12 text-center">
                         <ShieldCheck className="mx-auto text-muted-foreground" size={40} />
+
                         <h2 className="mt-4 text-lg font-semibold text-foreground">
-                            No insurance proposals found
+                            No insurance policies found
                         </h2>
+
                         <p className="mt-2 text-sm text-muted">
-                            There are no proposals matching the selected filters.
+                            There are no policies matching the selected filters.
                         </p>
                     </div>
                 ) : (
@@ -199,10 +209,12 @@ export default function DispatcherInsurancePage() {
                                                     <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                                                         <UserRound size={17} />
                                                     </div>
+
                                                     <div>
                                                         <p className="text-sm font-medium text-foreground">
                                                             {policy.user_id?.username || "Unknown Patient"}
                                                         </p>
+
                                                         <p className="mt-0.5 text-xs text-muted">
                                                             {policy.user_id?.email || "No email"}
                                                         </p>
@@ -214,6 +226,7 @@ export default function DispatcherInsurancePage() {
                                                 <p className="text-sm font-medium text-foreground">
                                                     {policy.plan_id?.name || "Unknown Plan"}
                                                 </p>
+
                                                 <p className="mt-1 text-xs text-muted">
                                                     {policy.policy_number || "Proposal"}
                                                 </p>
@@ -223,6 +236,7 @@ export default function DispatcherInsurancePage() {
                                                 <p className="text-sm font-medium text-foreground">
                                                     ₹{Number(policy.plan_id?.coverage_amount || 0).toLocaleString("en-IN")}
                                                 </p>
+
                                                 <p className="mt-1 text-xs text-muted">
                                                     Premium ₹{Number(policy.plan_id?.premium_amount || 0).toLocaleString("en-IN")}
                                                 </p>
@@ -268,6 +282,7 @@ export default function DispatcherInsurancePage() {
                                                 <p className="text-sm font-semibold text-foreground">
                                                     {policy.user_id?.username || "Unknown Patient"}
                                                 </p>
+
                                                 <p className="mt-1 text-xs text-muted">
                                                     {policy.user_id?.email || "No email"}
                                                 </p>
@@ -284,6 +299,7 @@ export default function DispatcherInsurancePage() {
                                     <div className="mt-5 grid grid-cols-2 gap-3">
                                         <div className="rounded-lg border border-border bg-surface-secondary p-3">
                                             <p className="text-xs text-muted">Plan</p>
+
                                             <p className="mt-1 truncate text-sm font-medium text-foreground">
                                                 {policy.plan_id?.name || "Unknown Plan"}
                                             </p>
@@ -291,11 +307,20 @@ export default function DispatcherInsurancePage() {
 
                                         <div className="rounded-lg border border-border bg-surface-secondary p-3">
                                             <p className="text-xs text-muted">Coverage</p>
+
                                             <p className="mt-1 text-sm font-medium text-foreground">
                                                 ₹{Number(policy.plan_id?.coverage_amount || 0).toLocaleString("en-IN")}
                                             </p>
                                         </div>
                                     </div>
+
+                                    {policy.status === "revival_pending" && (
+                                        <div className="mt-4 rounded-lg border border-warning/20 bg-warning/10 p-3">
+                                            <p className="text-xs font-medium text-warning">
+                                                Revival request awaiting review
+                                            </p>
+                                        </div>
+                                    )}
 
                                     <div className="mt-4 flex items-center justify-between">
                                         <p className="text-xs text-muted">

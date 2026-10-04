@@ -43,6 +43,26 @@ const InsurancePolicySchema = new Schema<IInsurancePolicyDocument>(
       type: Date,
     },
 
+    next_payment_due_at: {
+      type: Date,
+      index: true,
+    },
+
+    last_payment_at: {
+      type: Date,
+    },
+
+    grace_period_ends_at: { type: Date, index: true },
+    lapsed_at: { type: Date },
+    revival_requested_at: { type: Date },
+    revival_approved_at: { type: Date },
+
+    premium_payments_completed: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     status: {
       type: String,
       enum: [
@@ -50,6 +70,8 @@ const InsurancePolicySchema = new Schema<IInsurancePolicyDocument>(
         "approved",
         "payment_pending",
         "active",
+        "revival_pending",
+        "lapsed",
         "rejected",
         "expired",
         "cancelled",

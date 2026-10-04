@@ -3,13 +3,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import InsuranceClaim from "@/models/InsuranceClaim";
-import InsurancePolicy from "@/models/InsurancePolicy";
 
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  InsurancePolicy;
   try {
     const session = await getServerSession(authOptions);
 

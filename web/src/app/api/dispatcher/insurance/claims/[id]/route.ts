@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
@@ -27,6 +28,13 @@ export async function GET(
     }
 
     const { id } = await params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json(
+        { error: "Invalid insurance claim ID" },
+        { status: 400 },
+      );
+    }
 
     await dbConnect();
 
@@ -71,6 +79,14 @@ export async function PATCH(
     }
 
     const { id } = await params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json(
+        { error: "Invalid insurance claim ID" },
+        { status: 400 },
+      );
+    }
+
     const body = await req.json();
     const { action, rejection_reason, approved_amount, required_documents } =
       body;
@@ -102,13 +118,6 @@ export async function PATCH(
       );
     }
 
-    if (policy.status !== "active") {
-      return NextResponse.json(
-        { error: "Insurance policy is not active" },
-        { status: 400 },
-      );
-    }
-
     if (action === "under_review") {
       if (claim.status !== "submitted") {
         return NextResponse.json(
@@ -129,6 +138,7 @@ export async function PATCH(
         target_id: claim._id,
         details: {
           claim_number: claim.claim_number,
+          policy_status: policy.status,
         },
       });
     } else if (action === "documents_required") {
@@ -149,8 +159,19 @@ export async function PATCH(
         );
       }
 
+      const documents = required_documents
+        .map((document: unknown) => String(document).trim())
+        .filter(Boolean);
+
+      if (documents.length === 0) {
+        return NextResponse.json(
+          { error: "Required documents must be provided" },
+          { status: 400 },
+        );
+      }
+
       claim.status = "documents_required";
-      claim.required_documents = required_documents;
+      claim.required_documents = documents;
       claim.rejection_reason = undefined;
       claim.approved_amount = undefined;
 
@@ -161,7 +182,7 @@ export async function PATCH(
         target_id: claim._id,
         details: {
           claim_number: claim.claim_number,
-          required_documents,
+          required_documents: documents,
         },
       });
     } else if (action === "approve") {

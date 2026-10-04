@@ -31,6 +31,12 @@ const formatDate = (date?: string) => {
     });
 };
 
+const formatFrequency = (frequency?: string) => {
+    if (!frequency) return "Not available";
+
+    return frequency.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+};
+
 const relationshipLabel = (relationship?: string) => {
     if (!relationship) return "Member";
     return relationship.charAt(0).toUpperCase() + relationship.slice(1);
@@ -41,7 +47,9 @@ export default function InsurancePolicyDetailsPage() {
     const [policy, setPolicy] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [cancelling, setCancelling] = useState(false);
+    const [reviving, setReviving] = useState(false);
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+    const [showRevivalConfirm, setShowRevivalConfirm] = useState(false);
 
     useEffect(() => {
         const loadPolicy = async () => {
@@ -62,9 +70,7 @@ export default function InsurancePolicyDetailsPage() {
             }
         };
 
-        if (params.id) {
-            loadPolicy();
-        }
+        if (params.id) loadPolicy();
     }, [params.id]);
 
     const handleCancelPolicy = async () => {
@@ -73,9 +79,7 @@ export default function InsurancePolicyDetailsPage() {
 
             const response = await fetch(`/api/insurance/policies/${policy._id}`, {
                 method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ action: "cancel" }),
             });
 
@@ -95,6 +99,31 @@ export default function InsurancePolicyDetailsPage() {
         }
     };
 
+    const handleRevivalRequest = async () => {
+        try {
+            setReviving(true);
+
+            const response = await fetch(`/api/insurance/policies/${policy._id}/revival`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const data = await parseResponse(response);
+
+            if (!response.ok) {
+                throw new Error(data?.error || "Failed to request policy revival");
+            }
+
+            setPolicy(data.policy);
+            setShowRevivalConfirm(false);
+            toast.success("Revival request submitted successfully");
+        } catch (error: any) {
+            toast.error(error?.message || "Failed to request policy revival");
+        } finally {
+            setReviving(false);
+        }
+    };
+
     if (loading) {
         return (
             <main className="flex min-h-[70vh] items-center justify-center">
@@ -110,11 +139,7 @@ export default function InsurancePolicyDetailsPage() {
                     <ShieldCheck className="mx-auto text-muted-foreground" size={40} />
                     <h1 className="mt-4 text-xl font-semibold text-foreground">Policy not found</h1>
                     <p className="mt-2 text-sm text-muted">We could not find this insurance policy.</p>
-
-                    <Link
-                        href="/patient/insurance"
-                        className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
-                    >
+                    <Link href="/patient/insurance" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover">
                         <ArrowLeft size={17} />
                         Back to Insurance
                     </Link>
@@ -126,13 +151,13 @@ export default function InsurancePolicyDetailsPage() {
     const plan = policy.plan_id;
     const isPaymentPending = policy.status === "approved" || policy.status === "payment_pending";
     const isActive = policy.status === "active";
+    const isLapsed = policy.status === "lapsed";
+    const isRevivalPending = policy.status === "revival_pending";
+    const isPremiumDue = isActive && policy.next_payment_due_at && new Date(policy.next_payment_due_at) <= new Date();
 
     return (
         <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-            <Link
-                href="/patient/insurance"
-                className="inline-flex items-center gap-2 text-sm text-muted transition hover:text-foreground"
-            >
+            <Link href="/patient/insurance" className="inline-flex items-center gap-2 text-sm text-muted transition hover:text-foreground">
                 <ArrowLeft size={17} />
                 Back to Insurance
             </Link>
@@ -173,13 +198,15 @@ export default function InsurancePolicyDetailsPage() {
                         <p className="mt-2 text-xl font-bold text-foreground">
                             ₹{Number(plan?.premium_amount || 0).toLocaleString("en-IN")}
                         </p>
+                        <p className="mt-1 text-xs text-muted">
+                            {formatFrequency(plan?.premium_frequency)}
+                        </p>
                     </div>
 
                     <div className="rounded-lg border border-border bg-surface-secondary p-5">
                         <p className="text-xs text-muted-foreground">Policy Term</p>
                         <p className="mt-2 text-xl font-bold text-foreground">
-                            {plan?.policy_term_years || 0}{" "}
-                            {Number(plan?.policy_term_years) === 1 ? "Year" : "Years"}
+                            {plan?.policy_term_years || 0} {Number(plan?.policy_term_years) === 1 ? "Year" : "Years"}
                         </p>
                     </div>
                 </div>
@@ -192,9 +219,7 @@ export default function InsurancePolicyDetailsPage() {
                             <CalendarDays className="mt-0.5 shrink-0 text-primary" size={19} />
                             <div>
                                 <p className="text-xs text-muted-foreground">Start Date</p>
-                                <p className="mt-1 text-sm font-medium text-foreground">
-                                    {formatDate(policy.start_date)}
-                                </p>
+                                <p className="mt-1 text-sm font-medium text-foreground">{formatDate(policy.start_date)}</p>
                             </div>
                         </div>
 
@@ -202,11 +227,29 @@ export default function InsurancePolicyDetailsPage() {
                             <CalendarDays className="mt-0.5 shrink-0 text-primary" size={19} />
                             <div>
                                 <p className="text-xs text-muted-foreground">Expiry Date</p>
-                                <p className="mt-1 text-sm font-medium text-foreground">
-                                    {formatDate(policy.expiry_date)}
-                                </p>
+                                <p className="mt-1 text-sm font-medium text-foreground">{formatDate(policy.expiry_date)}</p>
                             </div>
                         </div>
+
+                        {policy.grace_period_ends_at && (
+                            <div className="flex items-start gap-3 rounded-lg border border-border bg-surface-secondary p-4">
+                                <CalendarDays className="mt-0.5 shrink-0 text-warning" size={19} />
+                                <div>
+                                    <p className="text-xs text-muted-foreground">Grace Period Ends</p>
+                                    <p className="mt-1 text-sm font-medium text-foreground">{formatDate(policy.grace_period_ends_at)}</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {policy.lapsed_at && (
+                            <div className="flex items-start gap-3 rounded-lg border border-danger/20 bg-danger/10 p-4">
+                                <CalendarDays className="mt-0.5 shrink-0 text-danger" size={19} />
+                                <div>
+                                    <p className="text-xs text-muted-foreground">Lapsed On</p>
+                                    <p className="mt-1 text-sm font-medium text-foreground">{formatDate(policy.lapsed_at)}</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -215,30 +258,21 @@ export default function InsurancePolicyDetailsPage() {
                         <Users className="text-primary" size={21} />
                         <div>
                             <h2 className="font-semibold text-foreground">Insured Members</h2>
-                            <p className="mt-1 text-xs text-muted">
-                                Members covered under this proposal.
-                            </p>
+                            <p className="mt-1 text-xs text-muted">Members covered under this policy.</p>
                         </div>
                     </div>
 
                     <div className="mt-5 space-y-3">
                         {policy.insured_members?.length > 0 ? (
                             policy.insured_members.map((member: any, index: number) => (
-                                <div
-                                    key={`${member.name}-${index}`}
-                                    className="flex flex-col gap-2 rounded-lg border border-border bg-surface-secondary p-4 sm:flex-row sm:items-center sm:justify-between"
-                                >
+                                <div key={`${member.name}-${index}`} className="flex flex-col gap-2 rounded-lg border border-border bg-surface-secondary p-4 sm:flex-row sm:items-center sm:justify-between">
                                     <div>
                                         <p className="text-sm font-medium text-foreground">{member.name}</p>
-                                        <p className="mt-1 text-xs text-muted">
-                                            {relationshipLabel(member.relationship)}
-                                        </p>
+                                        <p className="mt-1 text-xs text-muted">{relationshipLabel(member.relationship)}</p>
                                     </div>
 
                                     {member.date_of_birth && (
-                                        <p className="text-xs text-muted">
-                                            DOB: {formatDate(member.date_of_birth)}
-                                        </p>
+                                        <p className="text-xs text-muted">DOB: {formatDate(member.date_of_birth)}</p>
                                     )}
                                 </div>
                             ))
@@ -254,21 +288,13 @@ export default function InsurancePolicyDetailsPage() {
                             <FileText className="text-primary" size={21} />
                             <div>
                                 <h2 className="font-semibold text-foreground">Documents</h2>
-                                <p className="mt-1 text-xs text-muted">
-                                    Documents attached to this policy.
-                                </p>
+                                <p className="mt-1 text-xs text-muted">Documents attached to this policy.</p>
                             </div>
                         </div>
 
                         <div className="mt-5 space-y-3">
                             {policy.documents.map((document: any, index: number) => (
-                                <a
-                                    key={`${document.file_url}-${index}`}
-                                    href={document.file_url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex items-center justify-between gap-4 rounded-lg border border-border bg-surface-secondary p-4 transition hover:border-primary/40"
-                                >
+                                <a key={`${document.file_url}-${index}`} href={document.file_url} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-4 rounded-lg border border-border bg-surface-secondary p-4 transition hover:border-primary/40">
                                     <div className="flex min-w-0 items-center gap-3">
                                         <FileText className="shrink-0 text-muted" size={18} />
                                         <span className="truncate text-sm text-foreground">
@@ -276,9 +302,7 @@ export default function InsurancePolicyDetailsPage() {
                                         </span>
                                     </div>
 
-                                    <span className="shrink-0 text-xs font-medium text-primary">
-                                        View
-                                    </span>
+                                    <span className="shrink-0 text-xs font-medium text-primary">View</span>
                                 </a>
                             ))}
                         </div>
@@ -289,9 +313,62 @@ export default function InsurancePolicyDetailsPage() {
                     <div className="border-t border-border p-6 sm:p-8">
                         <div className="rounded-xl border border-danger/20 bg-danger/10 p-5">
                             <p className="text-sm font-semibold text-danger">Application Rejected</p>
+                            <p className="mt-2 text-sm leading-6 text-muted">{policy.rejection_reason}</p>
+                        </div>
+                    </div>
+                )}
+
+                {isLapsed && (
+                    <div className="border-t border-border bg-surface-secondary p-6 sm:p-8">
+                        {!showRevivalConfirm ? (
+                            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <p className="font-semibold text-danger">Policy has lapsed</p>
+                                    <p className="mt-1 max-w-2xl text-sm leading-6 text-muted">
+                                        Your policy is no longer active because the premium grace period has ended. You can request revival for this policy.
+                                    </p>
+                                </div>
+
+                                <button type="button" onClick={() => setShowRevivalConfirm(true)} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover">
+                                    <ShieldCheck size={18} />
+                                    Request Revival
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="rounded-xl border border-warning/20 bg-warning/10 p-5">
+                                <p className="text-sm font-semibold text-warning">Request policy revival?</p>
+                                <p className="mt-2 text-sm leading-6 text-muted">
+                                    Your revival request will be reviewed by our insurance team. If approved, you will need to pay one normal {formatFrequency(plan?.premium_frequency).toLowerCase()} premium to reactivate the policy.
+                                </p>
+
+                                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                                    <button type="button" onClick={handleRevivalRequest} disabled={reviving} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60">
+                                        {reviving && <Loader2 className="animate-spin" size={17} />}
+                                        {reviving ? "Submitting..." : "Yes, Request Revival"}
+                                    </button>
+
+                                    <button type="button" onClick={() => setShowRevivalConfirm(false)} disabled={reviving} className="rounded-lg border border-border bg-surface px-5 py-2.5 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground disabled:opacity-60">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {isRevivalPending && (
+                    <div className="border-t border-border bg-surface-secondary p-6 sm:p-8">
+                        <div className="rounded-xl border border-warning/20 bg-warning/10 p-5">
+                            <p className="text-sm font-semibold text-warning">Revival request under review</p>
                             <p className="mt-2 text-sm leading-6 text-muted">
-                                {policy.rejection_reason}
+                                Your request to revive this policy has been submitted. Our insurance team will review it. If approved, you will be able to pay one normal {formatFrequency(plan?.premium_frequency).toLowerCase()} premium to reactivate your policy.
                             </p>
+
+                            {policy.revival_requested_at && (
+                                <p className="mt-3 text-xs text-muted">
+                                    Requested on {formatDate(policy.revival_requested_at)}
+                                </p>
+                            )}
                         </div>
                     </div>
                 )}
@@ -303,17 +380,19 @@ export default function InsurancePolicyDetailsPage() {
                                 <p className="font-semibold text-foreground">
                                     {policy.status === "approved"
                                         ? "Your proposal has been approved"
-                                        : "Complete your premium payment"}
+                                        : policy.revival_approved_at
+                                            ? "Your policy revival has been approved"
+                                            : "Complete your premium payment"}
                                 </p>
+
                                 <p className="mt-1 text-sm text-muted">
-                                    Pay the premium to activate your insurance policy.
+                                    {policy.revival_approved_at
+                                        ? `Pay one ${formatFrequency(plan?.premium_frequency).toLowerCase()} premium to reactivate your insurance policy.`
+                                        : `Pay your ${formatFrequency(plan?.premium_frequency).toLowerCase()} premium to activate your insurance policy.`}
                                 </p>
                             </div>
 
-                            <Link
-                                href={`/patient/insurance/policies/${policy._id}/payment`}
-                                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
-                            >
+                            <Link href={`/patient/insurance/policies/${policy._id}/payment`} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover">
                                 <CreditCard size={18} />
                                 Pay Premium
                             </Link>
@@ -332,53 +411,62 @@ export default function InsurancePolicyDetailsPage() {
                                     </p>
                                 </div>
 
-                                <Link
-                                    href="/patient/insurance/claims/new"
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
-                                >
+                                <Link href="/patient/insurance/claims/new" className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover">
                                     <FileText size={18} />
                                     Create Claim
                                 </Link>
                             </div>
 
+                            {policy.next_payment_due_at && (
+                                <div className={`rounded-lg border p-4 ${isPremiumDue ? "border-warning/30 bg-warning/10" : "border-border bg-surface"}`}>
+                                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                        <div>
+                                            <p className="text-sm font-semibold text-foreground">
+                                                {isPremiumDue ? "Premium Payment Due" : "Next Premium Payment"}
+                                            </p>
+
+                                            <p className="mt-1 text-sm text-muted">
+                                                ₹{Number(plan?.premium_amount || 0).toLocaleString("en-IN")}{" "}
+                                                {formatFrequency(plan?.premium_frequency).toLowerCase()} premium
+                                            </p>
+
+                                            <p className="mt-1 text-xs text-muted">
+                                                Due on {formatDate(policy.next_payment_due_at)}
+                                            </p>
+                                        </div>
+
+                                        {isPremiumDue ? (
+                                            <Link href={`/patient/insurance/policies/${policy._id}/payment`} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover">
+                                                <CreditCard size={17} />
+                                                Pay Premium
+                                            </Link>
+                                        ) : (
+                                            <span className="text-xs font-medium text-muted">Payment not due yet</span>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
                             {!showCancelConfirm ? (
                                 <div className="border-t border-border pt-5">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowCancelConfirm(true)}
-                                        className="text-sm font-medium text-danger transition hover:opacity-80"
-                                    >
+                                    <button type="button" onClick={() => setShowCancelConfirm(true)} className="text-sm font-medium text-danger transition hover:opacity-80">
                                         Cancel Policy
                                     </button>
                                 </div>
                             ) : (
                                 <div className="rounded-xl border border-danger/20 bg-danger/10 p-5">
-                                    <p className="text-sm font-semibold text-danger">
-                                        Cancel this insurance policy?
-                                    </p>
-
+                                    <p className="text-sm font-semibold text-danger">Cancel this insurance policy?</p>
                                     <p className="mt-2 text-sm leading-6 text-muted">
-                                        This will cancel your active insurance policy. Once cancelled, the
-                                        policy will no longer remain active for future coverage.
+                                        This will cancel your active insurance policy. Once cancelled, the policy will no longer remain active for future coverage.
                                     </p>
 
                                     <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-                                        <button
-                                            type="button"
-                                            onClick={handleCancelPolicy}
-                                            disabled={cancelling}
-                                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-danger px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                                        >
+                                        <button type="button" onClick={handleCancelPolicy} disabled={cancelling} className="inline-flex items-center justify-center gap-2 rounded-lg bg-danger px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60">
                                             {cancelling && <Loader2 className="animate-spin" size={17} />}
                                             {cancelling ? "Cancelling..." : "Yes, Cancel Policy"}
                                         </button>
 
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowCancelConfirm(false)}
-                                            disabled={cancelling}
-                                            className="rounded-lg border border-border bg-surface px-5 py-2.5 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground disabled:opacity-60"
-                                        >
+                                        <button type="button" onClick={() => setShowCancelConfirm(false)} disabled={cancelling} className="rounded-lg border border-border bg-surface px-5 py-2.5 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground disabled:opacity-60">
                                             Keep Policy
                                         </button>
                                     </div>
@@ -388,7 +476,7 @@ export default function InsurancePolicyDetailsPage() {
                     </div>
                 )}
 
-                {!isPaymentPending && !isActive && policy.status === "pending" && (
+                {!isPaymentPending && !isActive && !isLapsed && !isRevivalPending && policy.status === "pending" && (
                     <div className="border-t border-border bg-surface-secondary p-6 sm:p-8">
                         <div className="rounded-lg border border-warning/20 bg-warning/10 p-4">
                             <p className="text-sm font-medium text-warning">Proposal under review</p>

@@ -1,18 +1,17 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import InsurancePolicy from "@/models/InsurancePolicy";
+import SystemLog from "@/models/SystemLog";
 import "@/models/InsurancePlan";
 import "@/models/User";
-import SystemLog from "@/models/SystemLog";
-import mongoose from "mongoose";
+import { syncInsurancePolicyStatus } from "@/lib/insurance";
 
-type RouteContext = {
-  params: Promise<{ id: string }>;
-};
+type RouteContext = { params: Promise<{ id: string }> };
 
-export async function GET(request: Request, { params }: RouteContext) {
+export async function GET(_req: Request, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -29,6 +28,13 @@ export async function GET(request: Request, { params }: RouteContext) {
 
     const { id } = await params;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json(
+        { error: "Invalid insurance policy ID" },
+        { status: 400 },
+      );
+    }
+
     await dbConnect();
 
     const policy = await InsurancePolicy.findOne({
@@ -36,8 +42,7 @@ export async function GET(request: Request, { params }: RouteContext) {
       user_id: session.user.id,
     })
       .populate("plan_id")
-      .populate("user_id", "username email contact_no address")
-      .lean();
+      .populate("user_id", "username email contact_no address");
 
     if (!policy) {
       return NextResponse.json(
@@ -46,9 +51,14 @@ export async function GET(request: Request, { params }: RouteContext) {
       );
     }
 
-    return NextResponse.json({ policy });
+    await syncInsurancePolicyStatus(policy);
+
+    return NextResponse.json({
+      policy: policy.toObject(),
+    });
   } catch (error) {
     console.error("Insurance policy fetch error:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch insurance policy" },
       { status: 500 },
@@ -56,10 +66,7 @@ export async function GET(request: Request, { params }: RouteContext) {
   }
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function PATCH(req: Request, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -77,14 +84,20 @@ export async function PATCH(
     const { id } = await params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return NextResponse.json({ error: "Invalid policy ID" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid insurance policy ID" },
+        { status: 400 },
+      );
     }
 
-    const { action } = await req.json();
+    const body = await req.json();
+    const { action } = body;
 
     if (action !== "cancel") {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
+
+    await dbConnect();
 
     const policy = await InsurancePolicy.findOne({
       _id: id,
@@ -98,9 +111,13 @@ export async function PATCH(
       );
     }
 
+    await syncInsurancePolicyStatus(policy);
+
     if (policy.status !== "active") {
       return NextResponse.json(
-        { error: "Only active insurance policies can be cancelled" },
+        {
+          error: "Only active insurance policies can be cancelled",
+        },
         { status: 400 },
       );
     }
@@ -120,7 +137,7 @@ export async function PATCH(
 
     return NextResponse.json({
       message: "Insurance policy cancelled successfully",
-      policy,
+      policy: policy.toObject(),
     });
   } catch (error) {
     console.error("Cancel insurance policy error:", error);

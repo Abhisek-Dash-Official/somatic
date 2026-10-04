@@ -6,6 +6,7 @@ import dbConnect from "@/lib/db";
 import InsurancePlan from "@/models/InsurancePlan";
 import InsurancePolicy from "@/models/InsurancePolicy";
 import SystemLog from "@/models/SystemLog";
+import { syncInsurancePolicyStatus } from "@/lib/insurance";
 
 export async function POST(req: Request) {
   try {
@@ -46,6 +47,16 @@ export async function POST(req: Request) {
           { status: 400 },
         );
       }
+
+      if (
+        member.date_of_birth &&
+        Number.isNaN(new Date(member.date_of_birth).getTime())
+      ) {
+        return NextResponse.json(
+          { error: "Invalid date of birth for insured member" },
+          { status: 400 },
+        );
+      }
     }
 
     if (documents !== undefined && !Array.isArray(documents)) {
@@ -55,14 +66,69 @@ export async function POST(req: Request) {
       );
     }
 
+    if (documents) {
+      for (const document of documents) {
+        if (!document?.type || !document?.file_url?.trim()) {
+          return NextResponse.json(
+            { error: "Each document must have a type and file URL" },
+            { status: 400 },
+          );
+        }
+      }
+    }
+
     await dbConnect();
 
-    const existingPolicy = await InsurancePolicy.findOne({
+    const existingPolicies = await InsurancePolicy.find({
       user_id: session.user.id,
-      status: { $in: ["pending", "approved", "payment_pending", "active"] },
+      status: {
+        $in: [
+          "pending",
+          "approved",
+          "payment_pending",
+          "active",
+          "revival_pending",
+          "lapsed",
+        ],
+      },
     });
 
+    for (const existingPolicy of existingPolicies) {
+      await syncInsurancePolicyStatus(existingPolicy);
+    }
+
+    const existingPolicy = existingPolicies.find((policy) =>
+      [
+        "pending",
+        "approved",
+        "payment_pending",
+        "active",
+        "revival_pending",
+        "lapsed",
+      ].includes(policy.status),
+    );
+
     if (existingPolicy) {
+      if (existingPolicy.status === "lapsed") {
+        return NextResponse.json(
+          {
+            error:
+              "You already have a lapsed insurance policy. Please request revival instead of purchasing another policy.",
+          },
+          { status: 409 },
+        );
+      }
+
+      if (existingPolicy.status === "revival_pending") {
+        return NextResponse.json(
+          {
+            error:
+              "Your insurance policy revival request is already under review.",
+          },
+          { status: 409 },
+        );
+      }
+
       return NextResponse.json(
         {
           error: "You already have an existing insurance policy or application",
@@ -96,7 +162,7 @@ export async function POST(req: Request) {
       documents: Array.isArray(documents)
         ? documents.map((document: any) => ({
             type: document.type,
-            file_url: document.file_url,
+            file_url: document.file_url.trim(),
           }))
         : [],
       status: "pending",
@@ -112,6 +178,8 @@ export async function POST(req: Request) {
         plan_name: plan.name,
         premium_amount: plan.premium_amount,
         coverage_amount: plan.coverage_amount,
+        premium_frequency: plan.premium_frequency,
+        policy_term_years: plan.policy_term_years,
         insured_members_count: insured_members.length,
       },
     });
@@ -161,10 +229,15 @@ export async function GET() {
       user_id: session.user.id,
     })
       .populate("plan_id")
-      .sort({ created_at: -1 })
-      .lean();
+      .sort({ created_at: -1 });
 
-    return NextResponse.json({ policies });
+    for (const policy of policies) {
+      await syncInsurancePolicyStatus(policy);
+    }
+
+    return NextResponse.json({
+      policies: policies.map((policy) => policy.toObject()),
+    });
   } catch (error) {
     console.error("Insurance policies fetch error:", error);
 

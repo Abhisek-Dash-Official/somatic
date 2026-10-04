@@ -5,6 +5,7 @@ import dbConnect from "@/lib/db";
 import InsurancePolicy from "@/models/InsurancePolicy";
 import "@/models/User";
 import "@/models/InsurancePlan";
+import { syncInsurancePolicyStatus } from "@/lib/insurance";
 
 export async function GET(req: Request) {
   try {
@@ -55,6 +56,10 @@ export async function GET(req: Request) {
       .populate("approved_by", "username email")
       .populate("rejected_by", "username email")
       .sort({ created_at: -1 });
+
+    for (const policy of policies) {
+      await syncInsurancePolicyStatus(policy);
+    }
 
     return NextResponse.json({ policies });
   } catch (error) {

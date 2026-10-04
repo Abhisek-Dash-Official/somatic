@@ -338,11 +338,22 @@ export interface IInsurancePolicy extends Document {
   start_date?: Date;
   expiry_date?: Date;
 
+  next_payment_due_at?: Date;
+  last_payment_at?: Date;
+  premium_payments_completed?: number;
+
+  grace_period_ends_at?: Date;
+  lapsed_at?: Date;
+  revival_requested_at?: Date;
+  revival_approved_at?: Date;
+
   status:
     | "pending"
     | "approved"
     | "payment_pending"
     | "active"
+    | "revival_pending"
+    | "lapsed"
     | "rejected"
     | "expired"
     | "cancelled";

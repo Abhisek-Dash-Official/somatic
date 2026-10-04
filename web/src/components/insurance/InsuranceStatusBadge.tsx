@@ -17,6 +17,14 @@ const statusConfig: Record<string, { label: string; className: string }> = {
         label: "Active",
         className: "bg-success/10 text-success border-success/20",
     },
+    revival_pending: {
+        label: "Revival Under Review",
+        className: "bg-warning/10 text-warning border-warning/20",
+    },
+    lapsed: {
+        label: "Lapsed",
+        className: "bg-danger/10 text-danger border-danger/20",
+    },
     rejected: {
         label: "Rejected",
         className: "bg-danger/10 text-danger border-danger/20",
@@ -62,9 +70,7 @@ export default function InsuranceStatusBadge({ status }: { status: string }) {
     };
 
     return (
-        <span
-            className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${config.className}`}
-        >
+        <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${config.className}`}>
             {config.label}
         </span>
     );

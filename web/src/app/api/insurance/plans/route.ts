@@ -21,9 +21,7 @@ export async function GET() {
 
     await dbConnect();
 
-    const plans = await InsurancePlan.find({
-      is_active: true,
-    })
+    const plans = await InsurancePlan.find({ is_active: true })
       .sort({ premium_amount: 1 })
       .lean();
 

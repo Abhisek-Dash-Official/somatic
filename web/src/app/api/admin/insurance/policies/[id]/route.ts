@@ -7,6 +7,7 @@ import InsurancePolicy from "@/models/InsurancePolicy";
 import "@/models/User";
 import "@/models/InsurancePlan";
 import SystemLog from "@/models/SystemLog";
+import { syncInsurancePolicyStatus } from "@/lib/insurance";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -35,8 +36,7 @@ export async function GET(req: NextRequest, { params }: RouteContext) {
         "name description coverage_amount premium_amount premium_frequency policy_term_years features",
       )
       .populate("approved_by", "username email")
-      .populate("rejected_by", "username email")
-      .lean();
+      .populate("rejected_by", "username email");
 
     if (!policy) {
       return NextResponse.json(
@@ -45,7 +45,9 @@ export async function GET(req: NextRequest, { params }: RouteContext) {
       );
     }
 
-    return NextResponse.json({ policy });
+    await syncInsurancePolicyStatus(policy);
+
+    return NextResponse.json({ policy: policy.toObject() });
   } catch (error) {
     console.error("Admin insurance policy GET error:", error);
     return NextResponse.json(
@@ -70,17 +72,13 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     }
 
     const body = await req.json();
-    const action = body.action;
-    const reason = typeof body.reason === "string" ? body.reason.trim() : "";
+    const { action, reason } = body;
 
     if (action !== "cancel") {
-      return NextResponse.json(
-        { error: "Invalid policy action" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
 
-    if (!reason) {
+    if (!reason?.trim()) {
       return NextResponse.json(
         { error: "Cancellation reason is required" },
         { status: 400 },
@@ -97,6 +95,8 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
         { status: 404 },
       );
     }
+
+    await syncInsurancePolicyStatus(policy);
 
     if (policy.status === "cancelled") {
       return NextResponse.json(
@@ -115,19 +115,20 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     const previousStatus = policy.status;
 
     policy.status = "cancelled";
-    policy.rejection_reason = reason;
+    policy.rejection_reason = reason.trim();
 
     await policy.save();
 
     await SystemLog.create({
-      actor_id: session.user.id,
-      actor_role: session.user.role,
-      action_type: "INSURANCE_POLICY_CANCELLED_BY_ADMIN",
-      target_id: policy._id,
-      details: {
+      user_id: session.user.id,
+      action: "INSURANCE_POLICY_CANCELLED_BY_ADMIN",
+      entity_type: "InsurancePolicy",
+      entity_id: policy._id,
+      metadata: {
+        policy_id: policy._id.toString(),
         policy_number: policy.policy_number,
         previous_status: previousStatus,
-        reason,
+        reason: reason.trim(),
       },
     });
 

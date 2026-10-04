@@ -46,8 +46,8 @@ export default function InsuranceClaimDocumentsPage() {
                 if (!response.ok) throw new Error(data.error || "Failed to load claim");
 
                 setClaim(data.claim as IInsuranceClaim);
-            } catch (error: any) {
-                toast.error(error.message || "Failed to load claim");
+            } catch (error) {
+                toast.error(error instanceof Error ? error.message : "Failed to load claim");
             } finally {
                 setLoading(false);
             }
@@ -61,12 +61,10 @@ export default function InsuranceClaimDocumentsPage() {
     const canUpload = claim?.status === "documents_required";
     const canEdit = claim?.status === "documents_required" || claim?.status === "under_review";
 
-    const getExistingDocument = (type: string) => {
-        return uploadedDocuments.find((document: any) => document.type === type);
-    };
+    const getExistingDocument = (type: string) => uploadedDocuments.find((document: any) => document.type === type);
 
-    const updateRequiredDocument = (type: string, file_url: string) => {
-        setRequiredInputs((current) => ({ ...current, [type]: file_url }));
+    const updateRequiredDocument = (type: string, fileUrl: string) => {
+        setRequiredInputs((current) => ({ ...current, [type]: fileUrl }));
     };
 
     const getRequiredDocumentValue = (type: string) => {
@@ -75,11 +73,7 @@ export default function InsuranceClaimDocumentsPage() {
     };
 
     const updateAdditionalDocument = (index: number, field: keyof EditableDocument, value: string) => {
-        setAdditionalDocuments((current) =>
-            current.map((document, documentIndex) =>
-                documentIndex === index ? { ...document, [field]: value } : document
-            )
-        );
+        setAdditionalDocuments((current) => current.map((document, documentIndex) => documentIndex === index ? { ...document, [field]: value } : document));
     };
 
     const addAdditionalDocument = () => {
@@ -92,12 +86,8 @@ export default function InsuranceClaimDocumentsPage() {
 
     const startEditing = (index: number) => {
         const document = uploadedDocuments[index] as any;
-
         setEditingIndex(index);
-        setEditDocument({
-            type: document.type,
-            file_url: document.file_url,
-        });
+        setEditDocument({ type: document.type, file_url: document.file_url });
     };
 
     const cancelEditing = () => {
@@ -130,17 +120,15 @@ export default function InsuranceClaimDocumentsPage() {
 
             setClaim((current) => {
                 if (!current) return current;
-
                 const documents = [...(current.documents || [])];
                 documents[editingIndex] = data.document;
-
                 return { ...current, documents };
             });
 
             cancelEditing();
             toast.success("Document updated successfully");
-        } catch (error: any) {
-            toast.error(error.message || "Failed to update document");
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Failed to update document");
         }
     };
 
@@ -156,22 +144,18 @@ export default function InsuranceClaimDocumentsPage() {
 
             if (!response.ok) throw new Error(data.error || "Failed to remove document");
 
-            setClaim((current) => {
-                if (!current) return current;
-
-                return {
-                    ...current,
-                    status: data.claim.status,
-                    required_documents: data.claim.required_documents || [],
-                    documents: data.claim.documents,
-                };
-            });
+            setClaim((current) => current ? {
+                ...current,
+                status: data.claim.status,
+                required_documents: data.claim.required_documents || [],
+                documents: data.claim.documents,
+            } : current);
 
             if (editingIndex === index) cancelEditing();
 
             toast.success("Document removed successfully");
-        } catch (error: any) {
-            toast.error(error.message || "Failed to remove document");
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Failed to remove document");
         }
     };
 
@@ -180,26 +164,18 @@ export default function InsuranceClaimDocumentsPage() {
 
         const requiredToSubmit = requiredDocuments
             .filter((type) => !getExistingDocument(type))
-            .map((type) => ({
-                type,
-                file_url: (requiredInputs[type] || "").trim(),
-            }));
+            .map((type) => ({ type, file_url: (requiredInputs[type] || "").trim() }));
 
         const missingRequired = requiredToSubmit.filter((document) => !document.file_url);
 
         if (missingRequired.length > 0) {
-            toast.warn(
-                `Please provide: ${missingRequired.map((document) => documentLabels[document.type] || document.type).join(", ")}`
-            );
+            toast.warn(`Please provide: ${missingRequired.map((document) => documentLabels[document.type] || document.type).join(", ")}`);
             return;
         }
 
         const extraDocuments = additionalDocuments
             .filter((document) => document.file_url.trim())
-            .map((document) => ({
-                type: document.type,
-                file_url: document.file_url.trim(),
-            }));
+            .map((document) => ({ type: document.type, file_url: document.file_url.trim() }));
 
         const documentsToSubmit = [...requiredToSubmit, ...extraDocuments];
 
@@ -221,25 +197,19 @@ export default function InsuranceClaimDocumentsPage() {
 
             if (!response.ok) {
                 if (data.missing_documents?.length) {
-                    toast.error(
-                        `Missing: ${data.missing_documents.map((type: string) => documentLabels[type] || type).join(", ")}`
-                    );
+                    toast.error(`Missing: ${data.missing_documents.map((type: string) => documentLabels[type] || type).join(", ")}`);
                 } else {
                     toast.error(data.error || "Failed to submit documents");
                 }
                 return;
             }
 
-            setClaim((current) =>
-                current
-                    ? {
-                        ...current,
-                        status: data.claim.status,
-                        documents: data.claim.documents,
-                        required_documents: data.claim.required_documents || [],
-                    }
-                    : current
-            );
+            setClaim((current) => current ? {
+                ...current,
+                status: data.claim.status,
+                documents: data.claim.documents,
+                required_documents: data.claim.required_documents || [],
+            } : current);
 
             setRequiredInputs({});
             setAdditionalDocuments([]);
@@ -251,8 +221,7 @@ export default function InsuranceClaimDocumentsPage() {
         }
     };
 
-    const inputClass =
-        "rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10";
+    const inputClass = "rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10";
 
     if (loading) {
         return (
@@ -270,10 +239,7 @@ export default function InsuranceClaimDocumentsPage() {
                 <div className="mx-auto max-w-5xl rounded-xl border border-border bg-surface p-8 text-center">
                     <FileText className="mx-auto h-10 w-10 text-muted-foreground" />
                     <h1 className="mt-4 text-lg font-semibold text-foreground">Claim not found</h1>
-                    <Link
-                        href="/patient/insurance/claims"
-                        className="mt-5 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
-                    >
+                    <Link href="/patient/insurance/claims" className="mt-5 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover">
                         <ArrowLeft className="h-4 w-4" />
                         Back to Claims
                     </Link>
@@ -286,26 +252,36 @@ export default function InsuranceClaimDocumentsPage() {
         <main className="min-h-screen bg-background px-4 py-6 text-foreground md:px-6">
             <div className="mx-auto max-w-5xl space-y-6">
                 <div>
-                    <Link
-                        href={`/patient/insurance/claims/${claimId}`}
-                        className="inline-flex items-center gap-2 text-sm font-medium text-muted transition hover:text-foreground"
-                    >
+                    <Link href={`/patient/insurance/claims/${claimId}`} className="inline-flex items-center gap-2 text-sm font-medium text-muted transition hover:text-foreground">
                         <ArrowLeft className="h-4 w-4" />
                         Back to Claim
                     </Link>
 
                     <h1 className="mt-4 text-2xl font-bold text-foreground">Claim Documents</h1>
-                    <p className="mt-1 text-sm text-muted">
-                        Claim #{claim.claim_number || claim._id}
-                    </p>
+                    <p className="mt-1 text-sm text-muted">Claim #{claim.claim_number || claim._id}</p>
                 </div>
+
+                {requiredDocuments.length > 0 && (
+                    <section className="rounded-xl border border-warning/20 bg-warning/10 p-5">
+                        <h2 className="text-lg font-semibold text-warning">Documents Requested by Insurance Team</h2>
+                        <p className="mt-1 text-sm text-muted">
+                            Please provide all documents requested by the dispatcher.
+                        </p>
+
+                        <div className="mt-4 flex flex-wrap gap-2">
+                            {requiredDocuments.map((type) => (
+                                <span key={type} className="rounded-lg border border-warning/20 bg-warning/10 px-3 py-1.5 text-xs font-medium text-warning">
+                                    {documentLabels[type] || type}
+                                </span>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 <section className="rounded-xl border border-border bg-surface p-5">
                     <div className="mb-5">
                         <h2 className="text-lg font-semibold text-foreground">Submitted Documents</h2>
-                        <p className="mt-1 text-sm text-muted">
-                            View, edit or remove documents already submitted with this claim.
-                        </p>
+                        <p className="mt-1 text-sm text-muted">View, edit or remove documents already submitted with this claim.</p>
                     </div>
 
                     {uploadedDocuments.length > 0 ? (
@@ -315,52 +291,22 @@ export default function InsuranceClaimDocumentsPage() {
                                     {editingIndex === index ? (
                                         <div className="space-y-3">
                                             <div className="grid gap-3 md:grid-cols-[190px_1fr]">
-                                                <select
-                                                    value={editDocument.type}
-                                                    onChange={(event) =>
-                                                        setEditDocument((current) => ({
-                                                            ...current,
-                                                            type: event.target.value,
-                                                        }))
-                                                    }
-                                                    className={inputClass}
-                                                >
+                                                <select value={editDocument.type} onChange={(event) => setEditDocument((current) => ({ ...current, type: event.target.value }))} className={inputClass}>
                                                     {documentTypes.map(([value, label]) => (
-                                                        <option key={value} value={value} className="bg-surface text-foreground">
-                                                            {label}
-                                                        </option>
+                                                        <option key={value} value={value} className="bg-surface text-foreground">{label}</option>
                                                     ))}
                                                 </select>
 
-                                                <input
-                                                    type="url"
-                                                    value={editDocument.file_url}
-                                                    onChange={(event) =>
-                                                        setEditDocument((current) => ({
-                                                            ...current,
-                                                            file_url: event.target.value,
-                                                        }))
-                                                    }
-                                                    placeholder="Enter document URL"
-                                                    className={inputClass}
-                                                />
+                                                <input type="url" value={editDocument.file_url} onChange={(event) => setEditDocument((current) => ({ ...current, file_url: event.target.value }))} placeholder="Enter document URL" className={inputClass} />
                                             </div>
 
                                             <div className="flex flex-wrap gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={saveDocument}
-                                                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
-                                                >
+                                                <button type="button" onClick={saveDocument} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover">
                                                     <Save className="h-4 w-4" />
                                                     Save
                                                 </button>
 
-                                                <button
-                                                    type="button"
-                                                    onClick={cancelEditing}
-                                                    className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
-                                                >
+                                                <button type="button" onClick={cancelEditing} className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground">
                                                     <X className="h-4 w-4" />
                                                     Cancel
                                                 </button>
@@ -374,54 +320,32 @@ export default function InsuranceClaimDocumentsPage() {
                                                 </div>
 
                                                 <div className="min-w-0">
-                                                    <p className="font-medium text-foreground">
-                                                        {documentLabels[document.type] || document.type}
-                                                    </p>
-
-                                                    <p className="mt-1 truncate text-sm text-muted">
-                                                        {document.file_url}
-                                                    </p>
+                                                    <p className="font-medium text-foreground">{documentLabels[document.type] || document.type}</p>
+                                                    <p className="mt-1 truncate text-sm text-muted">{document.file_url}</p>
 
                                                     {document.uploaded_at && (
                                                         <p className="mt-1 text-xs text-muted-foreground">
-                                                            Uploaded {new Date(document.uploaded_at).toLocaleDateString("en-IN", {
-                                                                day: "2-digit",
-                                                                month: "short",
-                                                                year: "numeric",
-                                                            })}
+                                                            Uploaded {new Date(document.uploaded_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
                                                         </p>
                                                     )}
                                                 </div>
                                             </div>
 
                                             <div className="flex shrink-0 flex-wrap gap-2">
-                                                <a
-                                                    href={document.file_url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary"
-                                                >
+                                                <a href={document.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary">
                                                     <ExternalLink className="h-4 w-4" />
                                                     View
                                                 </a>
 
                                                 {canEdit && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => startEditing(index)}
-                                                        className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary"
-                                                    >
+                                                    <button type="button" onClick={() => startEditing(index)} className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary">
                                                         <Edit3 className="h-4 w-4" />
                                                         Edit
                                                     </button>
                                                 )}
 
                                                 {canEdit && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeDocument(index)}
-                                                        className="inline-flex items-center gap-2 rounded-lg border border-danger/20 px-3 py-2 text-sm font-medium text-danger transition hover:bg-danger/10"
-                                                    >
+                                                    <button type="button" onClick={() => removeDocument(index)} className="inline-flex items-center gap-2 rounded-lg border border-danger/20 px-3 py-2 text-sm font-medium text-danger transition hover:bg-danger/10">
                                                         <Trash2 className="h-4 w-4" />
                                                         Remove
                                                     </button>
@@ -440,13 +364,11 @@ export default function InsuranceClaimDocumentsPage() {
                     )}
                 </section>
 
-                {requiredDocuments.length > 0 && (
+                {canUpload && requiredDocuments.length > 0 && (
                     <section className="rounded-xl border border-border bg-surface p-5">
                         <div className="mb-5">
                             <h2 className="text-lg font-semibold text-foreground">Required Documents</h2>
-                            <p className="mt-1 text-sm text-muted">
-                                Please provide the documents requested by the insurance dispatcher.
-                            </p>
+                            <p className="mt-1 text-sm text-muted">Submit all documents requested by the insurance dispatcher.</p>
                         </div>
 
                         <div className="space-y-4">
@@ -462,10 +384,7 @@ export default function InsuranceClaimDocumentsPage() {
                                             </div>
 
                                             <div>
-                                                <p className="font-medium text-foreground">
-                                                    {documentLabels[type] || type}
-                                                </p>
-
+                                                <p className="font-medium text-foreground">{documentLabels[type] || type}</p>
                                                 <p className={`text-xs ${existingDocument ? "text-success" : "text-warning"}`}>
                                                     {existingDocument ? "Already uploaded" : "Required"}
                                                 </p>
@@ -474,28 +393,15 @@ export default function InsuranceClaimDocumentsPage() {
 
                                         {existingDocument ? (
                                             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                                <p className="min-w-0 truncate text-sm text-muted">
-                                                    {existingDocument.file_url}
-                                                </p>
+                                                <p className="min-w-0 truncate text-sm text-muted">{existingDocument.file_url}</p>
 
-                                                <a
-                                                    href={existingDocument.file_url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary"
-                                                >
+                                                <a href={existingDocument.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary">
                                                     <ExternalLink className="h-4 w-4" />
                                                     View
                                                 </a>
                                             </div>
                                         ) : (
-                                            <input
-                                                type="url"
-                                                value={value}
-                                                onChange={(event) => updateRequiredDocument(type, event.target.value)}
-                                                placeholder={`Enter ${documentLabels[type] || type} URL`}
-                                                className={`w-full ${inputClass}`}
-                                            />
+                                            <input type="url" value={value} onChange={(event) => updateRequiredDocument(type, event.target.value)} placeholder={`Enter ${documentLabels[type] || type} URL`} className={`w-full ${inputClass}`} />
                                         )}
                                     </div>
                                 );
@@ -508,40 +414,22 @@ export default function InsuranceClaimDocumentsPage() {
                     <section className="rounded-xl border border-border bg-surface p-5">
                         <div className="mb-5">
                             <h2 className="text-lg font-semibold text-foreground">Additional Documents</h2>
-                            <p className="mt-1 text-sm text-muted">
-                                You can optionally submit additional documents along with the required documents.
-                            </p>
+                            <p className="mt-1 text-sm text-muted">Optionally submit additional documents with the requested documents.</p>
                         </div>
 
                         <div className="space-y-4">
                             {additionalDocuments.map((document, index) => (
                                 <div key={index} className="rounded-lg border border-border bg-surface-secondary p-4">
                                     <div className="grid gap-3 md:grid-cols-[190px_1fr_auto]">
-                                        <select
-                                            value={document.type}
-                                            onChange={(event) => updateAdditionalDocument(index, "type", event.target.value)}
-                                            className={inputClass}
-                                        >
+                                        <select value={document.type} onChange={(event) => updateAdditionalDocument(index, "type", event.target.value)} className={inputClass}>
                                             {documentTypes.map(([value, label]) => (
-                                                <option key={value} value={value} className="bg-surface text-foreground">
-                                                    {label}
-                                                </option>
+                                                <option key={value} value={value} className="bg-surface text-foreground">{label}</option>
                                             ))}
                                         </select>
 
-                                        <input
-                                            type="url"
-                                            value={document.file_url}
-                                            onChange={(event) => updateAdditionalDocument(index, "file_url", event.target.value)}
-                                            placeholder="Enter document URL"
-                                            className={inputClass}
-                                        />
+                                        <input type="url" value={document.file_url} onChange={(event) => updateAdditionalDocument(index, "file_url", event.target.value)} placeholder="Enter document URL" className={inputClass} />
 
-                                        <button
-                                            type="button"
-                                            onClick={() => removeAdditionalDocument(index)}
-                                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-danger/20 px-3 py-2 text-sm font-medium text-danger transition hover:bg-danger/10"
-                                        >
+                                        <button type="button" onClick={() => removeAdditionalDocument(index)} className="inline-flex items-center justify-center gap-2 rounded-lg border border-danger/20 px-3 py-2 text-sm font-medium text-danger transition hover:bg-danger/10">
                                             <Trash2 className="h-4 w-4" />
                                             Remove
                                         </button>
@@ -550,21 +438,12 @@ export default function InsuranceClaimDocumentsPage() {
                             ))}
 
                             <div className="flex flex-col gap-3 sm:flex-row">
-                                <button
-                                    type="button"
-                                    onClick={addAdditionalDocument}
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary"
-                                >
+                                <button type="button" onClick={addAdditionalDocument} className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-muted transition hover:border-primary/40 hover:bg-accent hover:text-primary">
                                     <Plus className="h-4 w-4" />
                                     Add Extra Document
                                 </button>
 
-                                <button
-                                    type="button"
-                                    onClick={submitDocuments}
-                                    disabled={submitting}
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
-                                >
+                                <button type="button" onClick={submitDocuments} disabled={submitting} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50">
                                     <Upload className="h-4 w-4" />
                                     {submitting ? "Submitting..." : "Submit Documents"}
                                 </button>

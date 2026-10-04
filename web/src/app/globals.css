@@ -98,7 +98,7 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--border) var(--background);
+  scrollbar-color: var(--border) #071116;
 }
 
 *::-webkit-scrollbar {
@@ -107,7 +107,7 @@ body {
 }
 
 *::-webkit-scrollbar-track {
-  background: var(--background);
+  background: #071116;
 }
 
 *::-webkit-scrollbar-thumb {
