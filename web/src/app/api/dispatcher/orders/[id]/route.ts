@@ -5,6 +5,7 @@ import dbConnect from "@/lib/db";
 import Order from "@/models/Order";
 import Transaction from "@/models/Transaction";
 import SystemLog from "@/models/SystemLog";
+import { notifyUser } from "@/lib/notification";
 
 const statusTransitions: Record<string, string[]> = {
   placed: ["confirmed", "cancelled"],
@@ -24,6 +25,7 @@ export async function GET(
 
     if (!session?.user?.id)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     if (!["dispatcher", "admin"].includes(session.user.role || ""))
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
@@ -50,6 +52,7 @@ export async function GET(
     return NextResponse.json({ order, transaction }, { status: 200 });
   } catch (error) {
     console.error("Dispatcher Order GET Error:", error);
+
     return NextResponse.json(
       { error: "Unable to fetch order" },
       { status: 500 },
@@ -158,6 +161,22 @@ export async function PATCH(
           details: logDetails,
         });
 
+        try {
+          await notifyUser({
+            sender_id: session.user.id,
+            recipient_id: order.user_id.toString(),
+            type: "shop_payment_received",
+            title: "Payment Received",
+            message: `Your COD payment for order #${order._id.toString().slice(-8).toUpperCase()} has been received successfully.`,
+            priority: "normal",
+            action_url: `/orders/${order._id}`,
+            reference_id: order._id.toString(),
+            reference_type: "shop_order",
+          });
+        } catch (notificationError) {
+          console.error("COD payment notification error:", notificationError);
+        }
+
         return NextResponse.json(
           {
             message: "COD payment synchronized successfully",
@@ -193,6 +212,22 @@ export async function PATCH(
         target_id: order._id,
         details: logDetails,
       });
+
+      try {
+        await notifyUser({
+          sender_id: session.user.id,
+          recipient_id: order.user_id.toString(),
+          type: "shop_payment_received",
+          title: "Payment Received",
+          message: `Your COD payment for order #${order._id.toString().slice(-8).toUpperCase()} has been received successfully.`,
+          priority: "normal",
+          action_url: `/orders/${order._id}`,
+          reference_id: order._id.toString(),
+          reference_type: "shop_order",
+        });
+      } catch (notificationError) {
+        console.error("COD payment notification error:", notificationError);
+      }
 
       return NextResponse.json(
         {
@@ -247,6 +282,69 @@ export async function PATCH(
         details: logDetails,
       });
 
+      const orderNumber = order._id.toString().slice(-8).toUpperCase();
+
+      const statusNotifications: Record<
+        string,
+        {
+          type: string;
+          title: string;
+          message: string;
+          priority: "low" | "normal" | "high" | "urgent";
+        }
+      > = {
+        confirmed: {
+          type: "shop_order_confirmed",
+          title: "Order Confirmed",
+          message: `Your order #${orderNumber} has been confirmed and is being prepared.`,
+          priority: "normal",
+        },
+        shipped: {
+          type: "shop_order_shipped",
+          title: "Order Shipped",
+          message: `Your order #${orderNumber} has been shipped.`,
+          priority: "normal",
+        },
+        out_for_delivery: {
+          type: "shop_order_out_for_delivery",
+          title: "Out for Delivery",
+          message: `Your order #${orderNumber} is out for delivery.`,
+          priority: "high",
+        },
+        delivered: {
+          type: "shop_order_delivered",
+          title: "Order Delivered",
+          message: `Your order #${orderNumber} has been delivered successfully.`,
+          priority: "normal",
+        },
+        cancelled: {
+          type: "shop_order_cancelled",
+          title: "Order Cancelled",
+          message: `Your order #${orderNumber} has been cancelled.`,
+          priority: "high",
+        },
+      };
+
+      const notification = statusNotifications[order_status];
+
+      if (notification) {
+        try {
+          await notifyUser({
+            sender_id: session.user.id,
+            recipient_id: order.user_id.toString(),
+            type: notification.type,
+            title: notification.title,
+            message: notification.message,
+            priority: notification.priority,
+            action_url: `/orders/${order._id}`,
+            reference_id: order._id.toString(),
+            reference_type: "shop_order",
+          });
+        } catch (notificationError) {
+          console.error("Order status notification error:", notificationError);
+        }
+      }
+
       return NextResponse.json(
         {
           message: "Order status updated successfully",
@@ -262,6 +360,7 @@ export async function PATCH(
     );
   } catch (error) {
     console.error("Dispatcher Order PATCH Error:", error);
+
     return NextResponse.json(
       { error: "Unable to update order" },
       { status: 500 },

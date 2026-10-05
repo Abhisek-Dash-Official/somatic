@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import InsurancePolicy from "@/models/InsurancePolicy";
 import SystemLog from "@/models/SystemLog";
+import { notifyUser } from "@/lib/notification";
 
 export async function PATCH(
   req: Request,
@@ -90,6 +91,18 @@ export async function PATCH(
         },
       });
 
+      await notifyUser({
+        sender_id: session.user.id,
+        recipient_id: policy.user_id.toString(),
+        type: "insurance_revival_rejected",
+        title: "Insurance Revival Rejected",
+        message: `Your revival request for insurance policy ${policy.policy_number} has been rejected. Your policy remains lapsed.`,
+        priority: "high",
+        action_url: `/patient/insurance/policies/${policy._id}`,
+        reference_id: policy._id.toString(),
+        reference_type: "insurance_policy",
+      });
+
       return NextResponse.json({
         message: "Insurance policy revival rejected",
         status: policy.status,
@@ -110,6 +123,18 @@ export async function PATCH(
         policy_id: policy._id,
         policy_number: policy.policy_number,
       },
+    });
+
+    await notifyUser({
+      sender_id: session.user.id,
+      recipient_id: policy.user_id.toString(),
+      type: "insurance_revival_approved",
+      title: "Insurance Revival Approved",
+      message: `Your revival request for insurance policy ${policy.policy_number} has been approved. Please complete the required premium payment to reactivate your policy.`,
+      priority: "high",
+      action_url: `/patient/insurance/policies/${policy._id}/revival-payment`,
+      reference_id: policy._id.toString(),
+      reference_type: "insurance_policy",
     });
 
     return NextResponse.json({

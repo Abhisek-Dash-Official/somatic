@@ -14,6 +14,7 @@ const FeedbackSchema = new Schema<IFeedbackDocument>(
     },
     ticket_type: { type: String },
     message: { type: String },
+    admin_response: { type: String, trim: true },
     status: { type: String, enum: ["Open", "Resolved"], default: "Open" },
   },
   { timestamps: { createdAt: "created_at", updatedAt: false } },

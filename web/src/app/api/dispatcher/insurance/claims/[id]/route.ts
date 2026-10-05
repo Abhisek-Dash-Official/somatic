@@ -8,6 +8,7 @@ import InsurancePolicy from "@/models/InsurancePolicy";
 import SystemLog from "@/models/SystemLog";
 import "@/models/User";
 import "@/models/Hospital";
+import { notifyUser } from "@/lib/notification";
 
 export async function GET(
   _req: Request,
@@ -185,6 +186,18 @@ export async function PATCH(
           required_documents: documents,
         },
       });
+
+      await notifyUser({
+        sender_id: session.user.id,
+        recipient_id: claim.user_id.toString(),
+        type: "insurance_documents_required",
+        title: "Documents Required for Your Claim",
+        message: `Additional documents are required for your insurance claim ${claim.claim_number}: ${documents.join(", ")}.`,
+        priority: "high",
+        action_url: `/patient/insurance/claims/${claim._id}/documents`,
+        reference_id: claim._id.toString(),
+        reference_type: "insurance_claim",
+      });
     } else if (action === "approve") {
       if (claim.status !== "under_review") {
         return NextResponse.json(
@@ -225,6 +238,18 @@ export async function PATCH(
           claim_number: claim.claim_number,
           approved_amount: amount,
         },
+      });
+
+      await notifyUser({
+        sender_id: session.user.id,
+        recipient_id: claim.user_id.toString(),
+        type: "insurance_claim_approved",
+        title: "Insurance Claim Approved",
+        message: `Your insurance claim ${claim.claim_number} has been approved for ₹${amount}.`,
+        priority: "high",
+        action_url: `/patient/insurance/claims/${claim._id}`,
+        reference_id: claim._id.toString(),
+        reference_type: "insurance_claim",
       });
     } else if (action === "partially_approve") {
       if (claim.status !== "under_review") {
@@ -267,6 +292,18 @@ export async function PATCH(
           approved_amount: amount,
         },
       });
+
+      await notifyUser({
+        sender_id: session.user.id,
+        recipient_id: claim.user_id.toString(),
+        type: "insurance_claim_partially_approved",
+        title: "Insurance Claim Partially Approved",
+        message: `Your insurance claim ${claim.claim_number} has been partially approved for ₹${amount}.`,
+        priority: "high",
+        action_url: `/patient/insurance/claims/${claim._id}`,
+        reference_id: claim._id.toString(),
+        reference_type: "insurance_claim",
+      });
     } else if (action === "reject") {
       if (
         claim.status !== "submitted" &&
@@ -300,6 +337,18 @@ export async function PATCH(
           rejection_reason: claim.rejection_reason,
         },
       });
+
+      await notifyUser({
+        sender_id: session.user.id,
+        recipient_id: claim.user_id.toString(),
+        type: "insurance_claim_rejected",
+        title: "Insurance Claim Rejected",
+        message: `Your insurance claim ${claim.claim_number} has been rejected. Reason: ${claim.rejection_reason}`,
+        priority: "high",
+        action_url: `/patient/insurance/claims/${claim._id}`,
+        reference_id: claim._id.toString(),
+        reference_type: "insurance_claim",
+      });
     } else if (action === "settle") {
       if (
         claim.status !== "approved" &&
@@ -329,6 +378,18 @@ export async function PATCH(
           claim_number: claim.claim_number,
           approved_amount: claim.approved_amount,
         },
+      });
+
+      await notifyUser({
+        sender_id: session.user.id,
+        recipient_id: claim.user_id.toString(),
+        type: "insurance_claim_settled",
+        title: "Insurance Claim Settled",
+        message: `Your insurance claim ${claim.claim_number} has been settled for ₹${claim.approved_amount}.`,
+        priority: "normal",
+        action_url: `/patient/insurance/claims/${claim._id}`,
+        reference_id: claim._id.toString(),
+        reference_type: "insurance_claim",
       });
     } else {
       return NextResponse.json(

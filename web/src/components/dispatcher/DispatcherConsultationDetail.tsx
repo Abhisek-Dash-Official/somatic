@@ -2,21 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-    AlertTriangle,
-    Ambulance,
-    ArrowLeft,
-    ArrowRight,
-    CalendarDays,
-    CheckCircle2,
-    Clock3,
-    Loader2,
-    Mail,
-    MapPin,
-    Phone,
-    Stethoscope,
-    User,
-} from "lucide-react";
+import { AlertTriangle, Ambulance, ArrowLeft, ArrowRight, BellRing, CalendarDays, CheckCircle2, Clock3, Loader2, Mail, MapPin, Phone, Stethoscope, User } from "lucide-react";
 import type { IConsultation, IDepartment, IUser } from "@/types/models";
 
 type PopulatedPatient = Pick<IUser, "username" | "email" | "contact_no" | "address" | "patient_info"> & {
@@ -91,6 +77,45 @@ export default function DispatcherConsultationDetail({ consultationId }: { consu
     const [consultation, setConsultation] = useState<PopulatedConsultation | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [notifyCount, setNotifyCount] = useState("5");
+    const [notifyingDoctors, setNotifyingDoctors] = useState(false);
+    const [notifyMessage, setNotifyMessage] = useState("");
+    const [notifyError, setNotifyError] = useState("");
+
+    const handleNotifyDoctors = async () => {
+        const count = Number(notifyCount);
+
+        if (!Number.isInteger(count) || count < 1 || count > 20) {
+            setNotifyError("Enter a number between 1 and 20.");
+            setNotifyMessage("");
+            return;
+        }
+
+        try {
+            setNotifyingDoctors(true);
+            setNotifyError("");
+            setNotifyMessage("");
+
+            const res = await fetch(`/api/dispatcher/consultations/${consultationId}/notify`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ count }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data?.error || "Failed to notify doctors.");
+            }
+
+            setNotifyMessage(data.message);
+        } catch (error) {
+            console.error(error);
+            setNotifyError(error instanceof Error ? error.message : "Failed to notify doctors.");
+        } finally {
+            setNotifyingDoctors(false);
+        }
+    };
 
     useEffect(() => {
         const fetchConsultation = async () => {
@@ -302,6 +327,68 @@ export default function DispatcherConsultationDetail({ consultationId }: { consu
                                 </a>
                             )}
                         </Section>
+                        {consultation.status !== "completed" && (
+                            <Section title="Notify Doctors">
+                                <div className="flex items-start gap-3">
+                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                        <BellRing className="h-4 w-4 text-primary" />
+                                    </div>
+
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-medium">
+                                            {doctor ? "Notify Assigned Doctor" : "Notify Available Doctors"}
+                                        </p>
+
+                                        <p className="mt-1 text-xs leading-5 text-muted">
+                                            {doctor
+                                                ? "The consultation is already claimed. Notify the assigned doctor to resolve or release the case."
+                                                : "The consultation is not claimed. Notify available doctors from the assigned department."}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                                    {!doctor && (
+                                        <input
+                                            type="number"
+                                            min={1}
+                                            max={20}
+                                            value={notifyCount}
+                                            onChange={(e) => setNotifyCount(e.target.value)}
+                                            className="h-10 w-full rounded-lg border border-border bg-surface-secondary px-3 text-sm text-foreground outline-none transition focus:border-primary sm:w-24"
+                                            placeholder="5"
+                                        />
+                                    )}
+
+                                    <button
+                                        type="button"
+                                        onClick={handleNotifyDoctors}
+                                        disabled={notifyingDoctors}
+                                        className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-4 text-sm font-medium text-primary transition hover:bg-primary/15 disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        {notifyingDoctors ? (
+                                            <>
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                                Notifying...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <BellRing className="h-4 w-4" />
+                                                {doctor ? "Notify Assigned Doctor" : "Notify Doctors"}
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+
+                                {notifyMessage && (
+                                    <p className="mt-3 text-xs text-success">{notifyMessage}</p>
+                                )}
+
+                                {notifyError && (
+                                    <p className="mt-3 text-xs text-danger">{notifyError}</p>
+                                )}
+                            </Section>
+                        )}
                     </div>
 
                     <div className="space-y-5">

@@ -5,10 +5,12 @@ import dbConnect from "@/lib/db";
 import Feedback from "@/models/Feedback";
 import User from "@/models/User";
 import SystemLog from "@/models/SystemLog";
+import { notifyUser } from "@/lib/notification";
 
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session || session.user.role !== "admin") {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
@@ -27,6 +29,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ success: true, tickets });
   } catch (error: any) {
     console.error("Admin Tickets GET Error:", error);
+
     return NextResponse.json(
       { success: false, message: "Internal Server Error" },
       { status: 500 },
@@ -37,6 +40,7 @@ export async function GET(req: Request) {
 export async function PATCH(req: Request) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session || session.user.role !== "admin") {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
@@ -44,7 +48,8 @@ export async function PATCH(req: Request) {
       );
     }
 
-    const { ticketId, status } = await req.json();
+    const { ticketId, status, notifyMessage } = await req.json();
+
     if (!ticketId || !status) {
       return NextResponse.json(
         { success: false, message: "Missing required fields" },
@@ -52,9 +57,17 @@ export async function PATCH(req: Request) {
       );
     }
 
+    if (!["Open", "Resolved"].includes(status)) {
+      return NextResponse.json(
+        { success: false, message: "Invalid ticket status" },
+        { status: 400 },
+      );
+    }
+
     await dbConnect();
 
     const ticket = await Feedback.findById(ticketId);
+
     if (!ticket) {
       return NextResponse.json(
         { success: false, message: "Ticket not found" },
@@ -63,6 +76,28 @@ export async function PATCH(req: Request) {
     }
 
     const oldStatus = ticket.status;
+
+    if (oldStatus === status) {
+      return NextResponse.json(
+        { success: false, message: `Ticket is already ${status}` },
+        { status: 400 },
+      );
+    }
+
+    if (status === "Resolved") {
+      if (typeof notifyMessage !== "string" || !notifyMessage.trim()) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Please write a message before resolving the ticket",
+          },
+          { status: 400 },
+        );
+      }
+
+      ticket.admin_response = notifyMessage.trim();
+    }
+
     ticket.status = status;
     await ticket.save();
 
@@ -78,12 +113,32 @@ export async function PATCH(req: Request) {
       },
     });
 
+    if (status === "Resolved") {
+      await notifyUser({
+        sender_id: session.user.id,
+        recipient_id: ticket.reported_by_user_id.toString(),
+        type: "support_ticket_resolved",
+        title: "Support Ticket Resolved",
+        message: notifyMessage.trim(),
+        priority: "normal",
+        action_url: "/support",
+        reference_id: ticket._id.toString(),
+        reference_type: "feedback",
+      });
+    }
+
     return NextResponse.json({
       success: true,
-      message: "Ticket status updated",
+      message: `Ticket marked as ${status}`,
+      ticket: {
+        _id: ticket._id,
+        status: ticket.status,
+        admin_response: ticket.admin_response,
+      },
     });
   } catch (error: any) {
     console.error("Admin Tickets PATCH Error:", error);
+
     return NextResponse.json(
       { success: false, message: "Internal Server Error" },
       { status: 500 },

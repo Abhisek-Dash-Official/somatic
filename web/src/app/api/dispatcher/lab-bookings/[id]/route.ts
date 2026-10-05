@@ -6,6 +6,7 @@ import dbConnect from "@/lib/db";
 import LabBooking from "@/models/LabBooking";
 import Transaction from "@/models/Transaction";
 import SystemLog from "@/models/SystemLog";
+import { notifyUser } from "@/lib/notification";
 import "@/models/User";
 import "@/models/LabTest";
 
@@ -368,6 +369,87 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       target_id: booking._id,
       details: logDetails,
     });
+
+    const bookingNumber = booking.booking_number;
+
+    const notificationMap: Record<
+      string,
+      {
+        type: string;
+        title: string;
+        message: string;
+        priority: "low" | "normal" | "high" | "urgent";
+      }
+    > = {
+      schedule_collection: {
+        type: "lab_collection_scheduled",
+        title: "Lab Collection Scheduled",
+        message: `Your lab sample collection has been scheduled for booking ${bookingNumber}.`,
+        priority: "normal",
+      },
+      sample_collected: {
+        type: "lab_sample_collected",
+        title: "Sample Collected",
+        message: `Your lab sample for booking ${bookingNumber} has been collected successfully.`,
+        priority: "normal",
+      },
+      start_processing: {
+        type: "lab_processing_started",
+        title: "Lab Processing Started",
+        message: `Your lab sample for booking ${bookingNumber} is now being processed.`,
+        priority: "normal",
+      },
+      enter_results: {
+        type: "lab_results_entered",
+        title: "Lab Results Updated",
+        message: `Your lab results for booking ${bookingNumber} have been entered and are being prepared for the report.`,
+        priority: "normal",
+      },
+      report_ready: {
+        type: "lab_report_ready",
+        title: "Lab Report Ready",
+        message: `Your lab report for booking ${bookingNumber} is ready to view.`,
+        priority: "high",
+      },
+      complete: {
+        type: "lab_booking_completed",
+        title: "Lab Booking Completed",
+        message: `Your lab booking ${bookingNumber} has been completed successfully.`,
+        priority: "normal",
+      },
+      confirm_cash_payment: {
+        type: "lab_payment_received",
+        title: "Lab Payment Received",
+        message: `Your cash payment for lab booking ${bookingNumber} has been confirmed successfully.`,
+        priority: "normal",
+      },
+      cancel: {
+        type: "lab_booking_cancelled",
+        title: "Lab Booking Cancelled",
+        message: `Your lab booking ${bookingNumber} has been cancelled.`,
+        priority: "high",
+      },
+    };
+
+    const notification = notificationMap[action];
+
+    if (notification) {
+      try {
+        await notifyUser({
+          sender_id: session.user.id,
+          recipient_id: booking.patient_id.toString(),
+          type: notification.type,
+          title: notification.title,
+          message: notification.message,
+          priority: notification.priority,
+          action_url: `/lab/bookings/${booking._id}`,
+          reference_id: booking._id.toString(),
+          reference_type: "lab_booking",
+        });
+      } catch (notificationError) {
+        console.error("Lab booking notification error:", notificationError);
+      }
+    }
 
     return NextResponse.json({
       message: "Lab booking updated successfully",

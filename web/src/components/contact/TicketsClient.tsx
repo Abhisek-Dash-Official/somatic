@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, MessageSquare, AlertCircle, CheckCircle2, PlusCircle, Clock } from "lucide-react";
+import { Loader2, MessageSquare, AlertCircle, CheckCircle2, PlusCircle, Clock, Reply } from "lucide-react";
 
 interface Ticket {
     _id: string;
     ticket_type: string;
     message: string;
+    admin_response?: string;
     status: string;
     created_at: string;
 }
@@ -45,7 +46,11 @@ export default function TicketsClient() {
 
     const formatDate = (dateString: string) =>
         new Date(dateString).toLocaleDateString("en-US", {
-            month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit"
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
         });
 
     return (
@@ -56,10 +61,15 @@ export default function TicketsClient() {
                         <MessageSquare className="h-8 w-8 text-primary" />
                         My Support Tickets
                     </h1>
-                    <p className="mt-2 text-muted">Track the status of your feedback and support requests.</p>
+                    <p className="mt-2 text-muted">
+                        Track the status of your feedback and support requests.
+                    </p>
                 </div>
 
-                <Link href="/contact" className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover">
+                <Link
+                    href="/contact"
+                    className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                >
                     <PlusCircle className="h-5 w-5" />
                     New Ticket
                 </Link>
@@ -78,8 +88,12 @@ export default function TicketsClient() {
                         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-secondary text-muted-foreground">
                             <MessageSquare className="h-8 w-8" />
                         </div>
-                        <h3 className="mb-2 text-xl font-bold text-foreground">No tickets found</h3>
-                        <p className="max-w-md text-muted">You haven't submitted any support tickets or feedback yet.</p>
+                        <h3 className="mb-2 text-xl font-bold text-foreground">
+                            No tickets found
+                        </h3>
+                        <p className="max-w-md text-muted">
+                            You haven't submitted any support tickets or feedback yet.
+                        </p>
                     </div>
                 ) : (
                     <div className="space-y-4">
@@ -100,22 +114,47 @@ export default function TicketsClient() {
                                     )}
                                 </div>
 
-                                <div className="flex-1 space-y-2">
+                                <div className="flex-1 space-y-3">
                                     <div className="flex flex-wrap items-center justify-between gap-2">
-                                        <h3 className="text-lg font-bold text-foreground">{ticket.ticket_type}</h3>
-                                        <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${ticket.status === "Open"
+                                        <h3 className="text-lg font-bold text-foreground">
+                                            {ticket.ticket_type}
+                                        </h3>
+
+                                        <span
+                                            className={`rounded-full border px-3 py-1 text-xs font-semibold ${ticket.status === "Open"
                                                 ? "border-warning/20 bg-warning/10 text-warning"
                                                 : "border-success/20 bg-success/10 text-success"
-                                            }`}>
+                                                }`}
+                                        >
                                             {ticket.status}
                                         </span>
                                     </div>
 
-                                    <p className="break-all whitespace-pre-wrap text-sm leading-relaxed text-muted">
-                                        {ticket.message}
-                                    </p>
+                                    <div>
+                                        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                            Your Message
+                                        </p>
+                                        <p className="break-all whitespace-pre-wrap text-sm leading-relaxed text-muted">
+                                            {ticket.message}
+                                        </p>
+                                    </div>
 
-                                    <div className="pt-2 text-xs font-medium text-muted-foreground">
+                                    {ticket.admin_response?.trim() && (
+                                        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                                            <div className="mb-2 flex items-center gap-2">
+                                                <Reply className="h-4 w-4 text-primary" />
+                                                <span className="text-sm font-semibold text-foreground">
+                                                    Admin Response
+                                                </span>
+                                            </div>
+
+                                            <p className="break-all whitespace-pre-wrap text-sm leading-relaxed text-muted">
+                                                {ticket.admin_response}
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    <div className="pt-1 text-xs font-medium text-muted-foreground">
                                         Submitted on: {formatDate(ticket.created_at)}
                                     </div>
                                 </div>

@@ -7,6 +7,7 @@ import SystemSetting from "@/models/SystemSetting";
 import User from "@/models/User";
 import AiUsage from "@/models/AiUsage";
 import { createSystemLog } from "@/lib/logger";
+import { notifyUser } from "@/lib/notification";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -272,6 +273,19 @@ export async function PATCH(req: Request, { params }: Props) {
       consultation.status = "completed";
       consultation.resolved_at = new Date();
       await consultation.save();
+
+      await notifyUser({
+        sender_id: session.user.id,
+        recipient_id: consultation.patient_id.toString(),
+        type: "consultation_completed",
+        title: "Consultation Resolved",
+        message:
+          "Your consultation has been completed by the doctor. You can now view your prescription and consultation details.",
+        priority: "normal",
+        action_url: `/patient/consultations/${consultation._id}`,
+        reference_id: consultation._id.toString(),
+        reference_type: "consultation",
+      });
 
       await createSystemLog({
         actor_id: session.user.id,

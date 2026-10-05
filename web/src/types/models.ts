@@ -105,6 +105,7 @@ export interface IFeedback {
   ticket_type?: string;
   message?: string;
   status: "Open" | "Resolved";
+  admin_response?: string;
   created_at?: Date | string;
 }
 
@@ -668,4 +669,35 @@ export interface ILearn {
   views?: number;
   created_at?: Date;
   updated_at?: Date;
+}
+
+export interface INotification {
+  _id?: mongoose.Types.ObjectId;
+  sender_id?: mongoose.Types.ObjectId;
+  recipient_id: mongoose.Types.ObjectId;
+  type: string;
+  title: string;
+  message: string;
+  priority: "low" | "normal" | "high" | "urgent";
+  is_read: boolean;
+  read_at?: Date;
+  action_url?: string;
+  reference_id?: mongoose.Types.ObjectId;
+  reference_type?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface IPushSubscription {
+  _id?: mongoose.Types.ObjectId;
+  user_id: mongoose.Types.ObjectId;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  user_agent?: string;
+  device_name?: string;
+  is_active: boolean;
+  last_used_at?: Date;
+  created_at: Date;
+  updated_at: Date;
 }

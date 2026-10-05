@@ -5,11 +5,13 @@ import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import Department from "@/models/Department";
 import SystemLog from "@/models/SystemLog";
+import { notifyUser } from "@/lib/notification";
 import bcrypt from "bcryptjs";
 
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session || session.user.role !== "admin") {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
@@ -18,12 +20,12 @@ export async function GET(req: Request) {
     }
 
     const { searchParams } = new URL(req.url);
-    const role = searchParams.get("role") || "patient"; // patient, doctor, admin
+    const role = searchParams.get("role") || "patient";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
     const search = searchParams.get("search") || "";
-    const status = searchParams.get("status") || "all"; // all, active, banned, deleted
-    const sortBy = searchParams.get("sortBy") || "created_at"; // created_at, username, experience
+    const status = searchParams.get("status") || "all";
+    const sortBy = searchParams.get("sortBy") || "created_at";
     const sortOrder = searchParams.get("sortOrder") === "asc" ? 1 : -1;
     const bloodGroup = searchParams.get("bloodGroup") || "";
     const departmentId = searchParams.get("departmentId") || "";
@@ -58,6 +60,7 @@ export async function GET(req: Request) {
       if (departmentId) {
         query["doctor_info.department_id"] = departmentId;
       }
+
       if (
         acceptingCases !== null &&
         acceptingCases !== undefined &&
@@ -68,6 +71,7 @@ export async function GET(req: Request) {
     }
 
     const sortOptions: any = {};
+
     if (
       sortBy === "experience" &&
       (role === "doctor" || role === "assistant_doctor")
@@ -93,10 +97,15 @@ export async function GET(req: Request) {
     return NextResponse.json({
       success: true,
       users,
-      pagination: { total, page, pages: Math.ceil(total / limit) },
+      pagination: {
+        total,
+        page,
+        pages: Math.ceil(total / limit),
+      },
     });
   } catch (error: any) {
     console.error("Admin Users GET Error:", error);
+
     return NextResponse.json(
       { success: false, message: "Internal Server Error" },
       { status: 500 },
@@ -107,6 +116,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session || session.user.role !== "admin") {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
@@ -115,6 +125,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
+
     const {
       username,
       email,
@@ -134,9 +145,30 @@ export async function POST(req: Request) {
       );
     }
 
+    if (
+      ![
+        "admin",
+        "doctor",
+        "patient",
+        "assistant_doctor",
+        "dispatcher",
+      ].includes(role)
+    ) {
+      return NextResponse.json(
+        { success: false, message: "Invalid role" },
+        { status: 400 },
+      );
+    }
+
     await dbConnect();
 
-    const existing = await User.findOne({ $or: [{ email }, { username }] });
+    const existing = await User.findOne({
+      $or: [
+        { email: email.trim().toLowerCase() },
+        { username: username.trim() },
+      ],
+    });
+
     if (existing) {
       return NextResponse.json(
         { success: false, message: "Email or username already exists" },
@@ -166,8 +198,28 @@ export async function POST(req: Request) {
       actor_role: session.user.role,
       action_type: "CREATE_USER_BY_ADMIN",
       target_id: newUser._id,
-      details: { username: newUser.username, role: newUser.role },
+      details: {
+        username: newUser.username,
+        role: newUser.role,
+      },
     });
+
+    try {
+      await notifyUser({
+        sender_id: session.user.id,
+        recipient_id: newUser._id.toString(),
+        type: "account_created",
+        title: "Account Created",
+        message:
+          "Your SOMATIC account has been created successfully by an administrator.",
+        priority: "normal",
+        action_url: "/profile",
+        reference_id: newUser._id.toString(),
+        reference_type: "user",
+      });
+    } catch (notificationError) {
+      console.error("Account creation notification error:", notificationError);
+    }
 
     return NextResponse.json({
       success: true,
@@ -175,6 +227,7 @@ export async function POST(req: Request) {
     });
   } catch (error: any) {
     console.error("Admin Users POST Error:", error);
+
     return NextResponse.json(
       { success: false, message: "Internal Server Error" },
       { status: 500 },
@@ -185,6 +238,7 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session || session.user.role !== "admin") {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
@@ -204,13 +258,18 @@ export async function PATCH(req: Request) {
 
     if (userId === session.user.id) {
       return NextResponse.json(
-        { success: false, message: "Action forbidden on your own account" },
+        {
+          success: false,
+          message: "Action forbidden on your own account",
+        },
         { status: 400 },
       );
     }
 
     await dbConnect();
+
     const user = await User.findById(userId);
+
     if (!user) {
       return NextResponse.json(
         { success: false, message: "User not found" },
@@ -236,16 +295,20 @@ export async function PATCH(req: Request) {
           { status: 400 },
         );
       }
+
       details.old_role = user.role;
-      user.role = value;
       details.new_role = value;
+
+      user.role = value;
       logAction = "UPDATE_USER_ROLE";
     } else if (action === "BAN") {
       user.is_ban = !!value;
+
       details.is_ban = user.is_ban;
       logAction = user.is_ban ? "BAN_USER" : "UNBAN_USER";
     } else if (action === "DELETE") {
       user.is_delete = !!value;
+
       details.is_delete = user.is_delete;
       logAction = user.is_delete ? "DELETE_USER" : "RESTORE_USER";
     } else {
@@ -265,12 +328,65 @@ export async function PATCH(req: Request) {
       details,
     });
 
+    let notificationTitle = "";
+    let notificationMessage = "";
+    let notificationPriority: "low" | "normal" | "high" | "urgent" = "normal";
+
+    if (action === "ROLE") {
+      notificationTitle = "Account Role Updated";
+      notificationMessage = `Your account role has been changed from ${details.old_role} to ${details.new_role}.`;
+      notificationPriority = "normal";
+    } else if (action === "BAN") {
+      if (user.is_ban) {
+        notificationTitle = "Account Suspended";
+        notificationMessage =
+          "Your SOMATIC account has been suspended by an administrator.";
+        notificationPriority = "high";
+      } else {
+        notificationTitle = "Account Unsuspended";
+        notificationMessage =
+          "Your SOMATIC account has been unsuspended and is active again.";
+        notificationPriority = "normal";
+      }
+    } else if (action === "DELETE") {
+      if (user.is_delete) {
+        notificationTitle = "Account Disabled";
+        notificationMessage =
+          "Your SOMATIC account has been disabled by an administrator.";
+        notificationPriority = "high";
+      } else {
+        notificationTitle = "Account Restored";
+        notificationMessage =
+          "Your SOMATIC account has been restored and is active again.";
+        notificationPriority = "normal";
+      }
+    }
+
+    if (notificationTitle && notificationMessage) {
+      try {
+        await notifyUser({
+          sender_id: session.user.id,
+          recipient_id: user._id.toString(),
+          type: "account_update",
+          title: notificationTitle,
+          message: notificationMessage,
+          priority: notificationPriority,
+          action_url: "/profile",
+          reference_id: user._id.toString(),
+          reference_type: "user",
+        });
+      } catch (notificationError) {
+        console.error("User account notification error:", notificationError);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: "User updated successfully",
     });
   } catch (error: any) {
     console.error("Admin Users PATCH Error:", error);
+
     return NextResponse.json(
       { success: false, message: "Internal Server Error" },
       { status: 500 },

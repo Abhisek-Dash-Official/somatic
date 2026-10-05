@@ -236,7 +236,7 @@ export const navLinks = {
         href: "/patient/consultations",
         icon: "ClipboardList",
       },
-      { title: "Lab Test", href: "/lab-tests", icon: "Microscope" },
+      { title: "Insurance", href: "/patient/insurance", icon: "ShieldCheck" },
       { title: "Tickets", href: "/tickets", icon: "Ticket" },
       { title: "Profile", href: "/patient/profile", icon: "User" },
     ],

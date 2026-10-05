@@ -8,6 +8,8 @@ import SystemSetting from "@/models/SystemSetting";
 
 export async function GET(req: Request) {
   try {
+    User;
+
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id || session.user.role !== "admin") {
