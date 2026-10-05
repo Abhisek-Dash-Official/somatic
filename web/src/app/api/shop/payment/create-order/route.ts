@@ -7,6 +7,7 @@ import Medicine from "@/models/Medicine";
 import BloodBank from "@/models/BloodBank";
 import Order from "@/models/Order";
 import Transaction from "@/models/Transaction";
+import SystemLog from "@/models/SystemLog";
 import { createRazorpayOrder, getRazorpayKeyId } from "@/lib/payment";
 
 type ShippingAddress = {
@@ -45,9 +46,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid pincode" }, { status: 400 });
     }
 
-    const cart = await Cart.findOne({
-      user_id: session.user.id,
-    }).lean();
+    const cart = await Cart.findOne({ user_id: session.user.id }).lean();
 
     if (!cart || !cart.items?.length) {
       return NextResponse.json(
@@ -199,6 +198,7 @@ export async function POST(req: Request) {
         payment_gateway: "razorpay",
         metadata: {
           order_id: order._id.toString(),
+          payment_method: "ONLINE",
           payment_purpose: "shop_order_payment",
         },
       });
@@ -219,6 +219,23 @@ export async function POST(req: Request) {
       transaction.status = "pending";
       await transaction.save();
 
+      await SystemLog.create({
+        actor_id: session.user.id,
+        actor_role: session.user.role,
+        action_type: "SHOP_ORDER_CREATED_ONLINE",
+        target_id: order._id,
+        details: {
+          order_id: order._id,
+          transaction_id: transaction._id,
+          razorpay_order_id: razorpayOrder.id,
+          payment_method: "ONLINE",
+          payment_status: "pending",
+          order_status: "placed",
+          amount: totalAmount,
+          currency: "INR",
+        },
+      });
+
       return NextResponse.json(
         {
           success: true,
@@ -236,7 +253,9 @@ export async function POST(req: Request) {
         reference_id: order._id,
         transaction_type: "shop_order",
       });
+
       await Order.deleteOne({ _id: order._id });
+
       throw paymentError;
     }
   } catch (error) {

@@ -7,6 +7,7 @@ import Medicine from "@/models/Medicine";
 import BloodBank from "@/models/BloodBank";
 import Order from "@/models/Order";
 import Transaction from "@/models/Transaction";
+import SystemLog from "@/models/SystemLog";
 
 type ShippingAddress = {
   street: string;
@@ -44,9 +45,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid pincode" }, { status: 400 });
     }
 
-    const cart = await Cart.findOne({
-      user_id: session.user.id,
-    }).lean();
+    const cart = await Cart.findOne({ user_id: session.user.id }).lean();
 
     if (!cart || !cart.items?.length) {
       return NextResponse.json(
@@ -200,6 +199,22 @@ export async function POST(req: Request) {
           order_id: order._id.toString(),
           payment_method: "COD",
           payment_purpose: "cash_on_delivery",
+        },
+      });
+
+      await SystemLog.create({
+        actor_id: session.user.id,
+        actor_role: session.user.role,
+        action_type: "SHOP_ORDER_CREATED_COD",
+        target_id: order._id,
+        details: {
+          order_id: order._id,
+          transaction_id: transaction._id,
+          payment_method: "COD",
+          payment_status: "pending",
+          order_status: "placed",
+          amount: totalAmount,
+          currency: "INR",
         },
       });
 

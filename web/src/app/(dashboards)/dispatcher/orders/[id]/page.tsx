@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, CheckCircle2, Package, User, XCircle } from "lucide-react";
+import { toast } from "react-toastify";
 import type { IOrder, ITransaction, IUser } from "@/types/models";
 
 type OrderStatus = IOrder["order_status"];
@@ -47,7 +48,9 @@ export default function DispatcherOrderDetailsPage({
             const response = await fetch(`/api/dispatcher/orders/${id}`);
             const data = await response.json();
 
-            if (!response.ok) throw new Error(data.error || "Unable to fetch order");
+            if (!response.ok) {
+                throw new Error(data.error || "Unable to fetch order");
+            }
 
             setOrder(data.order);
             setTransaction(data.transaction);
@@ -65,6 +68,11 @@ export default function DispatcherOrderDetailsPage({
     const updateStatus = async (status: OrderStatus) => {
         if (!order || isUpdating) return;
 
+        if (status === "delivered" && order.payment_status !== "paid") {
+            toast.error("Payment must be confirmed before marking the order as delivered.");
+            return;
+        }
+
         setIsUpdating(true);
         setUpdateError("");
 
@@ -77,13 +85,21 @@ export default function DispatcherOrderDetailsPage({
 
             const data = await response.json();
 
-            if (!response.ok) throw new Error(data.error || "Unable to update order status");
+            if (!response.ok) {
+                throw new Error(data.error || "Unable to update order status");
+            }
 
-            setOrder((current) =>
-                current ? { ...current, order_status: status } : current,
-            );
+            setOrder(data.order || { ...order, order_status: status });
+
+            if (data.transaction) {
+                setTransaction(data.transaction);
+            }
+
+            toast.success(`Order marked as ${formatStatus(status)}.`);
         } catch (error: any) {
-            setUpdateError(error.message || "Unable to update order status");
+            const message = error.message || "Unable to update order status";
+            setUpdateError(message);
+            toast.error(message);
         } finally {
             setIsUpdating(false);
         }
@@ -104,12 +120,22 @@ export default function DispatcherOrderDetailsPage({
 
             const data = await response.json();
 
-            if (!response.ok) throw new Error(data.error || "Unable to mark COD payment as paid");
+            if (!response.ok) {
+                throw new Error(
+                    data.error || "Unable to mark COD payment as paid",
+                );
+            }
 
             setOrder(data.order);
             setTransaction(data.transaction);
+
+            toast.success("COD payment marked as paid.");
         } catch (error: any) {
-            setUpdateError(error.message || "Unable to mark COD payment as paid");
+            const message =
+                error.message || "Unable to mark COD payment as paid";
+
+            setUpdateError(message);
+            toast.error(message);
         } finally {
             setIsUpdating(false);
         }
@@ -132,10 +158,15 @@ export default function DispatcherOrderDetailsPage({
             <main className="flex min-h-[80vh] items-center justify-center bg-background px-6 py-12">
                 <div className="w-full max-w-md rounded-xl border border-border bg-surface p-8 text-center">
                     <XCircle size={44} className="mx-auto text-danger" />
-                    <h1 className="mt-5 text-2xl font-bold text-foreground">Order not found</h1>
+
+                    <h1 className="mt-5 text-2xl font-bold text-foreground">
+                        Order not found
+                    </h1>
+
                     <p className="mt-2 text-sm text-muted">
                         {error || "The requested order could not be found."}
                     </p>
+
                     <Link
                         href="/dispatcher/orders"
                         className="mt-6 inline-flex rounded-lg bg-primary px-5 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover"
@@ -147,11 +178,17 @@ export default function DispatcherOrderDetailsPage({
         );
     }
 
+    const canDeliver = order.payment_status === "paid";
+
     const currentIndex = statuses.indexOf(order.order_status);
+
     const nextStatus =
         currentIndex >= 0 && currentIndex < statuses.length - 1
             ? statuses[currentIndex + 1]
             : null;
+
+    const blockedNextStatus =
+        nextStatus === "delivered" && !canDeliver;
 
     return (
         <main className="min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8">
@@ -169,6 +206,7 @@ export default function DispatcherOrderDetailsPage({
                         <p className="text-xs uppercase tracking-wider text-muted-foreground">
                             Order details
                         </p>
+
                         <h1 className="text-xl font-extrabold sm:text-2xl">
                             #{order._id.slice(-8).toUpperCase()}
                         </h1>
@@ -179,18 +217,24 @@ export default function DispatcherOrderDetailsPage({
                     <section className="rounded-xl border border-border bg-surface p-5 sm:p-6">
                         <div className="flex flex-wrap items-start justify-between gap-4">
                             <div>
-                                <h2 className="text-lg font-bold">Order status</h2>
+                                <h2 className="text-lg font-bold">
+                                    Order status
+                                </h2>
+
                                 <p className="mt-1 text-sm text-muted">
-                                    Placed {new Date(order.placed_at || "").toLocaleString("en-IN")}
+                                    Placed{" "}
+                                    {new Date(
+                                        order.placed_at || "",
+                                    ).toLocaleString("en-IN")}
                                 </p>
                             </div>
 
                             <span
                                 className={`rounded-md px-3 py-1.5 text-sm font-semibold ${order.order_status === "cancelled"
-                                    ? "bg-danger/10 text-danger"
-                                    : order.order_status === "delivered"
-                                        ? "bg-success/10 text-success"
-                                        : "bg-primary/10 text-primary"
+                                        ? "bg-danger/10 text-danger"
+                                        : order.order_status === "delivered"
+                                            ? "bg-success/10 text-success"
+                                            : "bg-primary/10 text-primary"
                                     }`}
                             >
                                 {formatStatus(order.order_status)}
@@ -206,31 +250,36 @@ export default function DispatcherOrderDetailsPage({
                                 <div className="space-y-4">
                                     <div className="grid gap-2 sm:grid-cols-5">
                                         {statuses.map((status, index) => {
-                                            const completed = currentIndex >= index;
+                                            const completed =
+                                                currentIndex >= index;
 
                                             return (
                                                 <div
                                                     key={status}
                                                     className={`flex min-h-16 items-center gap-2 rounded-lg border px-3 py-3 ${completed
-                                                        ? "border-primary/30 bg-primary/10"
-                                                        : "border-border bg-surface-secondary"
+                                                            ? "border-primary/30 bg-primary/10"
+                                                            : "border-border bg-surface-secondary"
                                                         }`}
                                                 >
                                                     <div
                                                         className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${completed
-                                                            ? "bg-primary text-primary-foreground"
-                                                            : "bg-surface text-muted"
+                                                                ? "bg-primary text-primary-foreground"
+                                                                : "bg-surface text-muted"
                                                             }`}
                                                     >
                                                         {completed ? (
                                                             <Check size={15} />
                                                         ) : (
-                                                            <span className="text-xs">{index + 1}</span>
+                                                            <span className="text-xs">
+                                                                {index + 1}
+                                                            </span>
                                                         )}
                                                     </div>
 
                                                     <span
-                                                        className={`text-xs font-semibold ${completed ? "text-primary" : "text-muted"
+                                                        className={`text-xs font-semibold ${completed
+                                                                ? "text-primary"
+                                                                : "text-muted"
                                                             }`}
                                                     >
                                                         {formatStatus(status)}
@@ -246,30 +295,49 @@ export default function DispatcherOrderDetailsPage({
                                                 <p className="text-sm font-semibold text-foreground">
                                                     Next status
                                                 </p>
+
                                                 <p className="mt-1 text-sm text-muted">
                                                     Move this order to{" "}
                                                     <span className="font-semibold text-foreground">
                                                         {formatStatus(nextStatus)}
                                                     </span>
                                                 </p>
+
+                                                {blockedNextStatus && (
+                                                    <p className="mt-2 text-sm font-medium text-warning">
+                                                        Payment must be confirmed
+                                                        before delivery.
+                                                    </p>
+                                                )}
                                             </div>
 
                                             <button
                                                 type="button"
-                                                onClick={() => updateStatus(nextStatus)}
-                                                disabled={isUpdating}
+                                                onClick={() =>
+                                                    updateStatus(nextStatus)
+                                                }
+                                                disabled={
+                                                    isUpdating ||
+                                                    blockedNextStatus
+                                                }
                                                 className="rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
                                             >
                                                 {isUpdating
                                                     ? "Updating..."
-                                                    : `Mark as ${formatStatus(nextStatus)}`}
+                                                    : blockedNextStatus
+                                                        ? "Payment Pending"
+                                                        : `Mark as ${formatStatus(
+                                                            nextStatus,
+                                                        )}`}
                                             </button>
                                         </div>
                                     )}
 
                                     <button
                                         type="button"
-                                        onClick={() => updateStatus("cancelled")}
+                                        onClick={() =>
+                                            updateStatus("cancelled")
+                                        }
                                         disabled={isUpdating}
                                         className="rounded-lg border border-danger/30 px-4 py-2.5 text-sm font-semibold text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
@@ -277,7 +345,9 @@ export default function DispatcherOrderDetailsPage({
                                     </button>
 
                                     {updateError && (
-                                        <p className="text-sm text-danger">{updateError}</p>
+                                        <p className="text-sm text-danger">
+                                            {updateError}
+                                        </p>
                                     )}
                                 </div>
                             )}
@@ -287,28 +357,42 @@ export default function DispatcherOrderDetailsPage({
                     <section className="rounded-xl border border-border bg-surface p-5 sm:p-6">
                         <div className="flex items-center gap-2">
                             <User size={19} className="text-primary" />
-                            <h2 className="text-lg font-bold">Customer</h2>
+
+                            <h2 className="text-lg font-bold">
+                                Customer
+                            </h2>
                         </div>
 
                         <div className="mt-5 grid gap-4 sm:grid-cols-3">
                             <div>
-                                <p className="text-xs text-muted">Username</p>
+                                <p className="text-xs text-muted">
+                                    Username
+                                </p>
+
                                 <p className="mt-1 font-semibold text-foreground">
                                     {order.user_id?.username || "Unknown"}
                                 </p>
                             </div>
 
                             <div>
-                                <p className="text-xs text-muted">Email</p>
+                                <p className="text-xs text-muted">
+                                    Email
+                                </p>
+
                                 <p className="mt-1 break-all font-semibold text-foreground">
-                                    {order.user_id?.email || "Not available"}
+                                    {order.user_id?.email ||
+                                        "Not available"}
                                 </p>
                             </div>
 
                             <div>
-                                <p className="text-xs text-muted">Phone</p>
+                                <p className="text-xs text-muted">
+                                    Phone
+                                </p>
+
                                 <p className="mt-1 font-semibold text-foreground">
-                                    {order.user_id?.contact_no || "Not available"}
+                                    {order.user_id?.contact_no ||
+                                        "Not available"}
                                 </p>
                             </div>
                         </div>
@@ -317,7 +401,10 @@ export default function DispatcherOrderDetailsPage({
                     <section className="rounded-xl border border-border bg-surface p-5 sm:p-6">
                         <div className="flex items-center gap-2">
                             <Package size={19} className="text-primary" />
-                            <h2 className="text-lg font-bold">Items</h2>
+
+                            <h2 className="text-lg font-bold">
+                                Items
+                            </h2>
                         </div>
 
                         <div className="mt-5 divide-y divide-border">
@@ -328,36 +415,48 @@ export default function DispatcherOrderDetailsPage({
                                 >
                                     <div className="min-w-0">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <h3 className="font-semibold text-foreground">{item.name}</h3>
+                                            <h3 className="font-semibold text-foreground">
+                                                {item.name}
+                                            </h3>
+
                                             <span className="rounded bg-surface-secondary px-2 py-0.5 text-xs text-muted">
                                                 {item.item_type}
                                             </span>
                                         </div>
 
                                         {item.manufacturer && (
-                                            <p className="mt-1 text-sm text-muted">{item.manufacturer}</p>
+                                            <p className="mt-1 text-sm text-muted">
+                                                {item.manufacturer}
+                                            </p>
                                         )}
 
                                         {item.blood_group && (
                                             <p className="mt-1 text-sm text-muted">
-                                                Blood group: {item.blood_group}
+                                                Blood group:{" "}
+                                                {item.blood_group}
                                             </p>
                                         )}
 
                                         <p className="mt-1 text-sm text-muted-foreground">
-                                            {formatINR(item.unit_price)} × {item.quantity}
+                                            {formatINR(item.unit_price)} ×{" "}
+                                            {item.quantity}
                                         </p>
                                     </div>
 
                                     <p className="shrink-0 font-bold tabular-nums text-foreground">
-                                        {formatINR(item.unit_price * item.quantity)}
+                                        {formatINR(
+                                            item.unit_price * item.quantity,
+                                        )}
                                     </p>
                                 </div>
                             ))}
                         </div>
 
                         <div className="mt-5 flex justify-between border-t border-border pt-5">
-                            <span className="font-bold text-foreground">Total</span>
+                            <span className="font-bold text-foreground">
+                                Total
+                            </span>
+
                             <span className="text-2xl font-extrabold tabular-nums text-foreground">
                                 {formatINR(order.total_amount)}
                             </span>
@@ -366,106 +465,161 @@ export default function DispatcherOrderDetailsPage({
 
                     <div className="grid gap-5 md:grid-cols-2">
                         <section className="rounded-xl border border-border bg-surface p-5 sm:p-6">
-                            <h2 className="text-lg font-bold">Shipping address</h2>
+                            <h2 className="text-lg font-bold">
+                                Shipping address
+                            </h2>
 
                             <div className="mt-4 text-sm leading-6 text-muted">
                                 <p>{order.shipping_address.street}</p>
+
                                 <p>
                                     {order.shipping_address.city},{" "}
                                     {order.shipping_address.state}
                                 </p>
+
                                 <p>{order.shipping_address.pincode}</p>
                             </div>
                         </section>
 
                         <section className="rounded-xl border border-border bg-surface p-5 sm:p-6">
-                            <h2 className="text-lg font-bold">Payment</h2>
+                            <h2 className="text-lg font-bold">
+                                Payment
+                            </h2>
 
                             <div className="mt-4 space-y-3 text-sm">
                                 <div className="flex justify-between gap-4">
-                                    <span className="text-muted">Method</span>
+                                    <span className="text-muted">
+                                        Method
+                                    </span>
+
                                     <span className="font-semibold text-foreground">
                                         {order.payment_method}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
-                                    <span className="text-muted">Payment status</span>
+                                    <span className="text-muted">
+                                        Payment status
+                                    </span>
+
                                     <span
                                         className={`font-semibold ${order.payment_status === "paid"
-                                            ? "text-success"
-                                            : order.payment_status === "failed"
-                                                ? "text-danger"
-                                                : "text-warning"
+                                                ? "text-success"
+                                                : order.payment_status ===
+                                                    "failed"
+                                                    ? "text-danger"
+                                                    : "text-warning"
                                             }`}
                                     >
-                                        {formatStatus(order.payment_status)}
+                                        {formatStatus(
+                                            order.payment_status,
+                                        )}
                                     </span>
                                 </div>
 
                                 {transaction && (
                                     <div className="flex justify-between gap-4">
-                                        <span className="text-muted">Transaction</span>
+                                        <span className="text-muted">
+                                            Transaction
+                                        </span>
+
                                         <span className="font-semibold text-foreground">
-                                            {formatStatus(transaction.status)}
+                                            {formatStatus(
+                                                transaction.status,
+                                            )}
                                         </span>
                                     </div>
                                 )}
 
                                 {transaction?.gateway_order_id && (
                                     <div className="flex justify-between gap-4">
-                                        <span className="text-muted">Razorpay order</span>
+                                        <span className="text-muted">
+                                            Razorpay order
+                                        </span>
+
                                         <span className="max-w-55 truncate font-mono text-xs text-foreground">
-                                            {transaction.gateway_order_id}
+                                            {
+                                                transaction.gateway_order_id
+                                            }
                                         </span>
                                     </div>
                                 )}
 
                                 {transaction?.gateway_payment_id && (
                                     <div className="flex justify-between gap-4">
-                                        <span className="text-muted">Payment ID</span>
+                                        <span className="text-muted">
+                                            Payment ID
+                                        </span>
+
                                         <span className="max-w-55 truncate font-mono text-xs text-foreground">
-                                            {transaction.gateway_payment_id}
+                                            {
+                                                transaction.gateway_payment_id
+                                            }
                                         </span>
                                     </div>
                                 )}
 
                                 {transaction?.paid_at && (
                                     <div className="flex justify-between gap-4">
-                                        <span className="text-muted">Paid at</span>
+                                        <span className="text-muted">
+                                            Paid at
+                                        </span>
+
                                         <span className="text-right text-foreground">
-                                            {new Date(transaction.paid_at).toLocaleString("en-IN")}
+                                            {new Date(
+                                                transaction.paid_at,
+                                            ).toLocaleString("en-IN")}
                                         </span>
                                     </div>
                                 )}
-                                {order.payment_method === "COD" && order.payment_status !== "paid" && (
-                                    <div className="border-t border-border pt-4">
-                                        <button
-                                            type="button"
-                                            onClick={markCODPaid}
-                                            disabled={isUpdating}
-                                            className="w-full rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
-                                        >
-                                            {isUpdating ? "Marking payment..." : "Mark COD Payment as Paid"}
-                                        </button>
-                                    </div>
-                                )}
+
+                                {order.payment_method === "COD" &&
+                                    order.payment_status !== "paid" && (
+                                        <div className="border-t border-border pt-4">
+                                            <button
+                                                type="button"
+                                                onClick={markCODPaid}
+                                                disabled={isUpdating}
+                                                className="w-full rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                                            >
+                                                {isUpdating
+                                                    ? "Marking payment..."
+                                                    : "Mark COD Payment as Paid"}
+                                            </button>
+                                        </div>
+                                    )}
                             </div>
                         </section>
                     </div>
 
                     {transaction?.failure_reason && (
                         <div className="rounded-lg border border-danger/30 bg-danger/10 p-4 text-sm text-danger">
-                            Payment failure: {transaction.failure_reason}
+                            Payment failure:{" "}
+                            {transaction.failure_reason}
                         </div>
                     )}
 
                     {order.payment_status === "paid" && (
                         <div className="flex items-center gap-3 rounded-lg border border-success/20 bg-success/10 p-4 text-sm text-success">
                             <CheckCircle2 size={18} />
-                            Payment has been successfully verified.
+
+                            <span>
+                                Payment has been successfully verified.
+                            </span>
                         </div>
                     )}
+
+                    {order.payment_status !== "paid" &&
+                        order.order_status !== "cancelled" && (
+                            <div className="flex items-center gap-3 rounded-lg border border-warning/20 bg-warning/10 p-4 text-sm text-warning">
+                                <XCircle size={18} />
+
+                                <span>
+                                    This order cannot be marked as delivered
+                                    until the payment is confirmed.
+                                </span>
+                            </div>
+                        )}
                 </div>
             </div>
         </main>

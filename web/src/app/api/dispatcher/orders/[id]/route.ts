@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Order from "@/models/Order";
 import Transaction from "@/models/Transaction";
+import SystemLog from "@/models/SystemLog";
 
 const statusTransitions: Record<string, string[]> = {
   placed: ["confirmed", "cancelled"],
@@ -65,6 +66,7 @@ export async function PATCH(
 
     if (!session?.user?.id)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     if (!["dispatcher", "admin"].includes(session.user.role || ""))
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
@@ -85,6 +87,9 @@ export async function PATCH(
 
     if (!order)
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
+
+    let actionType = "";
+    let logDetails: Record<string, unknown> = {};
 
     if (payment_status) {
       if (payment_status !== "paid") {
@@ -134,6 +139,25 @@ export async function PATCH(
         order.payment_status = "paid";
         await order.save();
 
+        actionType = "SHOP_COD_PAYMENT_MARKED_PAID";
+        logDetails = {
+          order_id: order._id,
+          transaction_id: transaction._id,
+          payment_method: "COD",
+          payment_status: "paid",
+          amount: transaction.amount,
+          currency: transaction.currency,
+          synchronized: true,
+        };
+
+        await SystemLog.create({
+          actor_id: session.user.id,
+          actor_role: session.user.role,
+          action_type: actionType,
+          target_id: order._id,
+          details: logDetails,
+        });
+
         return NextResponse.json(
           {
             message: "COD payment synchronized successfully",
@@ -151,6 +175,24 @@ export async function PATCH(
 
       order.payment_status = "paid";
       await order.save();
+
+      actionType = "SHOP_COD_PAYMENT_MARKED_PAID";
+      logDetails = {
+        order_id: order._id,
+        transaction_id: transaction._id,
+        payment_method: "COD",
+        payment_status: "paid",
+        amount: transaction.amount,
+        currency: transaction.currency,
+      };
+
+      await SystemLog.create({
+        actor_id: session.user.id,
+        actor_role: session.user.role,
+        action_type: actionType,
+        target_id: order._id,
+        details: logDetails,
+      });
 
       return NextResponse.json(
         {
@@ -181,8 +223,29 @@ export async function PATCH(
         );
       }
 
+      const previousStatus = order.order_status;
+
       order.order_status = order_status;
       await order.save();
+
+      actionType =
+        order_status === "cancelled"
+          ? "SHOP_ORDER_CANCELLED"
+          : "SHOP_ORDER_STATUS_UPDATED";
+
+      logDetails = {
+        order_id: order._id,
+        previous_status: previousStatus,
+        new_status: order_status,
+      };
+
+      await SystemLog.create({
+        actor_id: session.user.id,
+        actor_role: session.user.role,
+        action_type: actionType,
+        target_id: order._id,
+        details: logDetails,
+      });
 
       return NextResponse.json(
         {

@@ -5,6 +5,7 @@ import dbConnect from "@/lib/db";
 import Transaction from "@/models/Transaction";
 import Order from "@/models/Order";
 import Cart from "@/models/Cart";
+import SystemLog from "@/models/SystemLog";
 import {
   verifyRazorpaySignature,
   fetchRazorpayOrder,
@@ -162,11 +163,30 @@ export async function POST(req: Request) {
     transaction.gateway_signature = razorpay_signature;
     transaction.status = "paid";
     transaction.paid_at = new Date();
+    transaction.failure_reason = undefined;
 
     order.payment_status = "paid";
     order.order_status = "confirmed";
 
     await Promise.all([transaction.save(), order.save()]);
+
+    await SystemLog.create({
+      actor_id: session.user.id,
+      actor_role: session.user.role,
+      action_type: "SHOP_PAYMENT_VERIFIED",
+      target_id: order._id,
+      details: {
+        order_id: order._id,
+        transaction_id: transaction._id,
+        payment_method: "ONLINE",
+        payment_status: "paid",
+        order_status: "confirmed",
+        razorpay_order_id,
+        razorpay_payment_id,
+        amount: transaction.amount,
+        currency: transaction.currency,
+      },
+    });
 
     await Cart.findOneAndUpdate(
       { user_id: session.user.id },

@@ -219,7 +219,8 @@ export default function PaymentPage() {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error || "Unable to place COD order.");
+            setError(data.error || "Unable to place COD order.");
+            return;
         }
 
         setSuccessOrder(data.order);
