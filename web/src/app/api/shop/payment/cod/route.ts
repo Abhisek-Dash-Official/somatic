@@ -7,7 +7,6 @@ import Medicine from "@/models/Medicine";
 import BloodBank from "@/models/BloodBank";
 import Order from "@/models/Order";
 import Transaction from "@/models/Transaction";
-import { createRazorpayOrder, getRazorpayKeyId } from "@/lib/payment";
 
 type ShippingAddress = {
   street: string;
@@ -177,7 +176,7 @@ export async function POST(req: Request) {
       user_id: session.user.id,
       items: orderItems,
       total_amount: totalAmount,
-      payment_method: "ONLINE",
+      payment_method: "COD",
       payment_status: "pending",
       order_status: "placed",
       shipping_address: {
@@ -195,55 +194,45 @@ export async function POST(req: Request) {
         reference_id: order._id,
         amount: totalAmount,
         currency: "INR",
-        status: "created",
-        payment_gateway: "razorpay",
+        status: "pending",
+        payment_gateway: "cash",
         metadata: {
           order_id: order._id.toString(),
-          payment_purpose: "shop_order_payment",
+          payment_method: "COD",
+          payment_purpose: "cash_on_delivery",
         },
       });
 
-      const razorpayOrder = await createRazorpayOrder({
-        amount: totalAmount,
-        currency: "INR",
-        receipt: `SHOP-${transaction._id}`,
-        notes: {
-          somatic_order_id: order._id.toString(),
-          somatic_transaction_id: transaction._id.toString(),
-          user_id: session.user.id.toString(),
-          payment_purpose: "shop_order_payment",
-        },
-      });
-
-      transaction.gateway_order_id = razorpayOrder.id;
-      transaction.status = "pending";
-      await transaction.save();
-
-      return NextResponse.json(
+      await Cart.findOneAndUpdate(
+        { user_id: session.user.id },
         {
-          success: true,
-          order_id: order._id.toString(),
-          transaction_id: transaction._id.toString(),
-          razorpay_order_id: razorpayOrder.id,
-          amount: Math.round(totalAmount * 100),
-          currency: "INR",
-          key_id: getRazorpayKeyId(),
+          $set: {
+            items: [],
+            total_amount: 0,
+          },
         },
-        { status: 200 },
       );
-    } catch (paymentError) {
-      await Transaction.deleteMany({
-        reference_id: order._id,
-        transaction_type: "shop_order",
+
+      return NextResponse.json({
+        success: true,
+        order: order.toObject(),
+        order_id: order._id.toString(),
+        transaction_id: transaction._id.toString(),
+        payment_method: "COD",
+        payment_status: "pending",
+        order_status: "placed",
+        total_amount: totalAmount,
+        message: "Order placed successfully with Cash on Delivery.",
       });
+    } catch (transactionError) {
       await Order.deleteOne({ _id: order._id });
-      throw paymentError;
+      throw transactionError;
     }
   } catch (error) {
-    console.error("Create Payment Order Error:", error);
+    console.error("Create COD Order Error:", error);
 
     return NextResponse.json(
-      { error: "Unable to create payment order" },
+      { error: "Unable to place COD order" },
       { status: 500 },
     );
   }

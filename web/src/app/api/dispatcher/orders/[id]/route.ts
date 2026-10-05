@@ -21,13 +21,10 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    if (!session?.user?.id)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    if (!["dispatcher", "admin"].includes(session.user.role || "")) {
+    if (!["dispatcher", "admin"].includes(session.user.role || ""))
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
 
     await dbConnect();
 
@@ -37,9 +34,8 @@ export async function GET(
       .populate("user_id", "username email contact_no")
       .lean();
 
-    if (!order) {
+    if (!order)
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
-    }
 
     const transaction = await Transaction.findOne({
       reference_id: order._id,
@@ -67,58 +63,144 @@ export async function PATCH(
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    if (!session?.user?.id)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    if (!["dispatcher", "admin"].includes(session.user.role || "")) {
+    if (!["dispatcher", "admin"].includes(session.user.role || ""))
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
 
     await dbConnect();
 
     const { id } = await params;
     const body = await req.json();
-    const { order_status } = body;
+    const { order_status, payment_status } = body;
 
-    if (!order_status || typeof order_status !== "string") {
+    if (!order_status && !payment_status) {
       return NextResponse.json(
-        { error: "Order status is required" },
+        { error: "Order status or payment status is required" },
         { status: 400 },
       );
     }
 
     const order = await Order.findById(id);
 
-    if (!order) {
+    if (!order)
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
-    }
 
-    const allowedStatuses = statusTransitions[order.order_status] || [];
+    if (payment_status) {
+      if (payment_status !== "paid") {
+        return NextResponse.json(
+          { error: "Only paid status can be set by dispatcher" },
+          { status: 400 },
+        );
+      }
 
-    if (!allowedStatuses.includes(order_status)) {
+      if (order.payment_method !== "COD") {
+        return NextResponse.json(
+          { error: "Only COD orders can be marked as paid manually" },
+          { status: 400 },
+        );
+      }
+
+      if (order.payment_status === "paid") {
+        return NextResponse.json(
+          {
+            message: "COD payment is already marked as paid",
+            order,
+          },
+          { status: 200 },
+        );
+      }
+
+      const transaction = await Transaction.findOne({
+        reference_id: order._id,
+        transaction_type: "shop_order",
+      });
+
+      if (!transaction) {
+        return NextResponse.json(
+          { error: "Transaction not found" },
+          { status: 404 },
+        );
+      }
+
+      if (transaction.payment_gateway !== "cash") {
+        return NextResponse.json(
+          { error: "This order is not a cash payment transaction" },
+          { status: 400 },
+        );
+      }
+
+      if (transaction.status === "paid") {
+        order.payment_status = "paid";
+        await order.save();
+
+        return NextResponse.json(
+          {
+            message: "COD payment synchronized successfully",
+            order,
+            transaction,
+          },
+          { status: 200 },
+        );
+      }
+
+      transaction.status = "paid";
+      transaction.paid_at = new Date();
+      transaction.failure_reason = undefined;
+      await transaction.save();
+
+      order.payment_status = "paid";
+      await order.save();
+
       return NextResponse.json(
         {
-          error: `Cannot change order status from ${order.order_status} to ${order_status}`,
+          message: "COD payment marked as paid successfully",
+          order,
+          transaction,
         },
-        { status: 400 },
+        { status: 200 },
       );
     }
 
-    order.order_status = order_status;
-    await order.save();
+    if (order_status) {
+      if (typeof order_status !== "string") {
+        return NextResponse.json(
+          { error: "Invalid order status" },
+          { status: 400 },
+        );
+      }
+
+      const allowedStatuses = statusTransitions[order.order_status] || [];
+
+      if (!allowedStatuses.includes(order_status)) {
+        return NextResponse.json(
+          {
+            error: `Cannot change order status from ${order.order_status} to ${order_status}`,
+          },
+          { status: 400 },
+        );
+      }
+
+      order.order_status = order_status;
+      await order.save();
+
+      return NextResponse.json(
+        {
+          message: "Order status updated successfully",
+          order,
+        },
+        { status: 200 },
+      );
+    }
 
     return NextResponse.json(
-      {
-        message: "Order status updated successfully",
-        order,
-      },
-      { status: 200 },
+      { error: "No valid update requested" },
+      { status: 400 },
     );
   } catch (error) {
     console.error("Dispatcher Order PATCH Error:", error);
     return NextResponse.json(
-      { error: "Unable to update order status" },
+      { error: "Unable to update order" },
       { status: 500 },
     );
   }

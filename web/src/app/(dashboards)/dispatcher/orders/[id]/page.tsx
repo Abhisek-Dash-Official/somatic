@@ -2,14 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-    ArrowLeft,
-    Check,
-    CheckCircle2,
-    Package,
-    User,
-    XCircle,
-} from "lucide-react";
+import { ArrowLeft, Check, CheckCircle2, Package, User, XCircle } from "lucide-react";
 import type { IOrder, ITransaction, IUser } from "@/types/models";
 
 type OrderStatus = IOrder["order_status"];
@@ -91,6 +84,32 @@ export default function DispatcherOrderDetailsPage({
             );
         } catch (error: any) {
             setUpdateError(error.message || "Unable to update order status");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const markCODPaid = async () => {
+        if (!order || isUpdating) return;
+
+        setIsUpdating(true);
+        setUpdateError("");
+
+        try {
+            const response = await fetch(`/api/dispatcher/orders/${order._id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ payment_status: "paid" }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) throw new Error(data.error || "Unable to mark COD payment as paid");
+
+            setOrder(data.order);
+            setTransaction(data.transaction);
+        } catch (error: any) {
+            setUpdateError(error.message || "Unable to mark COD payment as paid");
         } finally {
             setIsUpdating(false);
         }
@@ -417,6 +436,18 @@ export default function DispatcherOrderDetailsPage({
                                         <span className="text-right text-foreground">
                                             {new Date(transaction.paid_at).toLocaleString("en-IN")}
                                         </span>
+                                    </div>
+                                )}
+                                {order.payment_method === "COD" && order.payment_status !== "paid" && (
+                                    <div className="border-t border-border pt-4">
+                                        <button
+                                            type="button"
+                                            onClick={markCODPaid}
+                                            disabled={isUpdating}
+                                            className="w-full rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                                        >
+                                            {isUpdating ? "Marking payment..." : "Mark COD Payment as Paid"}
+                                        </button>
                                     </div>
                                 )}
                             </div>

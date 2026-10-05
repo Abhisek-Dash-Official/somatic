@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import crypto from "crypto";
-
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
-
 import Transaction from "@/models/Transaction";
 import Order from "@/models/Order";
 import Cart from "@/models/Cart";
+import {
+  verifyRazorpaySignature,
+  fetchRazorpayOrder,
+  fetchRazorpayPayment,
+} from "@/lib/payment";
 
 export async function POST(req: Request) {
   try {
@@ -35,9 +37,7 @@ export async function POST(req: Request) {
       !razorpay_signature
     ) {
       return NextResponse.json(
-        {
-          error: "Missing payment verification fields",
-        },
+        { error: "Missing payment verification fields" },
         { status: 400 },
       );
     }
@@ -68,59 +68,91 @@ export async function POST(req: Request) {
       return NextResponse.json({
         success: true,
         already_paid: true,
+        order: order.toObject(),
         order_id: order._id.toString(),
+        payment_id: transaction.gateway_payment_id,
+        transaction_id: transaction._id.toString(),
       });
     }
 
-    if (transaction.gateway_order_id !== razorpay_order_id) {
+    if (transaction.status !== "pending") {
       return NextResponse.json(
-        {
-          error: "Razorpay order mismatch",
-        },
+        { error: "Transaction is not payable" },
         { status: 400 },
       );
     }
 
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
-
-    if (!keySecret) {
-      console.error("RAZORPAY_KEY_SECRET is missing");
-
+    if (transaction.gateway_order_id !== razorpay_order_id) {
       return NextResponse.json(
-        {
-          error: "Payment configuration error",
-        },
-        { status: 500 },
+        { error: "Razorpay order mismatch" },
+        { status: 400 },
       );
     }
 
-    const generatedSignature = crypto
-      .createHmac("sha256", keySecret)
-      .update(`${transaction.gateway_order_id}|${razorpay_payment_id}`)
-      .digest("hex");
-
-    const generatedBuffer = Buffer.from(generatedSignature, "utf8");
-
-    const receivedBuffer = Buffer.from(razorpay_signature, "utf8");
-
-    const signatureValid =
-      generatedBuffer.length === receivedBuffer.length &&
-      crypto.timingSafeEqual(generatedBuffer, receivedBuffer);
+    const signatureValid = verifyRazorpaySignature(
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    );
 
     if (!signatureValid) {
       transaction.status = "failed";
       transaction.failed_at = new Date();
       transaction.failure_reason = "Invalid Razorpay payment signature";
-
       await transaction.save();
 
       order.payment_status = "failed";
-
       await order.save();
 
       return NextResponse.json(
+        { error: "Payment verification failed" },
+        { status: 400 },
+      );
+    }
+
+    const [razorpayOrder, razorpayPayment] = await Promise.all([
+      fetchRazorpayOrder(razorpay_order_id),
+      fetchRazorpayPayment(razorpay_payment_id),
+    ]);
+
+    const expectedAmount = Math.round(transaction.amount * 100);
+
+    if (
+      razorpayOrder.id !== razorpay_order_id ||
+      razorpayOrder.currency !== transaction.currency ||
+      Number(razorpayOrder.amount) !== expectedAmount
+    ) {
+      return NextResponse.json(
+        { error: "Razorpay order amount or currency mismatch" },
+        { status: 400 },
+      );
+    }
+
+    if (
+      razorpayPayment.id !== razorpay_payment_id ||
+      razorpayPayment.order_id !== razorpay_order_id
+    ) {
+      return NextResponse.json(
+        { error: "Razorpay payment mismatch" },
+        { status: 400 },
+      );
+    }
+
+    if (
+      razorpayPayment.currency !== transaction.currency ||
+      Number(razorpayPayment.amount) !== expectedAmount
+    ) {
+      return NextResponse.json(
+        { error: "Payment amount or currency mismatch" },
+        { status: 400 },
+      );
+    }
+
+    if (razorpayPayment.status !== "captured") {
+      return NextResponse.json(
         {
-          error: "Payment verification failed",
+          error: "Payment has not been captured yet",
+          payment_status: razorpayPayment.status,
         },
         { status: 400 },
       );
@@ -131,17 +163,13 @@ export async function POST(req: Request) {
     transaction.status = "paid";
     transaction.paid_at = new Date();
 
-    await transaction.save();
-
     order.payment_status = "paid";
     order.order_status = "confirmed";
 
-    await order.save();
+    await Promise.all([transaction.save(), order.save()]);
 
     await Cart.findOneAndUpdate(
-      {
-        user_id: session.user.id,
-      },
+      { user_id: session.user.id },
       {
         $set: {
           items: [],
@@ -152,17 +180,18 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
+      already_paid: false,
+      order: order.toObject(),
       order_id: order._id.toString(),
+      transaction_id: transaction._id.toString(),
       payment_id: razorpay_payment_id,
       message: "Payment verified successfully",
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Verify Payment Error:", error);
 
     return NextResponse.json(
-      {
-        error: "Unable to verify payment",
-      },
+      { error: "Unable to verify payment" },
       { status: 500 },
     );
   }
