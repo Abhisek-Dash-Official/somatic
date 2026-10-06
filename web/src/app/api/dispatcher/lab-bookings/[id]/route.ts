@@ -442,7 +442,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
           title: notification.title,
           message: notification.message,
           priority: notification.priority,
-          action_url: `/lab/bookings/${booking._id}`,
+          action_url: `/lab-tests/bookings/${booking._id}`,
           reference_id: booking._id.toString(),
           reference_type: "lab_booking",
         });

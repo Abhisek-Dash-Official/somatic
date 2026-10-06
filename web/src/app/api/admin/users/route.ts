@@ -213,7 +213,7 @@ export async function POST(req: Request) {
         message:
           "Your SOMATIC account has been created successfully by an administrator.",
         priority: "normal",
-        action_url: "/profile",
+        action_url: "/",
         reference_id: newUser._id.toString(),
         reference_type: "user",
       });
@@ -371,7 +371,7 @@ export async function PATCH(req: Request) {
           title: notificationTitle,
           message: notificationMessage,
           priority: notificationPriority,
-          action_url: "/profile",
+          action_url: "/",
           reference_id: user._id.toString(),
           reference_type: "user",
         });

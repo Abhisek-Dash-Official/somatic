@@ -24,6 +24,7 @@ import {
     Ticket,
     Bell,
 } from "lucide-react";
+import NotificationPermissionButton from "@/components/ui/NotificationPermissionButton";
 import AvatarSelector from "@/components/profile/AvatarSelector";
 import DeleteAccountSection from "@/components/profile/DeleteAccountSection";
 
@@ -905,6 +906,19 @@ export default function Profile() {
                     label="Change Password"
                     onClick={handlePasswordSave}
                 />
+
+                <div className="mt-6 border-t border-border pt-6">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-foreground">Push Notifications</p>
+                            <p className="mt-1 text-xs leading-5 text-muted">
+                                Allow SOMATIC to send you important healthcare updates, reminders, and alerts.
+                            </p>
+                        </div>
+
+                        <NotificationPermissionButton />
+                    </div>
+                </div>
             </section>
 
             <DeleteAccountSection />

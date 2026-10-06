@@ -67,6 +67,8 @@ export async function notifyUser({
       message,
       priority,
       action_url: action_url || null,
+      icon: "/android-chrome-512x512.png",
+      badge: "/android-chrome-512x512.png",
     });
 
     await Promise.all(

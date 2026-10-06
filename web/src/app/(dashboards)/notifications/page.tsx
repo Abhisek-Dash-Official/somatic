@@ -4,10 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
     Bell,
-    Check,
     CheckCheck,
     ChevronDown,
-    ChevronRight,
     ChevronUp,
     CircleAlert,
     Clock3,
@@ -23,6 +21,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useNotificationStore } from "@/store/notificationStore";
+import NotificationPermissionButton from "@/components/ui/NotificationPermissionButton";
 
 interface Notification {
     _id: string;
@@ -400,6 +399,22 @@ export default function NotificationsPage() {
                                 Delete all
                             </button>
                         )}
+                    </div>
+                </div>
+                <div className="mb-6 rounded-xl border border-border bg-(--card) p-4 sm:p-5">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p className="text-sm font-semibold text-foreground">
+                                Notification preferences
+                            </p>
+
+                            <p className="mt-1 max-w-xl text-xs leading-5 text-muted sm:text-sm">
+                                Allow SOMATIC to send you important healthcare updates,
+                                reminders, and alerts on this device.
+                            </p>
+                        </div>
+
+                        <NotificationPermissionButton />
                     </div>
                 </div>
 

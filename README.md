@@ -630,6 +630,11 @@ INTERNAL_API_SECRET=your_internal_api_secret
 
 RAZORPAY_KEY_ID=your_razorpay_key_id
 RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=your_vapid_public_key
+VAPID_PUBLIC_KEY=your_vapid_public_key
+VAPID_PRIVATE_KEY=your_vapid_private_key
+VAPID_SUBJECT=mailto:your-email@example.com
 ```
 
 ## Python / FastAPI Backend
@@ -644,20 +649,24 @@ INTERNAL_API_SECRET=your_internal_api_secret
 
 ## Environment Variable Reference
 
-| Variable                        | Location           | Purpose                                         |
-| ------------------------------- | ------------------ | ----------------------------------------------- |
-| `NEXT_PUBLIC_APP_URL`           | `web`, `pyBackend` | Base URL of the web application                 |
-| `NEXTAUTH_SECRET`               | `web`              | Secret used by NextAuth                         |
-| `NEXTAUTH_URL`                  | `web`              | Application URL used by NextAuth                |
-| `MONGODB_URI`                   | `web`              | MongoDB database connection                     |
-| `UPSTASH_REDIS_REST_URL`        | `web`              | Upstash Redis endpoint                          |
-| `UPSTASH_REDIS_REST_TOKEN`      | `web`              | Upstash Redis authentication                    |
-| `PYTHON_BACKEND_URL`            | `web`              | FastAPI backend URL                             |
-| `FREE_CONSULTATION_TOKEN_LIMIT` | `web`              | Token allowance for free consultation workflows |
-| `INTERNAL_API_SECRET`           | `web`, `pyBackend` | Internal service authentication                 |
-| `RAZORPAY_KEY_ID`               | `web`              | Razorpay payment gateway key                    |
-| `RAZORPAY_KEY_SECRET`           | `web`              | Razorpay payment gateway secret                 |
-| `GROQ_API_KEY`                  | `pyBackend`        | Groq API authentication                         |
+| Variable                        | Location           | Purpose                                                     |
+| ------------------------------- | ------------------ | ----------------------------------------------------------- |
+| `NEXT_PUBLIC_APP_URL`           | `web`, `pyBackend` | Base URL of the web application                             |
+| `NEXTAUTH_SECRET`               | `web`              | Secret used by NextAuth                                     |
+| `NEXTAUTH_URL`                  | `web`              | Application URL used by NextAuth                            |
+| `MONGODB_URI`                   | `web`              | MongoDB database connection                                 |
+| `UPSTASH_REDIS_REST_URL`        | `web`              | Upstash Redis endpoint                                      |
+| `UPSTASH_REDIS_REST_TOKEN`      | `web`              | Upstash Redis authentication                                |
+| `PYTHON_BACKEND_URL`            | `web`              | FastAPI backend URL                                         |
+| `FREE_CONSULTATION_TOKEN_LIMIT` | `web`              | Token allowance for free consultation workflows             |
+| `INTERNAL_API_SECRET`           | `web`, `pyBackend` | Internal service authentication                             |
+| `RAZORPAY_KEY_ID`               | `web`              | Razorpay payment gateway key                                |
+| `RAZORPAY_KEY_SECRET`           | `web`              | Razorpay payment gateway secret                             |
+| `GROQ_API_KEY`                  | `pyBackend`        | Groq API authentication                                     |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY`  | `web`              | Public VAPID key used by the browser for push subscriptions |
+| `VAPID_PUBLIC_KEY`              | `web`              | Public VAPID key used by the server for Web Push            |
+| `VAPID_PRIVATE_KEY`             | `web`              | Private VAPID key used to authenticate Web Push requests    |
+| `VAPID_SUBJECT`                 | `web`              | VAPID contact/identity used by the Web Push service         |
 
 ---
 

@@ -169,7 +169,7 @@ export async function PATCH(
             title: "Payment Received",
             message: `Your COD payment for order #${order._id.toString().slice(-8).toUpperCase()} has been received successfully.`,
             priority: "normal",
-            action_url: `/orders/${order._id}`,
+            action_url: `/shop/orders/${order._id}`,
             reference_id: order._id.toString(),
             reference_type: "shop_order",
           });
@@ -221,7 +221,7 @@ export async function PATCH(
           title: "Payment Received",
           message: `Your COD payment for order #${order._id.toString().slice(-8).toUpperCase()} has been received successfully.`,
           priority: "normal",
-          action_url: `/orders/${order._id}`,
+          action_url: `/shop/orders/${order._id}`,
           reference_id: order._id.toString(),
           reference_type: "shop_order",
         });
@@ -336,7 +336,7 @@ export async function PATCH(
             title: notification.title,
             message: notification.message,
             priority: notification.priority,
-            action_url: `/orders/${order._id}`,
+            action_url: `/shop/orders/${order._id}`,
             reference_id: order._id.toString(),
             reference_type: "shop_order",
           });
