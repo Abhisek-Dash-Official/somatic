@@ -5,6 +5,8 @@ import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
+import InsurancePolicy from "@/models/InsurancePolicy";
+import InsurancePlan from "@/models/InsurancePlan";
 import { createSystemLog } from "@/lib/logger";
 
 const getChangedFields = (
@@ -41,19 +43,31 @@ export async function GET() {
       );
     }
 
-    const InsurancePolicy = (await import("@/models/InsurancePolicy")).default;
-
-    const somaticPolicy = await InsurancePolicy.findOne({
+    const somaticPolicies = await InsurancePolicy.find({
       user_id: user._id,
-      status: { $in: ["pending", "active"] },
+      status: {
+        $in: [
+          "pending",
+          "approved",
+          "payment_pending",
+          "active",
+          "revival_pending",
+          "lapsed",
+          "expired",
+        ],
+      },
     })
-      .populate("plan_id")
+      .populate({
+        path: "plan_id",
+        model: InsurancePlan,
+      })
+      .sort({ created_at: -1 })
       .lean();
 
     return NextResponse.json(
       {
         profile: user,
-        somatic_policy: somaticPolicy,
+        somatic_policies: somaticPolicies,
       },
       { status: 200 },
     );
@@ -151,7 +165,6 @@ export async function PATCH(req: Request) {
       const newContactNo = contactNo || undefined;
 
       addChange("contact_no", user.contact_no, newContactNo);
-
       user.contact_no = newContactNo;
     }
 
@@ -159,7 +172,6 @@ export async function PATCH(req: Request) {
       const address = String(body.address).trim() || undefined;
 
       addChange("address", user.address, address);
-
       user.address = address;
     }
 
@@ -167,7 +179,6 @@ export async function PATCH(req: Request) {
       const avatarId = String(body.avatar_id).trim() || undefined;
 
       addChange("avatar_id", user.avatar_id, avatarId);
-
       user.avatar_id = avatarId;
     }
 
@@ -195,7 +206,6 @@ export async function PATCH(req: Request) {
       }
 
       addChange("date_of_birth", user.date_of_birth, dateOfBirth);
-
       user.set("date_of_birth", dateOfBirth);
     }
 
@@ -216,7 +226,6 @@ export async function PATCH(req: Request) {
       }
 
       addChange("weight_kg", user.weight_kg, weight);
-
       user.set("weight_kg", weight);
     }
 
@@ -285,6 +294,21 @@ export async function PATCH(req: Request) {
 
       if (body.insurance === null || !insuranceType) {
         addChange("insurance.type", previousInsurance?.type, undefined);
+        addChange(
+          "insurance.provider_name",
+          previousInsurance?.provider_name,
+          undefined,
+        );
+        addChange(
+          "insurance.policy_number",
+          previousInsurance?.policy_number,
+          undefined,
+        );
+        addChange(
+          "insurance.policy_holder_name",
+          previousInsurance?.policy_holder_name,
+          undefined,
+        );
 
         user.insurance = undefined;
       } else if (insuranceType === "external") {
@@ -324,21 +348,40 @@ export async function PATCH(req: Request) {
 
         user.insurance = externalInsurance;
       } else if (insuranceType === "somatic") {
-        const InsurancePolicy = (await import("@/models/InsurancePolicy"))
-          .default;
+        const selectedPolicyNumber = String(
+          body.insurance.policy_number || "",
+        ).trim();
 
-        const somaticPolicy = await InsurancePolicy.findOne({
+        if (!selectedPolicyNumber) {
+          return NextResponse.json(
+            {
+              error: "Please select a SOMATIC insurance policy.",
+            },
+            { status: 400 },
+          );
+        }
+
+        const selectedPolicy = await InsurancePolicy.findOne({
           user_id: user._id,
+          policy_number: selectedPolicyNumber,
           status: {
-            $in: ["pending", "active"],
+            $in: [
+              "pending",
+              "approved",
+              "payment_pending",
+              "active",
+              "revival_pending",
+              "lapsed",
+              "expired",
+            ],
           },
-        });
+        }).lean();
 
-        if (!somaticPolicy) {
+        if (!selectedPolicy) {
           return NextResponse.json(
             {
               error:
-                "No SOMATIC insurance policy is linked to your account. Please purchase or activate a SOMATIC insurance plan first.",
+                "Selected SOMATIC insurance policy was not found or does not belong to your account.",
             },
             { status: 400 },
           );
@@ -346,8 +389,15 @@ export async function PATCH(req: Request) {
 
         addChange("insurance.type", previousInsurance?.type, "somatic");
 
+        addChange(
+          "insurance.policy_number",
+          previousInsurance?.policy_number,
+          selectedPolicy.policy_number,
+        );
+
         user.insurance = {
           type: "somatic",
+          policy_number: selectedPolicy.policy_number,
         };
       } else {
         return NextResponse.json(
@@ -402,7 +452,6 @@ export async function PATCH(req: Request) {
       }
 
       user.password_hash = await bcrypt.hash(body.newPassword, 10);
-
       passwordChanged = true;
     }
 
