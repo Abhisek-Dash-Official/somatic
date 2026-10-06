@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useUserStore } from "@/store/useUserStore";
+import { useNotificationStore } from "@/store/notificationStore";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { siteConfig } from "@/config/site";
 import { navLinks } from "@/config/nav";
@@ -18,7 +19,7 @@ const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 const accountIconMap: Record<string, any> = { Bell, LayoutDashboard, User, LogOut, LogIn, UserPlus, ShoppingCart };
 
-function AccountDropdown({ user, onClose }: { user: any; onClose: () => void }) {
+function AccountDropdown({ user, onClose, unreadCount }: { user: any; onClose: () => void; unreadCount: number }) {
     const links = user ? navLinks.accountMenu.authenticated : navLinks.accountMenu.guest;
 
     const getHref = (href: string) => {
@@ -62,8 +63,14 @@ function AccountDropdown({ user, onClose }: { user: any; onClose: () => void }) 
                                 className={`h-4 w-4 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6 ${link.danger ? "" : "text-[#687d83]"
                                     }`}
                             />
-                            <span className="transition-transform duration-300 group-hover:translate-x-1">
-                                {link.title}
+                            <span className="flex min-w-0 flex-1 items-center justify-between gap-2 transition-transform duration-300 group-hover:translate-x-1">
+                                <span>{link.title}</span>
+
+                                {link.title === "Notifications" && unreadCount > 0 && (
+                                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#08a9b5] px-1.5 text-[10px] font-bold leading-none text-[#041014]">
+                                        {unreadCount > 99 ? "99+" : unreadCount}
+                                    </span>
+                                )}
                             </span>
                         </Link>
                     );
@@ -75,6 +82,8 @@ function AccountDropdown({ user, onClose }: { user: any; onClose: () => void }) 
 
 export default function Header() {
     const { user } = useUserStore();
+    const unreadCount = useNotificationStore((state) => state.unreadCount);
+    const fetchUnreadCount = useNotificationStore((state) => state.fetchUnreadCount);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
@@ -89,6 +98,10 @@ export default function Header() {
         setIsAccountMenuOpen(false);
         setIsMoreMenuOpen(false);
     }, [pathname]);
+
+    useEffect(() => {
+        if (user) fetchUnreadCount();
+    }, [user, fetchUnreadCount]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -256,7 +269,7 @@ export default function Header() {
                             onClick={() => setIsAccountMenuOpen((prev) => !prev)}
                             aria-label="Account menu"
                             aria-expanded={isAccountMenuOpen}
-                            className={`flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border transition-all duration-300 hover:scale-105 active:scale-95 ${isAccountMenuOpen
+                            className={`relative flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300 hover:scale-105 active:scale-95 ${isAccountMenuOpen
                                 ? "border-[#08a9b5] ring-2 ring-[#08a9b5]/25"
                                 : "border-[#1d343c] hover:border-[#08a9b5]"
                                 }`}
@@ -268,9 +281,22 @@ export default function Header() {
                                 height={40}
                                 className="h-full w-full rounded-full object-cover"
                             />
+
+                            {unreadCount > 0 && (
+                                <span
+                                    aria-label={`${unreadCount} unread notifications`}
+                                    className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#071116] bg-red-500"
+                                />
+                            )}
                         </button>
 
-                        {isAccountMenuOpen && <AccountDropdown user={user} onClose={() => setIsAccountMenuOpen(false)} />}
+                        {isAccountMenuOpen && (
+                            <AccountDropdown
+                                user={user}
+                                unreadCount={unreadCount}
+                                onClose={() => setIsAccountMenuOpen(false)}
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -283,7 +309,7 @@ export default function Header() {
                             onClick={() => setIsAccountMenuOpen((prev) => !prev)}
                             aria-label="Account menu"
                             aria-expanded={isAccountMenuOpen}
-                            className={`flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border transition-all duration-300 active:scale-95 ${isAccountMenuOpen
+                            className={`relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border transition-all duration-300 active:scale-95 ${isAccountMenuOpen
                                 ? "border-[#08a9b5] ring-2 ring-[#08a9b5]/25"
                                 : "border-[#1d343c]"
                                 }`}
@@ -295,9 +321,22 @@ export default function Header() {
                                 height={40}
                                 className="h-full w-full rounded-full object-cover"
                             />
+
+                            {unreadCount > 0 && (
+                                <span
+                                    aria-label={`${unreadCount} unread notifications`}
+                                    className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#071116] bg-red-500"
+                                />
+                            )}
                         </button>
 
-                        {isAccountMenuOpen && <AccountDropdown user={user} onClose={() => setIsAccountMenuOpen(false)} />}
+                        {isAccountMenuOpen && (
+                            <AccountDropdown
+                                user={user}
+                                unreadCount={unreadCount}
+                                onClose={() => setIsAccountMenuOpen(false)}
+                            />
+                        )}
                     </div>
 
                     <button

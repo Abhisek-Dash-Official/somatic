@@ -121,7 +121,7 @@ export async function PATCH(req: Request) {
         title: "Support Ticket Resolved",
         message: notifyMessage.trim(),
         priority: "normal",
-        action_url: "/support",
+        action_url: "/tickets",
         reference_id: ticket._id.toString(),
         reference_type: "feedback",
       });
