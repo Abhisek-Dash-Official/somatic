@@ -1,7 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Ticket as TicketIcon, Clock, CheckCircle2, Loader2, User, Mail, ShieldAlert, MessageSquare, Reply } from "lucide-react";
+import {
+    CheckCircle2,
+    Clock,
+    Loader2,
+    Mail,
+    MessageSquare,
+    Reply,
+    ShieldAlert,
+    Ticket as TicketIcon,
+    User,
+} from "lucide-react";
 import { toast } from "react-toastify";
 
 interface TicketData {
@@ -49,7 +59,7 @@ export default function AdminTicketsPage() {
 
     const handleStatusToggle = async (
         ticketId: string,
-        currentStatus: "Open" | "Resolved"
+        currentStatus: "Open" | "Resolved",
     ) => {
         const newStatus = currentStatus === "Open" ? "Resolved" : "Open";
         const notifyMessage = notifyMessages[ticketId]?.trim() || "";
@@ -90,8 +100,8 @@ export default function AdminTicketsPage() {
                                 ? { admin_response: notifyMessage }
                                 : {}),
                         }
-                        : ticket
-                )
+                        : ticket,
+                ),
             );
 
             if (newStatus === "Resolved") {
@@ -113,7 +123,7 @@ export default function AdminTicketsPage() {
     };
 
     const filteredTickets = tickets.filter(
-        (ticket) => filter === "All" || ticket.status === filter
+        (ticket) => filter === "All" || ticket.status === filter,
     );
 
     if (loading) {
@@ -145,13 +155,11 @@ export default function AdminTicketsPage() {
                         <button
                             key={filterName}
                             onClick={() =>
-                                setFilter(
-                                    filterName as "All" | "Open" | "Resolved"
-                                )
+                                setFilter(filterName as "All" | "Open" | "Resolved")
                             }
-                            className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all ${filter === filterName
-                                ? "bg-primary text-primary-foreground"
-                                : "text-muted hover:bg-accent hover:text-foreground"
+                            className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all ${filter === filterName
+                                    ? "bg-primary text-primary-foreground"
+                                    : "text-muted hover:bg-accent hover:text-foreground"
                                 }`}
                         >
                             {filterName}
@@ -161,7 +169,7 @@ export default function AdminTicketsPage() {
             </div>
 
             {filteredTickets.length === 0 ? (
-                <div className="flex min-h-75 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-surface p-12">
+                <div className="flex min-h-75 flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface p-12 shadow-sm">
                     <ShieldAlert className="mb-4 h-12 w-12 text-muted-foreground" />
                     <p className="text-lg font-medium text-muted">
                         No tickets found.
@@ -172,40 +180,35 @@ export default function AdminTicketsPage() {
                     {filteredTickets.map((ticket) => {
                         const isOpen = ticket.status === "Open";
                         const isLoading = actionId === ticket._id;
-                        const notifyMessage =
-                            notifyMessages[ticket._id] || "";
+                        const notifyMessage = notifyMessages[ticket._id] || "";
 
                         return (
                             <div
                                 key={ticket._id}
-                                className="flex h-135 min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-surface p-5 transition-colors hover:border-primary/30"
+                                className="flex h-135 min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-surface p-5 shadow-sm transition-colors hover:border-primary/30"
                             >
-                                {/* Header */}
                                 <div className="mb-4 flex shrink-0 items-center justify-between gap-4">
                                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                                         <span
-                                            className={`shrink-0 rounded-md border px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${isOpen
-                                                ? "border-warning/20 bg-warning/10 text-warning"
-                                                : "border-success/20 bg-success/10 text-success"
+                                            className={`shrink-0 rounded-full border px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${isOpen
+                                                    ? "border-warning/20 bg-warning/10 text-warning"
+                                                    : "border-success/20 bg-success/10 text-success"
                                                 }`}
                                         >
                                             {ticket.status}
                                         </span>
 
-                                        <span className="max-w-45 truncate rounded-md bg-surface-secondary px-2.5 py-1 text-xs font-semibold text-muted">
+                                        <span className="max-w-45 truncate rounded-xl border border-border bg-surface-secondary px-2.5 py-1 text-xs font-semibold text-muted">
                                             {ticket.ticket_type}
                                         </span>
                                     </div>
 
                                     <span className="shrink-0 whitespace-nowrap font-mono text-xs text-muted-foreground">
-                                        {new Date(
-                                            ticket.created_at
-                                        ).toLocaleDateString()}
+                                        {new Date(ticket.created_at).toLocaleDateString()}
                                     </span>
                                 </div>
 
-                                {/* Ticket Content */}
-                                <div className="flex h-62.5 shrink-0 flex-col overflow-hidden rounded-lg border border-border bg-surface-secondary p-4">
+                                <div className="flex h-62.5 shrink-0 flex-col overflow-hidden rounded-xl border border-border bg-surface-secondary p-4">
                                     <div className="mb-3 flex shrink-0 items-center gap-2">
                                         <User className="h-4 w-4 shrink-0 text-muted-foreground" />
 
@@ -214,9 +217,8 @@ export default function AdminTicketsPage() {
                                                 "Unknown User"}
                                         </span>
 
-                                        <span className="shrink-0 rounded bg-accent px-2 py-0.5 text-xs capitalize text-muted">
-                                            {ticket.reported_by_user_id?.role ||
-                                                "N/A"}
+                                        <span className="shrink-0 rounded-full border border-border bg-accent px-2 py-0.5 text-xs capitalize text-muted">
+                                            {ticket.reported_by_user_id?.role || "N/A"}
                                         </span>
                                     </div>
 
@@ -240,35 +242,31 @@ export default function AdminTicketsPage() {
                                     </div>
                                 </div>
 
-                                {/* Bottom Action Area */}
                                 <div className="mt-4 flex h-36.25 shrink-0 flex-col border-t border-border pt-4">
                                     {isOpen ? (
                                         <>
                                             <textarea
                                                 value={notifyMessage}
                                                 onChange={(e) =>
-                                                    setNotifyMessages(
-                                                        (prev) => ({
-                                                            ...prev,
-                                                            [ticket._id]:
-                                                                e.target.value,
-                                                        })
-                                                    )
+                                                    setNotifyMessages((prev) => ({
+                                                        ...prev,
+                                                        [ticket._id]: e.target.value,
+                                                    }))
                                                 }
                                                 disabled={isLoading}
                                                 placeholder="Write a message to the user before resolving..."
-                                                className="h-19 w-full shrink-0 resize-none rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="h-19 w-full shrink-0 resize-none rounded-xl border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
                                             />
 
                                             <button
                                                 onClick={() =>
                                                     handleStatusToggle(
                                                         ticket._id,
-                                                        ticket.status
+                                                        ticket.status,
                                                     )
                                                 }
                                                 disabled={isLoading}
-                                                className="mt-3 flex h-11 shrink-0 w-full items-center justify-center gap-2 rounded-lg border border-success/20 bg-success/10 px-4 font-semibold text-success transition-all hover:bg-success/15 disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="mt-3 flex h-11 shrink-0 w-full items-center justify-center gap-2 rounded-xl border border-success/20 bg-success/10 px-4 font-semibold text-success transition-all hover:bg-success/15 disabled:cursor-not-allowed disabled:opacity-50"
                                             >
                                                 {isLoading ? (
                                                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -283,7 +281,7 @@ export default function AdminTicketsPage() {
                                         </>
                                     ) : (
                                         <>
-                                            <div className="h-25 shrink-0 overflow-hidden rounded-lg border border-primary/20 bg-primary/5 px-3 py-2.5">
+                                            <div className="h-25 shrink-0 overflow-hidden rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5">
                                                 <div className="mb-1 flex items-center gap-2">
                                                     <Reply className="h-3.5 w-3.5 shrink-0 text-primary" />
 
@@ -307,11 +305,11 @@ export default function AdminTicketsPage() {
                                                 onClick={() =>
                                                     handleStatusToggle(
                                                         ticket._id,
-                                                        ticket.status
+                                                        ticket.status,
                                                     )
                                                 }
                                                 disabled={isLoading}
-                                                className="mt-3 flex h-11 shrink-0 w-full items-center justify-center gap-2 rounded-lg border border-warning/20 bg-warning/10 px-4 font-semibold text-warning transition-all hover:bg-warning/15 disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="mt-3 flex h-11 shrink-0 w-full items-center justify-center gap-2 rounded-xl border border-warning/20 bg-warning/10 px-4 font-semibold text-warning transition-all hover:bg-warning/15 disabled:cursor-not-allowed disabled:opacity-50"
                                             >
                                                 {isLoading ? (
                                                     <Loader2 className="h-4 w-4 animate-spin" />

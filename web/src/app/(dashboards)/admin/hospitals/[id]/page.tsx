@@ -71,10 +71,14 @@ export default function HospitalDetailsPage() {
             setPaperworkEndpoint(hospitalData.paperwork_endpoint);
             setIsActive(hospitalData.is_active);
             setAuthType(hospitalData.auth_config?.type || "none");
-            setApiKeyHeader(hospitalData.auth_config?.api_key_header || "X-API-Key");
+            setApiKeyHeader(
+                hospitalData.auth_config?.api_key_header || "X-API-Key",
+            );
         } catch (error) {
             toast.error(
-                error instanceof Error ? error.message : "Failed to fetch hospital",
+                error instanceof Error
+                    ? error.message
+                    : "Failed to fetch hospital",
             );
         } finally {
             setLoading(false);
@@ -95,7 +99,9 @@ export default function HospitalDetailsPage() {
         setPaperworkEndpoint(hospital.paperwork_endpoint);
         setIsActive(hospital.is_active);
         setAuthType(hospital.auth_config?.type || "none");
-        setApiKeyHeader(hospital.auth_config?.api_key_header || "X-API-Key");
+        setApiKeyHeader(
+            hospital.auth_config?.api_key_header || "X-API-Key",
+        );
         setApiKey("");
         setToken("");
         setUsername("");
@@ -126,7 +132,8 @@ export default function HospitalDetailsPage() {
             };
 
             if (authType === "api_key") {
-                authConfig.api_key_header = apiKeyHeader.trim() || "X-API-Key";
+                authConfig.api_key_header =
+                    apiKeyHeader.trim() || "X-API-Key";
 
                 if (apiKey.trim()) {
                     authConfig.api_key = apiKey.trim();
@@ -147,24 +154,29 @@ export default function HospitalDetailsPage() {
                 }
             }
 
-            const response = await fetch(`/api/admin/hospitals/${hospitalId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
+            const response = await fetch(
+                `/api/admin/hospitals/${hospitalId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name: name.trim(),
+                        qr_identifier: qrIdentifier.trim(),
+                        paperwork_endpoint: paperworkEndpoint.trim(),
+                        is_active: isActive,
+                        auth_config: authConfig,
+                    }),
                 },
-                body: JSON.stringify({
-                    name: name.trim(),
-                    qr_identifier: qrIdentifier.trim(),
-                    paperwork_endpoint: paperworkEndpoint.trim(),
-                    is_active: isActive,
-                    auth_config: authConfig,
-                }),
-            });
+            );
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "Failed to update hospital");
+                throw new Error(
+                    data.message || "Failed to update hospital",
+                );
             }
 
             toast.success("Hospital updated successfully");
@@ -172,7 +184,9 @@ export default function HospitalDetailsPage() {
             await fetchHospital();
         } catch (error) {
             toast.error(
-                error instanceof Error ? error.message : "Failed to update hospital",
+                error instanceof Error
+                    ? error.message
+                    : "Failed to update hospital",
             );
         } finally {
             setSaving(false);
@@ -185,20 +199,25 @@ export default function HospitalDetailsPage() {
         try {
             setSaving(true);
 
-            const response = await fetch(`/api/admin/hospitals/${hospitalId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
+            const response = await fetch(
+                `/api/admin/hospitals/${hospitalId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        is_active: !hospital.is_active,
+                    }),
                 },
-                body: JSON.stringify({
-                    is_active: !hospital.is_active,
-                }),
-            });
+            );
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "Failed to update hospital status");
+                throw new Error(
+                    data.message || "Failed to update hospital status",
+                );
             }
 
             toast.success(
@@ -245,7 +264,11 @@ export default function HospitalDetailsPage() {
 
         const image = canvas.toDataURL("image/png");
 
-        const printWindow = window.open("", "_blank", "width=600,height=700");
+        const printWindow = window.open(
+            "",
+            "_blank",
+            "width=600,height=700",
+        );
 
         if (!printWindow) {
             toast.error("Please allow popups to print the QR");
@@ -308,16 +331,15 @@ export default function HospitalDetailsPage() {
     };
 
     const cardClass =
-        "rounded-xl border border-border bg-surface p-5 sm:p-6";
+        "rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6";
 
     const fieldViewClass =
-        "min-h-11.5 rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm font-medium text-foreground";
+        "min-h-11.5 rounded-xl border border-border bg-surface-secondary px-4 py-3 text-sm font-medium text-foreground";
 
     const inputClass =
-        "w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10";
+        "w-full rounded-xl border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10";
 
-    const labelClass =
-        "mb-2 block text-sm font-semibold text-foreground";
+    const labelClass = "mb-2 block text-sm font-semibold text-foreground";
 
     if (loading) {
         return (
@@ -335,7 +357,7 @@ export default function HospitalDetailsPage() {
     if (!hospital) {
         return (
             <div className="flex min-h-[70vh] items-center justify-center px-4">
-                <div className="w-full max-w-md rounded-xl border border-border bg-surface p-8 text-center">
+                <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-8 text-center shadow-sm">
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-danger/10 text-danger">
                         !
                     </div>
@@ -350,7 +372,7 @@ export default function HospitalDetailsPage() {
 
                     <button
                         onClick={() => router.push("/admin/hospitals")}
-                        className="mt-6 w-full rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                        className="mt-6 w-full rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
                     >
                         Back to Hospitals
                     </button>
@@ -391,13 +413,16 @@ export default function HospitalDetailsPage() {
                                                     : "bg-muted-foreground"
                                                 }`}
                                         />
-                                        {hospital.is_active ? "Active" : "Inactive"}
+                                        {hospital.is_active
+                                            ? "Active"
+                                            : "Inactive"}
                                     </span>
                                 )}
                             </div>
 
                             <p className="mt-2 text-sm text-muted sm:text-base">
-                                Manage hospital integration, API configuration and QR code.
+                                Manage hospital integration, API configuration
+                                and QR code.
                             </p>
                         </div>
 
@@ -406,7 +431,7 @@ export default function HospitalDetailsPage() {
                                 <>
                                     <button
                                         onClick={() => setEditing(true)}
-                                        className="w-full rounded-lg border border-border bg-surface-secondary px-5 py-2.5 text-sm font-semibold text-foreground transition hover:bg-accent sm:w-auto"
+                                        className="w-full rounded-xl border border-border bg-surface-secondary px-5 py-2.5 text-sm font-semibold text-foreground transition hover:bg-accent sm:w-auto"
                                     >
                                         Edit Hospital
                                     </button>
@@ -414,12 +439,14 @@ export default function HospitalDetailsPage() {
                                     <button
                                         onClick={handleStatusToggle}
                                         disabled={saving}
-                                        className={`w-full rounded-lg px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto ${hospital.is_active
+                                        className={`w-full rounded-xl px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto ${hospital.is_active
                                                 ? "bg-danger text-white hover:bg-danger/90"
                                                 : "bg-primary text-primary-foreground hover:bg-primary-hover"
                                             }`}
                                     >
-                                        {hospital.is_active ? "Deactivate" : "Activate"}
+                                        {hospital.is_active
+                                            ? "Deactivate"
+                                            : "Activate"}
                                     </button>
                                 </>
                             ) : (
@@ -429,7 +456,7 @@ export default function HospitalDetailsPage() {
                                             resetForm();
                                             setEditing(false);
                                         }}
-                                        className="w-full rounded-lg border border-border bg-surface-secondary px-5 py-2.5 text-sm font-semibold text-muted transition hover:bg-accent hover:text-foreground sm:w-auto"
+                                        className="w-full rounded-xl border border-border bg-surface-secondary px-5 py-2.5 text-sm font-semibold text-muted transition hover:bg-accent hover:text-foreground sm:w-auto"
                                     >
                                         Cancel
                                     </button>
@@ -437,9 +464,11 @@ export default function HospitalDetailsPage() {
                                     <button
                                         onClick={handleSave}
                                         disabled={saving}
-                                        className="w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                                        className="w-full rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                                     >
-                                        {saving ? "Saving..." : "Save Changes"}
+                                        {saving
+                                            ? "Saving..."
+                                            : "Save Changes"}
                                     </button>
                                 </>
                             )}
@@ -457,7 +486,8 @@ export default function HospitalDetailsPage() {
                                     </h2>
 
                                     <p className="mt-1 text-sm text-muted">
-                                        Basic information used for the hospital integration.
+                                        Basic information used for the hospital
+                                        integration.
                                     </p>
                                 </div>
 
@@ -465,7 +495,7 @@ export default function HospitalDetailsPage() {
                                     <button
                                         type="button"
                                         onClick={() => setIsActive(!isActive)}
-                                        className={`inline-flex w-fit items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold ${isActive
+                                        className={`inline-flex w-fit items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold ${isActive
                                                 ? "bg-success/10 text-success"
                                                 : "bg-surface-secondary text-muted"
                                             }`}
@@ -483,12 +513,16 @@ export default function HospitalDetailsPage() {
 
                             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div>
-                                    <label className={labelClass}>Hospital Name</label>
+                                    <label className={labelClass}>
+                                        Hospital Name
+                                    </label>
 
                                     {editing ? (
                                         <input
                                             value={name}
-                                            onChange={(e) => setName(e.target.value)}
+                                            onChange={(e) =>
+                                                setName(e.target.value)
+                                            }
                                             type="text"
                                             className={inputClass}
                                         />
@@ -500,17 +534,23 @@ export default function HospitalDetailsPage() {
                                 </div>
 
                                 <div>
-                                    <label className={labelClass}>QR Identifier</label>
+                                    <label className={labelClass}>
+                                        QR Identifier
+                                    </label>
 
                                     {editing ? (
                                         <input
                                             value={qrIdentifier}
-                                            onChange={(e) => setQrIdentifier(e.target.value)}
+                                            onChange={(e) =>
+                                                setQrIdentifier(e.target.value)
+                                            }
                                             type="text"
                                             className={inputClass}
                                         />
                                     ) : (
-                                        <div className={`${fieldViewClass} font-mono`}>
+                                        <div
+                                            className={`${fieldViewClass} font-mono`}
+                                        >
                                             {hospital.qr_identifier}
                                         </div>
                                     )}
@@ -525,20 +565,22 @@ export default function HospitalDetailsPage() {
                                         <input
                                             value={paperworkEndpoint}
                                             onChange={(e) =>
-                                                setPaperworkEndpoint(e.target.value)
+                                                setPaperworkEndpoint(
+                                                    e.target.value,
+                                                )
                                             }
                                             type="url"
                                             className={inputClass}
                                         />
                                     ) : (
-                                        <div className="break-all rounded-lg border border-border bg-surface-secondary px-4 py-3 font-mono text-sm text-muted">
+                                        <div className="break-all rounded-xl border border-border bg-surface-secondary px-4 py-3 font-mono text-sm text-muted">
                                             {hospital.paperwork_endpoint}
                                         </div>
                                     )}
 
                                     <p className="mt-2 text-xs text-muted-foreground">
-                                        The server uses this endpoint to submit patient
-                                        paperwork to the hospital.
+                                        The server uses this endpoint to submit
+                                        patient paperwork to the hospital.
                                     </p>
                                 </div>
                             </div>
@@ -547,7 +589,7 @@ export default function HospitalDetailsPage() {
                         <section className={cardClass}>
                             <div className="mb-6">
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-primary">
                                         <Lock className="h-5 w-5" />
                                     </div>
 
@@ -557,7 +599,8 @@ export default function HospitalDetailsPage() {
                                         </h2>
 
                                         <p className="text-sm text-muted">
-                                            Authentication used for hospital API requests.
+                                            Authentication used for hospital API
+                                            requests.
                                         </p>
                                     </div>
                                 </div>
@@ -573,30 +616,44 @@ export default function HospitalDetailsPage() {
                                         <select
                                             value={authType}
                                             onChange={(e) =>
-                                                setAuthType(e.target.value as AuthType)
+                                                setAuthType(
+                                                    e.target.value as AuthType,
+                                                )
                                             }
                                             className={inputClass}
                                         >
-                                            <option value="none" className="bg-surface">
+                                            <option
+                                                value="none"
+                                                className="bg-surface"
+                                            >
                                                 None
                                             </option>
-                                            <option value="api_key" className="bg-surface">
+                                            <option
+                                                value="api_key"
+                                                className="bg-surface"
+                                            >
                                                 API Key
                                             </option>
-                                            <option value="bearer" className="bg-surface">
+                                            <option
+                                                value="bearer"
+                                                className="bg-surface"
+                                            >
                                                 Bearer Token
                                             </option>
-                                            <option value="basic" className="bg-surface">
+                                            <option
+                                                value="basic"
+                                                className="bg-surface"
+                                            >
                                                 Basic Authentication
                                             </option>
                                         </select>
                                     ) : (
-                                        <div className="flex min-h-11.5 flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-surface-secondary px-4 py-3">
+                                        <div className="flex min-h-11.5 flex-wrap items-center justify-between gap-2 rounded-xl border border-border bg-surface-secondary px-4 py-3">
                                             <span className="text-sm font-medium capitalize text-foreground">
-                                                {(hospital.auth_config?.type || "none").replace(
-                                                    "_",
-                                                    " ",
-                                                )}
+                                                {(
+                                                    hospital.auth_config?.type ||
+                                                    "none"
+                                                ).replace("_", " ")}
                                             </span>
 
                                             <span className="rounded-full bg-success/10 px-2.5 py-1 text-xs font-semibold text-success">
@@ -609,29 +666,38 @@ export default function HospitalDetailsPage() {
                                 {editing && authType === "api_key" && (
                                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                         <div>
-                                            <label className={labelClass}>API Key</label>
+                                            <label className={labelClass}>
+                                                API Key
+                                            </label>
 
                                             <input
                                                 type="password"
                                                 value={apiKey}
-                                                onChange={(e) => setApiKey(e.target.value)}
+                                                onChange={(e) =>
+                                                    setApiKey(e.target.value)
+                                                }
                                                 placeholder="Enter new API key"
                                                 className={inputClass}
                                             />
 
                                             <p className="mt-2 text-xs text-muted-foreground">
-                                                Leave empty to keep the current key.
+                                                Leave empty to keep the current
+                                                key.
                                             </p>
                                         </div>
 
                                         <div>
-                                            <label className={labelClass}>Header Name</label>
+                                            <label className={labelClass}>
+                                                Header Name
+                                            </label>
 
                                             <input
                                                 type="text"
                                                 value={apiKeyHeader}
                                                 onChange={(e) =>
-                                                    setApiKeyHeader(e.target.value)
+                                                    setApiKeyHeader(
+                                                        e.target.value,
+                                                    )
                                                 }
                                                 placeholder="X-API-Key"
                                                 className={inputClass}
@@ -642,18 +708,23 @@ export default function HospitalDetailsPage() {
 
                                 {editing && authType === "bearer" && (
                                     <div>
-                                        <label className={labelClass}>Bearer Token</label>
+                                        <label className={labelClass}>
+                                            Bearer Token
+                                        </label>
 
                                         <input
                                             type="password"
                                             value={token}
-                                            onChange={(e) => setToken(e.target.value)}
+                                            onChange={(e) =>
+                                                setToken(e.target.value)
+                                            }
                                             placeholder="Enter new bearer token"
                                             className={inputClass}
                                         />
 
                                         <p className="mt-2 text-xs text-muted-foreground">
-                                            Leave empty to keep the current token.
+                                            Leave empty to keep the current
+                                            token.
                                         </p>
                                     </div>
                                 )}
@@ -661,7 +732,9 @@ export default function HospitalDetailsPage() {
                                 {editing && authType === "basic" && (
                                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                         <div>
-                                            <label className={labelClass}>Username</label>
+                                            <label className={labelClass}>
+                                                Username
+                                            </label>
 
                                             <input
                                                 type="text"
@@ -675,7 +748,9 @@ export default function HospitalDetailsPage() {
                                         </div>
 
                                         <div>
-                                            <label className={labelClass}>Password</label>
+                                            <label className={labelClass}>
+                                                Password
+                                            </label>
 
                                             <input
                                                 type="password"
@@ -688,48 +763,53 @@ export default function HospitalDetailsPage() {
                                             />
 
                                             <p className="mt-2 text-xs text-muted-foreground">
-                                                Leave empty to keep the current password.
+                                                Leave empty to keep the current
+                                                password.
                                             </p>
                                         </div>
                                     </div>
                                 )}
 
-                                {!editing && hospital.auth_config?.type === "none" && (
-                                    <div className="flex items-center gap-3 rounded-lg border border-border bg-surface-secondary p-4">
-                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-primary">
-                                            ✓
+                                {!editing &&
+                                    hospital.auth_config?.type === "none" && (
+                                        <div className="flex items-center gap-3 rounded-xl border border-border bg-surface-secondary p-4">
+                                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-primary">
+                                                ✓
+                                            </div>
+
+                                            <div>
+                                                <p className="text-sm font-semibold text-foreground">
+                                                    No authentication required
+                                                </p>
+
+                                                <p className="mt-0.5 text-xs text-muted-foreground">
+                                                    The hospital API accepts
+                                                    requests without additional
+                                                    credentials.
+                                                </p>
+                                            </div>
                                         </div>
+                                    )}
 
-                                        <div>
-                                            <p className="text-sm font-semibold text-foreground">
-                                                No authentication required
-                                            </p>
+                                {!editing &&
+                                    hospital.auth_config?.type !== "none" && (
+                                        <div className="flex items-center gap-3 rounded-xl border border-warning/20 bg-warning/10 p-4">
+                                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-warning/15 text-warning">
+                                                ✓
+                                            </div>
 
-                                            <p className="mt-0.5 text-xs text-muted-foreground">
-                                                The hospital API accepts requests without
-                                                additional credentials.
-                                            </p>
+                                            <div>
+                                                <p className="text-sm font-semibold text-warning">
+                                                    Credentials configured
+                                                </p>
+
+                                                <p className="mt-0.5 text-xs text-warning/80">
+                                                    Secret credentials are hidden
+                                                    for security.
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
-
-                                {!editing && hospital.auth_config?.type !== "none" && (
-                                    <div className="flex items-center gap-3 rounded-lg border border-warning/20 bg-warning/10 p-4">
-                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-warning/15 text-warning">
-                                            ✓
-                                        </div>
-
-                                        <div>
-                                            <p className="text-sm font-semibold text-warning">
-                                                Credentials configured
-                                            </p>
-
-                                            <p className="mt-0.5 text-xs text-warning/80">
-                                                Secret credentials are hidden for security.
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
+                                    )}
                             </div>
                         </section>
 
@@ -743,7 +823,7 @@ export default function HospitalDetailsPage() {
                             </p>
 
                             <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                                <div className="rounded-xl border border-border bg-surface-secondary p-4">
                                     <p className="text-xs font-medium text-muted-foreground">
                                         Integration Status
                                     </p>
@@ -760,23 +840,27 @@ export default function HospitalDetailsPage() {
                                     </p>
                                 </div>
 
-                                <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                                <div className="rounded-xl border border-border bg-surface-secondary p-4">
                                     <p className="text-xs font-medium text-muted-foreground">
                                         Created
                                     </p>
 
                                     <p className="mt-1 text-sm font-semibold text-foreground">
-                                        {new Date(hospital.created_at).toLocaleDateString()}
+                                        {new Date(
+                                            hospital.created_at,
+                                        ).toLocaleDateString()}
                                     </p>
                                 </div>
 
-                                <div className="rounded-lg border border-border bg-surface-secondary p-4 sm:col-span-2">
+                                <div className="rounded-xl border border-border bg-surface-secondary p-4 sm:col-span-2">
                                     <p className="text-xs font-medium text-muted-foreground">
                                         Last Updated
                                     </p>
 
                                     <p className="mt-1 text-sm font-semibold text-foreground">
-                                        {new Date(hospital.updated_at).toLocaleString()}
+                                        {new Date(
+                                            hospital.updated_at,
+                                        ).toLocaleString()}
                                     </p>
                                 </div>
                             </div>
@@ -784,7 +868,7 @@ export default function HospitalDetailsPage() {
                     </div>
 
                     <aside className="min-w-0">
-                        <div className="overflow-hidden rounded-xl border border-border bg-surface xl:sticky xl:top-6">
+                        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm xl:sticky xl:top-6">
                             <div className="border-b border-border p-5 sm:p-6">
                                 <div className="flex items-start justify-between gap-4">
                                     <div>
@@ -793,20 +877,24 @@ export default function HospitalDetailsPage() {
                                         </h2>
 
                                         <p className="mt-1 text-sm leading-5 text-muted">
-                                            Patients can scan this QR code to connect their
-                                            paperwork with this hospital.
+                                            Patients can scan this QR code to
+                                            connect their paperwork with this
+                                            hospital.
                                         </p>
                                     </div>
 
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-primary">
                                         QR
                                     </div>
                                 </div>
                             </div>
 
                             <div className="p-5 sm:p-6">
-                                <div className="flex justify-center rounded-xl border border-border bg-surface-secondary p-5 sm:p-8">
-                                    <div ref={qrRef} className="rounded-lg bg-white p-3">
+                                <div className="flex justify-center rounded-2xl border border-border bg-surface-secondary p-5 sm:p-8">
+                                    <div
+                                        ref={qrRef}
+                                        className="rounded-xl bg-white p-3"
+                                    >
                                         <QRCodeCanvas
                                             value={hospital.qr_identifier}
                                             size={240}
@@ -816,7 +904,7 @@ export default function HospitalDetailsPage() {
                                     </div>
                                 </div>
 
-                                <div className="mt-5 rounded-lg border border-border bg-surface-secondary p-4">
+                                <div className="mt-5 rounded-xl border border-border bg-surface-secondary p-4">
                                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                                         QR Identifier
                                     </p>
@@ -829,14 +917,14 @@ export default function HospitalDetailsPage() {
                                 <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
                                     <button
                                         onClick={downloadQr}
-                                        className="rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-accent"
+                                        className="rounded-xl border border-border bg-surface-secondary px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-accent"
                                     >
                                         Download
                                     </button>
 
                                     <button
                                         onClick={printQr}
-                                        className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                                        className="rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
                                     >
                                         Print QR
                                     </button>

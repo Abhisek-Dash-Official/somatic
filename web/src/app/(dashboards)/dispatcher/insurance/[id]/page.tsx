@@ -175,7 +175,7 @@ export default function DispatcherInsuranceDetailsPage() {
     if (!policy) {
         return (
             <main className="mx-auto flex min-h-[70vh] w-full max-w-3xl items-center justify-center bg-background px-4">
-                <div className="w-full rounded-xl border border-border bg-surface p-8 text-center">
+                <div className="w-full rounded-2xl border border-border bg-surface p-8 text-center shadow-sm">
                     <ShieldCheck className="mx-auto text-muted-foreground" size={40} />
 
                     <h1 className="mt-4 text-xl font-semibold text-foreground">
@@ -188,7 +188,7 @@ export default function DispatcherInsuranceDetailsPage() {
 
                     <Link
                         href="/dispatcher/insurance"
-                        className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover"
+                        className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
                     >
                         <ArrowLeft size={17} />
                         Back to Insurance
@@ -213,7 +213,7 @@ export default function DispatcherInsuranceDetailsPage() {
                 Back to Insurance
             </Link>
 
-            <section className="mt-6 overflow-hidden rounded-xl border border-border bg-surface">
+            <section className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                 <div className="border-b border-border bg-primary/5 p-6 sm:p-8">
                     <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                         <div className="flex items-start gap-4">
@@ -223,7 +223,9 @@ export default function DispatcherInsuranceDetailsPage() {
 
                             <div>
                                 <p className="text-sm font-medium text-primary">
-                                    {isRevivalPending ? "Insurance Revival Review" : "Insurance Proposal Review"}
+                                    {isRevivalPending
+                                        ? "Insurance Revival Review"
+                                        : "Insurance Proposal Review"}
                                 </p>
 
                                 <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">
@@ -269,7 +271,7 @@ export default function DispatcherInsuranceDetailsPage() {
                 )}
 
                 <div className="grid gap-4 p-6 sm:grid-cols-3 sm:p-8">
-                    <div className="rounded-lg border border-border bg-surface-secondary p-5">
+                    <div className="rounded-xl border border-border bg-surface-secondary p-5">
                         <p className="text-xs text-muted">Coverage Amount</p>
 
                         <p className="mt-2 text-2xl font-bold text-foreground">
@@ -277,7 +279,7 @@ export default function DispatcherInsuranceDetailsPage() {
                         </p>
                     </div>
 
-                    <div className="rounded-lg border border-border bg-surface-secondary p-5">
+                    <div className="rounded-xl border border-border bg-surface-secondary p-5">
                         <p className="text-xs text-muted">Premium</p>
 
                         <p className="mt-2 text-2xl font-bold text-foreground">
@@ -289,7 +291,7 @@ export default function DispatcherInsuranceDetailsPage() {
                         </p>
                     </div>
 
-                    <div className="rounded-lg border border-border bg-surface-secondary p-5">
+                    <div className="rounded-xl border border-border bg-surface-secondary p-5">
                         <p className="text-xs text-muted">Policy Term</p>
 
                         <p className="mt-2 text-2xl font-bold text-foreground">
@@ -316,7 +318,7 @@ export default function DispatcherInsuranceDetailsPage() {
                         </div>
 
                         <div className="mt-5 space-y-3">
-                            <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                            <div className="rounded-xl border border-border bg-surface-secondary p-4">
                                 <p className="text-xs text-muted">Name</p>
 
                                 <p className="mt-1 text-sm font-medium text-foreground">
@@ -324,19 +326,19 @@ export default function DispatcherInsuranceDetailsPage() {
                                 </p>
                             </div>
 
-                            <div className="flex items-center gap-3 rounded-lg border border-border bg-surface-secondary p-4">
+                            <div className="flex items-center gap-3 rounded-xl border border-border bg-surface-secondary p-4">
                                 <Mail className="text-muted-foreground" size={17} />
 
-                                <div>
+                                <div className="min-w-0">
                                     <p className="text-xs text-muted">Email</p>
 
-                                    <p className="mt-1 text-sm text-foreground">
+                                    <p className="mt-1 break-words text-sm text-foreground">
                                         {patient?.email || "Not available"}
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3 rounded-lg border border-border bg-surface-secondary p-4">
+                            <div className="flex items-center gap-3 rounded-xl border border-border bg-surface-secondary p-4">
                                 <Phone className="text-muted-foreground" size={17} />
 
                                 <div>
@@ -348,13 +350,13 @@ export default function DispatcherInsuranceDetailsPage() {
                                 </div>
                             </div>
 
-                            <div className="flex items-start gap-3 rounded-lg border border-border bg-surface-secondary p-4">
-                                <MapPin className="mt-0.5 text-muted-foreground" size={17} />
+                            <div className="flex items-start gap-3 rounded-xl border border-border bg-surface-secondary p-4">
+                                <MapPin className="mt-0.5 shrink-0 text-muted-foreground" size={17} />
 
-                                <div>
+                                <div className="min-w-0">
                                     <p className="text-xs text-muted">Address</p>
 
-                                    <p className="mt-1 text-sm leading-6 text-foreground">
+                                    <p className="mt-1 break-words text-sm leading-6 text-foreground">
                                         {patient?.address || "Not available"}
                                     </p>
                                 </div>
@@ -382,7 +384,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                 policy.insured_members.map((member: any, index: number) => (
                                     <div
                                         key={`${member.name}-${index}`}
-                                        className="rounded-lg border border-border bg-surface-secondary p-4"
+                                        className="rounded-xl border border-border bg-surface-secondary p-4"
                                     >
                                         <div className="flex items-center justify-between gap-3">
                                             <div>
@@ -413,21 +415,21 @@ export default function DispatcherInsuranceDetailsPage() {
                 </div>
 
                 <div className="grid gap-4 border-t border-border p-6 sm:grid-cols-3 sm:p-8">
-                    <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                    <div className="rounded-xl border border-border bg-surface-secondary p-4">
                         <p className="text-xs text-muted">Policy Start</p>
                         <p className="mt-1 text-sm font-medium text-foreground">
                             {formatDate(policy.start_date)}
                         </p>
                     </div>
 
-                    <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                    <div className="rounded-xl border border-border bg-surface-secondary p-4">
                         <p className="text-xs text-muted">Expiry</p>
                         <p className="mt-1 text-sm font-medium text-foreground">
                             {formatDate(policy.expiry_date)}
                         </p>
                     </div>
 
-                    <div className="rounded-lg border border-border bg-surface-secondary p-4">
+                    <div className="rounded-xl border border-border bg-surface-secondary p-4">
                         <p className="text-xs text-muted">Next Payment Due</p>
                         <p className="mt-1 text-sm font-medium text-foreground">
                             {formatDate(policy.next_payment_due_at)}
@@ -437,7 +439,7 @@ export default function DispatcherInsuranceDetailsPage() {
 
                 {policy.lapsed_at && (
                     <div className="border-t border-border p-6 sm:p-8">
-                        <div className="rounded-lg border border-danger/20 bg-danger/10 p-4">
+                        <div className="rounded-xl border border-danger/20 bg-danger/10 p-4">
                             <p className="text-sm font-semibold text-danger">
                                 Policy Lapsed
                             </p>
@@ -464,7 +466,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                 {plan.features.map((feature: string, index: number) => (
                                     <div
                                         key={`${feature}-${index}`}
-                                        className="rounded-lg border border-border bg-surface-secondary p-4 text-sm text-foreground"
+                                        className="rounded-xl border border-border bg-surface-secondary p-4 text-sm text-foreground"
                                     >
                                         {feature}
                                     </div>
@@ -497,7 +499,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                     href={document.file_url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface-secondary p-4 transition hover:bg-accent"
+                                    className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface-secondary p-4 transition hover:bg-accent"
                                 >
                                     <div className="flex min-w-0 items-center gap-3">
                                         <FileText
@@ -541,7 +543,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                     type="button"
                                     onClick={() => setShowReject(true)}
                                     disabled={actionLoading}
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-danger/30 px-6 py-3 text-sm font-medium text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-danger/30 px-6 py-3 text-sm font-medium text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <XCircle size={18} />
                                     Reject Proposal
@@ -551,7 +553,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                     type="button"
                                     onClick={() => setShowApproveConfirm(true)}
                                     disabled={actionLoading}
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <CheckCircle2 size={18} />
                                     Approve Proposal
@@ -560,7 +562,7 @@ export default function DispatcherInsuranceDetailsPage() {
                         )}
 
                         {showApproveConfirm && (
-                            <div className="rounded-xl border border-success/20 bg-success/10 p-5">
+                            <div className="rounded-2xl border border-success/20 bg-success/10 p-5">
                                 <h3 className="font-semibold text-foreground">
                                     Approve Insurance Proposal?
                                 </h3>
@@ -574,7 +576,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                         type="button"
                                         onClick={() => setShowApproveConfirm(false)}
                                         disabled={actionLoading}
-                                        className="rounded-lg border border-border px-5 py-3 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
+                                        className="rounded-xl border border-border px-5 py-3 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
                                     >
                                         Cancel
                                     </button>
@@ -583,7 +585,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                         type="button"
                                         onClick={() => updatePolicy("approve")}
                                         disabled={actionLoading}
-                                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         {actionLoading && (
                                             <Loader2 className="animate-spin" size={18} />
@@ -595,7 +597,7 @@ export default function DispatcherInsuranceDetailsPage() {
                         )}
 
                         {showReject && (
-                            <div className="rounded-xl border border-danger/20 bg-danger/10 p-5">
+                            <div className="rounded-2xl border border-danger/20 bg-danger/10 p-5">
                                 <h3 className="font-semibold text-foreground">
                                     Reject Insurance Proposal
                                 </h3>
@@ -609,7 +611,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                     onChange={(event) => setRejectionReason(event.target.value)}
                                     placeholder="Enter rejection reason..."
                                     rows={4}
-                                    className="mt-4 w-full resize-none rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-danger focus:ring-4 focus:ring-danger/10"
+                                    className="mt-4 w-full resize-none rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-danger focus:ring-4 focus:ring-danger/10"
                                 />
 
                                 <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-end">
@@ -620,7 +622,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                             setRejectionReason("");
                                         }}
                                         disabled={actionLoading}
-                                        className="rounded-lg border border-border px-5 py-3 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
+                                        className="rounded-xl border border-border px-5 py-3 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
                                     >
                                         Cancel
                                     </button>
@@ -629,7 +631,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                         type="button"
                                         onClick={() => updatePolicy("reject")}
                                         disabled={actionLoading}
-                                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-danger px-5 py-3 text-sm font-medium text-white transition hover:bg-danger/90 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-danger px-5 py-3 text-sm font-medium text-white transition hover:bg-danger/90 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         {actionLoading && (
                                             <Loader2 className="animate-spin" size={18} />
@@ -650,7 +652,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                     type="button"
                                     onClick={() => setShowRevivalReject(true)}
                                     disabled={actionLoading}
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-danger/30 px-6 py-3 text-sm font-medium text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-danger/30 px-6 py-3 text-sm font-medium text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <XCircle size={18} />
                                     Reject Revival
@@ -660,7 +662,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                     type="button"
                                     onClick={() => setShowRevivalApprove(true)}
                                     disabled={actionLoading}
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <CheckCircle2 size={18} />
                                     Approve Revival
@@ -669,7 +671,7 @@ export default function DispatcherInsuranceDetailsPage() {
                         )}
 
                         {showRevivalApprove && (
-                            <div className="rounded-xl border border-success/20 bg-success/10 p-5">
+                            <div className="rounded-2xl border border-success/20 bg-success/10 p-5">
                                 <h3 className="font-semibold text-foreground">
                                     Approve Policy Revival?
                                 </h3>
@@ -683,7 +685,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                         type="button"
                                         onClick={() => setShowRevivalApprove(false)}
                                         disabled={actionLoading}
-                                        className="rounded-lg border border-border px-5 py-3 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
+                                        className="rounded-xl border border-border px-5 py-3 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
                                     >
                                         Cancel
                                     </button>
@@ -692,7 +694,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                         type="button"
                                         onClick={() => updateRevival("approve")}
                                         disabled={actionLoading}
-                                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         {actionLoading && (
                                             <Loader2 className="animate-spin" size={18} />
@@ -704,7 +706,7 @@ export default function DispatcherInsuranceDetailsPage() {
                         )}
 
                         {showRevivalReject && (
-                            <div className="rounded-xl border border-danger/20 bg-danger/10 p-5">
+                            <div className="rounded-2xl border border-danger/20 bg-danger/10 p-5">
                                 <h3 className="font-semibold text-foreground">
                                     Reject Policy Revival
                                 </h3>
@@ -718,7 +720,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                     onChange={(event) => setRevivalRejectionReason(event.target.value)}
                                     placeholder="Enter revival rejection reason..."
                                     rows={4}
-                                    className="mt-4 w-full resize-none rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-danger focus:ring-4 focus:ring-danger/10"
+                                    className="mt-4 w-full resize-none rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-danger focus:ring-4 focus:ring-danger/10"
                                 />
 
                                 <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-end">
@@ -729,7 +731,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                             setRevivalRejectionReason("");
                                         }}
                                         disabled={actionLoading}
-                                        className="rounded-lg border border-border px-5 py-3 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
+                                        className="rounded-xl border border-border px-5 py-3 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
                                     >
                                         Cancel
                                     </button>
@@ -738,7 +740,7 @@ export default function DispatcherInsuranceDetailsPage() {
                                         type="button"
                                         onClick={() => updateRevival("reject")}
                                         disabled={actionLoading}
-                                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-danger px-5 py-3 text-sm font-medium text-white transition hover:bg-danger/90 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-danger px-5 py-3 text-sm font-medium text-white transition hover:bg-danger/90 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         {actionLoading && (
                                             <Loader2 className="animate-spin" size={18} />
@@ -753,7 +755,7 @@ export default function DispatcherInsuranceDetailsPage() {
 
                 {policy.status === "payment_pending" && policy.revival_approved_at && (
                     <div className="border-t border-border p-6 sm:p-8">
-                        <div className="rounded-lg border border-warning/20 bg-warning/10 p-4">
+                        <div className="rounded-xl border border-warning/20 bg-warning/10 p-4">
                             <p className="text-sm font-semibold text-warning">
                                 Revival Approved — Awaiting Payment
                             </p>

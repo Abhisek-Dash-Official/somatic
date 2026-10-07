@@ -19,7 +19,6 @@ export default function QRScannerBtn({ className = "" }: QRScannerBtnProps) {
 
     const stopScanner = async () => {
         const scanner = scannerRef.current;
-
         if (!scanner) return;
 
         scannerRef.current = null;
@@ -35,9 +34,7 @@ export default function QRScannerBtn({ className = "" }: QRScannerBtnProps) {
 
     const closeScanner = async () => {
         await stopScanner();
-
         processingRef.current = false;
-
         setOpen(false);
         setSuccess(false);
         setLoading(false);
@@ -47,9 +44,7 @@ export default function QRScannerBtn({ className = "" }: QRScannerBtnProps) {
         if (processingRef.current) return;
 
         processingRef.current = true;
-
         await stopScanner();
-
         setLoading(true);
 
         try {
@@ -83,24 +78,19 @@ export default function QRScannerBtn({ className = "" }: QRScannerBtnProps) {
 
         const startScanner = async () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
-
             if (!mounted) return;
 
             const scanner = new Html5Qrcode("qr-reader");
-
             scannerRef.current = scanner;
 
             try {
                 await scanner.start(
                     { facingMode: "environment" },
-                    {
-                        fps: 10,
-                        qrbox: { width: 250, height: 250 },
-                    },
+                    { fps: 10, qrbox: { width: 250, height: 250 } },
                     async (decodedText) => {
                         await handleQRScan(decodedText);
                     },
-                    () => { }
+                    () => { },
                 );
             } catch (error) {
                 if (!mounted) return;
@@ -139,6 +129,17 @@ export default function QRScannerBtn({ className = "" }: QRScannerBtnProps) {
         };
     }, []);
 
+    useEffect(() => {
+        if (!open) return;
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") closeScanner();
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [open]);
+
     const openScanner = () => {
         setSuccess(false);
         setLoading(false);
@@ -151,81 +152,97 @@ export default function QRScannerBtn({ className = "" }: QRScannerBtnProps) {
             <button
                 type="button"
                 onClick={openScanner}
-                className={`group flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover ${className}`}
+                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary-hover ${className}`}
             >
-                <QrCode className="h-5 w-5 transition-transform group-hover:scale-110" />
+                <QrCode className="h-5 w-5 transition-transform group-hover:scale-105" />
                 Scan Hospital QR
             </button>
 
             {open && (
-                <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 p-4">
-                    <div className="w-full max-w-lg overflow-hidden rounded-xl border border-border bg-surface shadow-2xl">
-                        <div className="flex items-center justify-between border-b border-border px-5 py-4">
-                            <div>
-                                <h2 className="flex items-center gap-2 text-lg font-bold text-foreground">
-                                    <ScanLine className="h-5 w-5 text-primary" />
-                                    Scan Hospital QR
-                                </h2>
+                <div
+                    className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="qr-scanner-title"
+                    onMouseDown={(event) => {
+                        if (event.target === event.currentTarget) closeScanner();
+                    }}
+                >
+                    <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl">
+                        <div className="flex items-center justify-between gap-4 border-b border-border p-5">
+                            <div className="flex min-w-0 items-center gap-3">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-primary">
+                                    <ScanLine className="h-5 w-5" />
+                                </div>
 
-                                <p className="mt-1 text-xs text-muted">
-                                    Scan the QR code provided by the hospital
-                                </p>
+                                <div className="min-w-0">
+                                    <h2 id="qr-scanner-title" className="text-lg font-semibold text-foreground">
+                                        Scan Hospital QR
+                                    </h2>
+                                    <p className="mt-1 text-xs text-muted">
+                                        Scan the QR code provided by the hospital
+                                    </p>
+                                </div>
                             </div>
 
                             <button
                                 type="button"
                                 onClick={closeScanner}
-                                className="rounded-lg p-2 text-muted transition hover:bg-surface-secondary hover:text-foreground"
+                                aria-label="Close QR scanner"
+                                className="rounded-xl p-2 text-muted transition hover:bg-accent hover:text-foreground"
                             >
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
 
-                        <div className="p-5">
+                        <div className="p-5 sm:p-6">
                             {!success && !loading && (
                                 <>
-                                    <div className="w-full overflow-hidden rounded-lg border border-border bg-background p-2">
-                                        <div id="qr-reader" className="w-full overflow-hidden rounded-md" />
+                                    <div className="overflow-hidden rounded-2xl border border-border bg-background p-2">
+                                        <div id="qr-reader" className="w-full overflow-hidden rounded-xl" />
                                     </div>
 
-                                    <p className="mt-4 text-center text-sm text-muted">
-                                        Point your camera at the hospital QR code
-                                    </p>
+                                    <div className="mt-4 flex items-center justify-center gap-2 text-center text-sm text-muted">
+                                        <QrCode className="h-4 w-4 shrink-0 text-primary" />
+                                        <span>Point your camera at the hospital QR code</span>
+                                    </div>
                                 </>
                             )}
 
                             {loading && (
-                                <div className="flex min-h-75 flex-col items-center justify-center text-center">
-                                    <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                                <div className="flex min-h-75 flex-col items-center justify-center px-4 text-center">
+                                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-accent text-primary">
+                                        <Loader2 className="h-8 w-8 animate-spin" />
+                                    </div>
 
-                                    <h3 className="mt-4 text-lg font-semibold text-foreground">
+                                    <h3 className="mt-5 text-lg font-semibold text-foreground">
                                         Preparing your information
                                     </h3>
 
-                                    <p className="mt-2 text-sm text-muted">
+                                    <p className="mt-2 max-w-sm text-sm leading-6 text-muted">
                                         Please wait while we prepare your hospital paperwork.
                                     </p>
                                 </div>
                             )}
 
                             {success && (
-                                <div className="flex min-h-75 flex-col items-center justify-center text-center">
+                                <div className="flex min-h-75 flex-col items-center justify-center px-4 text-center">
                                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success/10">
                                         <CheckCircle2 className="h-9 w-9 text-success" />
                                     </div>
 
-                                    <h3 className="mt-5 text-xl font-bold text-foreground">
+                                    <h3 className="mt-5 text-xl font-semibold text-foreground">
                                         Information Prepared
                                     </h3>
 
-                                    <p className="mt-2 max-w-sm text-sm text-muted">
+                                    <p className="mt-2 max-w-sm text-sm leading-6 text-muted">
                                         Your available information has been prepared for the hospital paperwork.
                                     </p>
 
                                     <button
                                         type="button"
                                         onClick={closeScanner}
-                                        className="mt-6 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                                        className="mt-6 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
                                     >
                                         Done
                                     </button>

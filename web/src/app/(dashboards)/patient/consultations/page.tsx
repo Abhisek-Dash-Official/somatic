@@ -21,29 +21,20 @@ type Props = {
 export default async function ConsultationsPage({ searchParams }: Props) {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
-        redirect("/login");
-    }
+    if (!session?.user?.id) redirect("/login");
 
     const resolvedParams = await searchParams;
-
-    const activeTab =
-        resolvedParams.tab === "pending" ? "pending" : "completed";
-
-    const page = parseInt(resolvedParams.page || "1", 10);
-    const limit = parseInt(resolvedParams.limit || "9", 10);
+    const activeTab = resolvedParams.tab === "pending" ? "pending" : "completed";
+    const page = Math.max(1, parseInt(resolvedParams.page || "1", 10) || 1);
+    const limit = Math.max(1, parseInt(resolvedParams.limit || "9", 10) || 9);
     const skip = (page - 1) * limit;
 
     await dbConnect();
 
-    const baseQuery = {
-        patient_id: session.user.id,
-    };
-
-    const tabQuery =
-        activeTab === "completed"
-            ? { ...baseQuery, status: "completed" }
-            : { ...baseQuery, status: { $ne: "completed" } };
+    const baseQuery = { patient_id: session.user.id };
+    const tabQuery = activeTab === "completed"
+        ? { ...baseQuery, status: "completed" }
+        : { ...baseQuery, status: { $ne: "completed" } };
 
     const total = await Consultation.countDocuments(tabQuery);
 
@@ -62,34 +53,22 @@ export default async function ConsultationsPage({ searchParams }: Props) {
         chief_complaints: c.ai_draft?.chief_complaints || [],
     }));
 
-    const completedCount = await Consultation.countDocuments({
-        ...baseQuery,
-        status: "completed",
-    });
-
-    const pendingCount = await Consultation.countDocuments({
-        ...baseQuery,
-        status: { $ne: "completed" },
-    });
-
-    const pagination = {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit) || 1,
-    };
-
-    const counts = {
-        completed: completedCount,
-        pending: pendingCount,
-    };
+    const [completedCount, pendingCount] = await Promise.all([
+        Consultation.countDocuments({ ...baseQuery, status: "completed" }),
+        Consultation.countDocuments({ ...baseQuery, status: { $ne: "completed" } }),
+    ]);
 
     return (
         <ConsultationsClient
             consultations={consultations}
-            pagination={pagination}
+            pagination={{
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit) || 1,
+            }}
             activeTab={activeTab}
-            counts={counts}
+            counts={{ completed: completedCount, pending: pendingCount }}
         />
     );
 }

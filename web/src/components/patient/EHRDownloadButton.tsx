@@ -2,8 +2,8 @@
 
 import { Download } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import { toast } from "react-toastify";
 
-// Escape user-generated text so it can't break (or inject into) the print HTML
 const esc = (value: unknown): string =>
     String(value ?? "")
         .replace(/&/g, "&amp;")
@@ -17,7 +17,7 @@ export default function EHRDownloadButton({ consultation }: { consultation: any 
         const printWindow = window.open("", "_blank");
 
         if (!printWindow) {
-            alert("Please allow popups to download the EHR.");
+            toast.error("Please allow popups to download the EHR.");
             return;
         }
 
@@ -514,10 +514,11 @@ export default function EHRDownloadButton({ consultation }: { consultation: any 
 
     return (
         <button
+            type="button"
             onClick={handleDownload}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover sm:w-auto sm:text-base"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-foreground shadow-sm transition hover:border-primary/30 hover:bg-accent hover:text-primary sm:w-auto"
         >
-            <Download className="h-4 w-4" />
+            <Download className="h-4 w-4 text-primary" />
             Download EHR
         </button>
     );

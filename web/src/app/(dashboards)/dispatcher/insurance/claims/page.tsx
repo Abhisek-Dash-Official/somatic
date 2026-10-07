@@ -53,7 +53,9 @@ export default function DispatcherInsuranceClaimsPage() {
             const res = await fetch(`/api/dispatcher/insurance/claims?${params.toString()}`);
             const data = await res.json();
 
-            if (!res.ok) throw new Error(data.error || "Failed to fetch insurance claims");
+            if (!res.ok) {
+                throw new Error(data.error || "Failed to fetch insurance claims");
+            }
 
             setClaims(data.claims || []);
         } catch (error) {
@@ -74,43 +76,53 @@ export default function DispatcherInsuranceClaimsPage() {
     const formatStatus = (value: string) => value.replaceAll("_", " ");
 
     return (
-        <div className="min-h-screen bg-background p-4 text-foreground md:p-6">
+        <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl space-y-6">
-                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                     <div>
-                        <div className="flex items-center gap-2">
-                            <ShieldCheck className="h-6 w-6 text-primary" />
-                            <h1 className="text-2xl font-bold text-foreground">Insurance Claims</h1>
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                <ShieldCheck size={22} />
+                            </div>
+
+                            <div>
+                                <p className="text-sm font-medium text-primary">Dispatcher</p>
+                                <h1 className="text-2xl font-bold text-foreground">
+                                    Insurance Claims
+                                </h1>
+                            </div>
                         </div>
-                        <p className="mt-1 text-sm text-muted">
+
+                        <p className="mt-3 text-sm text-muted">
                             Review and process patient insurance claims.
                         </p>
                     </div>
 
                     <Link
                         href="/dispatcher/insurance"
-                        className="inline-flex w-fit items-center rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
+                        className="inline-flex w-fit items-center rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground"
                     >
                         Insurance Proposals
                     </Link>
-                </div>
+                </section>
 
-                <div className="rounded-xl border border-border bg-surface p-4">
+                <section className="rounded-2xl border border-border bg-surface p-4 shadow-sm">
                     <div className="grid gap-3 md:grid-cols-[1fr_220px]">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
                             <input
                                 value={search}
-                                onChange={(e) => setSearch(e.target.value)}
+                                onChange={(event) => setSearch(event.target.value)}
                                 placeholder="Search claim number, patient name or email..."
-                                className="w-full rounded-lg border border-border bg-surface-secondary py-2.5 pl-10 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                className="w-full rounded-xl border border-border bg-surface-secondary py-2.5 pl-10 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
                             />
                         </div>
 
                         <select
                             value={status}
-                            onChange={(e) => setStatus(e.target.value)}
-                            className="rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
+                            onChange={(event) => setStatus(event.target.value)}
+                            className="rounded-xl border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
                         >
                             {statusOptions.map((item) => (
                                 <option key={item.value} value={item.value} className="bg-surface text-foreground">
@@ -119,32 +131,46 @@ export default function DispatcherInsuranceClaimsPage() {
                             ))}
                         </select>
                     </div>
-                </div>
+                </section>
 
                 {loading ? (
-                    <div className="flex min-h-75 items-center justify-center rounded-xl border border-border bg-surface">
+                    <div className="flex min-h-75 items-center justify-center rounded-2xl border border-border bg-surface shadow-sm">
                         <Loader2 className="h-7 w-7 animate-spin text-primary" />
                     </div>
                 ) : !claims.length ? (
-                    <div className="rounded-xl border border-border bg-surface p-12 text-center">
+                    <div className="rounded-2xl border border-border bg-surface p-12 text-center shadow-sm">
                         <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
-                        <h2 className="mt-4 text-lg font-semibold text-foreground">No claims found</h2>
+
+                        <h2 className="mt-4 text-lg font-semibold text-foreground">
+                            No claims found
+                        </h2>
+
                         <p className="mt-1 text-sm text-muted">
                             There are no insurance claims matching the selected filters.
                         </p>
                     </div>
                 ) : (
-                    <div className="overflow-hidden rounded-xl border border-border bg-surface">
+                    <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                         <div className="hidden overflow-x-auto md:block">
                             <table className="w-full text-left">
                                 <thead className="border-b border-border bg-surface-secondary">
                                     <tr>
-                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted">Claim</th>
-                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted">Patient</th>
-                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted">Type</th>
-                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted">Amount</th>
-                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted">Status</th>
-                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted"></th>
+                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted">
+                                            Claim
+                                        </th>
+                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted">
+                                            Patient
+                                        </th>
+                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted">
+                                            Type
+                                        </th>
+                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted">
+                                            Amount
+                                        </th>
+                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted">
+                                            Status
+                                        </th>
+                                        <th className="px-5 py-4 text-xs font-medium uppercase tracking-wider text-muted" />
                                     </tr>
                                 </thead>
 
@@ -152,13 +178,23 @@ export default function DispatcherInsuranceClaimsPage() {
                                     {claims.map((claim) => (
                                         <tr key={claim._id.toString()} className="transition hover:bg-surface-secondary">
                                             <td className="px-5 py-4">
-                                                <p className="text-sm font-medium text-foreground">{claim.claim_number || claim._id.toString()}</p>
-                                                <p className="mt-1 text-xs capitalize text-muted">{claim.incident_type || "—"}</p>
+                                                <p className="text-sm font-medium text-foreground">
+                                                    {claim.claim_number || claim._id.toString()}
+                                                </p>
+
+                                                <p className="mt-1 text-xs capitalize text-muted">
+                                                    {claim.incident_type || "—"}
+                                                </p>
                                             </td>
 
                                             <td className="px-5 py-4">
-                                                <p className="text-sm text-foreground">{claim.user_id?.username || "Unknown"}</p>
-                                                <p className="mt-1 text-xs text-muted">{claim.user_id?.email || "—"}</p>
+                                                <p className="text-sm text-foreground">
+                                                    {claim.user_id?.username || "Unknown"}
+                                                </p>
+
+                                                <p className="mt-1 text-xs text-muted">
+                                                    {claim.user_id?.email || "—"}
+                                                </p>
                                             </td>
 
                                             <td className="px-5 py-4 text-sm capitalize text-muted">
@@ -169,13 +205,16 @@ export default function DispatcherInsuranceClaimsPage() {
                                                 <p className="text-sm font-medium text-foreground">
                                                     ₹{Number(claim.claimed_amount || 0).toLocaleString("en-IN")}
                                                 </p>
+
                                                 <p className="mt-1 text-xs text-muted">
                                                     Approved: ₹{Number(claim.approved_amount || 0).toLocaleString("en-IN")}
                                                 </p>
                                             </td>
 
                                             <td className="px-5 py-4">
-                                                <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium capitalize ${statusStyles[claim.status] || "border-border bg-surface-secondary text-muted"}`}>
+                                                <span
+                                                    className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium capitalize ${statusStyles[claim.status] || "border-border bg-surface-secondary text-muted"}`}
+                                                >
                                                     {formatStatus(claim.status)}
                                                 </span>
                                             </td>
@@ -183,7 +222,7 @@ export default function DispatcherInsuranceClaimsPage() {
                                             <td className="px-5 py-4 text-right">
                                                 <Link
                                                     href={`/dispatcher/insurance/claims/${claim._id}`}
-                                                    className="text-sm font-medium text-primary transition hover:text-primary-hover"
+                                                    className="inline-flex rounded-xl px-3 py-2 text-sm font-medium text-primary transition hover:bg-accent hover:text-primary-hover"
                                                 >
                                                     Review
                                                 </Link>
@@ -203,17 +242,25 @@ export default function DispatcherInsuranceClaimsPage() {
                                 >
                                     <div className="flex items-start justify-between gap-3">
                                         <div>
-                                            <p className="text-sm font-medium text-foreground">{claim.claim_number || claim._id.toString()}</p>
-                                            <p className="mt-1 text-xs text-muted">{claim.user_id?.username || "Unknown"}</p>
+                                            <p className="text-sm font-medium text-foreground">
+                                                {claim.claim_number || claim._id.toString()}
+                                            </p>
+
+                                            <p className="mt-1 text-xs text-muted">
+                                                {claim.user_id?.username || "Unknown"}
+                                            </p>
                                         </div>
 
-                                        <span className={`rounded-full border px-2.5 py-1 text-xs font-medium capitalize ${statusStyles[claim.status] || "border-border bg-surface-secondary text-muted"}`}>
+                                        <span
+                                            className={`rounded-full border px-2.5 py-1 text-xs font-medium capitalize ${statusStyles[claim.status] || "border-border bg-surface-secondary text-muted"}`}
+                                        >
                                             {formatStatus(claim.status)}
                                         </span>
                                     </div>
 
                                     <div className="mt-4 flex items-center justify-between text-sm">
                                         <span className="capitalize text-muted">{claim.claim_type}</span>
+
                                         <span className="font-semibold text-foreground">
                                             ₹{Number(claim.claimed_amount || 0).toLocaleString("en-IN")}
                                         </span>
@@ -224,6 +271,6 @@ export default function DispatcherInsuranceClaimsPage() {
                     </div>
                 )}
             </div>
-        </div>
+        </main>
     );
 }

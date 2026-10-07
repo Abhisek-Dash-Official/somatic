@@ -25,7 +25,8 @@ const statusStyles: Record<string, string> = {
     cancelled: "bg-danger/10 text-danger",
 };
 
-const formatStatus = (status: string) => status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+const formatStatus = (status: string) =>
+    status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
 export default function OrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
@@ -55,10 +56,10 @@ export default function OrdersPage() {
         return (
             <main className="min-h-screen bg-background px-4 py-10 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-5xl animate-pulse space-y-4">
-                    <div className="h-8 w-48 rounded-lg bg-surface-secondary" />
-                    <div className="h-28 rounded-xl border border-border bg-surface" />
-                    <div className="h-28 rounded-xl border border-border bg-surface" />
-                    <div className="h-28 rounded-xl border border-border bg-surface" />
+                    <div className="h-8 w-48 rounded-xl bg-surface-secondary" />
+                    <div className="h-28 rounded-2xl border border-border bg-surface" />
+                    <div className="h-28 rounded-2xl border border-border bg-surface" />
+                    <div className="h-28 rounded-2xl border border-border bg-surface" />
                 </div>
             </main>
         );
@@ -68,29 +69,48 @@ export default function OrdersPage() {
         <main className="min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8">
             <div className="mx-auto max-w-5xl">
                 <div className="mb-8 flex items-center gap-3">
-                    <Link href="/shop" className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-muted transition hover:bg-surface-secondary hover:text-foreground" aria-label="Back to shop">
+                    <Link
+                        href="/shop"
+                        aria-label="Back to shop"
+                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-muted transition-colors hover:bg-surface-secondary hover:text-foreground"
+                    >
                         <ArrowLeft size={18} />
                     </Link>
+
                     <div>
-                        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">My orders</h1>
-                        <p className="mt-1 text-sm text-muted">View your medicine and blood orders.</p>
+                        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+                            My orders
+                        </h1>
+                        <p className="mt-1 text-sm text-muted">
+                            View your medicine and blood orders.
+                        </p>
                     </div>
                 </div>
 
                 {error && (
-                    <div className="mb-6 rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+                    <div className="mb-6 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
                         {error}
                     </div>
                 )}
 
                 {!error && orders.length === 0 ? (
-                    <div className="flex min-h-[50vh] flex-col items-center justify-center rounded-xl border border-border bg-surface p-8 text-center">
-                        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-accent">
+                    <div className="flex min-h-[50vh] flex-col items-center justify-center rounded-2xl border border-border bg-surface p-8 text-center">
+                        <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-border bg-accent">
                             <Package size={36} className="text-primary" />
                         </div>
-                        <h2 className="mt-5 text-xl font-bold text-foreground">No orders yet</h2>
-                        <p className="mt-2 max-w-md text-sm text-muted">Your completed and active shop orders will appear here.</p>
-                        <Link href="/shop" className="mt-6 flex items-center gap-2 rounded-lg bg-primary px-5 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover">
+
+                        <h2 className="mt-5 text-xl font-bold text-foreground">
+                            No orders yet
+                        </h2>
+
+                        <p className="mt-2 max-w-md text-sm text-muted">
+                            Your completed and active shop orders will appear here.
+                        </p>
+
+                        <Link
+                            href="/shop"
+                            className="mt-6 flex items-center gap-2 rounded-xl bg-primary px-5 py-3 font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
+                        >
                             <ShoppingBag size={18} />
                             Browse shop
                         </Link>
@@ -98,30 +118,50 @@ export default function OrdersPage() {
                 ) : (
                     <div className="space-y-4">
                         {orders.map((order) => (
-                            <Link key={order._id} href={`/shop/orders/${order._id}`} className="block rounded-xl border border-border bg-surface p-5 transition hover:border-primary/40 hover:bg-surface-secondary sm:p-6">
+                            <Link
+                                key={order._id}
+                                href={`/shop/orders/${order._id}`}
+                                className="block rounded-2xl border border-border bg-surface p-5 transition-colors hover:border-primary/40 hover:bg-surface-secondary sm:p-6"
+                            >
                                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                                     <div className="min-w-0">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <span className="text-sm font-bold text-foreground">Order #{order._id.slice(-8).toUpperCase()}</span>
-                                            <span className={`rounded-md px-2.5 py-1 text-xs font-semibold ${statusStyles[order.order_status] || "bg-surface-secondary text-muted"}`}>
+                                            <span className="text-sm font-bold text-foreground">
+                                                Order #{order._id.slice(-8).toUpperCase()}
+                                            </span>
+
+                                            <span
+                                                className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusStyles[order.order_status] ||
+                                                    "bg-surface-secondary text-muted"
+                                                    }`}
+                                            >
                                                 {formatStatus(order.order_status)}
                                             </span>
                                         </div>
 
                                         <p className="mt-2 text-sm text-muted">
-                                            {new Date(order.placed_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                                            {new Date(order.placed_at).toLocaleDateString("en-IN", {
+                                                day: "numeric",
+                                                month: "short",
+                                                year: "numeric",
+                                            })}
                                         </p>
 
                                         <p className="mt-3 text-sm text-muted">
-                                            {order.items.length} {order.items.length === 1 ? "item" : "items"} · {order.payment_method}
+                                            {order.items.length}{" "}
+                                            {order.items.length === 1 ? "item" : "items"} ·{" "}
+                                            {order.payment_method}
                                         </p>
                                     </div>
 
                                     <div className="flex items-center justify-between gap-6 sm:justify-end">
                                         <div className="text-right">
                                             <p className="text-xs text-muted">Total</p>
-                                            <p className="mt-1 text-xl font-extrabold tabular-nums text-foreground">{formatINR(order.total_amount)}</p>
+                                            <p className="mt-1 text-xl font-extrabold tabular-nums text-foreground">
+                                                {formatINR(order.total_amount)}
+                                            </p>
                                         </div>
+
                                         <ChevronRight size={20} className="text-muted-foreground" />
                                     </div>
                                 </div>

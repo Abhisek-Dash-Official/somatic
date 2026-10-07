@@ -120,24 +120,25 @@ export default function NewHospitalPage() {
     };
 
     const inputClass =
-        "w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10";
+        "w-full rounded-xl border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10";
 
-    const labelClass =
-        "mb-2 block text-sm font-medium text-foreground";
+    const labelClass = "mb-2 block text-sm font-medium text-foreground";
 
     return (
         <div className="w-full max-w-4xl space-y-6">
             <div className="flex items-center gap-3">
                 <Link
                     href="/admin/hospitals"
-                    className="rounded-lg border border-border bg-surface-secondary p-2.5 text-muted transition hover:bg-accent hover:text-foreground"
+                    className="rounded-xl border border-border bg-surface-secondary p-2.5 text-muted transition hover:bg-accent hover:text-foreground"
                 >
                     <ArrowLeft className="h-5 w-5" />
                 </Link>
 
                 <div>
-                    <h1 className="flex items-center gap-2 text-2xl font-bold text-foreground sm:text-3xl">
-                        <Building2 className="h-7 w-7 text-primary" />
+                    <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                        <div className="flex shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 p-2">
+                            <Building2 className="h-6 w-6 text-primary" />
+                        </div>
                         Add Hospital
                     </h1>
 
@@ -148,11 +149,15 @@ export default function NewHospitalPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="rounded-xl border border-border bg-surface p-5 sm:p-6">
-                    <div className="mb-5">
+                <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
+                    <div className="mb-5 border-b border-border pb-4">
                         <h2 className="text-lg font-semibold text-foreground">
                             Hospital Information
                         </h2>
+
+                        <p className="mt-1 text-sm text-muted">
+                            Basic information and integration endpoint.
+                        </p>
                     </div>
 
                     <div className="grid gap-5 sm:grid-cols-2">
@@ -203,7 +208,7 @@ export default function NewHospitalPage() {
                                         is_active: !form.is_active,
                                     })
                                 }
-                                className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-sm transition ${form.is_active
+                                className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${form.is_active
                                         ? "border-success/20 bg-success/10 text-success"
                                         : "border-border bg-surface-secondary text-muted"
                                     }`}
@@ -245,12 +250,16 @@ export default function NewHospitalPage() {
                     </div>
                 </div>
 
-                <div className="rounded-xl border border-border bg-surface p-5 sm:p-6">
-                    <div className="mb-5">
+                <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
+                    <div className="mb-5 border-b border-border pb-4">
                         <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
                             <KeyRound className="h-5 w-5 text-primary" />
                             API Authentication
                         </h2>
+
+                        <p className="mt-1 text-sm text-muted">
+                            Configure credentials used for hospital API requests.
+                        </p>
                     </div>
 
                     <div className="grid gap-5 sm:grid-cols-2">
@@ -380,7 +389,7 @@ export default function NewHospitalPage() {
                         )}
                     </div>
 
-                    <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/20 bg-accent p-4">
+                    <div className="mt-5 flex items-start gap-3 rounded-xl border border-primary/20 bg-accent p-4">
                         <LockKeyhole className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
 
                         <p className="text-xs leading-5 text-muted">
@@ -393,7 +402,7 @@ export default function NewHospitalPage() {
                 <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                     <Link
                         href="/admin/hospitals"
-                        className="inline-flex items-center justify-center rounded-lg border border-border bg-surface-secondary px-5 py-3 text-sm font-semibold text-muted transition hover:bg-accent hover:text-foreground"
+                        className="inline-flex items-center justify-center rounded-xl border border-border bg-surface-secondary px-5 py-3 text-sm font-semibold text-muted transition hover:bg-accent hover:text-foreground"
                     >
                         Cancel
                     </Link>
@@ -401,7 +410,7 @@ export default function NewHospitalPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <Plus className="h-4 w-4" />
                         {loading ? "Creating..." : "Create Hospital"}

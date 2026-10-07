@@ -2,11 +2,28 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { Plus, Search, Edit, Trash2, ChevronLeft, ChevronRight, Loader2, Pill } from "lucide-react";
+import {
+    ChevronLeft,
+    ChevronRight,
+    Edit,
+    Loader2,
+    Pill,
+    Plus,
+    Search,
+    Trash2,
+} from "lucide-react";
 import MedicineLightbox from "@/components/shop/medicines/MedicineLightbox";
 import MedicineFormModal from "@/components/shop/medicines/MedicineFormModal";
 
-const CATEGORIES = ["all", "prescription", "otc", "first-aid", "supplements", "personal-care", "devices"];
+const CATEGORIES = [
+    "all",
+    "prescription",
+    "otc",
+    "first-aid",
+    "supplements",
+    "personal-care",
+    "devices",
+];
 
 export default function AdminMedicinesPage() {
     const [medicines, setMedicines] = useState<any[]>([]);
@@ -64,7 +81,9 @@ export default function AdminMedicinesPage() {
         if (!confirm("Deactivate this medicine?")) return;
 
         try {
-            const res = await fetch(`/api/admin/shop/medicines/${id}`, { method: "DELETE" });
+            const res = await fetch(`/api/admin/shop/medicines/${id}`, {
+                method: "DELETE",
+            });
             const json = await res.json();
 
             if (json.success) fetchMedicines();
@@ -80,6 +99,7 @@ export default function AdminMedicinesPage() {
                     <h1 className="text-2xl font-bold tracking-tight text-foreground">
                         Medicines Management
                     </h1>
+
                     <p className="mt-0.5 text-sm text-muted">
                         Manage stock inventory, pricing, and prescriptions
                     </p>
@@ -88,30 +108,30 @@ export default function AdminMedicinesPage() {
                 <button
                     type="button"
                     onClick={() => openFormModal()}
-                    className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover active:scale-[0.98]"
+                    className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover active:scale-[0.98]"
                 >
                     <Plus className="h-4 w-4" />
                     Add New Medicine
                 </button>
             </div>
 
-            <div className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-3.5 md:flex-row">
+            <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4 shadow-sm md:flex-row">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
                     <input
                         type="text"
                         placeholder="Search by name, brand, SKU..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full rounded-lg border border-border bg-background py-2 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/20"
+                        className="w-full rounded-xl border border-border bg-surface-secondary py-2.5 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
                     />
                 </div>
 
                 <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="rounded-lg border border-border bg-background px-3.5 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    className="rounded-xl border border-border bg-surface-secondary px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
                 >
                     {CATEGORIES.map((cat) => (
                         <option key={cat} value={cat} className="bg-surface text-foreground">
@@ -123,15 +143,21 @@ export default function AdminMedicinesPage() {
                 <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="rounded-lg border border-border bg-background px-3.5 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    className="rounded-xl border border-border bg-surface-secondary px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
                 >
-                    <option value="all" className="bg-surface text-foreground">All Status</option>
-                    <option value="active" className="bg-surface text-foreground">Active</option>
-                    <option value="inactive" className="bg-surface text-foreground">Inactive</option>
+                    <option value="all" className="bg-surface text-foreground">
+                        All Status
+                    </option>
+                    <option value="active" className="bg-surface text-foreground">
+                        Active
+                    </option>
+                    <option value="inactive" className="bg-surface text-foreground">
+                        Inactive
+                    </option>
                 </select>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-border bg-surface">
+            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                 {loading ? (
                     <div className="flex items-center justify-center gap-3 p-16 text-muted">
                         <Loader2 className="h-5 w-5 animate-spin text-primary" />
@@ -161,10 +187,15 @@ export default function AdminMedicinesPage() {
                                 {medicines.map((med) => {
                                     const hasImages = med.images && med.images.length > 0;
                                     const firstImg = hasImages ? med.images[0] : null;
-                                    const isImgFailed = firstImg ? failedImages[`${med._id}-0`] : true;
+                                    const isImgFailed = firstImg
+                                        ? failedImages[`${med._id}-0`]
+                                        : true;
 
                                     return (
-                                        <tr key={med._id} className="transition-colors hover:bg-surface-secondary">
+                                        <tr
+                                            key={med._id}
+                                            className="transition-colors hover:bg-surface-secondary"
+                                        >
                                             <td className="p-4">
                                                 <div
                                                     onClick={() => {
@@ -173,7 +204,9 @@ export default function AdminMedicinesPage() {
                                                             setLightboxIndex(0);
                                                         }
                                                     }}
-                                                    className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-lg border border-border bg-background ${hasImages ? "cursor-pointer hover:border-primary/50" : ""
+                                                    className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-border bg-background ${hasImages
+                                                            ? "cursor-pointer hover:border-primary/50"
+                                                            : ""
                                                         }`}
                                                 >
                                                     {firstImg && !isImgFailed ? (
@@ -195,7 +228,7 @@ export default function AdminMedicinesPage() {
                                                     )}
 
                                                     {hasImages && med.images.length > 1 && (
-                                                        <span className="absolute bottom-0 right-0 rounded-tl bg-primary px-1 font-mono text-[9px] text-primary-foreground">
+                                                        <span className="absolute bottom-0 right-0 rounded-tl-lg bg-primary px-1 font-mono text-[9px] text-primary-foreground">
                                                             +{med.images.length - 1}
                                                         </span>
                                                     )}
@@ -206,8 +239,11 @@ export default function AdminMedicinesPage() {
                                                 <div className="font-semibold text-foreground">
                                                     {med.name}
                                                 </div>
+
                                                 <div className="mt-0.5 text-xs text-muted">
-                                                    {med.brand} <span className="text-muted-foreground">|</span> SKU: {med.sku}
+                                                    {med.brand}{" "}
+                                                    <span className="text-muted-foreground">|</span>{" "}
+                                                    SKU: {med.sku}
                                                 </div>
                                             </td>
 
@@ -233,11 +269,11 @@ export default function AdminMedicinesPage() {
 
                                             <td className="p-4">
                                                 {med.requires_prescription ? (
-                                                    <span className="rounded-lg border border-warning/20 bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning">
+                                                    <span className="rounded-full border border-warning/20 bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning">
                                                         Rx Req.
                                                     </span>
                                                 ) : (
-                                                    <span className="rounded-lg border border-border bg-surface-secondary px-2.5 py-1 text-xs font-medium text-muted">
+                                                    <span className="rounded-full border border-border bg-surface-secondary px-2.5 py-1 text-xs font-medium text-muted">
                                                         OTC
                                                     </span>
                                                 )}
@@ -245,11 +281,11 @@ export default function AdminMedicinesPage() {
 
                                             <td className="p-4">
                                                 {med.is_active ? (
-                                                    <span className="rounded-lg border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
+                                                    <span className="rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
                                                         Active
                                                     </span>
                                                 ) : (
-                                                    <span className="rounded-lg border border-danger/20 bg-danger/10 px-2.5 py-1 text-xs font-medium text-danger">
+                                                    <span className="rounded-full border border-danger/20 bg-danger/10 px-2.5 py-1 text-xs font-medium text-danger">
                                                         Inactive
                                                     </span>
                                                 )}
@@ -260,7 +296,7 @@ export default function AdminMedicinesPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => openFormModal(med)}
-                                                        className="rounded-lg p-2 text-muted transition hover:bg-accent hover:text-primary"
+                                                        className="rounded-xl p-2 text-muted transition hover:bg-accent hover:text-primary"
                                                     >
                                                         <Edit className="h-4 w-4" />
                                                     </button>
@@ -268,7 +304,7 @@ export default function AdminMedicinesPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => handleDelete(med._id)}
-                                                        className="rounded-lg p-2 text-muted transition hover:bg-danger/10 hover:text-danger"
+                                                        className="rounded-xl p-2 text-muted transition hover:bg-danger/10 hover:text-danger"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </button>
@@ -283,14 +319,16 @@ export default function AdminMedicinesPage() {
                 )}
 
                 <div className="flex items-center justify-between border-t border-border bg-surface-secondary p-4 text-xs text-muted">
-                    <span>Page {page} of {totalPages}</span>
+                    <span>
+                        Page {page} of {totalPages}
+                    </span>
 
                     <div className="flex items-center gap-2">
                         <button
                             type="button"
                             disabled={page <= 1}
                             onClick={() => setPage((p) => p - 1)}
-                            className="rounded-lg border border-border bg-surface p-1.5 text-foreground transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
+                            className="rounded-xl border border-border bg-surface p-2 text-foreground transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             <ChevronLeft className="h-4 w-4" />
                         </button>
@@ -299,7 +337,7 @@ export default function AdminMedicinesPage() {
                             type="button"
                             disabled={page >= totalPages}
                             onClick={() => setPage((p) => p + 1)}
-                            className="rounded-lg border border-border bg-surface p-1.5 text-foreground transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
+                            className="rounded-xl border border-border bg-surface p-2 text-foreground transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             <ChevronRight className="h-4 w-4" />
                         </button>

@@ -132,26 +132,28 @@ export default function HospitalsPage() {
         <div className="w-full space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="flex items-center gap-3 text-2xl font-bold text-foreground sm:text-3xl">
-                        <Building2 className="h-7 w-7 text-primary" />
+                    <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                        <div className="flex shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 p-2.5">
+                            <Building2 className="h-6 w-6 text-primary" />
+                        </div>
                         Hospitals
                     </h1>
 
-                    <p className="mt-1 text-sm text-muted">
+                    <p className="mt-1 text-sm text-muted sm:text-base">
                         Manage hospital integrations and QR identifiers
                     </p>
                 </div>
 
                 <Link
                     href="/admin/hospitals/new"
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
                 >
                     <Plus className="h-5 w-5" />
                     Add Hospital
                 </Link>
             </div>
 
-            <div className="rounded-xl border border-border bg-surface p-4">
+            <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm">
                 <div className="flex flex-col gap-3 lg:flex-row">
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
@@ -165,7 +167,7 @@ export default function HospitalsPage() {
                                 }
                             }}
                             placeholder="Search hospital or QR identifier..."
-                            className="w-full rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
+                            className="w-full rounded-xl border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
                         />
                     </div>
 
@@ -179,7 +181,7 @@ export default function HospitalsPage() {
                                     page: 1,
                                 }));
                             }}
-                            className="rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-primary"
+                            className="rounded-xl border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-primary"
                         >
                             <option value="" className="bg-surface">
                                 All Status
@@ -195,7 +197,7 @@ export default function HospitalsPage() {
                         <button
                             type="button"
                             onClick={handleSearch}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm font-medium text-foreground transition hover:bg-accent"
+                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface-secondary px-4 py-3 text-sm font-medium text-foreground transition hover:bg-accent"
                         >
                             <SlidersHorizontal className="h-4 w-4" />
                             Search
@@ -204,7 +206,7 @@ export default function HospitalsPage() {
                 </div>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-border bg-surface">
+            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                 <div className="hidden overflow-x-auto md:block">
                     <table className="w-full">
                         <thead>
@@ -277,7 +279,7 @@ export default function HospitalsPage() {
                                         </td>
 
                                         <td className="px-5 py-4">
-                                            <span className="rounded-md bg-surface-secondary px-2.5 py-1 font-mono text-xs text-muted">
+                                            <span className="rounded-full bg-surface-secondary px-2.5 py-1 font-mono text-xs text-muted">
                                                 {hospital.qr_identifier}
                                             </span>
                                         </td>
@@ -307,14 +309,14 @@ export default function HospitalsPage() {
                                             <div className="flex justify-end gap-2">
                                                 <Link
                                                     href={`/admin/hospitals/${hospital._id}`}
-                                                    className="rounded-lg p-2 text-muted transition hover:bg-accent hover:text-foreground"
+                                                    className="rounded-xl p-2 text-muted transition hover:bg-accent hover:text-foreground"
                                                 >
                                                     <Eye className="h-4 w-4" />
                                                 </Link>
 
                                                 <Link
                                                     href={`/admin/hospitals/${hospital._id}?edit=true`}
-                                                    className="rounded-lg p-2 text-muted transition hover:bg-accent hover:text-primary"
+                                                    className="rounded-xl p-2 text-muted transition hover:bg-accent hover:text-primary"
                                                 >
                                                     <Edit3 className="h-4 w-4" />
                                                 </Link>
@@ -363,7 +365,7 @@ export default function HospitalsPage() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3 text-sm">
-                                    <div>
+                                    <div className="rounded-xl border border-border bg-surface-secondary p-3">
                                         <p className="text-xs text-muted-foreground">
                                             QR Identifier
                                         </p>
@@ -373,7 +375,7 @@ export default function HospitalsPage() {
                                         </p>
                                     </div>
 
-                                    <div>
+                                    <div className="rounded-xl border border-border bg-surface-secondary p-3">
                                         <p className="text-xs text-muted-foreground">
                                             Authentication
                                         </p>
@@ -387,7 +389,7 @@ export default function HospitalsPage() {
                                 <div className="flex gap-2">
                                     <Link
                                         href={`/admin/hospitals/${hospital._id}`}
-                                        className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-accent"
+                                        className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-accent"
                                     >
                                         <Eye className="h-4 w-4" />
                                         View
@@ -395,7 +397,7 @@ export default function HospitalsPage() {
 
                                     <Link
                                         href={`/admin/hospitals/${hospital._id}?edit=true`}
-                                        className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
+                                        className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
                                     >
                                         <Edit3 className="h-4 w-4" />
                                         Edit
@@ -427,7 +429,7 @@ export default function HospitalsPage() {
                                     page: prev.page - 1,
                                 }))
                             }
-                            className="rounded-lg border border-border bg-surface-secondary p-2 text-muted transition hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
+                            className="rounded-xl border border-border bg-surface-secondary p-2 text-muted transition hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
                         >
                             <ChevronLeft className="h-4 w-4" />
                         </button>
@@ -445,7 +447,7 @@ export default function HospitalsPage() {
                                     page: prev.page + 1,
                                 }))
                             }
-                            className="rounded-lg border border-border bg-surface-secondary p-2 text-muted transition hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
+                            className="rounded-xl border border-border bg-surface-secondary p-2 text-muted transition hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
                         >
                             <ChevronRight className="h-4 w-4" />
                         </button>

@@ -2,27 +2,27 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useUserStore } from "@/store/useUserStore";
 import { toast } from "react-toastify";
+import { useUserStore } from "@/store/useUserStore";
 import {
-    User,
-    Mail,
-    Phone,
-    MapPin,
-    Calendar,
-    Weight,
-    ShieldCheck,
-    Loader2,
-    Save,
     AlertTriangle,
-    Lock,
-    Stethoscope,
-    HeartPulse,
-    Plus,
-    X,
-    Shield,
-    Ticket,
     Bell,
+    Calendar,
+    HeartPulse,
+    Loader2,
+    Lock,
+    Mail,
+    MapPin,
+    Phone,
+    Plus,
+    Save,
+    Shield,
+    ShieldCheck,
+    Stethoscope,
+    Ticket,
+    User,
+    Weight,
+    X,
 } from "lucide-react";
 import NotificationPermissionButton from "@/components/ui/NotificationPermissionButton";
 import AvatarSelector from "@/components/profile/AvatarSelector";
@@ -52,16 +52,7 @@ interface SomaticPolicy {
     policy_number: string;
     start_date?: string;
     expiry_date?: string;
-    status:
-    | "pending"
-    | "approved"
-    | "payment_pending"
-    | "active"
-    | "revival_pending"
-    | "lapsed"
-    | "expired"
-    | "rejected"
-    | "cancelled";
+    status: "pending" | "approved" | "payment_pending" | "active" | "revival_pending" | "lapsed" | "expired" | "rejected" | "cancelled";
     plan_id?: SomaticPlan;
 }
 
@@ -186,10 +177,7 @@ export default function Profile() {
                 return;
             }
 
-            const existingPolicy = somaticPolicies.find(
-                (policy) => policy.policy_number === insurance.policy_number,
-            );
-
+            const existingPolicy = somaticPolicies.find((policy) => policy.policy_number === insurance.policy_number);
             const selectedPolicy = existingPolicy || somaticPolicies[0];
 
             setInsurance({
@@ -211,26 +199,14 @@ export default function Profile() {
             return;
         }
 
-        setInsurance({
-            type: "",
-            provider_name: "",
-            policy_number: "",
-            policy_holder_name: "",
-        });
+        setInsurance({ type: "", provider_name: "", policy_number: "", policy_holder_name: "" });
     };
 
     const handleSomaticPolicyChange = (policyNumber: string) => {
-        const selectedPolicy = somaticPolicies.find(
-            (policy) => policy.policy_number === policyNumber,
-        );
-
+        const selectedPolicy = somaticPolicies.find((policy) => policy.policy_number === policyNumber);
         if (!selectedPolicy) return;
 
-        setInsurance((prev) => ({
-            ...prev,
-            type: "somatic",
-            policy_number: selectedPolicy.policy_number,
-        }));
+        setInsurance((prev) => ({ ...prev, type: "somatic", policy_number: selectedPolicy.policy_number }));
     };
 
     const addAllergy = () => {
@@ -244,9 +220,7 @@ export default function Profile() {
         setAllergyInput("");
     };
 
-    const removeAllergy = (index: number) => {
-        setAllergies((prev) => prev.filter((_, i) => i !== index));
-    };
+    const removeAllergy = (index: number) => setAllergies((prev) => prev.filter((_, i) => i !== index));
 
     const addDisease = () => {
         const value = diseaseInput.trim();
@@ -259,9 +233,7 @@ export default function Profile() {
         setDiseaseInput("");
     };
 
-    const removeDisease = (index: number) => {
-        setDiseases((prev) => prev.filter((_, i) => i !== index));
-    };
+    const removeDisease = (index: number) => setDiseases((prev) => prev.filter((_, i) => i !== index));
 
     const patchProfile = async (payload: Record<string, unknown>) => {
         const res = await fetch("/api/users/profile", {
@@ -272,10 +244,7 @@ export default function Profile() {
 
         const data = await res.json();
 
-        if (!res.ok) {
-            throw new Error(data.error || "Failed to update profile");
-        }
-
+        if (!res.ok) throw new Error(data.error || "Failed to update profile");
         return data;
     };
 
@@ -352,24 +321,11 @@ export default function Profile() {
         setInsuranceSaving(true);
 
         try {
-            const payload =
-                insurance.type === "somatic"
-                    ? {
-                        insurance: {
-                            type: "somatic",
-                            policy_number: insurance.policy_number,
-                        },
-                    }
-                    : insurance.type === "external"
-                        ? {
-                            insurance: {
-                                type: "external",
-                                provider_name: insurance.provider_name,
-                                policy_number: insurance.policy_number,
-                                policy_holder_name: insurance.policy_holder_name,
-                            },
-                        }
-                        : { insurance: null };
+            const payload = insurance.type === "somatic"
+                ? { insurance: { type: "somatic", policy_number: insurance.policy_number } }
+                : insurance.type === "external"
+                    ? { insurance: { type: "external", provider_name: insurance.provider_name, policy_number: insurance.policy_number, policy_holder_name: insurance.policy_holder_name } }
+                    : { insurance: null };
 
             const data = await patchProfile(payload);
 
@@ -405,12 +361,7 @@ export default function Profile() {
 
             toast.success(data.message || "Password changed successfully.");
 
-            setFormData((prev) => ({
-                ...prev,
-                currentPassword: "",
-                newPassword: "",
-            }));
-
+            setFormData((prev) => ({ ...prev, currentPassword: "", newPassword: "" }));
             await fetchUser(true);
         } catch (error) {
             console.error("Password update error:", error);
@@ -422,7 +373,7 @@ export default function Profile() {
 
     if (isLoading && !user) {
         return (
-            <div className="flex min-h-100 items-center justify-center">
+            <div className="flex min-h-[60vh] items-center justify-center">
                 <Loader2 className="h-7 w-7 animate-spin text-primary" />
             </div>
         );
@@ -430,323 +381,159 @@ export default function Profile() {
 
     if (!user) {
         return (
-            <div className="rounded-xl border border-border bg-surface p-8 text-center">
-                <AlertTriangle className="mx-auto mb-3 h-8 w-8 text-warning" />
-                <p className="text-muted">Unable to load profile.</p>
+            <div className="flex min-h-[50vh] items-center justify-center p-4">
+                <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-8 text-center shadow-sm">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-warning/10 text-warning">
+                        <AlertTriangle className="h-6 w-6" />
+                    </div>
+                    <h2 className="mt-4 text-lg font-semibold text-foreground">Unable to load profile</h2>
+                    <p className="mt-2 text-sm text-muted">Please refresh the page and try again.</p>
+                </div>
             </div>
         );
     }
 
     const roleLabel = roleLabels[user.role] || user.role;
-
-    const selectedSomaticPolicy =
-        insurance.type === "somatic"
-            ? somaticPolicies.find((policy) => policy.policy_number === insurance.policy_number) || null
-            : null;
+    const selectedSomaticPolicy = insurance.type === "somatic"
+        ? somaticPolicies.find((policy) => policy.policy_number === insurance.policy_number) || null
+        : null;
 
     return (
-        <div className="space-y-6">
-            <div className="rounded-xl border border-border bg-surface p-6">
-                <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+        <div className="mx-auto w-full max-w-6xl space-y-5 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
+            <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
+                <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
                     <AvatarSelector
                         currentAvatarId={formData.avatar_id}
                         onSelect={(id) => setFormData((prev) => ({ ...prev, avatar_id: id }))}
                         isAdmin={user.role === "admin"}
                     />
 
-                    <div>
-                        <h1 className="text-2xl font-semibold text-foreground">Profile</h1>
+                    <div className="min-w-0">
+                        <p className="text-xs font-medium uppercase tracking-wider text-primary">Account</p>
+                        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">Profile</h1>
+                        <p className="mt-1 text-sm text-muted">Manage your personal information, medical details, insurance, and security.</p>
 
-                        <p className="mt-1 text-sm text-muted">
-                            Manage your personal information and account settings.
-                        </p>
-
-                        <div className="mt-3 flex flex-wrap items-center gap-2">
-                            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
+                        <div className="mt-3 flex flex-wrap gap-2">
+                            <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground">
                                 <ShieldCheck className="h-3.5 w-3.5" />
                                 {roleLabel}
-                            </div>
+                            </span>
 
-                            <Link
-                                href="/tickets"
-                                className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-secondary px-3 py-1 text-xs font-medium text-muted transition hover:border-primary/30 hover:bg-accent hover:text-foreground"
-                            >
+                            <Link href="/tickets" className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-secondary px-3 py-1.5 text-xs font-medium text-muted transition hover:border-primary/30 hover:bg-accent hover:text-foreground">
                                 <Ticket className="h-3.5 w-3.5 text-primary" />
                                 Support Tickets
                             </Link>
 
-                            <Link
-                                href="/notifications"
-                                className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-secondary px-3 py-1 text-xs font-medium text-muted transition hover:border-primary/30 hover:bg-accent hover:text-foreground"
-                            >
+                            <Link href="/notifications" className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-secondary px-3 py-1.5 text-xs font-medium text-muted transition hover:border-primary/30 hover:bg-accent hover:text-foreground">
                                 <Bell className="h-3.5 w-3.5 text-primary" />
                                 Notifications
                             </Link>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <section className="rounded-xl border border-border bg-surface p-6">
-                <SectionHeader
-                    icon={<User className="h-5 w-5 text-primary" />}
-                    title="General Information"
-                    description="Your basic personal and contact information."
-                />
-
+            <ProfileSection title="General Information" description="Your basic personal and contact information." icon={<User className="h-5 w-5 text-primary" />}>
                 <div className="grid gap-5 md:grid-cols-2">
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-foreground">Username</label>
-                        <div className="relative">
-                            <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <input
-                                type="text"
-                                value={formData.username}
-                                onChange={(e) => updateField("username", e.target.value)}
-                                className="w-full rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-primary"
-                            />
-                        </div>
-                    </div>
+                    <Field label="Username" icon={<User className="h-4 w-4" />}>
+                        <input value={formData.username} onChange={(e) => updateField("username", e.target.value)} className={inputClass} />
+                    </Field>
 
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-foreground">Email</label>
-                        <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <input
-                                type="email"
-                                value={user.email}
-                                disabled
-                                className="w-full cursor-not-allowed rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-muted outline-none"
-                            />
-                        </div>
-                    </div>
+                    <Field label="Email" icon={<Mail className="h-4 w-4" />}>
+                        <input type="email" value={user.email} disabled className={`${inputClass} cursor-not-allowed text-muted`} />
+                    </Field>
 
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-foreground">Contact Number</label>
-                        <div className="relative">
-                            <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <input
-                                type="tel"
-                                value={formData.contact_no}
-                                onChange={(e) => updateField("contact_no", e.target.value)}
-                                placeholder="10 digit mobile number"
-                                className="w-full rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
-                            />
-                        </div>
-                    </div>
+                    <Field label="Contact Number" icon={<Phone className="h-4 w-4" />}>
+                        <input type="tel" value={formData.contact_no} onChange={(e) => updateField("contact_no", e.target.value)} placeholder="10 digit mobile number" className={inputClass} />
+                    </Field>
 
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-foreground">Date of Birth</label>
-                        <div className="relative">
-                            <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <input
-                                type="date"
-                                value={formData.date_of_birth}
-                                onChange={(e) => updateField("date_of_birth", e.target.value)}
-                                className="w-full rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-primary"
-                            />
-                        </div>
-                    </div>
+                    <Field label="Date of Birth" icon={<Calendar className="h-4 w-4" />}>
+                        <input type="date" value={formData.date_of_birth} onChange={(e) => updateField("date_of_birth", e.target.value)} className={inputClass} />
+                    </Field>
 
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-foreground">Weight (kg)</label>
-                        <div className="relative">
-                            <Weight className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <input
-                                type="number"
-                                min="1"
-                                step="0.1"
-                                value={formData.weight_kg}
-                                onChange={(e) => updateField("weight_kg", e.target.value)}
-                                placeholder="e.g. 65"
-                                className="w-full rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
-                            />
-                        </div>
-                    </div>
+                    <Field label="Weight (kg)" icon={<Weight className="h-4 w-4" />}>
+                        <input type="number" min="1" step="0.1" value={formData.weight_kg} onChange={(e) => updateField("weight_kg", e.target.value)} placeholder="e.g. 65" className={inputClass} />
+                    </Field>
 
                     <InfoItem label="Member Since" value={formatDate(user.created_at)} />
 
                     <div className="md:col-span-2">
-                        <label className="mb-2 block text-sm font-medium text-foreground">Address</label>
-                        <div className="relative">
-                            <MapPin className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-                            <textarea
-                                value={formData.address}
-                                onChange={(e) => updateField("address", e.target.value)}
-                                rows={3}
-                                placeholder="Enter your address"
-                                className="w-full resize-none rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
-                            />
-                        </div>
+                        <Field label="Address" icon={<MapPin className="h-4 w-4" />}>
+                            <textarea value={formData.address} onChange={(e) => updateField("address", e.target.value)} rows={3} placeholder="Enter your address" className={`${inputClass} resize-none py-3`} />
+                        </Field>
                     </div>
                 </div>
 
-                <SectionSaveButton
-                    saving={generalSaving}
-                    label="Save Changes"
-                    onClick={handleGeneralSave}
-                />
-            </section>
+                <SectionSaveButton saving={generalSaving} label="Save Changes" onClick={handleGeneralSave} />
+            </ProfileSection>
 
             {(user.role === "doctor" || user.role === "assistant_doctor") && user.doctor_info && (
-                <section className="rounded-xl border border-border bg-surface p-6">
-                    <SectionHeader
-                        icon={<Stethoscope className="h-5 w-5 text-primary" />}
-                        title="Professional Information"
-                        description="Your professional information is managed by the system."
-                    />
-
-                    <div className="grid gap-5 md:grid-cols-2">
+                <ProfileSection title="Professional Information" description="Your professional information is managed by the system." icon={<Stethoscope className="h-5 w-5 text-primary" />}>
+                    <div className="grid gap-4 md:grid-cols-2">
                         <InfoItem label="Registration Number" value={user.doctor_info.reg_no} />
                         <InfoItem label="Qualification" value={user.doctor_info.qualification} />
-                        <InfoItem
-                            label="Experience"
-                            value={user.doctor_info.experience !== undefined ? `${user.doctor_info.experience} years` : undefined}
-                        />
-                        <InfoItem
-                            label="Department"
-                            value={user.doctor_info.department_id ? String(user.doctor_info.department_id) : undefined}
-                        />
-                        <InfoItem
-                            label="Case Acceptance"
-                            value={user.doctor_info.is_accepting_cases ? "Accepting Cases" : "Not Accepting Cases"}
-                        />
+                        <InfoItem label="Experience" value={user.doctor_info.experience !== undefined ? `${user.doctor_info.experience} years` : undefined} />
+                        <InfoItem label="Department" value={user.doctor_info.department_id ? String(user.doctor_info.department_id) : undefined} />
+                        <InfoItem label="Case Acceptance" value={user.doctor_info.is_accepting_cases ? "Accepting Cases" : "Not Accepting Cases"} />
                     </div>
-                </section>
+                </ProfileSection>
             )}
 
             {user.role === "patient" && (
-                <section className="rounded-xl border border-border bg-surface p-6">
-                    <SectionHeader
-                        icon={<HeartPulse className="h-5 w-5 text-primary" />}
-                        title="Medical Profile"
-                        description="Keep your medical information updated for safer emergency assistance."
-                    />
-
+                <ProfileSection title="Medical Profile" description="Keep your medical information updated for safer emergency assistance." icon={<HeartPulse className="h-5 w-5 text-primary" />}>
                     <div className="space-y-6">
                         <div>
                             <label className="mb-2 block text-sm font-medium text-foreground">Blood Group</label>
-                            <select
-                                value={bloodGrp}
-                                onChange={(e) => setBloodGrp(e.target.value)}
-                                className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
-                            >
+                            <select value={bloodGrp} onChange={(e) => setBloodGrp(e.target.value)} className={inputClass}>
                                 <option value="">Select blood group</option>
-                                {bloodGroups.map((group) => (
-                                    <option key={group} value={group}>{group}</option>
-                                ))}
+                                {bloodGroups.map((group) => <option key={group} value={group}>{group}</option>)}
                             </select>
                         </div>
 
-                        <TagInput
-                            label="Known Allergies"
-                            items={allergies}
-                            input={allergyInput}
-                            setInput={setAllergyInput}
-                            onAdd={addAllergy}
-                            onRemove={removeAllergy}
-                            placeholder="e.g. Penicillin"
-                        />
-
-                        <TagInput
-                            label="Chronic Diseases"
-                            items={diseases}
-                            input={diseaseInput}
-                            setInput={setDiseaseInput}
-                            onAdd={addDisease}
-                            onRemove={removeDisease}
-                            placeholder="e.g. Diabetes"
-                        />
+                        <TagInput label="Known Allergies" items={allergies} input={allergyInput} setInput={setAllergyInput} onAdd={addAllergy} onRemove={removeAllergy} placeholder="e.g. Penicillin" />
+                        <TagInput label="Chronic Diseases" items={diseases} input={diseaseInput} setInput={setDiseaseInput} onAdd={addDisease} onRemove={removeDisease} placeholder="e.g. Diabetes" />
                     </div>
 
-                    <SectionSaveButton
-                        saving={medicalSaving}
-                        label="Save Medical Information"
-                        onClick={handleMedicalSave}
-                    />
-                </section>
+                    <SectionSaveButton saving={medicalSaving} label="Save Medical Information" onClick={handleMedicalSave} />
+                </ProfileSection>
             )}
 
-            <section className="rounded-xl border border-border bg-surface p-6">
-                <SectionHeader
-                    icon={<Shield className="h-5 w-5 text-primary" />}
-                    title="Insurance"
-                    description="Manage your insurance information for emergency paperwork and assistance."
-                />
-
+            <ProfileSection title="Insurance" description="Manage your insurance information for emergency paperwork and assistance." icon={<Shield className="h-5 w-5 text-primary" />}>
                 <div>
                     <label className="mb-2 block text-sm font-medium text-foreground">Insurance Type</label>
-
-                    <select
-                        value={insurance.type}
-                        onChange={(e) => handleInsuranceTypeChange(e.target.value)}
-                        disabled={policyLoading || insuranceSaving}
-                        className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary disabled:cursor-not-allowed disabled:opacity-60"
-                    >
+                    <select value={insurance.type} onChange={(e) => handleInsuranceTypeChange(e.target.value)} disabled={policyLoading || insuranceSaving} className={`${inputClass} disabled:cursor-not-allowed disabled:opacity-60`}>
                         <option value="">No Insurance</option>
                         <option value="external">External Insurance</option>
-                        <option value="somatic" disabled={!somaticPolicies.length}>
-                            SOMATIC Insurance{!somaticPolicies.length ? " (No Policy)" : ""}
-                        </option>
+                        <option value="somatic" disabled={!somaticPolicies.length}>SOMATIC Insurance{!somaticPolicies.length ? " (No Policy)" : ""}</option>
                     </select>
                 </div>
 
                 {insurance.type === "external" && (
                     <div className="mt-5 space-y-5">
                         <div className="grid gap-5 md:grid-cols-2">
-                            <div>
-                                <label className="mb-2 block text-sm font-medium text-foreground">Insurance Provider</label>
-                                <input
-                                    type="text"
-                                    value={insurance.provider_name}
-                                    onChange={(e) => setInsurance((prev) => ({ ...prev, type: "external", provider_name: e.target.value }))}
-                                    placeholder="e.g. Star Health"
-                                    className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
-                                />
-                            </div>
+                            <Field label="Insurance Provider">
+                                <input type="text" value={insurance.provider_name} onChange={(e) => setInsurance((prev) => ({ ...prev, type: "external", provider_name: e.target.value }))} placeholder="e.g. Star Health" className={inputClass} />
+                            </Field>
 
-                            <div>
-                                <label className="mb-2 block text-sm font-medium text-foreground">Policy Number</label>
-                                <input
-                                    type="text"
-                                    value={insurance.policy_number}
-                                    onChange={(e) => setInsurance((prev) => ({ ...prev, type: "external", policy_number: e.target.value }))}
-                                    placeholder="Enter policy number"
-                                    className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
-                                />
-                            </div>
+                            <Field label="Policy Number">
+                                <input type="text" value={insurance.policy_number} onChange={(e) => setInsurance((prev) => ({ ...prev, type: "external", policy_number: e.target.value }))} placeholder="Enter policy number" className={inputClass} />
+                            </Field>
 
                             <div className="md:col-span-2">
-                                <label className="mb-2 block text-sm font-medium text-foreground">Policy Holder Name</label>
-                                <input
-                                    type="text"
-                                    value={insurance.policy_holder_name}
-                                    onChange={(e) => setInsurance((prev) => ({ ...prev, type: "external", policy_holder_name: e.target.value }))}
-                                    placeholder="Enter policy holder name"
-                                    className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
-                                />
+                                <Field label="Policy Holder Name">
+                                    <input type="text" value={insurance.policy_holder_name} onChange={(e) => setInsurance((prev) => ({ ...prev, type: "external", policy_holder_name: e.target.value }))} placeholder="Enter policy holder name" className={inputClass} />
+                                </Field>
                             </div>
                         </div>
 
-                        <div className="rounded-lg border border-warning/20 bg-warning/10 p-4">
-                            <div className="flex gap-3">
-                                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
-                                <p className="text-xs leading-5 text-warning">
-                                    External insurance information is provided by you and is not verified by SOMATIC. Please make sure the information is accurate.
-                                </p>
-                            </div>
-                        </div>
+                        <Notice type="warning" text="External insurance information is provided by you and is not verified by SOMATIC. Please make sure the information is accurate." />
 
-                        <div className="flex flex-col gap-3 rounded-lg border border-border bg-surface-secondary p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface-secondary p-4 sm:flex-row sm:items-center sm:justify-between">
                             <div>
                                 <p className="text-sm font-medium text-foreground">Want SOMATIC Insurance?</p>
                                 <p className="mt-1 text-xs text-muted">View available SOMATIC insurance plans.</p>
                             </div>
-
-                            <Link
-                                href="/patient/insurance"
-                                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition hover:bg-primary/10"
-                            >
+                            <Link href="/patient/insurance" className="inline-flex justify-center rounded-lg border border-primary/20 bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition hover:bg-primary/10">
                                 View SOMATIC Plans
                             </Link>
                         </div>
@@ -757,13 +544,7 @@ export default function Profile() {
                     <div className="mt-5 space-y-5">
                         <div>
                             <label className="mb-2 block text-sm font-medium text-foreground">Select SOMATIC Policy</label>
-
-                            <select
-                                value={insurance.policy_number}
-                                onChange={(e) => handleSomaticPolicyChange(e.target.value)}
-                                disabled={insuranceSaving}
-                                className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary disabled:cursor-not-allowed disabled:opacity-60"
-                            >
+                            <select value={insurance.policy_number} onChange={(e) => handleSomaticPolicyChange(e.target.value)} disabled={insuranceSaving} className={`${inputClass} disabled:cursor-not-allowed disabled:opacity-60`}>
                                 {somaticPolicies.map((policy) => (
                                     <option key={policy._id} value={policy.policy_number}>
                                         {policy.plan_id?.name || "SOMATIC Insurance"} — {policy.policy_number} — {formatStatus(policy.status)}
@@ -773,39 +554,28 @@ export default function Profile() {
                         </div>
 
                         {selectedSomaticPolicy ? (
-                            <div className="rounded-lg border border-success/20 bg-success/5 p-5">
-                                <div className="mb-5 flex items-start justify-between gap-4">
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <ShieldCheck className="h-5 w-5 text-success" />
-                                            <h3 className="font-medium text-foreground">
-                                                {selectedSomaticPolicy.plan_id?.name || "SOMATIC Insurance"}
-                                            </h3>
+                            <div className="rounded-xl border border-success/20 bg-success/5 p-5">
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                    <div className="flex gap-3">
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-success/10 text-success">
+                                            <ShieldCheck className="h-5 w-5" />
                                         </div>
-
-                                        <p className="mt-1 text-xs text-muted">Selected SOMATIC insurance policy.</p>
+                                        <div>
+                                            <h3 className="font-medium text-foreground">{selectedSomaticPolicy.plan_id?.name || "SOMATIC Insurance"}</h3>
+                                            <p className="mt-1 text-xs text-muted">Selected SOMATIC insurance policy.</p>
+                                        </div>
                                     </div>
 
-                                    <span className={`rounded-full px-3 py-1 text-xs font-medium ${selectedSomaticPolicy.status === "active" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>
+                                    <span className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${selectedSomaticPolicy.status === "active" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>
                                         {formatStatus(selectedSomaticPolicy.status)}
                                     </span>
                                 </div>
 
-                                <div className="grid gap-4 sm:grid-cols-2">
+                                <div className="mt-5 grid gap-4 sm:grid-cols-2">
                                     <InfoItem label="Policy Number" value={selectedSomaticPolicy.policy_number} />
                                     <InfoItem label="Plan" value={selectedSomaticPolicy.plan_id?.name} />
-                                    <InfoItem
-                                        label="Coverage"
-                                        value={selectedSomaticPolicy.plan_id?.coverage_amount !== undefined ? `₹${selectedSomaticPolicy.plan_id.coverage_amount.toLocaleString("en-IN")}` : undefined}
-                                    />
-                                    <InfoItem
-                                        label="Premium"
-                                        value={
-                                            selectedSomaticPolicy.plan_id?.premium_amount !== undefined
-                                                ? `₹${selectedSomaticPolicy.plan_id.premium_amount.toLocaleString("en-IN")} / ${formatFrequency(selectedSomaticPolicy.plan_id.premium_frequency)}`
-                                                : undefined
-                                        }
-                                    />
+                                    <InfoItem label="Coverage" value={selectedSomaticPolicy.plan_id?.coverage_amount !== undefined ? `₹${selectedSomaticPolicy.plan_id.coverage_amount.toLocaleString("en-IN")}` : undefined} />
+                                    <InfoItem label="Premium" value={selectedSomaticPolicy.plan_id?.premium_amount !== undefined ? `₹${selectedSomaticPolicy.plan_id.premium_amount.toLocaleString("en-IN")} / ${formatFrequency(selectedSomaticPolicy.plan_id.premium_frequency)}` : undefined} />
                                     <InfoItem label="Valid From" value={formatDate(selectedSomaticPolicy.start_date)} />
                                     <InfoItem label="Valid Until" value={formatDate(selectedSomaticPolicy.expiry_date)} />
                                 </div>
@@ -813,7 +583,6 @@ export default function Profile() {
                                 {selectedSomaticPolicy.plan_id?.features?.length ? (
                                     <div className="mt-5 border-t border-border pt-5">
                                         <p className="mb-3 text-sm font-medium text-foreground">Plan Features</p>
-
                                         <div className="flex flex-wrap gap-2">
                                             {selectedSomaticPolicy.plan_id.features.map((feature, index) => (
                                                 <span key={`${feature}-${index}`} className="rounded-full border border-border bg-surface-secondary px-3 py-1.5 text-xs text-muted">
@@ -824,138 +593,97 @@ export default function Profile() {
                                     </div>
                                 ) : null}
 
-                                <div className="mt-5 flex items-center gap-2 rounded-lg bg-success/10 px-3 py-2.5 text-xs text-success">
-                                    <ShieldCheck className="h-4 w-4 shrink-0" />
-                                    This policy is linked to your SOMATIC account and its details cannot be edited from your profile.
+                                <div className="mt-5 flex gap-2 rounded-lg bg-success/10 px-3 py-2.5 text-xs text-success">
+                                    <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
+                                    <span>This policy is linked to your SOMATIC account and its details cannot be edited from your profile.</span>
                                 </div>
                             </div>
                         ) : (
-                            <div className="rounded-lg border border-warning/20 bg-warning/10 p-4">
-                                <div className="flex gap-3">
-                                    <AlertTriangle className="mt-0.5 h-5 w-5 text-warning" />
-                                    <div>
-                                        <p className="text-sm font-medium text-warning">No SOMATIC policy selected</p>
-                                        <p className="mt-1 text-xs leading-5 text-warning/70">Select a SOMATIC policy from the list above.</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <Notice type="warning" title="No SOMATIC policy selected" text="Select a SOMATIC policy from the list above." />
                         )}
                     </div>
                 )}
 
                 {!insurance.type && (
-                    <div className="mt-5 flex flex-col gap-4 rounded-lg border border-border bg-surface-secondary p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="mt-5 flex flex-col gap-4 rounded-xl border border-border bg-surface-secondary p-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <p className="text-sm font-medium text-foreground">No insurance selected</p>
                             <p className="mt-1 text-xs text-muted">Add external insurance details or get a SOMATIC insurance plan.</p>
                         </div>
-
-                        <Link
-                            href="/patient/insurance"
-                            className="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
-                        >
+                        <Link href="/patient/insurance" className="inline-flex justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover">
                             Get SOMATIC Insurance
                         </Link>
                     </div>
                 )}
 
-                <SectionSaveButton
-                    saving={insuranceSaving}
-                    label="Save Insurance"
-                    onClick={handleInsuranceSave}
-                />
-            </section>
+                <SectionSaveButton saving={insuranceSaving} label="Save Insurance" onClick={handleInsuranceSave} />
+            </ProfileSection>
 
-            <section className="rounded-xl border border-border bg-surface p-6">
-                <SectionHeader
-                    icon={<Lock className="h-5 w-5 text-primary" />}
-                    title="Security"
-                    description="Change your account password."
-                />
-
+            <ProfileSection title="Security" description="Change your account password and manage notification permissions." icon={<Lock className="h-5 w-5 text-primary" />}>
                 <div className="grid gap-5 md:grid-cols-2">
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-foreground">Current Password</label>
-                        <input
-                            type="password"
-                            value={formData.currentPassword}
-                            onChange={(e) => updateField("currentPassword", e.target.value)}
-                            placeholder="Enter current password"
-                            className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
-                        />
-                    </div>
+                    <Field label="Current Password">
+                        <input type="password" value={formData.currentPassword} onChange={(e) => updateField("currentPassword", e.target.value)} placeholder="Enter current password" className={inputClass} />
+                    </Field>
 
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-foreground">New Password</label>
-                        <input
-                            type="password"
-                            value={formData.newPassword}
-                            onChange={(e) => updateField("newPassword", e.target.value)}
-                            placeholder="Enter new password"
-                            className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
-                        />
-                    </div>
+                    <Field label="New Password">
+                        <input type="password" value={formData.newPassword} onChange={(e) => updateField("newPassword", e.target.value)} placeholder="Enter new password" className={inputClass} />
+                    </Field>
                 </div>
 
-                <p className="mt-3 text-xs text-muted-foreground">
-                    Leave both fields empty if you do not want to change your password.
-                </p>
+                <p className="mt-3 text-xs text-muted">Leave both fields empty if you do not want to change your password.</p>
 
-                <SectionSaveButton
-                    saving={passwordSaving}
-                    label="Change Password"
-                    onClick={handlePasswordSave}
-                />
+                <SectionSaveButton saving={passwordSaving} label="Change Password" onClick={handlePasswordSave} />
 
-                <div className="mt-6 border-t border-border pt-6">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                            <p className="text-sm font-medium text-foreground">Push Notifications</p>
-                            <p className="mt-1 text-xs leading-5 text-muted">
-                                Allow SOMATIC to send you important healthcare updates, reminders, and alerts.
-                            </p>
-                        </div>
-
-                        <NotificationPermissionButton />
+                <div className="mt-6 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <p className="text-sm font-medium text-foreground">Push Notifications</p>
+                        <p className="mt-1 max-w-xl text-xs leading-5 text-muted">
+                            Allow SOMATIC to send important healthcare updates, reminders, and alerts.
+                        </p>
                     </div>
+                    <NotificationPermissionButton />
                 </div>
-            </section>
+            </ProfileSection>
 
             <DeleteAccountSection />
         </div>
     );
 }
 
-function SectionHeader({
-    icon,
-    title,
-    description,
-}: {
-    icon: React.ReactNode;
-    title: string;
-    description: string;
-}) {
-    return (
-        <div className="mb-6">
-            <div className="flex items-center gap-2">
-                {icon}
-                <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-            </div>
+const inputClass = "w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/10";
 
-            <p className="mt-1 text-sm text-muted">{description}</p>
+function ProfileSection({ title, description, icon, children }: { title: string; description: string; icon: React.ReactNode; children: React.ReactNode }) {
+    return (
+        <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
+            <div className="mb-6 flex items-start gap-3 border-b border-border pb-5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent">
+                    {icon}
+                </div>
+                <div>
+                    <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+                    <p className="mt-1 text-sm text-muted">{description}</p>
+                </div>
+            </div>
+            {children}
+        </section>
+    );
+}
+
+function Field({ label, icon, children }: { label: string; icon?: React.ReactNode; children: React.ReactNode }) {
+    return (
+        <div>
+            <label className="mb-2 block text-sm font-medium text-foreground">{label}</label>
+            {icon ? (
+                <div className="relative">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">{icon}</span>
+                    <div className="[&>input]:pl-10">{children}</div>
+                </div>
+            ) : children}
         </div>
     );
 }
 
-function SectionSaveButton({
-    saving,
-    label,
-    onClick,
-}: {
-    saving: boolean;
-    label: string;
-    onClick: () => void;
-}) {
+function SectionSaveButton({ saving, label, onClick }: { saving: boolean; label: string; onClick: () => void }) {
     return (
         <div className="mt-6 flex justify-end border-t border-border pt-5">
             <button
@@ -980,15 +708,7 @@ function InfoItem({ label, value }: { label: string; value?: string }) {
     );
 }
 
-function TagInput({
-    label,
-    items,
-    input,
-    setInput,
-    onAdd,
-    onRemove,
-    placeholder,
-}: {
+function TagInput({ label, items, input, setInput, onAdd, onRemove, placeholder }: {
     label: string;
     items: string[];
     input: string;
@@ -1013,40 +733,44 @@ function TagInput({
                         }
                     }}
                     placeholder={placeholder}
-                    className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
+                    className={`${inputClass} pr-12`}
                 />
 
                 {input.trim() && (
-                    <button
-                        type="button"
-                        onClick={onAdd}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-primary transition hover:bg-accent hover:text-primary-hover"
-                    >
+                    <button type="button" onClick={onAdd} aria-label={`Add ${label.toLowerCase()}`} className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-primary transition hover:bg-accent">
                         <Plus className="h-5 w-5" />
                     </button>
                 )}
             </div>
 
             {items.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-3 flex flex-wrap gap-2">
                     {items.map((item, index) => (
-                        <span
-                            key={`${item}-${index}`}
-                            className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-secondary px-3 py-2 text-sm text-muted"
-                        >
+                        <span key={`${item}-${index}`} className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-secondary px-3 py-2 text-sm text-muted">
                             {item}
-
-                            <button
-                                type="button"
-                                onClick={() => onRemove(index)}
-                                className="text-muted-foreground transition hover:text-danger"
-                            >
+                            <button type="button" onClick={() => onRemove(index)} aria-label={`Remove ${item}`} className="text-muted-foreground transition hover:text-danger">
                                 <X className="h-4 w-4" />
                             </button>
                         </span>
                     ))}
                 </div>
             )}
+        </div>
+    );
+}
+
+function Notice({ type, title, text }: { type: "warning" | "info"; title?: string; text: string }) {
+    const warning = type === "warning";
+
+    return (
+        <div className={`rounded-xl border p-4 ${warning ? "border-warning/20 bg-warning/10" : "border-primary/20 bg-accent"}`}>
+            <div className="flex gap-3">
+                <AlertTriangle className={`mt-0.5 h-5 w-5 shrink-0 ${warning ? "text-warning" : "text-primary"}`} />
+                <div>
+                    {title && <p className={`text-sm font-medium ${warning ? "text-warning" : "text-foreground"}`}>{title}</p>}
+                    <p className={`text-xs leading-5 ${title ? "mt-1" : ""} ${warning ? "text-warning/80" : "text-muted"}`}>{text}</p>
+                </div>
+            </div>
         </div>
     );
 }

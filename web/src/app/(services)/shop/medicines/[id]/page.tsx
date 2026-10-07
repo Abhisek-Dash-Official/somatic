@@ -3,30 +3,18 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import {
-    Pill,
-    Package,
-    FileText,
-    Building2,
-    ShoppingCart,
-    AlertCircle,
-    ArrowLeft,
-} from "lucide-react";
+import { Pill, Package, FileText, Building2, ShoppingCart, AlertCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useCartStore } from "@/store/useCartStore";
 
 const getValidImage = (imgSrc: string) => {
-    if (imgSrc && (imgSrc.startsWith("http") || imgSrc.startsWith("/"))) {
-        return imgSrc;
-    }
-
+    if (imgSrc && (imgSrc.startsWith("http") || imgSrc.startsWith("/"))) return imgSrc;
     return "/fallback.png";
 };
 
 export default function MedicineDetail() {
     const params = useParams();
-
     const [medicine, setMedicine] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [adding, setAdding] = useState(false);
@@ -40,10 +28,7 @@ export default function MedicineDetail() {
         fetch(`/api/shop/medicines/${params.id}`)
             .then((res) => res.json())
             .then((json) => {
-                if (json.success) {
-                    setMedicine(json.data);
-                }
-
+                if (json.success) setMedicine(json.data);
                 setLoading(false);
             })
             .catch((error) => {
@@ -64,25 +49,17 @@ export default function MedicineDetail() {
 
         setAdding(true);
 
-        const success = await addToCart(
-            "Medicine",
-            medicine._id,
-            undefined,
-            quantity
-        );
+        const success = await addToCart("Medicine", medicine._id, undefined, quantity);
 
-        if (success) {
-            toast.success("Added to cart");
-        } else {
-            toast.error("Failed to add to cart");
-        }
+        if (success) toast.success("Added to cart");
+        else toast.error("Failed to add to cart");
 
         setAdding(false);
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center font-semibold text-muted">
+            <div className="flex min-h-screen items-center justify-center bg-background font-semibold text-muted">
                 Loading medicine details...
             </div>
         );
@@ -90,12 +67,12 @@ export default function MedicineDetail() {
 
     if (!medicine) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center text-danger font-bold gap-4">
+            <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background font-bold text-danger">
                 <p>Medicine not found</p>
 
                 <Link
                     href="/shop/medicines"
-                    className="text-primary hover:text-primary-hover underline text-sm"
+                    className="text-sm text-primary underline hover:text-primary-hover"
                 >
                     Back to Medicines
                 </Link>
@@ -107,45 +84,42 @@ export default function MedicineDetail() {
     const stockCount = medicine.stock ?? medicine.stock_quantity ?? 0;
     const itemPrice = medicine.pricing?.sale_price ?? medicine.price ?? 0;
     const itemMrp = medicine.pricing?.mrp ?? 0;
-    const reqPrescription = medicine.requires_prescription ?? medicine.prescription_required ?? false;
+    const reqPrescription =
+        medicine.requires_prescription ?? medicine.prescription_required ?? false;
 
     return (
-        <div className="min-h-screen bg-background py-10 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-6xl mx-auto space-y-8">
+        <div className="min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-6xl space-y-8">
                 <div>
                     <Link
                         href="/shop/medicines"
-                        className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground mb-4"
+                        className="mb-4 inline-flex items-center gap-2 text-sm text-muted hover:text-foreground"
                     >
-                        <ArrowLeft className="w-4 h-4" />
+                        <ArrowLeft className="h-4 w-4" />
                         Back to Medicines
                     </Link>
 
-                    <div className="flex items-center gap-2 mb-2">
-                        <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-bold uppercase">
+                    <div className="mb-2 flex items-center gap-2">
+                        <span className="rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase text-accent-foreground">
                             {medicine.category || "Medicine"}
                         </span>
 
                         {reqPrescription && (
-                            <span className="bg-warning/15 text-warning border border-warning/20 px-3 py-1 rounded-full text-xs font-bold">
+                            <span className="rounded-full border border-warning/20 bg-warning/15 px-3 py-1 text-xs font-bold text-warning">
                                 Prescription Required
                             </span>
                         )}
                     </div>
 
-                    <h1 className="text-3xl font-bold text-foreground">
-                        {medicine.name}
-                    </h1>
+                    <h1 className="text-3xl font-bold text-foreground">{medicine.name}</h1>
 
                     {medicine.brand && (
-                        <p className="text-lg text-muted mt-1">
-                            Brand: {medicine.brand}
-                        </p>
+                        <p className="mt-1 text-lg text-muted">Brand: {medicine.brand}</p>
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="md:col-span-2 relative h-80 rounded-2xl overflow-hidden bg-surface-secondary">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div className="relative h-80 overflow-hidden rounded-2xl bg-surface-secondary md:col-span-2">
                         <Image
                             src={getValidImage(images[0])}
                             alt={medicine.name}
@@ -155,11 +129,11 @@ export default function MedicineDetail() {
                         />
                     </div>
 
-                    <div className="hidden md:grid grid-rows-2 gap-4 h-80">
+                    <div className="hidden h-80 grid-rows-2 gap-4 md:grid">
                         {[1, 2].map((idx) => (
                             <div
                                 key={idx}
-                                className="relative rounded-xl overflow-hidden bg-surface-secondary h-38"
+                                className="relative h-38 overflow-hidden rounded-xl bg-surface-secondary"
                             >
                                 <Image
                                     src={getValidImage(images[idx])}
@@ -173,22 +147,19 @@ export default function MedicineDetail() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-1 space-y-6">
-                        <div className="bg-surface p-6 rounded-2xl shadow-sm border border-border">
-                            <h3 className="text-lg font-bold text-foreground mb-5">
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    <div className="space-y-6 lg:col-span-1">
+                        <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+                            <h3 className="mb-5 text-lg font-bold text-foreground">
                                 Medicine Information
                             </h3>
 
                             <ul className="space-y-5 text-sm text-muted">
                                 {medicine.manufacturer && (
                                     <li className="flex items-start gap-3">
-                                        <Building2 className="w-5 h-5 text-muted-foreground shrink-0" />
-
+                                        <Building2 className="h-5 w-5 shrink-0 text-muted-foreground" />
                                         <div>
-                                            <strong className="block text-foreground">
-                                                Manufacturer
-                                            </strong>
+                                            <strong className="block text-foreground">Manufacturer</strong>
                                             {medicine.manufacturer}
                                         </div>
                                     </li>
@@ -196,12 +167,9 @@ export default function MedicineDetail() {
 
                                 {medicine.category && (
                                     <li className="flex items-start gap-3">
-                                        <FileText className="w-5 h-5 text-muted-foreground shrink-0" />
-
+                                        <FileText className="h-5 w-5 shrink-0 text-muted-foreground" />
                                         <div>
-                                            <strong className="block text-foreground">
-                                                Category
-                                            </strong>
+                                            <strong className="block text-foreground">Category</strong>
                                             {medicine.category}
                                         </div>
                                     </li>
@@ -209,12 +177,9 @@ export default function MedicineDetail() {
 
                                 {medicine.dosage_form && (
                                     <li className="flex items-start gap-3">
-                                        <Pill className="w-5 h-5 text-muted-foreground shrink-0" />
-
+                                        <Pill className="h-5 w-5 shrink-0 text-muted-foreground" />
                                         <div>
-                                            <strong className="block text-foreground">
-                                                Dosage Form
-                                            </strong>
+                                            <strong className="block text-foreground">Dosage Form</strong>
                                             {medicine.dosage_form}
                                         </div>
                                     </li>
@@ -222,12 +187,9 @@ export default function MedicineDetail() {
 
                                 {medicine.packaging && (
                                     <li className="flex items-start gap-3">
-                                        <Package className="w-5 h-5 text-muted-foreground shrink-0" />
-
+                                        <Package className="h-5 w-5 shrink-0 text-muted-foreground" />
                                         <div>
-                                            <strong className="block text-foreground">
-                                                Packaging
-                                            </strong>
+                                            <strong className="block text-foreground">Packaging</strong>
                                             {medicine.packaging}
                                         </div>
                                     </li>
@@ -236,55 +198,43 @@ export default function MedicineDetail() {
                         </div>
 
                         {medicine.description && (
-                            <div className="bg-surface p-6 rounded-2xl shadow-sm border border-border">
-                                <h3 className="text-lg font-bold text-foreground mb-3">
-                                    Description
-                                </h3>
-
-                                <p className="text-sm text-muted leading-6">
-                                    {medicine.description}
-                                </p>
+                            <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+                                <h3 className="mb-3 text-lg font-bold text-foreground">Description</h3>
+                                <p className="text-sm leading-6 text-muted">{medicine.description}</p>
                             </div>
                         )}
                     </div>
 
                     <div className="lg:col-span-2">
-                        <div className="bg-surface p-6 rounded-2xl shadow-sm border border-border">
-                            <div className="flex items-center gap-2 mb-6">
-                                <ShoppingCart className="w-6 h-6 text-primary" />
-
-                                <h3 className="text-xl font-bold text-foreground">
-                                    Purchase Medicine
-                                </h3>
+                        <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+                            <div className="mb-6 flex items-center gap-2">
+                                <ShoppingCart className="h-6 w-6 text-primary" />
+                                <h3 className="text-xl font-bold text-foreground">Purchase Medicine</h3>
                             </div>
 
-                            <div className="bg-surface-secondary rounded-xl p-5 mb-6 flex items-baseline gap-4">
+                            <div className="mb-6 flex items-baseline gap-4 rounded-xl bg-surface-secondary p-5">
                                 <div>
-                                    <p className="text-sm text-muted">
-                                        Price
-                                    </p>
-
-                                    <p className="text-3xl font-bold text-foreground mt-1">
+                                    <p className="text-sm text-muted">Price</p>
+                                    <p className="mt-1 text-3xl font-bold text-foreground">
                                         ₹{itemPrice}
                                     </p>
                                 </div>
 
                                 {itemMrp > itemPrice && (
-                                    <div className="text-muted-foreground line-through text-lg">
+                                    <div className="text-lg text-muted-foreground line-through">
                                         ₹{itemMrp}
                                     </div>
                                 )}
                             </div>
 
-                            <div className="flex items-center justify-between border-b border-border pb-5 mb-6">
+                            <div className="mb-6 flex items-center justify-between border-b border-border pb-5">
                                 <div className="flex items-center gap-3">
-                                    <Package className="w-5 h-5 text-muted-foreground" />
+                                    <Package className="h-5 w-5 text-muted-foreground" />
 
                                     <div>
                                         <p className="text-sm font-semibold text-foreground">
                                             Available Stock
                                         </p>
-
                                         <p className="text-sm text-muted">
                                             {stockCount > 0
                                                 ? `${stockCount} units available`
@@ -294,26 +244,23 @@ export default function MedicineDetail() {
                                 </div>
 
                                 {stockCount > 0 ? (
-                                    <span className="bg-success/15 text-success border border-success/20 px-3 py-1 rounded-full text-xs font-bold">
+                                    <span className="rounded-full border border-success/20 bg-success/15 px-3 py-1 text-xs font-bold text-success">
                                         In Stock
                                     </span>
                                 ) : (
-                                    <span className="bg-danger/15 text-danger border border-danger/20 px-3 py-1 rounded-full text-xs font-bold">
+                                    <span className="rounded-full border border-danger/20 bg-danger/15 px-3 py-1 text-xs font-bold text-danger">
                                         Out of Stock
                                     </span>
                                 )}
                             </div>
 
                             {reqPrescription && (
-                                <div className="flex gap-3 bg-warning/10 border border-warning/20 rounded-xl p-4 mb-6">
-                                    <AlertCircle className="w-5 h-5 text-warning shrink-0" />
+                                <div className="mb-6 flex gap-3 rounded-xl border border-warning/20 bg-warning/10 p-4">
+                                    <AlertCircle className="h-5 w-5 shrink-0 text-warning" />
 
                                     <div>
-                                        <p className="font-semibold text-warning">
-                                            Prescription Required
-                                        </p>
-
-                                        <p className="text-sm text-muted mt-1">
+                                        <p className="font-semibold text-warning">Prescription Required</p>
+                                        <p className="mt-1 text-sm text-muted">
                                             A valid prescription may be required before dispatch.
                                         </p>
                                     </div>
@@ -322,14 +269,14 @@ export default function MedicineDetail() {
 
                             {stockCount > 0 && (
                                 <div className="mb-6">
-                                    <label className="block text-sm font-semibold text-foreground mb-2">
+                                    <label className="mb-2 block text-sm font-semibold text-foreground">
                                         Quantity
                                     </label>
 
                                     <div className="flex items-center gap-3">
                                         <button
                                             onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                            className="w-10 h-10 rounded-lg border border-border bg-surface-secondary text-lg font-bold text-foreground hover:bg-accent transition-colors"
+                                            className="h-10 w-10 rounded-xl border border-border bg-surface-secondary text-lg font-bold text-foreground transition-colors hover:bg-accent"
                                         >
                                             -
                                         </button>
@@ -340,7 +287,7 @@ export default function MedicineDetail() {
 
                                         <button
                                             onClick={() => setQuantity(Math.min(stockCount, quantity + 1))}
-                                            className="w-10 h-10 rounded-lg border border-border bg-surface-secondary text-lg font-bold text-foreground hover:bg-accent transition-colors"
+                                            className="h-10 w-10 rounded-xl border border-border bg-surface-secondary text-lg font-bold text-foreground transition-colors hover:bg-accent"
                                         >
                                             +
                                         </button>
@@ -349,11 +296,8 @@ export default function MedicineDetail() {
                             )}
 
                             {stockCount > 0 && (
-                                <div className="flex items-center justify-between mb-6">
-                                    <span className="text-muted">
-                                        Total
-                                    </span>
-
+                                <div className="mb-6 flex items-center justify-between">
+                                    <span className="text-muted">Total</span>
                                     <span className="text-2xl font-bold text-foreground">
                                         ₹{itemPrice * quantity}
                                     </span>
@@ -363,9 +307,9 @@ export default function MedicineDetail() {
                             <button
                                 onClick={handleAddToCart}
                                 disabled={stockCount <= 0 || adding}
-                                className={`w-full py-3.5 rounded-xl font-semibold transition-colors ${stockCount > 0
+                                className={`w-full rounded-xl py-3.5 font-semibold transition-colors ${stockCount > 0
                                         ? "bg-primary text-primary-foreground hover:bg-primary-hover"
-                                        : "bg-surface-secondary text-muted-foreground cursor-not-allowed"
+                                        : "cursor-not-allowed bg-surface-secondary text-muted-foreground"
                                     }`}
                             >
                                 {adding

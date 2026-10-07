@@ -1,7 +1,16 @@
 "use client";
 
-import { AlertTriangle, CalendarDays, Check, Clock3, Coins, ShieldCheck, Sparkles, X } from "lucide-react";
 import { useState } from "react";
+import {
+    AlertTriangle,
+    CalendarDays,
+    Check,
+    Clock3,
+    Coins,
+    ShieldCheck,
+    Sparkles,
+    X,
+} from "lucide-react";
 import { toast } from "react-toastify";
 
 type Subscription = {
@@ -32,8 +41,7 @@ const formatDate = (date?: string) =>
         })
         : "-";
 
-const formatTokens = (value: number) =>
-    new Intl.NumberFormat("en-IN").format(value);
+const formatTokens = (value: number) => new Intl.NumberFormat("en-IN").format(value);
 
 export default function CurrentSubscription({ subscription, onViewPlans }: Props) {
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -41,7 +49,7 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
 
     if (!subscription) {
         return (
-            <div className="mx-auto max-w-xl border border-border bg-surface p-8 text-center">
+            <div className="mx-auto max-w-xl rounded-2xl border border-border bg-surface p-8 text-center shadow-sm">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-accent-foreground">
                     <Sparkles className="h-6 w-6" />
                 </div>
@@ -57,7 +65,7 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
                 <button
                     type="button"
                     onClick={onViewPlans}
-                    className="mt-6 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                    className="mt-6 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
                 >
                     View Plans
                 </button>
@@ -72,10 +80,7 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
 
     const usagePercentage =
         subscription.token_limit > 0
-            ? Math.min(
-                (subscription.tokens_used / subscription.token_limit) * 100,
-                100,
-            )
+            ? Math.min((subscription.tokens_used / subscription.token_limit) * 100, 100)
             : 0;
 
     const handleCancel = async () => {
@@ -89,17 +94,12 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
             const data = await res.json().catch(() => ({}));
 
             if (!res.ok) {
-                throw new Error(
-                    data.error || "Failed to cancel subscription.",
-                );
+                throw new Error(data.error || "Failed to cancel subscription.");
             }
 
-            toast.success(
-                data.message || "Subscription cancelled successfully.",
-            );
+            toast.success(data.message || "Subscription cancelled successfully.");
 
             setShowCancelConfirm(false);
-
             window.location.reload();
         } catch (error) {
             toast.error(
@@ -114,7 +114,7 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
 
     return (
         <div className="mx-auto max-w-4xl">
-            <div className="border border-border bg-surface">
+            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                 <div className="border-b border-border p-6 sm:p-8">
                     <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                         <div>
@@ -165,11 +165,9 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
                 </div>
 
                 <div className="border-b border-border p-6 sm:p-8">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-4">
                         <div>
-                            <h3 className="font-semibold text-foreground">
-                                AI Token Usage
-                            </h3>
+                            <h3 className="font-semibold text-foreground">AI Token Usage</h3>
 
                             <p className="mt-1 text-sm text-muted">
                                 {formatTokens(subscription.tokens_used)} used of{" "}
@@ -193,17 +191,14 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
                 <div className="p-6 sm:p-8">
                     <div className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-primary" />
-
-                        <h3 className="font-semibold text-foreground">
-                            Supported Features
-                        </h3>
+                        <h3 className="font-semibold text-foreground">Supported Features</h3>
                     </div>
 
                     <div className="mt-5 flex flex-wrap gap-2">
                         {(subscription.supported_features || []).map((feature) => (
                             <span
                                 key={feature}
-                                className="rounded-lg bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                                className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
                             >
                                 {feature}
                             </span>
@@ -212,34 +207,28 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
 
                     <div className="mt-8 flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-primary" />
-
-                        <h3 className="font-semibold text-foreground">
-                            Plan Features
-                        </h3>
+                        <h3 className="font-semibold text-foreground">Plan Features</h3>
                     </div>
 
                     <div className="mt-5 grid gap-3 sm:grid-cols-2">
                         {(subscription.features || []).map((feature) => (
                             <div
                                 key={feature}
-                                className="flex items-center gap-3 border border-border bg-surface-secondary p-3"
+                                className="flex items-center gap-3 rounded-xl border border-border bg-surface-secondary p-3"
                             >
                                 <Check className="h-4 w-4 shrink-0 text-primary" />
-
-                                <span className="text-sm text-foreground">
-                                    {feature}
-                                </span>
+                                <span className="text-sm text-foreground">{feature}</span>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
 
-            <div className="border-t border-border p-6 sm:p-8">
+            <div className="mt-4 rounded-2xl border border-border bg-surface p-6 sm:p-8">
                 <button
                     type="button"
                     onClick={() => setShowCancelConfirm(true)}
-                    className="text-sm font-medium text-danger transition hover:underline"
+                    className="rounded-lg text-sm font-medium text-danger transition hover:bg-danger/5 hover:underline"
                 >
                     Cancel Subscription
                 </button>
@@ -247,7 +236,7 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
 
             {showCancelConfirm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-                    <div className="w-full max-w-md border border-border bg-surface p-6 shadow-2xl">
+                    <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
                         <div className="flex items-start gap-4">
                             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-danger/10 text-danger">
                                 <AlertTriangle className="h-5 w-5" />
@@ -259,10 +248,9 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
                                 </h3>
 
                                 <p className="mt-2 text-sm leading-6 text-muted">
-                                    Your current {subscription.plan_name} subscription
-                                    will be cancelled immediately. You will lose access
-                                    to its premium features and remaining subscription
-                                    tokens.
+                                    Your current {subscription.plan_name} subscription will
+                                    be cancelled immediately. You will lose access to its
+                                    premium features and remaining subscription tokens.
                                 </p>
                             </div>
 
@@ -270,7 +258,8 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
                                 type="button"
                                 onClick={() => setShowCancelConfirm(false)}
                                 disabled={cancelling}
-                                className="ml-auto text-muted transition hover:text-foreground"
+                                className="ml-auto rounded-xl p-1.5 text-muted transition hover:bg-surface-secondary hover:text-foreground disabled:opacity-50"
+                                aria-label="Close cancellation dialog"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -281,7 +270,7 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
                                 type="button"
                                 onClick={() => setShowCancelConfirm(false)}
                                 disabled={cancelling}
-                                className="rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-surface-secondary disabled:opacity-50"
+                                className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-surface-secondary disabled:opacity-50"
                             >
                                 Keep Subscription
                             </button>
@@ -290,11 +279,9 @@ export default function CurrentSubscription({ subscription, onViewPlans }: Props
                                 type="button"
                                 onClick={handleCancel}
                                 disabled={cancelling}
-                                className="rounded-lg bg-danger px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="rounded-xl bg-danger px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                {cancelling
-                                    ? "Cancelling..."
-                                    : "Cancel Subscription"}
+                                {cancelling ? "Cancelling..." : "Cancel Subscription"}
                             </button>
                         </div>
                     </div>

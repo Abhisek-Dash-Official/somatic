@@ -88,7 +88,7 @@ export default function DispatcherInsurancePage() {
 
     return (
         <main className="mx-auto w-full max-w-7xl px-4 py-6 text-foreground sm:px-6 lg:px-8">
-            <section className="rounded-xl border border-border bg-surface p-6 sm:p-8">
+            <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
                 <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                     <div>
                         <div className="flex items-center gap-3">
@@ -109,15 +109,15 @@ export default function DispatcherInsurancePage() {
                         </p>
                     </div>
 
-                    <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-                        <div className="flex items-center gap-2 rounded-lg border border-border bg-surface-secondary px-3 py-2 text-xs text-muted">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <div className="flex items-center gap-2 rounded-xl border border-border bg-surface-secondary px-3 py-2 text-xs text-muted">
                             <span className="h-2 w-2 rounded-full bg-success" />
                             Dispatcher Review
                         </div>
 
                         <Link
                             href="/dispatcher/insurance/claims"
-                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition hover:bg-primary/15"
+                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-4 py-2.5 text-sm font-medium text-primary transition hover:bg-primary/15"
                         >
                             <FileText size={15} />
                             View Claims
@@ -126,7 +126,7 @@ export default function DispatcherInsurancePage() {
                 </div>
             </section>
 
-            <section className="mt-6 rounded-xl border border-border bg-surface p-4">
+            <section className="mt-6 rounded-2xl border border-border bg-surface p-4 shadow-sm">
                 <div className="flex flex-col gap-3 lg:flex-row">
                     <div className="relative flex-1">
                         <Search
@@ -139,14 +139,14 @@ export default function DispatcherInsurancePage() {
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
                             placeholder="Search by patient, email or policy number..."
-                            className="w-full rounded-lg border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
+                            className="w-full rounded-xl border border-border bg-surface-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
                         />
                     </div>
 
                     <select
                         value={status}
                         onChange={(event) => setStatus(event.target.value)}
-                        className="rounded-lg border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
+                        className="rounded-xl border border-border bg-surface-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
                     >
                         {statuses.map((item) => (
                             <option key={item.value} value={item.value} className="bg-surface text-foreground">
@@ -159,11 +159,11 @@ export default function DispatcherInsurancePage() {
 
             <section className="mt-6">
                 {loading ? (
-                    <div className="flex min-h-80 items-center justify-center rounded-xl border border-border bg-surface">
+                    <div className="flex min-h-80 items-center justify-center rounded-2xl border border-border bg-surface shadow-sm">
                         <Loader2 className="animate-spin text-primary" size={30} />
                     </div>
                 ) : policies.length === 0 ? (
-                    <div className="rounded-xl border border-border bg-surface p-12 text-center">
+                    <div className="rounded-2xl border border-border bg-surface p-12 text-center shadow-sm">
                         <ShieldCheck className="mx-auto text-muted-foreground" size={40} />
 
                         <h2 className="mt-4 text-lg font-semibold text-foreground">
@@ -175,7 +175,7 @@ export default function DispatcherInsurancePage() {
                         </p>
                     </div>
                 ) : (
-                    <div className="overflow-hidden rounded-xl border border-border bg-surface">
+                    <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                         <div className="hidden overflow-x-auto md:block">
                             <table className="w-full">
                                 <thead className="border-b border-border bg-surface-secondary">
@@ -206,7 +206,7 @@ export default function DispatcherInsurancePage() {
                                         <tr key={policy._id} className="transition hover:bg-surface-secondary">
                                             <td className="px-5 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
                                                         <UserRound size={17} />
                                                     </div>
 
@@ -257,7 +257,7 @@ export default function DispatcherInsurancePage() {
                                             <td className="px-5 py-4 text-right">
                                                 <Link
                                                     href={`/dispatcher/insurance/${policy._id}`}
-                                                    className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs font-medium text-muted transition hover:bg-accent hover:text-foreground"
+                                                    className="inline-flex items-center gap-2 rounded-xl border border-border px-3 py-2 text-xs font-medium text-muted transition hover:bg-accent hover:text-foreground"
                                                 >
                                                     <Eye size={15} />
                                                     Review
@@ -297,7 +297,7 @@ export default function DispatcherInsurancePage() {
                                     </div>
 
                                     <div className="mt-5 grid grid-cols-2 gap-3">
-                                        <div className="rounded-lg border border-border bg-surface-secondary p-3">
+                                        <div className="rounded-xl border border-border bg-surface-secondary p-3">
                                             <p className="text-xs text-muted">Plan</p>
 
                                             <p className="mt-1 truncate text-sm font-medium text-foreground">
@@ -305,7 +305,7 @@ export default function DispatcherInsurancePage() {
                                             </p>
                                         </div>
 
-                                        <div className="rounded-lg border border-border bg-surface-secondary p-3">
+                                        <div className="rounded-xl border border-border bg-surface-secondary p-3">
                                             <p className="text-xs text-muted">Coverage</p>
 
                                             <p className="mt-1 text-sm font-medium text-foreground">
@@ -315,7 +315,7 @@ export default function DispatcherInsurancePage() {
                                     </div>
 
                                     {policy.status === "revival_pending" && (
-                                        <div className="mt-4 rounded-lg border border-warning/20 bg-warning/10 p-3">
+                                        <div className="mt-4 rounded-xl border border-warning/20 bg-warning/10 p-3">
                                             <p className="text-xs font-medium text-warning">
                                                 Revival request awaiting review
                                             </p>
@@ -329,7 +329,7 @@ export default function DispatcherInsurancePage() {
 
                                         <Link
                                             href={`/dispatcher/insurance/${policy._id}`}
-                                            className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs font-medium text-muted hover:bg-accent hover:text-foreground"
+                                            className="inline-flex items-center gap-2 rounded-xl border border-border px-3 py-2 text-xs font-medium text-muted transition hover:bg-accent hover:text-foreground"
                                         >
                                             <Eye size={15} />
                                             Review

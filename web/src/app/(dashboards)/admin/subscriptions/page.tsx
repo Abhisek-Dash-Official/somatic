@@ -2,9 +2,20 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Check, ChevronLeft, ChevronRight, Crown, Edit3, Loader2, Plus, Search, Users, X } from "lucide-react";
+import {
+    Check,
+    ChevronLeft,
+    ChevronRight,
+    Crown,
+    Edit3,
+    Loader2,
+    Plus,
+    Search,
+    Users,
+    X,
+} from "lucide-react";
 import { toast } from "react-toastify";
-import { supportedAIFeatureOptions } from "@/config/aiFeatures"
+import { supportedAIFeatureOptions } from "@/config/aiFeatures";
 
 type Plan = {
     _id: string;
@@ -13,7 +24,8 @@ type Plan = {
     price: number;
     currency: string;
     duration_days: number;
-    features: string[]; supported_features: string[];
+    features: string[];
+    supported_features: string[];
     token_limit: number;
     is_active: boolean;
     subscriber_count: number;
@@ -114,10 +126,9 @@ export default function AdminSubscriptionsPage() {
 
         try {
             if (tab === "plans") {
-                const res = await fetch(
-                    "/api/admin/subscriptions?view=plans",
-                    { cache: "no-store" },
-                );
+                const res = await fetch("/api/admin/subscriptions?view=plans", {
+                    cache: "no-store",
+                });
 
                 const data = await res.json();
 
@@ -131,9 +142,7 @@ export default function AdminSubscriptionsPage() {
                     view: "subscribers",
                     page: String(page),
                     limit: "10",
-                    ...(search.trim()
-                        ? { search: search.trim() }
-                        : {}),
+                    ...(search.trim() ? { search: search.trim() } : {}),
                 });
 
                 const res = await fetch(
@@ -276,23 +285,18 @@ export default function AdminSubscriptionsPage() {
 
     const togglePlan = async (plan: Plan) => {
         try {
-            const res = await fetch(
-                `/api/admin/subscriptions/${plan._id}`,
-                {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        is_active: !plan.is_active,
-                    }),
-                },
-            );
+            const res = await fetch(`/api/admin/subscriptions/${plan._id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    is_active: !plan.is_active,
+                }),
+            });
 
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(
-                    data.message || "Failed to update plan",
-                );
+                throw new Error(data.message || "Failed to update plan");
             }
 
             toast.success(
@@ -331,7 +335,7 @@ export default function AdminSubscriptionsPage() {
                     {tab === "plans" && (
                         <button
                             onClick={openCreate}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
+                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
                         >
                             <Plus className="h-4 w-4" />
                             Add Plan
@@ -339,15 +343,15 @@ export default function AdminSubscriptionsPage() {
                     )}
                 </div>
 
-                <div className="mb-6 flex border-b border-border">
+                <div className="mb-6 flex rounded-xl border border-border bg-surface p-1">
                     <button
                         onClick={() => {
                             setTab("plans");
                             setPage(1);
                         }}
-                        className={`border-b-2 px-4 py-3 text-sm font-medium ${tab === "plans"
-                            ? "border-primary text-primary"
-                            : "border-transparent text-muted hover:text-foreground"
+                        className={`flex-1 rounded-lg border-b-2 px-4 py-3 text-sm font-medium sm:flex-none ${tab === "plans"
+                                ? "border-primary bg-primary/5 text-primary"
+                                : "border-transparent text-muted hover:bg-surface-secondary hover:text-foreground"
                             }`}
                     >
                         Plans
@@ -358,9 +362,9 @@ export default function AdminSubscriptionsPage() {
                             setTab("subscribers");
                             setPage(1);
                         }}
-                        className={`border-b-2 px-4 py-3 text-sm font-medium ${tab === "subscribers"
-                            ? "border-primary text-primary"
-                            : "border-transparent text-muted hover:text-foreground"
+                        className={`flex-1 rounded-lg border-b-2 px-4 py-3 text-sm font-medium sm:flex-none ${tab === "subscribers"
+                                ? "border-primary bg-primary/5 text-primary"
+                                : "border-transparent text-muted hover:bg-surface-secondary hover:text-foreground"
                             }`}
                     >
                         Subscribers
@@ -368,7 +372,7 @@ export default function AdminSubscriptionsPage() {
                 </div>
 
                 {tab === "subscribers" && (
-                    <div className="mb-5 flex max-w-md items-center gap-2 rounded-lg border border-border bg-surface px-3">
+                    <div className="mb-5 flex max-w-md items-center gap-2 rounded-xl border border-border bg-surface px-3">
                         <Search className="h-4 w-4 text-muted" />
 
                         <input
@@ -389,7 +393,7 @@ export default function AdminSubscriptionsPage() {
                     </div>
                 ) : tab === "plans" ? (
                     plans.length === 0 ? (
-                        <div className="rounded-xl border border-border bg-surface p-10 text-center">
+                        <div className="rounded-2xl border border-border bg-surface p-10 text-center shadow-sm">
                             <Crown className="mx-auto h-8 w-8 text-muted" />
                             <p className="mt-3 font-medium">
                                 No subscription plans
@@ -403,7 +407,7 @@ export default function AdminSubscriptionsPage() {
                             {plans.map((plan) => (
                                 <div
                                     key={plan._id}
-                                    className="rounded-xl border border-border bg-surface p-5"
+                                    className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
                                 >
                                     <div className="flex items-start justify-between gap-3">
                                         <div>
@@ -419,8 +423,8 @@ export default function AdminSubscriptionsPage() {
 
                                         <span
                                             className={`rounded-full px-2.5 py-1 text-xs font-medium ${plan.is_active
-                                                ? "bg-success/10 text-success"
-                                                : "bg-muted/10 text-muted"
+                                                    ? "bg-success/10 text-success"
+                                                    : "bg-muted/10 text-muted"
                                                 }`}
                                         >
                                             {plan.is_active
@@ -443,7 +447,7 @@ export default function AdminSubscriptionsPage() {
                                     </div>
 
                                     <div className="mt-4 grid grid-cols-2 gap-3">
-                                        <div className="rounded-lg bg-surface-secondary p-3">
+                                        <div className="rounded-xl border border-border bg-surface-secondary p-3">
                                             <p className="text-xs text-muted">
                                                 Token limit
                                             </p>
@@ -453,7 +457,7 @@ export default function AdminSubscriptionsPage() {
                                             </p>
                                         </div>
 
-                                        <div className="rounded-lg bg-surface-secondary p-3">
+                                        <div className="rounded-xl border border-border bg-surface-secondary p-3">
                                             <p className="text-xs text-muted">
                                                 Subscribers
                                             </p>
@@ -476,7 +480,7 @@ export default function AdminSubscriptionsPage() {
                                                     (feature) => (
                                                         <span
                                                             key={feature}
-                                                            className="rounded-md bg-accent px-2 py-1 text-xs font-medium text-accent-foreground"
+                                                            className="rounded-full border border-border bg-accent px-2 py-1 text-xs font-medium text-accent-foreground"
                                                         >
                                                             {supportedAIFeatureOptions.find(
                                                                 (item) =>
@@ -510,7 +514,7 @@ export default function AdminSubscriptionsPage() {
                                     <div className="mt-5 flex gap-2 border-t border-border pt-4">
                                         <button
                                             onClick={() => openEdit(plan)}
-                                            className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-surface-secondary"
+                                            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border px-3 py-2 text-sm font-medium hover:bg-surface-secondary"
                                         >
                                             <Edit3 className="h-4 w-4" />
                                             Edit
@@ -518,7 +522,7 @@ export default function AdminSubscriptionsPage() {
 
                                         <button
                                             onClick={() => togglePlan(plan)}
-                                            className="rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-surface-secondary"
+                                            className="rounded-xl border border-border px-3 py-2 text-sm font-medium hover:bg-surface-secondary"
                                         >
                                             {plan.is_active
                                                 ? "Disable"
@@ -530,26 +534,16 @@ export default function AdminSubscriptionsPage() {
                         </div>
                     )
                 ) : (
-                    <div className="overflow-hidden rounded-xl border border-border bg-surface">
+                    <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                         <div className="overflow-x-auto">
                             <table className="min-w-225 w-full text-left">
                                 <thead className="border-b border-border bg-surface-secondary">
                                     <tr className="text-xs uppercase tracking-wide text-muted">
-                                        <th className="px-5 py-3 font-medium">
-                                            User
-                                        </th>
-                                        <th className="px-5 py-3 font-medium">
-                                            Plan
-                                        </th>
-                                        <th className="px-5 py-3 font-medium">
-                                            Amount
-                                        </th>
-                                        <th className="px-5 py-3 font-medium">
-                                            Status
-                                        </th>
-                                        <th className="px-5 py-3 font-medium">
-                                            Period
-                                        </th>
+                                        <th className="px-5 py-3 font-medium">User</th>
+                                        <th className="px-5 py-3 font-medium">Plan</th>
+                                        <th className="px-5 py-3 font-medium">Amount</th>
+                                        <th className="px-5 py-3 font-medium">Status</th>
+                                        <th className="px-5 py-3 font-medium">Period</th>
                                         <th className="px-5 py-3 font-medium" />
                                     </tr>
                                 </thead>
@@ -562,14 +556,12 @@ export default function AdminSubscriptionsPage() {
                                         >
                                             <td className="px-5 py-4">
                                                 <p className="font-medium">
-                                                    {subscription.user_id
-                                                        ?.username ||
+                                                    {subscription.user_id?.username ||
                                                         "Unknown"}
                                                 </p>
 
                                                 <p className="mt-0.5 text-xs text-muted">
-                                                    {subscription.user_id
-                                                        ?.email || "—"}
+                                                    {subscription.user_id?.email || "—"}
                                                 </p>
                                             </td>
 
@@ -640,22 +632,16 @@ export default function AdminSubscriptionsPage() {
                                 <div className="flex gap-2">
                                     <button
                                         disabled={page === 1}
-                                        onClick={() =>
-                                            setPage((p) => p - 1)
-                                        }
-                                        className="rounded-lg border border-border p-2 disabled:cursor-not-allowed disabled:opacity-40"
+                                        onClick={() => setPage((p) => p - 1)}
+                                        className="rounded-xl border border-border p-2 disabled:cursor-not-allowed disabled:opacity-40"
                                     >
                                         <ChevronLeft className="h-4 w-4" />
                                     </button>
 
                                     <button
-                                        disabled={
-                                            page >= pagination.total_pages
-                                        }
-                                        onClick={() =>
-                                            setPage((p) => p + 1)
-                                        }
-                                        className="rounded-lg border border-border p-2 disabled:cursor-not-allowed disabled:opacity-40"
+                                        disabled={page >= pagination.total_pages}
+                                        onClick={() => setPage((p) => p + 1)}
+                                        className="rounded-xl border border-border p-2 disabled:cursor-not-allowed disabled:opacity-40"
                                     >
                                         <ChevronRight className="h-4 w-4" />
                                     </button>
@@ -668,7 +654,7 @@ export default function AdminSubscriptionsPage() {
 
             {modal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-                    <div className="w-full max-w-lg rounded-xl border border-border bg-surface shadow-2xl">
+                    <div className="w-full max-w-lg rounded-2xl border border-border bg-surface shadow-2xl">
                         <div className="flex items-center justify-between border-b border-border px-5 py-4">
                             <div>
                                 <h2 className="font-semibold">
@@ -684,7 +670,7 @@ export default function AdminSubscriptionsPage() {
 
                             <button
                                 onClick={() => setModal(false)}
-                                className="rounded-lg p-2 hover:bg-surface-secondary"
+                                className="rounded-xl p-2 hover:bg-surface-secondary"
                             >
                                 <X className="h-4 w-4" />
                             </button>
@@ -704,7 +690,7 @@ export default function AdminSubscriptionsPage() {
                                             name: e.target.value,
                                         })
                                     }
-                                    className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+                                    className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                 />
                             </div>
 
@@ -722,7 +708,7 @@ export default function AdminSubscriptionsPage() {
                                         })
                                     }
                                     rows={2}
-                                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
+                                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
                                 />
                             </div>
 
@@ -742,7 +728,7 @@ export default function AdminSubscriptionsPage() {
                                                 price: e.target.value,
                                             })
                                         }
-                                        className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+                                        className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                     />
                                 </div>
 
@@ -759,7 +745,7 @@ export default function AdminSubscriptionsPage() {
                                                 currency: e.target.value,
                                             })
                                         }
-                                        className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm uppercase outline-none focus:border-primary"
+                                        className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm uppercase outline-none focus:border-primary"
                                     />
                                 </div>
                             </div>
@@ -780,7 +766,7 @@ export default function AdminSubscriptionsPage() {
                                                 duration_days: e.target.value,
                                             })
                                         }
-                                        className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+                                        className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                     />
                                 </div>
 
@@ -799,7 +785,7 @@ export default function AdminSubscriptionsPage() {
                                                 token_limit: e.target.value,
                                             })
                                         }
-                                        className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+                                        className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                     />
                                 </div>
                             </div>
@@ -832,15 +818,15 @@ export default function AdminSubscriptionsPage() {
                                                         feature.value,
                                                     )
                                                 }
-                                                className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 text-left text-sm transition ${selected
-                                                    ? "border-primary bg-primary/10 text-primary"
-                                                    : "border-border hover:bg-surface-secondary"
+                                                className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 text-left text-sm transition ${selected
+                                                        ? "border-primary bg-primary/10 text-primary"
+                                                        : "border-border hover:bg-surface-secondary"
                                                     }`}
                                             >
                                                 <span
                                                     className={`flex h-4 w-4 items-center justify-center rounded border ${selected
-                                                        ? "border-primary bg-primary text-primary-foreground"
-                                                        : "border-border"
+                                                            ? "border-primary bg-primary text-primary-foreground"
+                                                            : "border-border"
                                                         }`}
                                                 >
                                                     {selected && (
@@ -872,7 +858,7 @@ export default function AdminSubscriptionsPage() {
                                     placeholder={
                                         "Access to SOMA AI\nCreate AI-assisted medical consultations\nAI-assisted multilingual symptom analysis"
                                     }
-                                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
+                                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
                                 />
 
                                 <p className="mt-1 text-xs text-muted">
@@ -900,7 +886,7 @@ export default function AdminSubscriptionsPage() {
                         <div className="flex justify-end gap-2 border-t border-border px-5 py-4">
                             <button
                                 onClick={() => setModal(false)}
-                                className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-surface-secondary"
+                                className="rounded-xl border border-border px-4 py-2 text-sm font-medium hover:bg-surface-secondary"
                             >
                                 Cancel
                             </button>
@@ -908,15 +894,13 @@ export default function AdminSubscriptionsPage() {
                             <button
                                 disabled={saving}
                                 onClick={savePlan}
-                                className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
+                                className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
                             >
                                 {saving && (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                 )}
 
-                                {editingPlan
-                                    ? "Save Changes"
-                                    : "Create Plan"}
+                                {editingPlan ? "Save Changes" : "Create Plan"}
                             </button>
                         </div>
                     </div>

@@ -14,7 +14,11 @@ export default function NotificationPermissionButton() {
 
     useEffect(() => {
         const checkNotificationState = async () => {
-            if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
+            if (
+                !("Notification" in window) ||
+                !("serviceWorker" in navigator) ||
+                !("PushManager" in window)
+            ) {
                 setPermission("unsupported");
                 return;
             }
@@ -29,6 +33,7 @@ export default function NotificationPermissionButton() {
 
             try {
                 await navigator.serviceWorker.register("/sw.js");
+
                 const registration = await navigator.serviceWorker.ready;
                 const subscription = await registration.pushManager.getSubscription();
 
@@ -45,7 +50,11 @@ export default function NotificationPermissionButton() {
     const enableNotifications = async () => {
         if (loading) return;
 
-        if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
+        if (
+            !("Notification" in window) ||
+            !("serviceWorker" in navigator) ||
+            !("PushManager" in window)
+        ) {
             toast.error("Push notifications are not supported by this browser.");
             setPermission("unsupported");
             return;
@@ -72,15 +81,17 @@ export default function NotificationPermissionButton() {
 
             if (permissionResult !== "granted") {
                 if (permissionResult === "denied") {
-                    toast.error("Notifications are blocked. Please enable them from your browser site settings.");
+                    toast.error(
+                        "Notifications are blocked. Please enable them from your browser site settings.",
+                    );
                 }
 
                 return;
             }
 
-            const registration = await navigator.serviceWorker.register("/sw.js");
-            const readyRegistration = await navigator.serviceWorker.ready;
+            await navigator.serviceWorker.register("/sw.js");
 
+            const readyRegistration = await navigator.serviceWorker.ready;
             let subscription = await readyRegistration.pushManager.getSubscription();
 
             if (!subscription) {
@@ -92,7 +103,11 @@ export default function NotificationPermissionButton() {
 
             const subscriptionJson = subscription.toJSON();
 
-            if (!subscriptionJson.endpoint || !subscriptionJson.keys?.p256dh || !subscriptionJson.keys?.auth) {
+            if (
+                !subscriptionJson.endpoint ||
+                !subscriptionJson.keys?.p256dh ||
+                !subscriptionJson.keys?.auth
+            ) {
                 throw new Error("Invalid push subscription received from browser.");
             }
 
@@ -121,7 +136,12 @@ export default function NotificationPermissionButton() {
             toast.success("Notifications enabled.");
         } catch (error) {
             console.error("Failed to enable notifications:", error);
-            toast.error(error instanceof Error ? error.message : "Failed to enable notifications.");
+
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : "Failed to enable notifications.",
+            );
         } finally {
             setLoading(false);
         }
@@ -165,7 +185,12 @@ export default function NotificationPermissionButton() {
             toast.success("Notifications disabled.");
         } catch (error) {
             console.error("Failed to disable notifications:", error);
-            toast.error(error instanceof Error ? error.message : "Failed to disable notifications.");
+
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : "Failed to disable notifications.",
+            );
         } finally {
             setLoading(false);
         }
@@ -178,11 +203,13 @@ export default function NotificationPermissionButton() {
             <button
                 type="button"
                 onClick={() => {
-                    toast.info("Notifications are blocked. Please enable them from your browser site settings.");
+                    toast.info(
+                        "Notifications are blocked. Please enable them from your browser site settings.",
+                    );
                 }}
-                className="inline-flex items-center gap-2 rounded-lg border border-red-400/30 px-4 py-2.5 text-sm font-medium text-red-400 transition hover:border-red-400/50"
+                className="inline-flex items-center gap-2 rounded-xl border border-danger/30 px-4 py-2.5 text-sm font-medium text-danger transition-colors hover:border-danger/50 hover:bg-danger/5"
             >
-                <BellOff size={16} />
+                <BellOff className="h-4 w-4" />
                 Notifications blocked
             </button>
         );
@@ -191,8 +218,8 @@ export default function NotificationPermissionButton() {
     if (permission === "granted" && subscribed) {
         return (
             <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-                <div className="inline-flex items-center gap-2 rounded-lg border border-success/20 bg-success/5 px-4 py-2.5 text-sm font-medium text-success">
-                    <Check size={16} />
+                <div className="inline-flex items-center gap-2 rounded-xl border border-success/20 bg-success/5 px-4 py-2.5 text-sm font-medium text-success">
+                    <Check className="h-4 w-4" />
                     Notifications enabled
                 </div>
 
@@ -200,9 +227,13 @@ export default function NotificationPermissionButton() {
                     type="button"
                     onClick={disableNotifications}
                     disabled={loading}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted transition hover:border-danger/30 hover:text-danger disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-muted transition-colors hover:border-danger/30 hover:bg-danger/5 hover:text-danger disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                    {loading ? <Loader2 size={16} className="animate-spin" /> : <BellOff size={16} />}
+                    {loading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <BellOff className="h-4 w-4" />
+                    )}
                     {loading ? "Disabling..." : "Disable"}
                 </button>
             </div>
@@ -214,9 +245,13 @@ export default function NotificationPermissionButton() {
             type="button"
             onClick={enableNotifications}
             disabled={loading}
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
-            {loading ? <Loader2 size={16} className="animate-spin" /> : <Bell size={16} />}
+            {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+                <Bell className="h-4 w-4" />
+            )}
             {loading ? "Enabling..." : "Enable notifications"}
         </button>
     );

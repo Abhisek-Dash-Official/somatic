@@ -7,7 +7,6 @@ import {
     CheckCircle2,
     Clock3,
     CreditCard,
-    ExternalLink,
     FileText,
     Loader2,
     User,
@@ -159,9 +158,7 @@ export default function AdminTransactionDetailPage({
                 const result = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(
-                        result.error || "Failed to fetch transaction",
-                    );
+                    throw new Error(result.error || "Failed to fetch transaction");
                 }
 
                 setData(result);
@@ -247,9 +244,7 @@ export default function AdminTransactionDetailPage({
                             </div>
 
                             <div className="min-w-0">
-                                <p className="text-sm font-medium text-primary">
-                                    Finance
-                                </p>
+                                <p className="text-sm font-medium text-primary">Finance</p>
 
                                 <h1 className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">
                                     Transaction Details
@@ -262,7 +257,9 @@ export default function AdminTransactionDetailPage({
                         </div>
 
                         <span
-                            className={`inline-flex w-fit shrink-0 rounded-full px-3 py-1.5 text-xs font-medium ${statusClass[transaction.status] || "bg-surface-secondary text-muted"}`}
+                            className={`inline-flex w-fit shrink-0 rounded-full px-3 py-1.5 text-xs font-medium ${statusClass[transaction.status] ||
+                                "bg-surface-secondary text-muted"
+                                }`}
                         >
                             {formatType(transaction.status)}
                         </span>
@@ -271,7 +268,7 @@ export default function AdminTransactionDetailPage({
 
                 <div className="grid gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(280px,0.8fr)]">
                     <div className="space-y-5">
-                        <section className="rounded-2xl border border-border bg-surface">
+                        <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                             <div className="border-b border-border px-4 py-4 sm:px-5">
                                 <h2 className="font-semibold text-foreground">
                                     Payment Details
@@ -279,17 +276,11 @@ export default function AdminTransactionDetailPage({
                             </div>
 
                             <div className="grid gap-px bg-border sm:grid-cols-2">
-                                <DetailItem
-                                    label="Transaction ID"
-                                    value={transaction._id}
-                                    mono
-                                />
+                                <DetailItem label="Transaction ID" value={transaction._id} mono />
 
                                 <DetailItem
                                     label="Transaction Type"
-                                    value={formatType(
-                                        transaction.transaction_type,
-                                    )}
+                                    value={formatType(transaction.transaction_type)}
                                 />
 
                                 <DetailItem
@@ -332,7 +323,7 @@ export default function AdminTransactionDetailPage({
                             </div>
                         </section>
 
-                        <section className="rounded-2xl border border-border bg-surface">
+                        <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                             <div className="border-b border-border px-4 py-4 sm:px-5">
                                 <h2 className="font-semibold text-foreground">
                                     Gateway Details
@@ -342,17 +333,13 @@ export default function AdminTransactionDetailPage({
                             <div className="grid gap-px bg-border sm:grid-cols-2">
                                 <DetailItem
                                     label="Gateway Order ID"
-                                    value={
-                                        transaction.gateway_order_id || "—"
-                                    }
+                                    value={transaction.gateway_order_id || "—"}
                                     mono
                                 />
 
                                 <DetailItem
                                     label="Gateway Payment ID"
-                                    value={
-                                        transaction.gateway_payment_id || "—"
-                                    }
+                                    value={transaction.gateway_payment_id || "—"}
                                     mono
                                 />
 
@@ -368,7 +355,7 @@ export default function AdminTransactionDetailPage({
                             </div>
                         </section>
 
-                        <section className="rounded-2xl border border-border bg-surface">
+                        <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                             <div className="border-b border-border px-4 py-4 sm:px-5">
                                 <h2 className="font-semibold text-foreground">
                                     Reference
@@ -393,11 +380,13 @@ export default function AdminTransactionDetailPage({
                                             label="Subscription Status"
                                             value={
                                                 <span
-                                                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${subscriptionStatusClass[subscription.status] || "bg-surface-secondary text-muted"}`}
+                                                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${subscriptionStatusClass[
+                                                        subscription.status
+                                                        ] ||
+                                                        "bg-surface-secondary text-muted"
+                                                        }`}
                                                 >
-                                                    {formatType(
-                                                        subscription.status,
-                                                    )}
+                                                    {formatType(subscription.status)}
                                                 </span>
                                             }
                                         />
@@ -413,16 +402,12 @@ export default function AdminTransactionDetailPage({
 
                                         <DetailItem
                                             label="Token Limit"
-                                            value={subscription.token_limit.toLocaleString(
-                                                "en-IN",
-                                            )}
+                                            value={subscription.token_limit.toLocaleString("en-IN")}
                                         />
 
                                         <DetailItem
                                             label="Tokens Used"
-                                            value={subscription.tokens_used.toLocaleString(
-                                                "en-IN",
-                                            )}
+                                            value={subscription.tokens_used.toLocaleString("en-IN")}
                                         />
 
                                         <DetailItem
@@ -437,16 +422,12 @@ export default function AdminTransactionDetailPage({
 
                                         <DetailItem
                                             label="Start Date"
-                                            value={formatDate(
-                                                subscription.start_date,
-                                            )}
+                                            value={formatDate(subscription.start_date)}
                                         />
 
                                         <DetailItem
                                             label="End Date"
-                                            value={formatDate(
-                                                subscription.end_date,
-                                            )}
+                                            value={formatDate(subscription.end_date)}
                                         />
                                     </div>
                                 )}
@@ -454,7 +435,7 @@ export default function AdminTransactionDetailPage({
                         </section>
 
                         {subscription && (
-                            <section className="rounded-2xl border border-border bg-surface">
+                            <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                                 <div className="flex flex-col gap-1 border-b border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
                                     <div>
                                         <h2 className="font-semibold text-foreground">
@@ -462,14 +443,12 @@ export default function AdminTransactionDetailPage({
                                         </h2>
 
                                         <p className="mt-0.5 text-xs text-muted">
-                                            AI activity recorded against this
-                                            subscription.
+                                            AI activity recorded against this subscription.
                                         </p>
                                     </div>
 
                                     <div className="text-sm font-semibold text-primary">
-                                        {totalAiTokens.toLocaleString("en-IN")}{" "}
-                                        tokens
+                                        {totalAiTokens.toLocaleString("en-IN")} tokens
                                     </div>
                                 </div>
 
@@ -491,9 +470,7 @@ export default function AdminTransactionDetailPage({
                                                         </p>
 
                                                         <p className="mt-1 text-lg font-semibold text-foreground">
-                                                            {tokens.toLocaleString(
-                                                                "en-IN",
-                                                            )}
+                                                            {tokens.toLocaleString("en-IN")}
                                                         </p>
 
                                                         <p className="text-xs text-muted">
@@ -508,27 +485,13 @@ export default function AdminTransactionDetailPage({
                                             <table className="min-w-212.5 w-full text-left text-sm">
                                                 <thead className="border-b border-border bg-surface-secondary/60 text-xs uppercase tracking-wide text-muted">
                                                     <tr>
-                                                        <th className="px-5 py-3 font-medium">
-                                                            Feature
-                                                        </th>
-                                                        <th className="px-5 py-3 font-medium">
-                                                            Model
-                                                        </th>
-                                                        <th className="px-5 py-3 font-medium">
-                                                            Prompt
-                                                        </th>
-                                                        <th className="px-5 py-3 font-medium">
-                                                            Completion
-                                                        </th>
-                                                        <th className="px-5 py-3 font-medium">
-                                                            Total
-                                                        </th>
-                                                        <th className="px-5 py-3 font-medium">
-                                                            Response
-                                                        </th>
-                                                        <th className="px-5 py-3 font-medium">
-                                                            Created
-                                                        </th>
+                                                        <th className="px-5 py-3 font-medium">Feature</th>
+                                                        <th className="px-5 py-3 font-medium">Model</th>
+                                                        <th className="px-5 py-3 font-medium">Prompt</th>
+                                                        <th className="px-5 py-3 font-medium">Completion</th>
+                                                        <th className="px-5 py-3 font-medium">Total</th>
+                                                        <th className="px-5 py-3 font-medium">Response</th>
+                                                        <th className="px-5 py-3 font-medium">Created</th>
                                                     </tr>
                                                 </thead>
 
@@ -540,49 +503,40 @@ export default function AdminTransactionDetailPage({
                                                         >
                                                             <td className="px-5 py-4">
                                                                 <span
-                                                                    className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${featureClass[usage.feature] || "bg-surface-secondary text-muted"}`}
+                                                                    className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${featureClass[
+                                                                        usage.feature
+                                                                        ] ||
+                                                                        "bg-surface-secondary text-muted"
+                                                                        }`}
                                                                 >
-                                                                    {formatType(
-                                                                        usage.feature,
-                                                                    )}
+                                                                    {formatType(usage.feature)}
                                                                 </span>
                                                             </td>
 
                                                             <td className="max-w-48 truncate px-5 py-4 font-mono text-xs text-muted">
-                                                                {
-                                                                    usage.ai_model
-                                                                }
+                                                                {usage.ai_model}
                                                             </td>
 
                                                             <td className="px-5 py-4 text-muted">
-                                                                {usage.tokens_prompt.toLocaleString(
-                                                                    "en-IN",
-                                                                )}
+                                                                {usage.tokens_prompt.toLocaleString("en-IN")}
                                                             </td>
 
                                                             <td className="px-5 py-4 text-muted">
-                                                                {usage.tokens_completion.toLocaleString(
-                                                                    "en-IN",
-                                                                )}
+                                                                {usage.tokens_completion.toLocaleString("en-IN")}
                                                             </td>
 
                                                             <td className="px-5 py-4 font-semibold text-foreground">
-                                                                {usage.tokens_total.toLocaleString(
-                                                                    "en-IN",
-                                                                )}
+                                                                {usage.tokens_total.toLocaleString("en-IN")}
                                                             </td>
 
                                                             <td className="px-5 py-4 text-muted">
-                                                                {usage.response_time_sec !=
-                                                                    null
+                                                                {usage.response_time_sec != null
                                                                     ? `${usage.response_time_sec}s`
                                                                     : "—"}
                                                             </td>
 
                                                             <td className="whitespace-nowrap px-5 py-4 text-muted">
-                                                                {formatDate(
-                                                                    usage.created_at,
-                                                                )}
+                                                                {formatDate(usage.created_at)}
                                                             </td>
                                                         </tr>
                                                     ))}
@@ -596,7 +550,7 @@ export default function AdminTransactionDetailPage({
                     </div>
 
                     <aside className="space-y-5">
-                        <section className="rounded-2xl border border-border bg-surface">
+                        <section className="rounded-2xl border border-border bg-surface shadow-sm">
                             <div className="border-b border-border px-4 py-4 sm:px-5">
                                 <h2 className="font-semibold text-foreground">
                                     Customer
@@ -611,15 +565,12 @@ export default function AdminTransactionDetailPage({
 
                                     <div className="min-w-0">
                                         <p className="truncate font-semibold text-foreground">
-                                            {transaction.user_id?.username ||
-                                                "Unknown"}
+                                            {transaction.user_id?.username || "Unknown"}
                                         </p>
 
                                         <p className="truncate text-xs text-muted">
                                             {transaction.user_id?.role
-                                                ? formatType(
-                                                    transaction.user_id.role,
-                                                )
+                                                ? formatType(transaction.user_id.role)
                                                 : "—"}
                                         </p>
                                     </div>
@@ -628,23 +579,18 @@ export default function AdminTransactionDetailPage({
                                 <div className="space-y-3">
                                     <InfoRow
                                         label="Email"
-                                        value={
-                                            transaction.user_id?.email || "—"
-                                        }
+                                        value={transaction.user_id?.email || "—"}
                                     />
 
                                     <InfoRow
                                         label="Contact"
-                                        value={
-                                            transaction.user_id?.contact_no ||
-                                            "—"
-                                        }
+                                        value={transaction.user_id?.contact_no || "—"}
                                     />
                                 </div>
                             </div>
                         </section>
 
-                        <section className="rounded-2xl border border-border bg-surface">
+                        <section className="rounded-2xl border border-border bg-surface shadow-sm">
                             <div className="border-b border-border px-4 py-4 sm:px-5">
                                 <h2 className="font-semibold text-foreground">
                                     Transaction Status
@@ -662,26 +608,21 @@ export default function AdminTransactionDetailPage({
                                     }
                                     title={formatType(transaction.status)}
                                     description={formatDate(
-                                        transaction.updated_at ||
-                                        transaction.created_at,
+                                        transaction.updated_at || transaction.created_at,
                                     )}
                                 />
 
                                 <StatusItem
                                     icon={FileText}
                                     title="Created"
-                                    description={formatDate(
-                                        transaction.created_at,
-                                    )}
+                                    description={formatDate(transaction.created_at)}
                                 />
 
                                 {transaction.paid_at && (
                                     <StatusItem
                                         icon={CheckCircle2}
                                         title="Payment Completed"
-                                        description={formatDate(
-                                            transaction.paid_at,
-                                        )}
+                                        description={formatDate(transaction.paid_at)}
                                     />
                                 )}
 
@@ -689,9 +630,7 @@ export default function AdminTransactionDetailPage({
                                     <StatusItem
                                         icon={XCircle}
                                         title="Payment Failed"
-                                        description={formatDate(
-                                            transaction.failed_at,
-                                        )}
+                                        description={formatDate(transaction.failed_at)}
                                     />
                                 )}
                             </div>
@@ -699,7 +638,7 @@ export default function AdminTransactionDetailPage({
 
                         {subscription?.plan_id &&
                             typeof subscription.plan_id !== "string" && (
-                                <section className="rounded-2xl border border-border bg-surface">
+                                <section className="rounded-2xl border border-border bg-surface shadow-sm">
                                     <div className="border-b border-border px-4 py-4 sm:px-5">
                                         <h2 className="font-semibold text-foreground">
                                             Plan
@@ -713,20 +652,15 @@ export default function AdminTransactionDetailPage({
                                                     subscription.plan_name}
                                             </p>
 
-                                            {subscription.plan_id
-                                                .description && (
-                                                    <p className="mt-1 text-sm text-muted">
-                                                        {
-                                                            subscription.plan_id
-                                                                .description
-                                                        }
-                                                    </p>
-                                                )}
+                                            {subscription.plan_id.description && (
+                                                <p className="mt-1 text-sm text-muted">
+                                                    {subscription.plan_id.description}
+                                                </p>
+                                            )}
                                         </div>
 
                                         {subscription.plan_id.features &&
-                                            subscription.plan_id.features
-                                                .length > 0 && (
+                                            subscription.plan_id.features.length > 0 && (
                                                 <ul className="space-y-2">
                                                     {subscription.plan_id.features.map(
                                                         (feature) => (
@@ -735,9 +669,7 @@ export default function AdminTransactionDetailPage({
                                                                 className="flex items-start gap-2 text-sm text-muted"
                                                             >
                                                                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                                                                <span>
-                                                                    {feature}
-                                                                </span>
+                                                                <span>{feature}</span>
                                                             </li>
                                                         ),
                                                     )}
@@ -770,8 +702,8 @@ function DetailItem({
 
             <div
                 className={`mt-1 wrap-break-word text-sm ${strong
-                    ? "font-semibold text-foreground"
-                    : "text-foreground"
+                        ? "font-semibold text-foreground"
+                        : "text-foreground"
                     } ${mono ? "font-mono text-xs" : ""}`}
             >
                 {value}
@@ -800,7 +732,7 @@ function StatusItem({
 }) {
     return (
         <div className="flex items-start gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-secondary text-primary">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-surface-secondary text-primary">
                 <Icon className="h-4 w-4" />
             </div>
 

@@ -16,15 +16,15 @@ export default function ConfirmModal({ isOpen, title, message, loading, onClose,
 
     return (
         <div className="fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/60 p-4 backdrop-blur-sm fade-in duration-200">
-            <div className="w-full max-w-md space-y-4 rounded-2xl border border-border bg-surface p-6 shadow-2xl">
-                <div className="flex items-center gap-3">
+            <div className="w-full max-w-md space-y-5 rounded-2xl border border-border bg-surface p-6 shadow-2xl">
+                <div className="flex items-start gap-3">
                     <div className="shrink-0 rounded-xl border border-danger/20 bg-danger/10 p-3 text-danger">
-                        <AlertTriangle className="h-6 w-6" />
+                        <AlertTriangle className="h-5 w-5" />
                     </div>
 
-                    <div>
+                    <div className="min-w-0">
                         <h3 className="text-lg font-bold text-foreground">{title}</h3>
-                        <p className="mt-0.5 text-sm text-muted">{message}</p>
+                        <p className="mt-1 text-sm leading-5 text-muted">{message}</p>
                     </div>
                 </div>
 

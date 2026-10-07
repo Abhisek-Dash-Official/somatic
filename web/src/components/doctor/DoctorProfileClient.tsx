@@ -1,20 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUserStore } from "@/store/useUserStore";
 import { toast } from "react-toastify";
 import {
-    User,
-    Phone,
-    MapPin,
-    FileText,
     Award,
-    ShieldCheck,
-    Lock,
-    Loader2,
-    CheckCircle,
     BriefcaseMedical,
+    CheckCircle,
+    FileText,
+    Loader2,
+    Lock,
+    MapPin,
+    Phone,
+    ShieldCheck,
+    User,
 } from "lucide-react";
+import { useUserStore } from "@/store/useUserStore";
 import AvatarSelector from "@/components/profile/AvatarSelector";
 import DeleteAccountSection from "@/components/profile/DeleteAccountSection";
 
@@ -40,10 +40,7 @@ export default function DoctorProfileClient() {
     });
 
     useEffect(() => {
-        if (
-            user &&
-            (user.role === "doctor" || user.role === "assistant_doctor")
-        ) {
+        if (user && (user.role === "doctor" || user.role === "assistant_doctor")) {
             setProfileData({
                 username: user.username || "",
                 contact_no: user.contact_no || "",
@@ -59,14 +56,12 @@ export default function DoctorProfileClient() {
     if (!isFetched) {
         return (
             <div className="flex justify-center py-20">
-                <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
             </div>
         );
     }
 
-    const handleProfileSubmit = async (
-        e: React.SubmitEvent<HTMLFormElement>,
-    ) => {
+    const handleProfileSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoadingProfile(true);
 
@@ -96,16 +91,14 @@ export default function DoctorProfileClient() {
                 const data = await res.json();
                 toast.error(data.error || "Failed to update profile");
             }
-        } catch (error) {
+        } catch {
             toast.error("Network error. Please try again.");
         } finally {
             setLoadingProfile(false);
         }
     };
 
-    const handlePasswordSubmit = async (
-        e: React.SubmitEvent<HTMLFormElement>,
-    ) => {
+    const handlePasswordSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (passwordData.newPassword !== passwordData.confirmPassword) {
@@ -136,7 +129,7 @@ export default function DoctorProfileClient() {
                 const data = await res.json();
                 toast.error(data.error || "Failed to change password");
             }
-        } catch (error) {
+        } catch {
             toast.error("Network error. Please try again.");
         } finally {
             setLoadingPassword(false);
@@ -144,14 +137,14 @@ export default function DoctorProfileClient() {
     };
 
     const inputClass =
-        "w-full bg-surface-secondary border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition";
+        "w-full rounded-xl border border-border bg-surface-secondary py-3 pl-10 pr-4 text-foreground placeholder:text-muted-foreground outline-none transition focus:border-primary/50 focus:ring-4 focus:ring-primary/10";
 
     const passwordInputClass =
-        "w-full bg-surface-secondary border border-border rounded-xl py-3 px-4 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition";
+        "w-full rounded-xl border border-border bg-surface-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground outline-none transition focus:border-primary/50 focus:ring-4 focus:ring-primary/10";
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 max-w-4xl mx-auto">
-            <div className="rounded-xl border border-border bg-surface p-8 flex flex-col md:flex-row items-center gap-6">
+        <div className="mx-auto max-w-4xl space-y-6">
+            <div className="flex flex-col items-center gap-6 rounded-2xl border border-border bg-surface p-6 sm:p-8 md:flex-row">
                 <div className="shrink-0">
                     <AvatarSelector
                         currentAvatarId={profileData.avatar_id}
@@ -166,172 +159,142 @@ export default function DoctorProfileClient() {
                 </div>
 
                 <div className="text-center md:text-left">
-                    <h1 className="text-3xl font-bold text-foreground mb-2">
+                    <h1 className="text-2xl font-semibold text-foreground sm:text-3xl">
                         Dr. {profileData.username || "Profile"}
                     </h1>
 
-                    <p className="text-muted flex items-center justify-center md:justify-start gap-2 capitalize">
+                    <p className="mt-2 flex items-center justify-center gap-2 text-sm capitalize text-muted md:justify-start">
                         <ShieldCheck className="h-4 w-4 text-primary" />
                         Verified Medical Professional
                     </p>
                 </div>
             </div>
 
-            <div className="bg-surface border border-border rounded-xl p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-6 border-b border-border pb-4">
-                    <BriefcaseMedical className="w-6 h-6 text-primary" />
-                    <h2 className="text-xl font-bold text-foreground">
-                        Professional Details
-                    </h2>
+            <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
+                <div className="mb-6 flex items-center gap-3 border-b border-border pb-4">
+                    <BriefcaseMedical className="h-6 w-6 text-primary" />
+                    <h2 className="text-xl font-semibold text-foreground">Professional Details</h2>
                 </div>
 
                 <form onSubmit={handleProfileSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-1">
-                            <label className="text-sm font-medium text-muted">
-                                Username
-                            </label>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <ProfileField label="Username" icon={<User className="h-5 w-5" />}>
+                            <input
+                                type="text"
+                                required
+                                value={profileData.username}
+                                onChange={(e) =>
+                                    setProfileData({
+                                        ...profileData,
+                                        username: e.target.value,
+                                    })
+                                }
+                                className={inputClass}
+                            />
+                        </ProfileField>
 
-                            <div className="relative">
-                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                <input
-                                    type="text"
-                                    required
-                                    value={profileData.username}
-                                    onChange={(e) =>
-                                        setProfileData({
-                                            ...profileData,
-                                            username: e.target.value,
-                                        })
-                                    }
-                                    className={inputClass}
-                                />
-                            </div>
-                        </div>
+                        <ProfileField label="Contact Number" icon={<Phone className="h-5 w-5" />}>
+                            <input
+                                type="text"
+                                required
+                                value={profileData.contact_no}
+                                onChange={(e) =>
+                                    setProfileData({
+                                        ...profileData,
+                                        contact_no: e.target.value,
+                                    })
+                                }
+                                className={inputClass}
+                            />
+                        </ProfileField>
 
-                        <div className="space-y-1">
-                            <label className="text-sm font-medium text-muted">
-                                Contact Number
-                            </label>
+                        <ProfileField
+                            label="Clinic / Hospital Address"
+                            icon={<MapPin className="h-5 w-5" />}
+                            className="md:col-span-2"
+                            iconClass="top-4 -translate-y-0"
+                        >
+                            <textarea
+                                rows={2}
+                                required
+                                value={profileData.address}
+                                onChange={(e) =>
+                                    setProfileData({
+                                        ...profileData,
+                                        address: e.target.value,
+                                    })
+                                }
+                                className={`${inputClass} resize-none`}
+                            />
+                        </ProfileField>
 
-                            <div className="relative">
-                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                <input
-                                    type="text"
-                                    required
-                                    value={profileData.contact_no}
-                                    onChange={(e) =>
-                                        setProfileData({
-                                            ...profileData,
-                                            contact_no: e.target.value,
-                                        })
-                                    }
-                                    className={inputClass}
-                                />
-                            </div>
-                        </div>
+                        <ProfileField
+                            label="Medical Registration No."
+                            icon={<FileText className="h-5 w-5" />}
+                        >
+                            <input
+                                type="text"
+                                required
+                                value={profileData.reg_no}
+                                onChange={(e) =>
+                                    setProfileData({
+                                        ...profileData,
+                                        reg_no: e.target.value,
+                                    })
+                                }
+                                className={inputClass}
+                            />
+                        </ProfileField>
 
-                        <div className="space-y-1 md:col-span-2">
-                            <label className="text-sm font-medium text-muted">
-                                Clinic / Hospital Address
-                            </label>
+                        <ProfileField
+                            label="Qualifications"
+                            icon={<Award className="h-5 w-5" />}
+                        >
+                            <input
+                                type="text"
+                                required
+                                value={profileData.qualification}
+                                onChange={(e) =>
+                                    setProfileData({
+                                        ...profileData,
+                                        qualification: e.target.value,
+                                    })
+                                }
+                                className={inputClass}
+                                placeholder="e.g. MBBS, MD (Medicine)"
+                            />
+                        </ProfileField>
 
-                            <div className="relative">
-                                <MapPin className="absolute left-3 top-4 w-5 h-5 text-muted-foreground" />
-                                <textarea
-                                    rows={2}
-                                    required
-                                    value={profileData.address}
-                                    onChange={(e) =>
-                                        setProfileData({
-                                            ...profileData,
-                                            address: e.target.value,
-                                        })
-                                    }
-                                    className={`${inputClass} pl-10 custom-scrollbar`}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-1">
-                            <label className="text-sm font-medium text-muted">
-                                Medical Registration No.
-                            </label>
-
-                            <div className="relative">
-                                <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                <input
-                                    type="text"
-                                    required
-                                    value={profileData.reg_no}
-                                    onChange={(e) =>
-                                        setProfileData({
-                                            ...profileData,
-                                            reg_no: e.target.value,
-                                        })
-                                    }
-                                    className={inputClass}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-1">
-                            <label className="text-sm font-medium text-muted">
-                                Qualifications
-                            </label>
-
-                            <div className="relative">
-                                <Award className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                <input
-                                    type="text"
-                                    required
-                                    value={profileData.qualification}
-                                    onChange={(e) =>
-                                        setProfileData({
-                                            ...profileData,
-                                            qualification: e.target.value,
-                                        })
-                                    }
-                                    className={inputClass}
-                                    placeholder="e.g. MBBS, MD (Medicine)"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-1">
-                            <label className="text-sm font-medium text-muted">
-                                Experience (Years)
-                            </label>
-
-                            <div className="relative">
-                                <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                <input
-                                    type="number"
-                                    min="0"
-                                    required
-                                    value={profileData.experience}
-                                    onChange={(e) =>
-                                        setProfileData({
-                                            ...profileData,
-                                            experience: Number(e.target.value),
-                                        })
-                                    }
-                                    className={inputClass}
-                                />
-                            </div>
-                        </div>
+                        <ProfileField
+                            label="Experience (Years)"
+                            icon={<ShieldCheck className="h-5 w-5" />}
+                        >
+                            <input
+                                type="number"
+                                min="0"
+                                required
+                                value={profileData.experience}
+                                onChange={(e) =>
+                                    setProfileData({
+                                        ...profileData,
+                                        experience: Number(e.target.value),
+                                    })
+                                }
+                                className={inputClass}
+                            />
+                        </ProfileField>
                     </div>
 
-                    <div className="flex justify-end pt-4 border-t border-border">
+                    <div className="flex justify-end border-t border-border pt-4">
                         <button
                             type="submit"
                             disabled={loadingProfile}
-                            className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold transition disabled:opacity-50"
+                            className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:opacity-50"
                         >
                             {loadingProfile ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <Loader2 className="h-5 w-5 animate-spin" />
                             ) : (
-                                <CheckCircle className="w-5 h-5" />
+                                <CheckCircle className="h-5 w-5" />
                             )}
                             Save Profile
                         </button>
@@ -339,16 +302,16 @@ export default function DoctorProfileClient() {
                 </form>
             </div>
 
-            <div className="bg-surface border border-border rounded-xl p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-6 border-b border-border pb-4">
-                    <Lock className="w-6 h-6 text-danger" />
-                    <h2 className="text-xl font-bold text-foreground">
+            <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
+                <div className="mb-6 flex items-center gap-3 border-b border-border pb-4">
+                    <Lock className="h-6 w-6 text-danger" />
+                    <h2 className="text-xl font-semibold text-foreground">
                         Security & Password
                     </h2>
                 </div>
 
                 <form onSubmit={handlePasswordSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div className="space-y-1 md:col-span-2">
                             <label className="text-sm font-medium text-muted">
                                 Current Password
@@ -416,10 +379,10 @@ export default function DoctorProfileClient() {
                         <button
                             type="submit"
                             disabled={loadingPassword}
-                            className="flex items-center gap-2 bg-surface-secondary hover:bg-danger/10 hover:text-danger hover:border-danger/20 border border-border text-muted px-6 py-3 rounded-xl font-bold transition disabled:opacity-50"
+                            className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-secondary px-6 py-3 font-semibold text-muted transition hover:border-danger/20 hover:bg-danger/10 hover:text-danger disabled:opacity-50"
                         >
                             {loadingPassword ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <Loader2 className="h-5 w-5 animate-spin" />
                             ) : (
                                 "Update Password"
                             )}
@@ -429,6 +392,35 @@ export default function DoctorProfileClient() {
             </div>
 
             <DeleteAccountSection />
+        </div>
+    );
+}
+
+function ProfileField({
+    label,
+    icon,
+    children,
+    className = "",
+    iconClass = "",
+}: {
+    label: string;
+    icon: React.ReactNode;
+    children: React.ReactNode;
+    className?: string;
+    iconClass?: string;
+}) {
+    return (
+        <div className={`space-y-1 ${className}`}>
+            <label className="text-sm font-medium text-muted">{label}</label>
+
+            <div className="relative">
+                <span
+                    className={`absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground ${iconClass}`}
+                >
+                    {icon}
+                </span>
+                {children}
+            </div>
         </div>
     );
 }

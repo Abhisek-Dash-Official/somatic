@@ -1,7 +1,21 @@
 "use client";
 
 import { ChangeEvent, DragEvent, ReactNode, useState } from "react";
-import { AlertCircle, ArrowRight, CheckCircle2, ClipboardList, FileText, HeartPulse, Info, Sparkles, Stethoscope, Upload, ShieldCheck, X, Loader2 } from "lucide-react";
+import {
+    AlertCircle,
+    ArrowRight,
+    CheckCircle2,
+    ClipboardList,
+    FileText,
+    HeartPulse,
+    Info,
+    Sparkles,
+    Stethoscope,
+    Upload,
+    ShieldCheck,
+    X,
+    Loader2,
+} from "lucide-react";
 
 type FindingStatus = "low" | "high" | "normal" | "critical" | "unknown";
 type Urgency = "routine" | "follow_up" | "prompt" | "urgent" | "emergency";
@@ -86,9 +100,7 @@ export default function ReportsPage() {
 
         const droppedFile = event.dataTransfer.files?.[0];
 
-        if (droppedFile) {
-            validateFile(droppedFile);
-        }
+        if (droppedFile) validateFile(droppedFile);
     };
 
     const removeFile = () => {
@@ -116,12 +128,20 @@ export default function ReportsPage() {
             const result = await response.json();
 
             if (!response.ok) {
-                throw new Error(result?.error || result?.detail || "Failed to analyze the medical report.");
+                throw new Error(
+                    result?.error ||
+                    result?.detail ||
+                    "Failed to analyze the medical report."
+                );
             }
 
             setAnalysis(result.data || result);
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Something went wrong while analyzing the report.");
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Something went wrong while analyzing the report."
+            );
         } finally {
             setIsAnalyzing(false);
         }
@@ -133,7 +153,7 @@ export default function ReportsPage() {
                 {!analysis && (
                     <>
                         <section className="mb-8">
-                            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400">
+                            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">
                                 <Sparkles className="h-3.5 w-3.5" />
                                 AI Medical Report Analysis
                             </div>
@@ -142,14 +162,14 @@ export default function ReportsPage() {
                                 Understand your medical report
                             </h1>
 
-                            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+                            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted sm:text-base">
                                 Upload a medical report and SOMATIC will organize the findings,
                                 explain medical terms, and highlight points you may want to
                                 discuss with your doctor.
                             </p>
                         </section>
 
-                        <section className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
+                        <section className="rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-6">
                             {!file ? (
                                 <div
                                     onDragOver={(event) => {
@@ -159,8 +179,8 @@ export default function ReportsPage() {
                                     onDragLeave={() => setIsDragging(false)}
                                     onDrop={handleDrop}
                                     className={`relative flex min-h-80 flex-col items-center justify-center rounded-xl border-2 border-dashed px-5 text-center transition ${isDragging
-                                        ? "border-emerald-500 bg-emerald-500/5"
-                                        : "border-border hover:border-emerald-500/40"
+                                            ? "border-primary bg-primary/5"
+                                            : "border-border hover:border-primary/40"
                                         }`}
                                 >
                                     <input
@@ -171,8 +191,11 @@ export default function ReportsPage() {
                                         className="sr-only"
                                     />
 
-                                    <label htmlFor="report-file" className="flex cursor-pointer flex-col items-center">
-                                        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400">
+                                    <label
+                                        htmlFor="report-file"
+                                        className="flex cursor-pointer flex-col items-center"
+                                    >
+                                        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                                             <Upload className="h-7 w-7" />
                                         </div>
 
@@ -180,24 +203,24 @@ export default function ReportsPage() {
                                             Upload your medical report
                                         </h2>
 
-                                        <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+                                        <p className="mt-2 max-w-md text-sm leading-6 text-muted">
                                             Drag and drop your file here, or click to browse from
                                             your device.
                                         </p>
 
-                                        <span className="mt-4 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-600">
+                                        <span className="mt-4 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover">
                                             Choose file
                                         </span>
 
-                                        <p className="mt-4 text-xs text-muted-foreground">
-                                            PDF, JPG, PNG or WEBP · Maximum 20 MB
+                                        <p className="mt-4 text-xs text-muted">
+                                            PDF, JPG, PNG or WEBP · Maximum 10 MB
                                         </p>
                                     </label>
                                 </div>
                             ) : (
                                 <div className="rounded-xl border border-border bg-background p-4 sm:p-5">
                                     <div className="flex items-start gap-4">
-                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                                             <FileText className="h-6 w-6" />
                                         </div>
 
@@ -206,7 +229,7 @@ export default function ReportsPage() {
                                                 {file.name}
                                             </p>
 
-                                            <p className="mt-1 text-xs text-muted-foreground">
+                                            <p className="mt-1 text-xs text-muted">
                                                 {formatFileSize(file.size)} ·{" "}
                                                 {file.type === "application/pdf"
                                                     ? "PDF document"
@@ -217,7 +240,7 @@ export default function ReportsPage() {
                                         <button
                                             type="button"
                                             onClick={removeFile}
-                                            className="rounded-lg p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                                            className="rounded-xl p-2 text-muted transition-colors hover:bg-surface-secondary hover:text-foreground"
                                             aria-label="Remove file"
                                         >
                                             <X className="h-4 w-4" />
@@ -228,7 +251,7 @@ export default function ReportsPage() {
                                         <button
                                             type="button"
                                             onClick={removeFile}
-                                            className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium transition hover:bg-muted"
+                                            className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-surface-secondary"
                                         >
                                             Choose another
                                         </button>
@@ -237,7 +260,7 @@ export default function ReportsPage() {
                                             type="button"
                                             onClick={analyzeReport}
                                             disabled={isAnalyzing}
-                                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
+                                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
                                         >
                                             {isAnalyzing ? (
                                                 <>
@@ -256,9 +279,9 @@ export default function ReportsPage() {
                             )}
 
                             <div className="mt-5 flex items-start gap-3 rounded-xl border border-border bg-background p-4">
-                                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
 
-                                <p className="text-xs leading-5 text-muted-foreground">
+                                <p className="text-xs leading-5 text-muted">
                                     Your report is analyzed to provide educational insights.
                                     SOMATIC does not replace a qualified healthcare professional
                                     or provide a definitive diagnosis.
@@ -269,15 +292,15 @@ export default function ReportsPage() {
                 )}
 
                 {error && (
-                    <div className="mt-4 flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-400">
+                    <div className="mt-4 flex items-start gap-3 rounded-xl border border-danger/20 bg-danger/5 p-4 text-sm text-danger">
                         <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                         <span>{error}</span>
                     </div>
                 )}
 
                 {isAnalyzing && (
-                    <section className="mt-6 rounded-2xl border border-border bg-card p-8 text-center sm:p-12">
-                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400">
+                    <section className="mt-6 rounded-2xl border border-border bg-surface p-8 text-center sm:p-12">
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                             <HeartPulse className="h-7 w-7 animate-pulse" />
                         </div>
 
@@ -285,13 +308,13 @@ export default function ReportsPage() {
                             Analyzing your report
                         </h2>
 
-                        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+                        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">
                             SOMATIC is reading the report and organizing the relevant
                             findings. This may take a moment.
                         </p>
 
-                        <div className="mx-auto mt-6 h-1.5 max-w-xs overflow-hidden rounded-full bg-muted">
-                            <div className="h-full w-1/2 animate-pulse rounded-full bg-emerald-500" />
+                        <div className="mx-auto mt-6 h-1.5 max-w-xs overflow-hidden rounded-full bg-surface-secondary">
+                            <div className="h-full w-1/2 animate-pulse rounded-full bg-primary" />
                         </div>
                     </section>
                 )}
@@ -315,7 +338,7 @@ function ReportResults({
         <section className="space-y-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <div className="mb-2 inline-flex items-center gap-2 text-xs font-medium text-emerald-400">
+                    <div className="mb-2 inline-flex items-center gap-2 text-xs font-medium text-primary">
                         <CheckCircle2 className="h-4 w-4" />
                         Analysis complete
                     </div>
@@ -324,7 +347,7 @@ function ReportResults({
                         Report insights
                     </h2>
 
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-1 text-sm text-muted">
                         {analysis.file_name || "Medical report"}
                     </p>
                 </div>
@@ -332,7 +355,7 @@ function ReportResults({
                 <button
                     type="button"
                     onClick={onNewReport}
-                    className="inline-flex w-fit items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium transition hover:bg-muted"
+                    className="inline-flex w-fit items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-surface-secondary"
                 >
                     <Upload className="h-4 w-4" />
                     Analyze another
@@ -340,14 +363,14 @@ function ReportResults({
             </div>
 
             <div className="grid gap-5 lg:grid-cols-[1.4fr_0.6fr]">
-                <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+                <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                             <FileText className="h-5 w-5" />
                         </div>
 
                         <div>
-                            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                            <p className="text-xs font-medium uppercase tracking-wider text-muted">
                                 Report type
                             </p>
 
@@ -360,7 +383,7 @@ function ReportResults({
                     <div className="mt-6">
                         <h3 className="text-base font-semibold">Overall summary</h3>
 
-                        <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                        <p className="mt-3 text-sm leading-7 text-muted">
                             {analysis.overall_summary}
                         </p>
                     </div>
@@ -370,7 +393,7 @@ function ReportResults({
             </div>
 
             {analysis.abnormal_findings?.length > 0 && (
-                <section className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+                <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
                     <SectionHeader
                         icon={<AlertCircle className="h-5 w-5" />}
                         title="Abnormal findings"
@@ -381,29 +404,29 @@ function ReportResults({
                         {analysis.abnormal_findings.map((finding, index) => (
                             <div
                                 key={`${finding.finding}-${index}`}
-                                className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4"
+                                className="rounded-xl border border-warning/20 bg-warning/5 p-4"
                             >
                                 <div className="flex items-start justify-between gap-3">
                                     <h4 className="text-sm font-semibold">
                                         {finding.finding}
                                     </h4>
 
-                                    <span className="shrink-0 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-400">
+                                    <span className="shrink-0 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning">
                                         Review
                                     </span>
                                 </div>
 
-                                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                                <p className="mt-2 text-sm leading-6 text-muted">
                                     {finding.explanation}
                                 </p>
 
                                 {finding.possible_significance && (
-                                    <div className="mt-3 rounded-lg border border-border bg-background p-3">
+                                    <div className="mt-3 rounded-xl border border-border bg-background p-3">
                                         <p className="text-xs font-medium text-foreground">
                                             Possible significance
                                         </p>
 
-                                        <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                                        <p className="mt-1 text-xs leading-5 text-muted">
                                             {finding.possible_significance}
                                         </p>
                                     </div>
@@ -424,7 +447,7 @@ function ReportResults({
             )}
 
             {analysis.key_findings?.length > 0 && (
-                <section className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+                <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
                     <SectionHeader
                         icon={<ClipboardList className="h-5 w-5" />}
                         title="Key findings"
@@ -432,7 +455,7 @@ function ReportResults({
                     />
 
                     <div className="mt-5 overflow-hidden rounded-xl border border-border">
-                        <div className="hidden grid-cols-[1.3fr_1fr_1fr_0.8fr] border-b border-border bg-muted/40 px-4 py-3 text-xs font-medium text-muted-foreground sm:grid">
+                        <div className="hidden grid-cols-[1.3fr_1fr_1fr_0.8fr] border-b border-border bg-surface-secondary px-4 py-3 text-xs font-medium text-muted sm:grid">
                             <span>Test</span>
                             <span>Result</span>
                             <span>Reference range</span>
@@ -448,7 +471,7 @@ function ReportResults({
                                     <div>
                                         <p className="text-sm font-medium">{finding.test}</p>
 
-                                        <p className="mt-1 text-xs leading-5 text-muted-foreground sm:hidden">
+                                        <p className="mt-1 text-xs leading-5 text-muted sm:hidden">
                                             {finding.explanation}
                                         </p>
                                     </div>
@@ -457,13 +480,13 @@ function ReportResults({
                                         {finding.value} {finding.unit || ""}
                                     </p>
 
-                                    <p className="text-sm text-muted-foreground">
+                                    <p className="text-sm text-muted">
                                         {finding.reference_range || "Not provided"}
                                     </p>
 
                                     <StatusBadge status={finding.status} />
 
-                                    <p className="hidden text-xs leading-5 text-muted-foreground sm:col-span-4 sm:block">
+                                    <p className="hidden text-xs leading-5 text-muted sm:col-span-4 sm:block">
                                         {finding.explanation}
                                     </p>
                                 </div>
@@ -512,9 +535,9 @@ function ReportResults({
             </div>
 
             {analysis.limitations?.length > 0 && (
-                <section className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+                <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
                     <div className="flex items-start gap-3">
-                        <Info className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
+                        <Info className="mt-0.5 h-5 w-5 shrink-0 text-muted" />
 
                         <div>
                             <h3 className="text-sm font-semibold">Important</h3>
@@ -523,14 +546,14 @@ function ReportResults({
                                 {analysis.limitations.map((limitation, index) => (
                                     <li
                                         key={index}
-                                        className="text-xs leading-6 text-muted-foreground"
+                                        className="text-xs leading-6 text-muted"
                                     >
                                         • {limitation}
                                     </li>
                                 ))}
                             </ul>
 
-                            <p className="mt-4 border-t border-border pt-4 text-xs leading-6 text-muted-foreground">
+                            <p className="mt-4 border-t border-border pt-4 text-xs leading-6 text-muted">
                                 {analysis.disclaimer ||
                                     "This analysis is educational and does not replace evaluation or treatment from a qualified healthcare professional."}
                             </p>
@@ -541,9 +564,11 @@ function ReportResults({
 
             {(analysis.tokens_total !== undefined ||
                 analysis.response_time_sec !== undefined) && (
-                    <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
+                    <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-[11px] text-muted">
                         {analysis.tokens_total !== undefined && (
-                            <span>{analysis.tokens_total.toLocaleString()} AI tokens used</span>
+                            <span>
+                                {analysis.tokens_total.toLocaleString()} AI tokens used
+                            </span>
                         )}
 
                         {analysis.response_time_sec !== undefined &&
@@ -561,32 +586,32 @@ function UrgencyCard({ urgency }: { urgency: Urgency }) {
         routine: {
             label: "Routine",
             text: "No immediate concern identified from the report alone.",
-            className: "border-emerald-500/20 bg-emerald-500/5 text-emerald-400",
+            className: "border-success/20 bg-success/5 text-success",
         },
         follow_up: {
             label: "Follow-up",
             text: "Consider discussing the findings at your next appointment.",
-            className: "border-blue-500/20 bg-blue-500/5 text-blue-400",
+            className: "border-primary/20 bg-primary/5 text-primary",
         },
         prompt: {
             label: "Prompt review",
             text: "Consider contacting a healthcare professional soon.",
-            className: "border-amber-500/20 bg-amber-500/5 text-amber-400",
+            className: "border-warning/20 bg-warning/5 text-warning",
         },
         urgent: {
             label: "Urgent",
             text: "Seek appropriate medical attention promptly.",
-            className: "border-red-500/20 bg-red-500/5 text-red-400",
+            className: "border-danger/20 bg-danger/5 text-danger",
         },
         emergency: {
             label: "Emergency",
             text: "This report indicates a potentially serious situation requiring immediate medical attention.",
-            className: "border-red-500/20 bg-red-500/5 text-red-400",
+            className: "border-danger/20 bg-danger/5 text-danger",
         },
     }[urgency] || {
         label: "Review",
         text: "Discuss the report with a healthcare professional.",
-        className: "border-border bg-card text-foreground",
+        className: "border-border bg-surface text-foreground",
     };
 
     return (
@@ -600,7 +625,6 @@ function UrgencyCard({ urgency }: { urgency: Urgency }) {
             </div>
 
             <p className="mt-4 text-xl font-semibold">{config.label}</p>
-
             <p className="mt-2 text-sm leading-6 opacity-80">{config.text}</p>
         </div>
     );
@@ -618,16 +642,13 @@ function InsightList({
     items: string[];
 }) {
     return (
-        <section className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+        <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
             <div className="flex items-start gap-3">
-                <div className="mt-0.5 text-emerald-400">{icon}</div>
+                <div className="mt-0.5 text-primary">{icon}</div>
 
                 <div>
                     <h3 className="text-base font-semibold">{title}</h3>
-
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        {description}
-                    </p>
+                    <p className="mt-1 text-sm text-muted">{description}</p>
                 </div>
             </div>
 
@@ -635,9 +656,9 @@ function InsightList({
                 {items.map((item, index) => (
                     <li
                         key={index}
-                        className="flex gap-3 text-sm leading-6 text-muted-foreground"
+                        className="flex gap-3 text-sm leading-6 text-muted"
                     >
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                         <span>{item}</span>
                     </li>
                 ))}
@@ -657,12 +678,11 @@ function SectionHeader({
 }) {
     return (
         <div className="flex items-start gap-3">
-            <div className="mt-0.5 text-emerald-400">{icon}</div>
+            <div className="mt-0.5 text-primary">{icon}</div>
 
             <div>
                 <h3 className="text-base font-semibold">{title}</h3>
-
-                <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+                <p className="mt-1 text-sm text-muted">{description}</p>
             </div>
         </div>
     );
@@ -670,11 +690,11 @@ function SectionHeader({
 
 function StatusBadge({ status }: { status: FindingStatus }) {
     const config = {
-        low: "bg-amber-500/10 text-amber-400",
-        high: "bg-amber-500/10 text-amber-400",
-        normal: "bg-emerald-500/10 text-emerald-400",
-        critical: "bg-red-500/10 text-red-400",
-        unknown: "bg-muted text-muted-foreground",
+        low: "bg-warning/10 text-warning",
+        high: "bg-warning/10 text-warning",
+        normal: "bg-success/10 text-success",
+        critical: "bg-danger/10 text-danger",
+        unknown: "bg-surface-secondary text-muted",
     }[status];
 
     return (

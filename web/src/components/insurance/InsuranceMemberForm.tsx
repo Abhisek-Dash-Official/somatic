@@ -35,29 +35,46 @@ export default function InsuranceMemberForm({
         value: string
     ) => {
         const updated = [...members];
-        updated[index] = { ...updated[index], [field]: value };
+
+        updated[index] = {
+            ...updated[index],
+            [field]: value,
+        };
+
         onChange(updated);
     };
 
     const addMember = () => {
         onChange([
             ...members,
-            { name: "", relationship: "other", date_of_birth: "" },
+            {
+                name: "",
+                relationship: "other",
+                date_of_birth: "",
+            },
         ]);
     };
 
     const removeMember = (index: number) => {
-        if (members.length === 1) return;
-        onChange(members.filter((_, memberIndex) => memberIndex !== index));
+        if (members.length <= 1) return;
+
+        onChange(
+            members.filter(
+                (_, memberIndex) => memberIndex !== index
+            )
+        );
     };
 
     return (
         <div className="space-y-5">
             {members.map((member, index) => (
-                <div key={index} className="rounded-xl border border-border bg-surface-secondary p-5">
+                <div
+                    key={index}
+                    className="rounded-2xl border border-border bg-surface-secondary p-5"
+                >
                     <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-primary">
                                 <UserRound size={18} />
                             </div>
 
@@ -65,7 +82,8 @@ export default function InsuranceMemberForm({
                                 <h3 className="text-sm font-semibold text-foreground">
                                     Insured Member {index + 1}
                                 </h3>
-                                <p className="text-xs text-muted-foreground">
+
+                                <p className="text-xs text-muted">
                                     {index === 0
                                         ? "Primary insured member"
                                         : "Additional family member"}
@@ -76,8 +94,10 @@ export default function InsuranceMemberForm({
                         {members.length > 1 && (
                             <button
                                 type="button"
-                                onClick={() => removeMember(index)}
-                                className="rounded-lg p-2 text-muted-foreground transition hover:bg-danger/10 hover:text-danger"
+                                onClick={() =>
+                                    removeMember(index)
+                                }
+                                className="rounded-xl p-2 text-muted transition hover:bg-danger/10 hover:text-danger"
                             >
                                 <Trash2 size={17} />
                             </button>
@@ -95,10 +115,14 @@ export default function InsuranceMemberForm({
                                 value={member.name}
                                 required
                                 onChange={(event) =>
-                                    updateMember(index, "name", event.target.value)
+                                    updateMember(
+                                        index,
+                                        "name",
+                                        event.target.value
+                                    )
                                 }
                                 placeholder="Enter full name"
-                                className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
                             />
                         </div>
 
@@ -117,14 +141,23 @@ export default function InsuranceMemberForm({
                                         event.target.value
                                     )
                                 }
-                                className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
                             >
-                                {relationships.map((relationship) => (
-                                    <option key={relationship} value={relationship}>
-                                        {relationship.charAt(0).toUpperCase() +
-                                            relationship.slice(1)}
-                                    </option>
-                                ))}
+                                {relationships.map(
+                                    (relationship) => (
+                                        <option
+                                            key={relationship}
+                                            value={relationship}
+                                        >
+                                            {relationship
+                                                .charAt(0)
+                                                .toUpperCase() +
+                                                relationship.slice(
+                                                    1
+                                                )}
+                                        </option>
+                                    )
+                                )}
                             </select>
                         </div>
 
@@ -144,7 +177,7 @@ export default function InsuranceMemberForm({
                                         event.target.value
                                     )
                                 }
-                                className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+                                className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
                             />
                         </div>
                     </div>
@@ -154,7 +187,7 @@ export default function InsuranceMemberForm({
             <button
                 type="button"
                 onClick={addMember}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border px-4 py-3 text-sm font-medium text-muted transition hover:border-primary/50 hover:bg-accent hover:text-primary"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border px-4 py-3 text-sm font-medium text-muted transition hover:border-primary/50 hover:bg-accent hover:text-primary"
             >
                 <Plus size={18} />
                 Add Family Member

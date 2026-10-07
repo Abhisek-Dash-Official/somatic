@@ -3,7 +3,17 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Script from "next/script";
-import { ArrowLeft, CheckCircle2, Loader2, MapPin, ShieldCheck, ShoppingBag, Truck, WalletCards, PackageCheck } from "lucide-react";
+import {
+    ArrowLeft,
+    CheckCircle2,
+    Loader2,
+    MapPin,
+    PackageCheck,
+    ShieldCheck,
+    ShoppingBag,
+    Truck,
+    WalletCards,
+} from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 
 declare global {
@@ -86,12 +96,7 @@ export default function PaymentPage() {
             return false;
         }
 
-        if (
-            !address.street.trim() ||
-            !address.city.trim() ||
-            !address.state.trim() ||
-            !address.pincode.trim()
-        ) {
+        if (!address.street.trim() || !address.city.trim() || !address.state.trim() || !address.pincode.trim()) {
             setError("Please complete your delivery address.");
             return false;
         }
@@ -113,12 +118,8 @@ export default function PaymentPage() {
 
         const createResponse = await fetch("/api/shop/payment/create-order", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                shipping_address: address,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ shipping_address: address }),
         });
 
         const createData = await createResponse.json();
@@ -138,16 +139,12 @@ export default function PaymentPage() {
             name: "SOMATIC",
             description: "Healthcare Shop Order",
             order_id: razorpay_order_id,
-            theme: {
-                color: "#08a9b5",
-            },
+            theme: { color: "#08a9b5" },
             handler: async function (response: any) {
                 try {
                     const verifyResponse = await fetch("/api/shop/payment/verify", {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
+                        headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                             order_id,
                             razorpay_order_id: response.razorpay_order_id,
@@ -159,18 +156,13 @@ export default function PaymentPage() {
                     const verifyData = await verifyResponse.json();
 
                     if (!verifyResponse.ok) {
-                        throw new Error(
-                            verifyData.error || "Payment verification failed.",
-                        );
+                        throw new Error(verifyData.error || "Payment verification failed.");
                     }
 
                     setSuccessOrder(verifyData.order);
                     setIsProcessing(false);
                 } catch (verificationError: any) {
-                    setError(
-                        verificationError.message ||
-                        "Payment verification failed.",
-                    );
+                    setError(verificationError.message || "Payment verification failed.");
                     setIsProcessing(false);
                 }
             },
@@ -194,11 +186,7 @@ export default function PaymentPage() {
         razorpay.on("payment.failed", function (response: any) {
             console.error("Razorpay payment failed:", response);
 
-            setError(
-                response?.error?.description ||
-                "Payment failed. Please try again.",
-            );
-
+            setError(response?.error?.description || "Payment failed. Please try again.");
             setIsProcessing(false);
         });
 
@@ -208,12 +196,8 @@ export default function PaymentPage() {
     const handleCOD = async () => {
         const response = await fetch("/api/shop/payment/cod", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                shipping_address: address,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ shipping_address: address }),
         });
 
         const data = await response.json();
@@ -244,11 +228,7 @@ export default function PaymentPage() {
             await handleOnlinePayment();
         } catch (paymentError: any) {
             console.error("Checkout error:", paymentError);
-
-            setError(
-                paymentError.message || "Unable to process your order.",
-            );
-
+            setError(paymentError.message || "Unable to process your order.");
             setIsProcessing(false);
         }
     };
@@ -259,16 +239,14 @@ export default function PaymentPage() {
         return (
             <main className="flex min-h-screen items-center justify-center bg-background px-4 py-10 text-foreground">
                 <div className="w-full max-w-xl">
-                    <div className="border border-border bg-surface">
+                    <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                         <div className="flex flex-col items-center border-b border-border bg-surface-secondary px-6 py-10 text-center">
                             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-primary/30 bg-accent">
                                 <CheckCircle2 size={34} className="text-primary" />
                             </div>
 
                             <h1 className="mt-5 text-2xl font-extrabold">
-                                {isCOD
-                                    ? "Order placed successfully"
-                                    : "Payment successful"}
+                                {isCOD ? "Order placed successfully" : "Payment successful"}
                             </h1>
 
                             <p className="mt-2 max-w-md text-sm text-muted">
@@ -283,10 +261,7 @@ export default function PaymentPage() {
                                 <PackageCheck size={22} className="text-primary" />
 
                                 <div>
-                                    <p className="text-xs text-muted">
-                                        Order ID
-                                    </p>
-
+                                    <p className="text-xs text-muted">Order ID</p>
                                     <p className="mt-1 break-all text-sm font-bold text-foreground">
                                         {successOrder._id}
                                     </p>
@@ -294,27 +269,18 @@ export default function PaymentPage() {
                             </div>
 
                             <div className="grid gap-4 sm:grid-cols-2">
-                                <div className="border border-border bg-background p-4">
-                                    <p className="text-xs text-muted">
-                                        Total amount
-                                    </p>
-
+                                <div className="rounded-xl border border-border bg-background p-4">
+                                    <p className="text-xs text-muted">Total amount</p>
                                     <p className="mt-1 text-xl font-extrabold text-foreground">
                                         {formatINR(successOrder.total_amount)}
                                     </p>
                                 </div>
 
-                                <div className="border border-border bg-background p-4">
-                                    <p className="text-xs text-muted">
-                                        Payment
-                                    </p>
-
+                                <div className="rounded-xl border border-border bg-background p-4">
+                                    <p className="text-xs text-muted">Payment</p>
                                     <p className="mt-1 text-sm font-bold text-foreground">
-                                        {isCOD
-                                            ? "Cash on Delivery"
-                                            : "Paid Online"}
+                                        {isCOD ? "Cash on Delivery" : "Paid Online"}
                                     </p>
-
                                     <p className="mt-1 text-xs text-success">
                                         {isCOD ? "Payment pending" : "Paid"}
                                     </p>
@@ -322,13 +288,10 @@ export default function PaymentPage() {
                             </div>
 
                             {successOrder.shipping_address && (
-                                <div className="border border-border bg-background p-4">
+                                <div className="rounded-xl border border-border bg-background p-4">
                                     <div className="flex items-center gap-2">
                                         <MapPin size={17} className="text-primary" />
-
-                                        <p className="text-sm font-bold">
-                                            Delivery address
-                                        </p>
+                                        <p className="text-sm font-bold">Delivery address</p>
                                     </div>
 
                                     <p className="mt-3 text-sm leading-6 text-muted">
@@ -340,12 +303,8 @@ export default function PaymentPage() {
                                 </div>
                             )}
 
-                            <div className="flex items-start gap-3 border border-border bg-surface-secondary p-4">
-                                <Truck
-                                    size={18}
-                                    className="mt-0.5 shrink-0 text-primary"
-                                />
-
+                            <div className="flex items-start gap-3 rounded-xl border border-border bg-surface-secondary p-4">
+                                <Truck size={18} className="mt-0.5 shrink-0 text-primary" />
                                 <p className="text-sm text-muted">
                                     {isCOD
                                         ? "Your order will be processed and delivered after confirmation."
@@ -355,7 +314,7 @@ export default function PaymentPage() {
 
                             <Link
                                 href={`/shop/orders/${successOrder._id}`}
-                                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3.5 font-bold text-primary-foreground transition hover:bg-primary-hover"
+                                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3.5 font-bold text-primary-foreground transition-colors hover:bg-primary-hover"
                             >
                                 <PackageCheck size={18} />
                                 View Order
@@ -363,7 +322,7 @@ export default function PaymentPage() {
 
                             <Link
                                 href="/shop"
-                                className="flex w-full items-center justify-center rounded-lg border border-border bg-background px-5 py-3.5 font-semibold text-foreground transition hover:bg-surface-secondary"
+                                className="flex w-full items-center justify-center rounded-xl border border-border bg-background px-5 py-3.5 font-semibold text-foreground transition-colors hover:bg-surface-secondary"
                             >
                                 Continue Shopping
                             </Link>
@@ -389,18 +348,15 @@ export default function PaymentPage() {
                     <ShoppingBag size={34} className="text-primary" />
                 </div>
 
-                <h1 className="text-2xl font-bold text-foreground">
-                    Your cart is empty
-                </h1>
+                <h1 className="text-2xl font-bold text-foreground">Your cart is empty</h1>
 
                 <p className="mt-2 max-w-md text-muted">
-                    Add medicines or blood units to your cart before continuing
-                    to payment.
+                    Add medicines or blood units to your cart before continuing to payment.
                 </p>
 
                 <Link
                     href="/shop"
-                    className="mt-6 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                    className="mt-6 rounded-xl bg-primary px-6 py-3 font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
                 >
                     Back to shop
                 </Link>
@@ -423,7 +379,7 @@ export default function PaymentPage() {
                         <Link
                             href="/shop/cart"
                             aria-label="Back to cart"
-                            className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-muted transition hover:bg-surface-secondary hover:text-foreground"
+                            className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-muted transition-colors hover:bg-surface-secondary hover:text-foreground"
                         >
                             <ArrowLeft size={18} />
                         </Link>
@@ -432,7 +388,6 @@ export default function PaymentPage() {
                             <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
                                 Checkout
                             </h1>
-
                             <p className="mt-1 text-sm text-muted">
                                 Complete your delivery details and payment.
                             </p>
@@ -440,7 +395,7 @@ export default function PaymentPage() {
                     </div>
 
                     {error && (
-                        <div className="mb-6 rounded-lg border border-danger/30 bg-danger/10 p-4 text-sm text-danger">
+                        <div className="mb-6 rounded-xl border border-danger/30 bg-danger/10 p-4 text-sm text-danger">
                             {error}
                         </div>
                     )}
@@ -450,7 +405,7 @@ export default function PaymentPage() {
                         className="grid gap-8 lg:grid-cols-[1fr_380px]"
                     >
                         <section className="space-y-6">
-                            <div className="rounded-xl border border-border bg-surface">
+                            <div className="overflow-hidden rounded-2xl border border-border bg-surface">
                                 <div className="flex items-center gap-3 border-b border-border bg-surface-secondary px-5 py-4">
                                     <MapPin size={20} className="text-primary" />
 
@@ -458,7 +413,6 @@ export default function PaymentPage() {
                                         <h2 className="font-bold text-foreground">
                                             Delivery address
                                         </h2>
-
                                         <p className="text-xs text-muted">
                                             Where should we deliver your order?
                                         </p>
@@ -466,93 +420,46 @@ export default function PaymentPage() {
                                 </div>
 
                                 <div className="grid gap-4 p-5 sm:grid-cols-2">
-                                    <div className="sm:col-span-2">
-                                        <label className="mb-1.5 block text-sm font-semibold text-foreground">
-                                            Street address
-                                        </label>
+                                    {([
+                                        ["street", "Street address", "House no., street, area", true],
+                                        ["city", "City", "City", false],
+                                        ["state", "State", "State", false],
+                                        ["pincode", "Pincode", "6-digit pincode", false],
+                                    ] as const).map(([field, label, placeholder, fullWidth]) => (
+                                        <div key={field} className={fullWidth ? "sm:col-span-2" : ""}>
+                                            <label className="mb-1.5 block text-sm font-semibold text-foreground">
+                                                {label}
+                                            </label>
 
-                                        <input
-                                            type="text"
-                                            value={address.street}
-                                            onChange={(event) =>
-                                                updateAddress("street", event.target.value)
-                                            }
-                                            placeholder="House no., street, area"
-                                            className="w-full rounded-lg border border-border bg-background px-3.5 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                            required
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="mb-1.5 block text-sm font-semibold text-foreground">
-                                            City
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            value={address.city}
-                                            onChange={(event) =>
-                                                updateAddress("city", event.target.value)
-                                            }
-                                            placeholder="City"
-                                            className="w-full rounded-lg border border-border bg-background px-3.5 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                            required
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="mb-1.5 block text-sm font-semibold text-foreground">
-                                            State
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            value={address.state}
-                                            onChange={(event) =>
-                                                updateAddress("state", event.target.value)
-                                            }
-                                            placeholder="State"
-                                            className="w-full rounded-lg border border-border bg-background px-3.5 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                            required
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="mb-1.5 block text-sm font-semibold text-foreground">
-                                            Pincode
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            inputMode="numeric"
-                                            maxLength={6}
-                                            value={address.pincode}
-                                            onChange={(event) =>
-                                                updateAddress(
-                                                    "pincode",
-                                                    event.target.value.replace(/\D/g, ""),
-                                                )
-                                            }
-                                            placeholder="6-digit pincode"
-                                            className="w-full rounded-lg border border-border bg-background px-3.5 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                                            required
-                                        />
-                                    </div>
+                                            <input
+                                                type="text"
+                                                inputMode={field === "pincode" ? "numeric" : undefined}
+                                                maxLength={field === "pincode" ? 6 : undefined}
+                                                value={address[field as keyof Address]}
+                                                onChange={(event) =>
+                                                    updateAddress(
+                                                        field as keyof Address,
+                                                        field === "pincode"
+                                                            ? event.target.value.replace(/\D/g, "")
+                                                            : event.target.value,
+                                                    )
+                                                }
+                                                placeholder={placeholder}
+                                                className="w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                                required
+                                            />
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 
-                            <div className="rounded-xl border border-border bg-surface">
+                            <div className="overflow-hidden rounded-2xl border border-border bg-surface">
                                 <div className="flex items-center gap-3 border-b border-border bg-surface-secondary px-5 py-4">
                                     <ShieldCheck size={20} className="text-primary" />
 
                                     <div>
-                                        <h2 className="font-bold text-foreground">
-                                            Payment method
-                                        </h2>
-
-                                        <p className="text-xs text-muted">
-                                            Choose how you want to pay.
-                                        </p>
+                                        <h2 className="font-bold text-foreground">Payment method</h2>
+                                        <p className="text-xs text-muted">Choose how you want to pay.</p>
                                     </div>
                                 </div>
 
@@ -560,17 +467,17 @@ export default function PaymentPage() {
                                     <button
                                         type="button"
                                         onClick={() => setPaymentMethod("ONLINE")}
-                                        className={`text-left rounded-lg border p-4 transition ${paymentMethod === "ONLINE"
-                                            ? "border-primary bg-accent"
-                                            : "border-border bg-background hover:bg-surface-secondary"
+                                        className={`rounded-xl border p-4 text-left transition-colors ${paymentMethod === "ONLINE"
+                                                ? "border-primary bg-accent"
+                                                : "border-border bg-background hover:bg-surface-secondary"
                                             }`}
                                     >
                                         <div className="flex items-start gap-3">
                                             <CheckCircle2
                                                 size={20}
                                                 className={`mt-0.5 shrink-0 ${paymentMethod === "ONLINE"
-                                                    ? "text-primary"
-                                                    : "text-muted-foreground"
+                                                        ? "text-primary"
+                                                        : "text-muted-foreground"
                                                     }`}
                                             />
 
@@ -578,10 +485,8 @@ export default function PaymentPage() {
                                                 <p className="font-semibold text-foreground">
                                                     Online payment
                                                 </p>
-
                                                 <p className="mt-1 text-sm text-muted">
-                                                    Pay using UPI, cards, net banking and
-                                                    supported methods.
+                                                    Pay using UPI, cards, net banking and supported methods.
                                                 </p>
                                             </div>
                                         </div>
@@ -590,17 +495,17 @@ export default function PaymentPage() {
                                     <button
                                         type="button"
                                         onClick={() => setPaymentMethod("COD")}
-                                        className={`text-left rounded-lg border p-4 transition ${paymentMethod === "COD"
-                                            ? "border-primary bg-accent"
-                                            : "border-border bg-background hover:bg-surface-secondary"
+                                        className={`rounded-xl border p-4 text-left transition-colors ${paymentMethod === "COD"
+                                                ? "border-primary bg-accent"
+                                                : "border-border bg-background hover:bg-surface-secondary"
                                             }`}
                                     >
                                         <div className="flex items-start gap-3">
                                             <WalletCards
                                                 size={20}
                                                 className={`mt-0.5 shrink-0 ${paymentMethod === "COD"
-                                                    ? "text-primary"
-                                                    : "text-muted-foreground"
+                                                        ? "text-primary"
+                                                        : "text-muted-foreground"
                                                     }`}
                                             />
 
@@ -608,7 +513,6 @@ export default function PaymentPage() {
                                                 <p className="font-semibold text-foreground">
                                                     Cash on Delivery
                                                 </p>
-
                                                 <p className="mt-1 text-sm text-muted">
                                                     Pay in cash when your order is delivered.
                                                 </p>
@@ -618,11 +522,8 @@ export default function PaymentPage() {
                                 </div>
                             </div>
 
-                            <div className="flex items-start gap-3 rounded-lg border border-border bg-surface p-4 text-sm text-muted">
-                                <Truck
-                                    size={18}
-                                    className="mt-0.5 shrink-0 text-primary"
-                                />
+                            <div className="flex items-start gap-3 rounded-xl border border-border bg-surface p-4 text-sm text-muted">
+                                <Truck size={18} className="mt-0.5 shrink-0 text-primary" />
 
                                 <p>
                                     {paymentMethod === "COD"
@@ -633,11 +534,9 @@ export default function PaymentPage() {
                         </section>
 
                         <aside className="h-fit lg:sticky lg:top-24">
-                            <div className="overflow-hidden rounded-xl border border-border bg-surface">
+                            <div className="overflow-hidden rounded-2xl border border-border bg-surface">
                                 <div className="border-b border-border bg-surface-secondary px-5 py-4">
-                                    <h2 className="font-bold text-foreground">
-                                        Order summary
-                                    </h2>
+                                    <h2 className="font-bold text-foreground">Order summary</h2>
                                 </div>
 
                                 <div className="max-h-90 space-y-4 overflow-y-auto p-5">
@@ -649,18 +548,13 @@ export default function PaymentPage() {
 
                                         if (isMedicine) {
                                             name = item.item_id?.name || "Unknown medicine";
-                                            price =
-                                                item.item_id?.pricing?.sale_price ??
-                                                item.item_id?.pricing?.mrp ??
-                                                0;
+                                            price = item.item_id?.pricing?.sale_price ?? item.item_id?.pricing?.mrp ?? 0;
                                         } else {
                                             name = item.item_id?.name || "Blood bank";
 
-                                            const bloodItem =
-                                                item.item_id?.inventory?.find(
-                                                    (inventory: any) =>
-                                                        inventory.blood_group === item.blood_group,
-                                                );
+                                            const bloodItem = item.item_id?.inventory?.find(
+                                                (inventory: any) => inventory.blood_group === item.blood_group,
+                                            );
 
                                             price = bloodItem?.price_per_unit ?? 0;
                                         }
@@ -697,7 +591,6 @@ export default function PaymentPage() {
                                 <div className="border-t border-border p-5">
                                     <div className="mb-2 flex justify-between text-sm text-muted">
                                         <span>Subtotal</span>
-
                                         <span className="font-semibold text-foreground">
                                             {formatINR(displayTotal)}
                                         </span>
@@ -705,17 +598,11 @@ export default function PaymentPage() {
 
                                     <div className="mb-4 flex justify-between text-sm text-muted">
                                         <span>Delivery</span>
-
-                                        <span className="font-semibold text-success">
-                                            Free
-                                        </span>
+                                        <span className="font-semibold text-success">Free</span>
                                     </div>
 
                                     <div className="flex items-end justify-between border-t border-dashed border-border pt-4">
-                                        <span className="font-bold text-foreground">
-                                            Total
-                                        </span>
-
+                                        <span className="font-bold text-foreground">Total</span>
                                         <span className="text-2xl font-extrabold text-foreground">
                                             {formatINR(displayTotal)}
                                         </span>
@@ -724,14 +611,12 @@ export default function PaymentPage() {
                                     <button
                                         type="submit"
                                         disabled={isProcessing}
-                                        className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3.5 font-bold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                                        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 font-bold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
                                     >
                                         {isProcessing ? (
                                             <>
                                                 <Loader2 size={18} className="animate-spin" />
-                                                {paymentMethod === "COD"
-                                                    ? "Placing order..."
-                                                    : "Processing..."}
+                                                {paymentMethod === "COD" ? "Placing order..." : "Processing..."}
                                             </>
                                         ) : paymentMethod === "COD" ? (
                                             <>

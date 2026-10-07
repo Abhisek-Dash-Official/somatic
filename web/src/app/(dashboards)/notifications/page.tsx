@@ -111,7 +111,7 @@ const getDateGroup = (date: string) => {
 const getPriorityClass = (notification: Notification) => {
     if (notification.priority === "urgent") return "border-l-red-500";
     if (notification.priority === "high") return "border-l-amber-500";
-    if (!notification.is_read) return "border-l-[var(--primary)]";
+    if (!notification.is_read) return "border-l-primary";
     return "border-l-transparent";
 };
 
@@ -126,10 +126,8 @@ export default function NotificationsPage() {
     const [total, setTotal] = useState(0);
     const [unreadCount, setLocalUnreadCount] = useState(0);
     const [expandedId, setExpandedId] = useState<string | null>(null);
-
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
-
     const [deleteTarget, setDeleteTarget] = useState<Notification | null>(null);
     const [showDeleteAll, setShowDeleteAll] = useState(false);
     const [deleting, setDeleting] = useState(false);
@@ -151,14 +149,12 @@ export default function NotificationsPage() {
 
             const data: NotificationResponse | null = await response.json().catch(() => null);
 
-            console.log("Notifications API:", {
-                status: response.status,
-                statusText: response.statusText,
-                data,
-            });
-
             if (!response.ok) {
-                throw new Error(data && "message" in data ? String(data.message) : `Notifications API failed (${response.status})`);
+                throw new Error(
+                    data && "message" in data
+                        ? String(data.message)
+                        : `Notifications API failed (${response.status})`,
+                );
             }
 
             setNotifications(data?.notifications || []);
@@ -264,7 +260,6 @@ export default function NotificationsPage() {
 
             setLocalUnreadCount(data.unread_count || 0);
             setUnreadCount(data.unread_count || 0);
-
             toast.success("All notifications marked as read");
         } catch (error) {
             console.error("Failed to mark all notifications as read:", error);
@@ -353,8 +348,10 @@ export default function NotificationsPage() {
     const groupedNotifications = useMemo(() => {
         return notifications.reduce<Record<string, Notification[]>>((groups, notification) => {
             const group = getDateGroup(notification.created_at);
+
             if (!groups[group]) groups[group] = [];
             groups[group].push(notification);
+
             return groups;
         }, {});
     }, [notifications]);
@@ -368,7 +365,7 @@ export default function NotificationsPage() {
                     <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                         <div>
                             <div className="mb-3 flex items-center gap-3">
-                                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-(--card)">
+                                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-surface">
                                     <Bell size={21} className="text-primary" />
                                 </div>
 
@@ -376,7 +373,6 @@ export default function NotificationsPage() {
                                     <p className="text-xs font-medium uppercase tracking-wider text-muted">
                                         Your care updates
                                     </p>
-
                                     <h1 className="text-2xl font-semibold text-foreground sm:text-3xl">
                                         Notifications
                                     </h1>
@@ -393,7 +389,7 @@ export default function NotificationsPage() {
                             <button
                                 type="button"
                                 onClick={() => setShowDeleteAll(true)}
-                                className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border px-4 text-sm font-medium text-muted transition hover:border-red-400/40 hover:text-red-400"
+                                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-muted transition hover:border-danger/30 hover:text-danger"
                             >
                                 <Trash2 size={16} />
                                 Delete all
@@ -401,13 +397,13 @@ export default function NotificationsPage() {
                         )}
                     </div>
                 </div>
-                <div className="mb-6 rounded-xl border border-border bg-(--card) p-4 sm:p-5">
+
+                <div className="mb-6 rounded-2xl border border-border bg-surface p-4 sm:p-5">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <p className="text-sm font-semibold text-foreground">
                                 Notification preferences
                             </p>
-
                             <p className="mt-1 max-w-xl text-xs leading-5 text-muted sm:text-sm">
                                 Allow SOMATIC to send you important healthcare updates,
                                 reminders, and alerts on this device.
@@ -419,16 +415,16 @@ export default function NotificationsPage() {
                 </div>
 
                 <div className="mb-6 flex flex-col gap-4 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-1 rounded-lg border border-border bg-(--card) p-1">
+                    <div className="flex items-center gap-1 rounded-xl border border-border bg-surface p-1">
                         <button
                             type="button"
                             onClick={() => {
                                 setActiveFilter("all");
                                 setPage(1);
                             }}
-                            className={`rounded-md px-4 py-2 text-sm font-medium transition ${activeFilter === "all"
-                                ? "bg-primary text-white"
-                                : "text-muted hover:text-foreground"
+                            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${activeFilter === "all"
+                                    ? "bg-primary text-primary-foreground"
+                                    : "text-muted hover:text-foreground"
                                 }`}
                         >
                             All updates
@@ -440,9 +436,9 @@ export default function NotificationsPage() {
                                 setActiveFilter("unread");
                                 setPage(1);
                             }}
-                            className={`rounded-md px-4 py-2 text-sm font-medium transition ${activeFilter === "unread"
-                                ? "bg-primary text-white"
-                                : "text-muted hover:text-foreground"
+                            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${activeFilter === "unread"
+                                    ? "bg-primary text-primary-foreground"
+                                    : "text-muted hover:text-foreground"
                                 }`}
                         >
                             Unread
@@ -470,12 +466,12 @@ export default function NotificationsPage() {
                         {[1, 2, 3, 4].map((item) => (
                             <div
                                 key={item}
-                                className="h-28 animate-pulse rounded-xl border border-border bg-(--card)"
+                                className="h-28 animate-pulse rounded-2xl border border-border bg-surface"
                             />
                         ))}
                     </div>
                 ) : notifications.length === 0 ? (
-                    <div className="rounded-2xl border border-border bg-(--card) px-6 py-16 text-center">
+                    <div className="rounded-2xl border border-border bg-surface px-6 py-16 text-center">
                         <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-border">
                             <Bell size={24} className="text-muted" />
                         </div>
@@ -508,9 +504,9 @@ export default function NotificationsPage() {
                                         return (
                                             <article
                                                 key={notification._id}
-                                                className={`group relative overflow-hidden rounded-xl border border-l-4 border-border bg-(--card) transition ${isExpanded
-                                                    ? "border-(--primary)/40"
-                                                    : "hover:border-(--primary)/40"
+                                                className={`group relative overflow-hidden rounded-2xl border border-l-4 border-border bg-surface transition ${isExpanded
+                                                        ? "border-primary/40"
+                                                        : "hover:border-primary/40"
                                                     } ${getPriorityClass(notification)}`}
                                             >
                                                 <button
@@ -521,9 +517,9 @@ export default function NotificationsPage() {
                                                 >
                                                     <div className="flex items-start gap-4">
                                                         <div
-                                                            className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${notification.is_read
-                                                                ? "border-border text-muted"
-                                                                : "border-(--primary)/30 text-primary"
+                                                            className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${notification.is_read
+                                                                    ? "border-border text-muted"
+                                                                    : "border-primary/30 text-primary"
                                                                 }`}
                                                         >
                                                             <Icon size={19} />
@@ -534,8 +530,8 @@ export default function NotificationsPage() {
                                                                 <div className="flex min-w-0 items-center gap-2">
                                                                     <h3
                                                                         className={`min-w-0 text-sm ${notification.is_read
-                                                                            ? "font-medium"
-                                                                            : "font-semibold"
+                                                                                ? "font-medium"
+                                                                                : "font-semibold"
                                                                             } text-foreground`}
                                                                     >
                                                                         {notification.title}
@@ -561,13 +557,13 @@ export default function NotificationsPage() {
 
                                                             <div className="mt-3 flex flex-wrap items-center gap-3">
                                                                 {notification.priority === "urgent" && (
-                                                                    <span className="text-xs font-medium text-red-400">
+                                                                    <span className="text-xs font-medium text-danger">
                                                                         Urgent
                                                                     </span>
                                                                 )}
 
                                                                 {notification.priority === "high" && (
-                                                                    <span className="text-xs font-medium text-amber-400">
+                                                                    <span className="text-xs font-medium text-warning">
                                                                         Important
                                                                     </span>
                                                                 )}
@@ -592,7 +588,7 @@ export default function NotificationsPage() {
                                                         event.stopPropagation();
                                                         setDeleteTarget(notification);
                                                     }}
-                                                    className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-muted transition hover:bg-red-500/10 hover:text-red-400 focus:opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                                                    className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg text-muted transition hover:bg-danger/10 hover:text-danger sm:opacity-0 sm:group-hover:opacity-100"
                                                 >
                                                     <Trash2 size={15} />
                                                 </button>
@@ -601,7 +597,7 @@ export default function NotificationsPage() {
                                                     <div className="border-t border-border px-4 pb-5 pt-4 sm:px-5">
                                                         <div className="ml-0 sm:ml-14">
                                                             <div className="grid gap-3 sm:grid-cols-2">
-                                                                <div className="rounded-lg border border-border px-3 py-3">
+                                                                <div className="rounded-xl border border-border px-3 py-3">
                                                                     <p className="text-[11px] font-medium uppercase tracking-wide text-muted">
                                                                         Notification type
                                                                     </p>
@@ -610,7 +606,7 @@ export default function NotificationsPage() {
                                                                     </p>
                                                                 </div>
 
-                                                                <div className="rounded-lg border border-border px-3 py-3">
+                                                                <div className="rounded-xl border border-border px-3 py-3">
                                                                     <p className="text-[11px] font-medium uppercase tracking-wide text-muted">
                                                                         Received
                                                                     </p>
@@ -620,7 +616,7 @@ export default function NotificationsPage() {
                                                                 </div>
 
                                                                 {notification.reference_type && (
-                                                                    <div className="rounded-lg border border-border px-3 py-3">
+                                                                    <div className="rounded-xl border border-border px-3 py-3">
                                                                         <p className="text-[11px] font-medium uppercase tracking-wide text-muted">
                                                                             Reference
                                                                         </p>
@@ -630,33 +626,29 @@ export default function NotificationsPage() {
                                                                     </div>
                                                                 )}
 
-                                                                {notification.priority && (
-                                                                    <div className="rounded-lg border border-border px-3 py-3">
-                                                                        <p className="text-[11px] font-medium uppercase tracking-wide text-muted">
-                                                                            Priority
-                                                                        </p>
-                                                                        <p
-                                                                            className={`mt-1 text-sm font-medium capitalize ${notification.priority === "urgent"
-                                                                                ? "text-red-400"
+                                                                <div className="rounded-xl border border-border px-3 py-3">
+                                                                    <p className="text-[11px] font-medium uppercase tracking-wide text-muted">
+                                                                        Priority
+                                                                    </p>
+                                                                    <p
+                                                                        className={`mt-1 text-sm font-medium capitalize ${notification.priority === "urgent"
+                                                                                ? "text-danger"
                                                                                 : notification.priority === "high"
-                                                                                    ? "text-amber-400"
+                                                                                    ? "text-warning"
                                                                                     : "text-foreground"
-                                                                                }`}
-                                                                        >
-                                                                            {notification.priority}
-                                                                        </p>
-                                                                    </div>
-                                                                )}
+                                                                            }`}
+                                                                    >
+                                                                        {notification.priority}
+                                                                    </p>
+                                                                </div>
                                                             </div>
 
                                                             <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                                                <div>
-                                                                    <p className="text-xs text-muted">
-                                                                        {notification.is_read
-                                                                            ? "This notification has been read."
-                                                                            : "This notification is unread."}
-                                                                    </p>
-                                                                </div>
+                                                                <p className="text-xs text-muted">
+                                                                    {notification.is_read
+                                                                        ? "This notification has been read."
+                                                                        : "This notification is unread."}
+                                                                </p>
 
                                                                 {notification.action_url && (
                                                                     <button
@@ -665,7 +657,7 @@ export default function NotificationsPage() {
                                                                             event.stopPropagation();
                                                                             goToAction(notification.action_url!);
                                                                         }}
-                                                                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
+                                                                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
                                                                     >
                                                                         Go to details
                                                                         <ExternalLink size={15} />
@@ -690,7 +682,7 @@ export default function NotificationsPage() {
                             type="button"
                             disabled={page <= 1}
                             onClick={() => setPage((current) => Math.max(current - 1, 1))}
-                            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                            className="rounded-xl border border-border px-4 py-2 text-sm font-medium text-muted transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             Previous
                         </button>
@@ -703,14 +695,14 @@ export default function NotificationsPage() {
                             type="button"
                             disabled={page >= totalPages}
                             onClick={() => setPage((current) => Math.min(current + 1, totalPages))}
-                            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                            className="rounded-xl border border-border px-4 py-2 text-sm font-medium text-muted transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             Next
                         </button>
                     </div>
                 )}
 
-                <div className="mt-10 border-t border-border pt-5 pb-8 text-center">
+                <div className="mt-10 border-t border-border pb-8 pt-5 text-center">
                     <p className="text-xs leading-5 text-muted">
                         Your health updates are private and visible only to you.
                     </p>
@@ -719,15 +711,15 @@ export default function NotificationsPage() {
 
             {deleteTarget && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-[#071116] px-4"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
                     onClick={() => !deleting && setDeleteTarget(null)}
                 >
                     <div
-                        className="w-full max-w-md rounded-2xl border border-border bg-(--card) p-6"
+                        className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl"
                         onClick={(event) => event.stopPropagation()}
                     >
                         <div className="mb-5 flex items-start justify-between gap-4">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-red-500/20 text-red-400">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-danger/20 text-danger">
                                 <Trash2 size={19} />
                             </div>
 
@@ -735,7 +727,7 @@ export default function NotificationsPage() {
                                 type="button"
                                 disabled={deleting}
                                 onClick={() => setDeleteTarget(null)}
-                                className="text-muted transition hover:text-foreground"
+                                className="rounded-lg p-1 text-muted transition hover:bg-accent hover:text-foreground"
                             >
                                 <X size={19} />
                             </button>
@@ -754,7 +746,7 @@ export default function NotificationsPage() {
                                 type="button"
                                 disabled={deleting}
                                 onClick={() => setDeleteTarget(null)}
-                                className="rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted transition hover:text-foreground disabled:opacity-50"
+                                className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-muted transition hover:text-foreground disabled:opacity-50"
                             >
                                 Cancel
                             </button>
@@ -763,7 +755,7 @@ export default function NotificationsPage() {
                                 type="button"
                                 disabled={deleting}
                                 onClick={deleteNotification}
-                                className="rounded-lg bg-red-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-600 disabled:opacity-50"
+                                className="rounded-xl bg-danger px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50"
                             >
                                 {deleting ? "Deleting..." : "Delete"}
                             </button>
@@ -774,15 +766,15 @@ export default function NotificationsPage() {
 
             {showDeleteAll && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-[#071116] px-4"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
                     onClick={() => !deleting && setShowDeleteAll(false)}
                 >
                     <div
-                        className="w-full max-w-md rounded-2xl border border-border bg-(--card) p-6"
+                        className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl"
                         onClick={(event) => event.stopPropagation()}
                     >
                         <div className="mb-5 flex items-start justify-between gap-4">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-red-500/20 text-red-400">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-danger/20 text-danger">
                                 <Trash2 size={19} />
                             </div>
 
@@ -790,7 +782,7 @@ export default function NotificationsPage() {
                                 type="button"
                                 disabled={deleting}
                                 onClick={() => setShowDeleteAll(false)}
-                                className="text-muted transition hover:text-foreground"
+                                className="rounded-lg p-1 text-muted transition hover:bg-accent hover:text-foreground"
                             >
                                 <X size={19} />
                             </button>
@@ -810,7 +802,7 @@ export default function NotificationsPage() {
                                 type="button"
                                 disabled={deleting}
                                 onClick={() => setShowDeleteAll(false)}
-                                className="rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted transition hover:text-foreground disabled:opacity-50"
+                                className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-muted transition hover:text-foreground disabled:opacity-50"
                             >
                                 Cancel
                             </button>
@@ -819,7 +811,7 @@ export default function NotificationsPage() {
                                 type="button"
                                 disabled={deleting}
                                 onClick={deleteAllNotifications}
-                                className="rounded-lg bg-red-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-600 disabled:opacity-50"
+                                className="rounded-xl bg-danger px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50"
                             >
                                 {deleting ? "Deleting..." : "Delete all"}
                             </button>

@@ -66,7 +66,7 @@ export default function BloodBankDetail() {
                 </div>
 
                 <div className="grid h-auto grid-cols-1 gap-4 md:h-100 md:grid-cols-3">
-                    <div className="relative h-72 overflow-hidden rounded-xl bg-surface-secondary md:col-span-2 md:h-auto">
+                    <div className="relative h-72 overflow-hidden rounded-2xl bg-surface-secondary md:col-span-2 md:h-auto">
                         <Image
                             src={getValidImage(bank.images?.[0])}
                             alt={bank.name}
@@ -78,7 +78,10 @@ export default function BloodBankDetail() {
 
                     <div className="hidden grid-rows-2 gap-4 md:grid">
                         {[1, 2].map((idx) => (
-                            <div key={idx} className="relative overflow-hidden rounded-xl bg-surface-secondary">
+                            <div
+                                key={idx}
+                                className="relative overflow-hidden rounded-xl bg-surface-secondary"
+                            >
                                 <Image
                                     src={getValidImage(bank.images?.[idx])}
                                     alt={`Gallery ${idx}`}
@@ -93,8 +96,10 @@ export default function BloodBankDetail() {
 
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                     <div className="space-y-6 lg:col-span-1">
-                        <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-                            <h3 className="mb-4 text-lg font-bold text-foreground">Contact & Location</h3>
+                        <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+                            <h3 className="mb-4 text-lg font-bold text-foreground">
+                                Contact & Location
+                            </h3>
 
                             <ul className="space-y-5 text-sm text-muted">
                                 <li className="flex items-start gap-3">
@@ -126,7 +131,8 @@ export default function BloodBankDetail() {
                                     <div>
                                         <strong className="block text-foreground">Address</strong>
                                         {bank.address?.street},<br />
-                                        {bank.address?.city}, {bank.address?.state} - {bank.address?.pincode}
+                                        {bank.address?.city}, {bank.address?.state} -{" "}
+                                        {bank.address?.pincode}
                                     </div>
                                 </li>
                             </ul>
@@ -134,7 +140,7 @@ export default function BloodBankDetail() {
                     </div>
 
                     <div className="lg:col-span-2">
-                        <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
+                        <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
                             <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-foreground">
                                 <Droplet className="h-6 w-6 fill-danger/10 text-danger" />
                                 Live Blood Inventory
@@ -144,10 +150,18 @@ export default function BloodBankDetail() {
                                 <table className="w-full border-collapse text-left">
                                     <thead>
                                         <tr className="border-y border-border bg-surface-secondary text-muted">
-                                            <th className="px-4 py-3 text-sm font-semibold">Blood Group</th>
-                                            <th className="px-4 py-3 text-sm font-semibold">Stock Units</th>
-                                            <th className="px-4 py-3 text-sm font-semibold">Price / Unit</th>
-                                            <th className="px-4 py-3 text-right text-sm font-semibold">Action</th>
+                                            <th className="px-4 py-3 text-sm font-semibold">
+                                                Blood Group
+                                            </th>
+                                            <th className="px-4 py-3 text-sm font-semibold">
+                                                Stock Units
+                                            </th>
+                                            <th className="px-4 py-3 text-sm font-semibold">
+                                                Price / Unit
+                                            </th>
+                                            <th className="px-4 py-3 text-right text-sm font-semibold">
+                                                Action
+                                            </th>
                                         </tr>
                                     </thead>
 
@@ -167,7 +181,7 @@ export default function BloodBankDetail() {
                                                             {item.stock_units} Units
                                                         </span>
                                                     ) : (
-                                                        <span className="rounded bg-danger/10 px-2 py-1 text-xs font-bold text-danger">
+                                                        <span className="rounded-full bg-danger/10 px-2.5 py-1 text-xs font-bold text-danger">
                                                             Out of Stock
                                                         </span>
                                                     )}
@@ -179,14 +193,21 @@ export default function BloodBankDetail() {
 
                                                 <td className="px-4 py-4 text-right">
                                                     <button
-                                                        onClick={() => handleAddToCart(item.blood_group)}
-                                                        disabled={item.stock_units === 0 || addingKey === item.blood_group}
-                                                        className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${item.stock_units > 0
-                                                            ? "bg-primary text-primary-foreground hover:bg-primary-hover"
-                                                            : "cursor-not-allowed border border-border bg-surface-secondary text-muted-foreground"
+                                                        onClick={() =>
+                                                            handleAddToCart(item.blood_group)
+                                                        }
+                                                        disabled={
+                                                            item.stock_units === 0 ||
+                                                            addingKey === item.blood_group
+                                                        }
+                                                        className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${item.stock_units > 0
+                                                                ? "bg-primary text-primary-foreground hover:bg-primary-hover"
+                                                                : "cursor-not-allowed border border-border bg-surface-secondary text-muted-foreground"
                                                             }`}
                                                     >
-                                                        {addingKey === item.blood_group ? "Adding..." : "Add to Cart"}
+                                                        {addingKey === item.blood_group
+                                                            ? "Adding..."
+                                                            : "Add to Cart"}
                                                     </button>
                                                 </td>
                                             </tr>

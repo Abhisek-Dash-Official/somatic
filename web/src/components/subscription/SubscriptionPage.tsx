@@ -28,10 +28,7 @@ export default function SubscriptionPage() {
 
     const fetchSubscription = async () => {
         try {
-            const res = await fetch("/api/subscription/current", {
-                cache: "no-store",
-            });
-
+            const res = await fetch("/api/subscription/current", { cache: "no-store" });
             const data = await res.json();
 
             if (res.ok) {
@@ -64,13 +61,13 @@ export default function SubscriptionPage() {
                     </p>
                 </div>
 
-                <div className="mx-auto mt-8 flex w-fit items-center gap-1 rounded-lg border border-border bg-surface p-1">
+                <div className="mx-auto mt-8 flex w-fit items-center gap-1 rounded-xl border border-border bg-surface p-1 shadow-sm">
                     <button
                         type="button"
                         onClick={() => setActiveTab("plans")}
-                        className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${activeTab === "plans"
-                            ? "bg-primary text-primary-foreground"
-                            : "text-muted hover:bg-surface-secondary hover:text-foreground"
+                        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${activeTab === "plans"
+                                ? "bg-primary text-primary-foreground"
+                                : "text-muted hover:bg-surface-secondary hover:text-foreground"
                             }`}
                     >
                         <Package className="h-4 w-4" />
@@ -80,9 +77,9 @@ export default function SubscriptionPage() {
                     <button
                         type="button"
                         onClick={() => setActiveTab("current")}
-                        className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${activeTab === "current"
-                            ? "bg-primary text-primary-foreground"
-                            : "text-muted hover:bg-surface-secondary hover:text-foreground"
+                        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${activeTab === "current"
+                                ? "bg-primary text-primary-foreground"
+                                : "text-muted hover:bg-surface-secondary hover:text-foreground"
                             }`}
                     >
                         <CreditCard className="h-4 w-4" />

@@ -15,7 +15,6 @@ export default function BloodBanksList() {
     const [loading, setLoading] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-
     const [bloodGroup, setBloodGroup] = useState("");
     const [search, setSearch] = useState("");
     const [city, setCity] = useState("");
@@ -30,6 +29,7 @@ export default function BloodBanksList() {
 
     const fetchBloodBanks = async (isNewSearch: boolean = false) => {
         if (fetchingRef.current) return;
+
         fetchingRef.current = true;
 
         try {
@@ -38,6 +38,7 @@ export default function BloodBanksList() {
 
             const params = new URLSearchParams();
             params.set("limit", limit.toString());
+
             if (bloodGroup) params.set("bloodGroup", bloodGroup);
             if (search.trim()) params.set("search", search.trim());
             if (city.trim()) params.set("city", city.trim());
@@ -46,6 +47,7 @@ export default function BloodBanksList() {
 
             if (!isNewSearch && currentList.length > 0) {
                 const lastItem = currentList[currentList.length - 1];
+
                 if (lastItem) params.set("lastId", lastItem._id);
             }
 
@@ -60,7 +62,10 @@ export default function BloodBanksList() {
                 } else {
                     setBloodBanks((prev) => {
                         const existingIds = new Set(prev.map((item) => item._id));
-                        const uniqueNewItems = fetchedData.filter((item: any) => !existingIds.has(item._id));
+                        const uniqueNewItems = fetchedData.filter(
+                            (item: any) => !existingIds.has(item._id)
+                        );
+
                         return [...prev, ...uniqueNewItems];
                     });
                 }
@@ -92,6 +97,7 @@ export default function BloodBanksList() {
     const lastElementRef = useCallback(
         (node: HTMLDivElement | null) => {
             if (fetchingRef.current || !hasMore) return;
+
             if (observerRef.current) observerRef.current.disconnect();
 
             observerRef.current = new IntersectionObserver((entries) => {
@@ -111,15 +117,17 @@ export default function BloodBanksList() {
                 <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                     <div>
                         <h1 className="text-3xl font-bold text-foreground">Available Blood Banks</h1>
-                        <p className="mt-1 text-muted">Find blood banks and check real-time availability.</p>
+                        <p className="mt-1 text-muted">
+                            Find blood banks and check real-time availability.
+                        </p>
                     </div>
 
-                    <div className="rounded-lg bg-danger px-4 py-2 text-sm font-bold text-white">
+                    <div className="rounded-full bg-danger px-4 py-2 text-sm font-bold text-white">
                         Rendered Items: {bloodBanks.length}
                     </div>
                 </div>
 
-                <div className="mb-8 rounded-xl border border-border bg-surface p-4 shadow-sm">
+                <div className="mb-8 rounded-2xl border border-border bg-surface p-4 shadow-sm">
                     <form onSubmit={handleSearchSubmit} className="flex flex-col gap-4 lg:flex-row">
                         <div className="flex-1">
                             <input
@@ -127,7 +135,7 @@ export default function BloodBanksList() {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search by blood bank name..."
-                                className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                className="w-full rounded-xl border border-border bg-surface-secondary px-4 py-3 text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                         </div>
 
@@ -137,7 +145,7 @@ export default function BloodBanksList() {
                                 value={city}
                                 onChange={(e) => setCity(e.target.value)}
                                 placeholder="Filter by city..."
-                                className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                className="w-full rounded-xl border border-border bg-surface-secondary px-4 py-3 text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                         </div>
 
@@ -145,7 +153,7 @@ export default function BloodBanksList() {
                             <select
                                 value={bloodGroup}
                                 onChange={(e) => setBloodGroup(e.target.value)}
-                                className="w-full rounded-lg border border-border bg-surface-secondary px-4 py-3 font-medium text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                className="w-full rounded-xl border border-border bg-surface-secondary px-4 py-3 font-medium text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                             >
                                 <option value="">All Blood Groups</option>
                                 <option value="A+">A+</option>
@@ -161,7 +169,7 @@ export default function BloodBanksList() {
 
                         <button
                             type="submit"
-                            className="rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                            className="rounded-xl bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover"
                         >
                             Filter
                         </button>
@@ -173,10 +181,12 @@ export default function BloodBanksList() {
                         Loading Blood Banks...
                     </div>
                 ) : bloodBanks.length === 0 ? (
-                    <div className="rounded-xl border border-border bg-surface p-12 text-center">
+                    <div className="rounded-2xl border border-border bg-surface p-12 text-center">
                         <Filter className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                         <h2 className="text-xl font-bold text-foreground">No blood banks found</h2>
-                        <p className="mt-2 text-muted">Try changing your search or blood group filter.</p>
+                        <p className="mt-2 text-muted">
+                            Try changing your search or blood group filter.
+                        </p>
                     </div>
                 ) : (
                     <>
@@ -188,7 +198,7 @@ export default function BloodBanksList() {
                                     <div
                                         ref={isLastItem ? lastElementRef : null}
                                         key={`${bank._id}-${index}`}
-                                        className="flex flex-col justify-between overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+                                        className="flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-surface shadow-sm transition hover:border-primary/40 hover:shadow-md"
                                     >
                                         <div>
                                             <div className="relative h-48 w-full bg-surface-secondary">
@@ -227,7 +237,7 @@ export default function BloodBanksList() {
 
                                                     <Link
                                                         href={`/shop/bloodbanks/${bank._id}`}
-                                                        className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-primary hover:text-primary-foreground"
+                                                        className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-primary hover:text-primary-foreground"
                                                     >
                                                         View Details
                                                     </Link>

@@ -170,9 +170,7 @@ export default function LabBookingPage() {
                     }
                 },
                 modal: {
-                    ondismiss: () => {
-                        setSubmitting(false);
-                    },
+                    ondismiss: () => setSubmitting(false),
                 },
             };
 
@@ -185,7 +183,11 @@ export default function LabBookingPage() {
     }
 
     if (loading) {
-        return <main className="min-h-screen bg-background px-5 py-16 text-center text-sm text-muted">Loading booking...</main>;
+        return (
+            <main className="min-h-screen bg-background px-5 py-16 text-center text-sm text-muted">
+                Loading booking...
+            </main>
+        );
     }
 
     return (
@@ -194,8 +196,12 @@ export default function LabBookingPage() {
 
             <main className="min-h-screen bg-background text-foreground">
                 <div className="mx-auto max-w-6xl px-5 py-8 lg:px-8">
-                    <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-sm text-muted hover:text-primary">
-                        <ArrowLeft className="h-4 w-4" />Back
+                    <button
+                        onClick={() => router.back()}
+                        className="inline-flex items-center gap-2 rounded-xl px-2 py-1 text-sm text-muted transition-colors hover:bg-surface-secondary hover:text-primary"
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                        Back
                     </button>
 
                     <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_330px]">
@@ -203,17 +209,26 @@ export default function LabBookingPage() {
                             <div className="border-b border-border pb-6">
                                 <p className="text-sm font-medium text-primary">Lab booking</p>
                                 <h1 className="mt-2 text-2xl font-semibold">Schedule home collection</h1>
-                                <p className="mt-2 text-sm text-muted">Enter your collection details and choose how you want to pay.</p>
+                                <p className="mt-2 text-sm text-muted">
+                                    Enter your collection details and choose how you want to pay.
+                                </p>
                             </div>
 
-                            {error && <div className="mt-5 border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>}
+                            {error && (
+                                <div className="mt-5 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+                                    {error}
+                                </div>
+                            )}
 
                             <section className="mt-8">
                                 <h2 className="text-base font-semibold">Selected tests</h2>
 
-                                <div className="mt-4 border-t border-border">
+                                <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-surface">
                                     {tests.map((test) => (
-                                        <div key={String(test._id)} className="flex items-center justify-between border-b border-border py-4">
+                                        <div
+                                            key={String(test._id)}
+                                            className="flex items-center justify-between border-b border-border px-5 py-4 last:border-0"
+                                        >
                                             <div>
                                                 <p className="text-sm font-medium">{test.name}</p>
                                                 <p className="mt-1 text-xs text-muted">{test.category}</p>
@@ -228,11 +243,36 @@ export default function LabBookingPage() {
                                 <h2 className="text-base font-semibold">Collection address</h2>
 
                                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                                    <input value={address.address_line} onChange={(e) => setAddress({ ...address, address_line: e.target.value })} placeholder="Address" className="sm:col-span-2 h-11 border border-border bg-surface px-3 text-sm outline-none focus:border-primary" />
-                                    <input value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} placeholder="City" className="h-11 border border-border bg-surface px-3 text-sm outline-none focus:border-primary" />
-                                    <input value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} placeholder="State" className="h-11 border border-border bg-surface px-3 text-sm outline-none focus:border-primary" />
-                                    <input value={address.pincode} onChange={(e) => setAddress({ ...address, pincode: e.target.value })} placeholder="Pincode" className="h-11 border border-border bg-surface px-3 text-sm outline-none focus:border-primary" />
-                                    <input value={address.landmark} onChange={(e) => setAddress({ ...address, landmark: e.target.value })} placeholder="Landmark (optional)" className="h-11 border border-border bg-surface px-3 text-sm outline-none focus:border-primary" />
+                                    <input
+                                        value={address.address_line}
+                                        onChange={(e) => setAddress({ ...address, address_line: e.target.value })}
+                                        placeholder="Address"
+                                        className="h-11 rounded-xl border border-border bg-surface px-3 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 sm:col-span-2"
+                                    />
+                                    <input
+                                        value={address.city}
+                                        onChange={(e) => setAddress({ ...address, city: e.target.value })}
+                                        placeholder="City"
+                                        className="h-11 rounded-xl border border-border bg-surface px-3 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                    />
+                                    <input
+                                        value={address.state}
+                                        onChange={(e) => setAddress({ ...address, state: e.target.value })}
+                                        placeholder="State"
+                                        className="h-11 rounded-xl border border-border bg-surface px-3 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                    />
+                                    <input
+                                        value={address.pincode}
+                                        onChange={(e) => setAddress({ ...address, pincode: e.target.value })}
+                                        placeholder="Pincode"
+                                        className="h-11 rounded-xl border border-border bg-surface px-3 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                    />
+                                    <input
+                                        value={address.landmark}
+                                        onChange={(e) => setAddress({ ...address, landmark: e.target.value })}
+                                        placeholder="Landmark (optional)"
+                                        className="h-11 rounded-xl border border-border bg-surface px-3 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                    />
                                 </div>
                             </section>
 
@@ -240,14 +280,27 @@ export default function LabBookingPage() {
                                 <h2 className="text-base font-semibold">Collection schedule</h2>
 
                                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                                    <label className="border border-border bg-surface p-3">
-                                        <span className="mb-2 flex items-center gap-2 text-xs text-muted"><CalendarDays className="h-4 w-4" />Date</span>
-                                        <input type="date" value={scheduledDate} min={new Date().toISOString().split("T")[0]} onChange={(e) => setScheduledDate(e.target.value)} className="w-full bg-transparent text-sm outline-none" />
+                                    <label className="rounded-xl border border-border bg-surface p-3">
+                                        <span className="mb-2 flex items-center gap-2 text-xs text-muted">
+                                            <CalendarDays className="h-4 w-4" />
+                                            Date
+                                        </span>
+                                        <input
+                                            type="date"
+                                            value={scheduledDate}
+                                            min={new Date().toISOString().split("T")[0]}
+                                            onChange={(e) => setScheduledDate(e.target.value)}
+                                            className="w-full bg-transparent text-sm outline-none"
+                                        />
                                     </label>
 
-                                    <label className="border border-border bg-surface p-3">
+                                    <label className="rounded-xl border border-border bg-surface p-3">
                                         <span className="mb-2 block text-xs text-muted">Time slot</span>
-                                        <select value={scheduledSlot} onChange={(e) => setScheduledSlot(e.target.value)} className="w-full bg-transparent text-sm outline-none">
+                                        <select
+                                            value={scheduledSlot}
+                                            onChange={(e) => setScheduledSlot(e.target.value)}
+                                            className="w-full bg-transparent text-sm outline-none"
+                                        >
                                             <option value="">Select slot</option>
                                             <option value="08:00 AM - 10:00 AM">08:00 AM - 10:00 AM</option>
                                             <option value="10:00 AM - 12:00 PM">10:00 AM - 12:00 PM</option>
@@ -262,9 +315,20 @@ export default function LabBookingPage() {
                             <section className="mt-8">
                                 <h2 className="text-base font-semibold">Payment method</h2>
 
-                                <div className="mt-4 border-t border-border">
-                                    <button onClick={() => setPaymentMethod("online")} className={`flex w-full items-start gap-4 border-b border-border py-5 text-left ${paymentMethod === "online" ? "text-foreground" : "text-muted"}`}>
-                                        <span className={`mt-0.5 flex h-5 w-5 items-center justify-center border ${paymentMethod === "online" ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
+                                <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-surface">
+                                    <button
+                                        onClick={() => setPaymentMethod("online")}
+                                        className={`flex w-full items-start gap-4 border-b border-border px-5 py-5 text-left transition-colors ${paymentMethod === "online"
+                                                ? "bg-surface-secondary/50 text-foreground"
+                                                : "text-muted hover:bg-surface-secondary/30"
+                                            }`}
+                                    >
+                                        <span
+                                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${paymentMethod === "online"
+                                                    ? "border-primary bg-primary text-primary-foreground"
+                                                    : "border-border"
+                                                }`}
+                                        >
                                             {paymentMethod === "online" && <Check className="h-3.5 w-3.5" />}
                                         </span>
                                         <span>
@@ -273,35 +337,78 @@ export default function LabBookingPage() {
                                         </span>
                                     </button>
 
-                                    <button onClick={() => setPaymentMethod("cash_on_collection")} className={`flex w-full items-start gap-4 py-5 text-left ${paymentMethod === "cash_on_collection" ? "text-foreground" : "text-muted"}`}>
-                                        <span className={`mt-0.5 flex h-5 w-5 items-center justify-center border ${paymentMethod === "cash_on_collection" ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
+                                    <button
+                                        onClick={() => setPaymentMethod("cash_on_collection")}
+                                        className={`flex w-full items-start gap-4 px-5 py-5 text-left transition-colors ${paymentMethod === "cash_on_collection"
+                                                ? "bg-surface-secondary/50 text-foreground"
+                                                : "text-muted hover:bg-surface-secondary/30"
+                                            }`}
+                                    >
+                                        <span
+                                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${paymentMethod === "cash_on_collection"
+                                                    ? "border-primary bg-primary text-primary-foreground"
+                                                    : "border-border"
+                                                }`}
+                                        >
                                             {paymentMethod === "cash_on_collection" && <Check className="h-3.5 w-3.5" />}
                                         </span>
                                         <span>
                                             <span className="block text-sm font-medium">Cash on home collection</span>
-                                            <span className="mt-1 block text-xs text-muted">Pay the collection representative when the sample is collected.</span>
+                                            <span className="mt-1 block text-xs text-muted">
+                                                Pay the collection representative when the sample is collected.
+                                            </span>
                                         </span>
                                     </button>
                                 </div>
                             </section>
                         </div>
 
-                        <aside className="h-fit border border-border bg-surface p-6">
+                        <aside className="h-fit rounded-2xl border border-border bg-surface p-6">
                             <h2 className="font-semibold">Booking summary</h2>
 
                             <div className="mt-5 border-t border-border pt-4 text-sm">
-                                <div className="flex justify-between py-2 text-muted"><span>Subtotal</span><span>₹{subtotal.toLocaleString("en-IN")}</span></div>
-                                <div className="flex justify-between py-2 text-muted"><span>Home collection</span><span>{collectionFee ? `₹${collectionFee}` : "Free"}</span></div>
-                                {discount > 0 && <div className="flex justify-between py-2 text-success"><span>Discount</span><span>-₹{discount.toLocaleString("en-IN")}</span></div>}
-                                <div className="mt-3 flex justify-between border-t border-border pt-4 text-base font-semibold"><span>Total</span><span>₹{total.toLocaleString("en-IN")}</span></div>
+                                <div className="flex justify-between py-2 text-muted">
+                                    <span>Subtotal</span>
+                                    <span>₹{subtotal.toLocaleString("en-IN")}</span>
+                                </div>
+
+                                <div className="flex justify-between py-2 text-muted">
+                                    <span>Home collection</span>
+                                    <span>{collectionFee ? `₹${collectionFee}` : "Free"}</span>
+                                </div>
+
+                                {discount > 0 && (
+                                    <div className="flex justify-between py-2 text-success">
+                                        <span>Discount</span>
+                                        <span>-₹{discount.toLocaleString("en-IN")}</span>
+                                    </div>
+                                )}
+
+                                <div className="mt-3 flex justify-between border-t border-border pt-4 text-base font-semibold">
+                                    <span>Total</span>
+                                    <span>₹{total.toLocaleString("en-IN")}</span>
+                                </div>
                             </div>
 
                             <div className="mt-5 border-t border-border pt-4 text-xs text-muted">
-                                <div className="flex gap-2"><MapPin className="h-4 w-4 shrink-0 text-primary" />Home sample collection at your selected address.</div>
-                                <div className="mt-3 flex gap-2"><Home className="h-4 w-4 shrink-0 text-primary" />{paymentMethod === "online" ? "Payment is completed before booking confirmation." : "Payment is collected when the sample is collected."}</div>
+                                <div className="flex gap-2">
+                                    <MapPin className="h-4 w-4 shrink-0 text-primary" />
+                                    Home sample collection at your selected address.
+                                </div>
+
+                                <div className="mt-3 flex gap-2">
+                                    <Home className="h-4 w-4 shrink-0 text-primary" />
+                                    {paymentMethod === "online"
+                                        ? "Payment is completed before booking confirmation."
+                                        : "Payment is collected when the sample is collected."}
+                                </div>
                             </div>
 
-                            <button disabled={submitting} onClick={submitBooking} className="mt-6 flex w-full items-center justify-center gap-2 bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50">
+                            <button
+                                disabled={submitting}
+                                onClick={submitBooking}
+                                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover disabled:opacity-50"
+                            >
                                 {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
                                 {paymentMethod === "online" ? "Continue to payment" : "Confirm booking"}
                             </button>

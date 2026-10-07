@@ -11,45 +11,38 @@ export const metadata: Metadata = {
 export default function FAQPage() {
     return (
         <main className="bg-background text-foreground">
-            <div className="mx-auto max-w-6xl px-5 py-14 sm:px-6 sm:py-20 lg:py-24">
-                {/* HEADER */}
-                <section className="border-b border-border pb-12 sm:pb-16">
-                    <div className="flex items-start gap-4">
-                        <div className="mt-1 hidden h-9 w-9 items-center justify-center bg-accent text-accent-foreground sm:flex">
-                            <HelpCircle className="h-4 w-4" />
-                        </div>
-
-                        <div>
-                            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-primary">
-                                Help center
-                            </p>
-
-                            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                                Frequently asked questions.
-                            </h1>
-
-                            <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg">
-                                Everything you need to know about Somatic, its AI capabilities, and data security standards.
-                            </p>
-                        </div>
+            <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+                <section className="mb-12 text-center sm:mb-14">
+                    <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted">
+                        <HelpCircle className="h-3.5 w-3.5 text-primary" />
+                        Help Center
                     </div>
+
+                    <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+                        Frequently asked questions
+                    </h1>
+
+                    <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+                        Everything you need to know about Somatic, its AI capabilities,
+                        and data security standards.
+                    </p>
                 </section>
 
-                {/* FAQ */}
-                <section className="pt-10 sm:pt-14">
-                    <div className="grid gap-x-12 md:grid-cols-2">
+                <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+                    <div className="grid md:grid-cols-2">
                         {pageContent.faq.map((item, index) => (
                             <article
                                 key={index}
-                                className="border-b border-border py-7 first:border-t md:nth-[2]:border-t"
+                                className={`group border-b border-border p-6 transition-colors hover:bg-surface-secondary sm:p-8 ${index % 2 === 0 ? "md:border-r" : ""
+                                    } ${index >= pageContent.faq.length - 2 ? "md:border-b-0" : ""}`}
                             >
                                 <div className="flex gap-5">
-                                    <span className="pt-1 text-xs font-semibold text-primary">
+                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-xs font-bold text-primary">
                                         {String(index + 1).padStart(2, "0")}
                                     </span>
 
-                                    <div>
-                                        <h2 className="text-lg font-bold leading-snug sm:text-xl">
+                                    <div className="min-w-0">
+                                        <h2 className="text-lg font-bold leading-snug text-foreground sm:text-xl">
                                             {item.question}
                                         </h2>
 

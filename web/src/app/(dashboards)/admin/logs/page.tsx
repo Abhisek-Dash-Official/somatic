@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import {
-    Logs,
     AlertTriangle,
-    Loader2,
     ChevronLeft,
     ChevronRight,
     Eye,
+    Loader2,
+    Logs,
 } from "lucide-react";
 import LogDetailsModal from "@/components/admin/LogDetailsModal";
 
@@ -80,10 +80,9 @@ export default function AdminLogsPage() {
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                 <div className="flex flex-col gap-1">
                     <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                        <div className="flex shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-accent p-2.5">
+                        <div className="flex shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-accent p-2.5">
                             <Logs className="h-6 w-6 text-primary" />
                         </div>
-
                         System Audit Logs
                     </h1>
 
@@ -93,7 +92,7 @@ export default function AdminLogsPage() {
                 </div>
 
                 {pagination && (
-                    <div className="w-fit rounded-lg border border-border bg-surface-secondary px-4 py-2 font-mono text-sm text-muted">
+                    <div className="w-fit rounded-xl border border-border bg-surface-secondary px-4 py-2 font-mono text-sm text-muted">
                         Total Records:{" "}
                         <span className="font-bold text-foreground">
                             {pagination.total}
@@ -102,7 +101,7 @@ export default function AdminLogsPage() {
                 )}
             </div>
 
-            <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-surface">
+            <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                 {loading && logs.length === 0 ? (
                     <div className="flex min-h-100 items-center justify-center">
                         <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -125,15 +124,12 @@ export default function AdminLogsPage() {
                                         <th className="w-1/4 px-6 py-4 font-semibold">
                                             Timestamp
                                         </th>
-
                                         <th className="w-1/3 px-6 py-4 font-semibold">
                                             Action Type
                                         </th>
-
                                         <th className="w-1/4 px-6 py-4 font-semibold">
                                             Actor
                                         </th>
-
                                         <th className="px-6 py-4 text-center font-semibold">
                                             Details
                                         </th>
@@ -158,7 +154,7 @@ export default function AdminLogsPage() {
                                                                     day: "2-digit",
                                                                     month: "short",
                                                                     year: "numeric",
-                                                                },
+                                                                }
                                                             )}
                                                         </span>
 
@@ -172,7 +168,7 @@ export default function AdminLogsPage() {
                                                     <span className="font-semibold text-foreground">
                                                         {log.action_type.replace(
                                                             /_/g,
-                                                            " ",
+                                                            " "
                                                         )}
                                                     </span>
                                                 </td>
@@ -180,7 +176,7 @@ export default function AdminLogsPage() {
                                                 <td className="px-6 py-4">
                                                     <div className="flex flex-col items-start gap-1">
                                                         <span
-                                                            className={`rounded-md border px-2 py-0.5 text-[10px] font-medium capitalize sm:text-xs ${log.actor_role ===
+                                                            className={`rounded-full border px-2 py-0.5 text-[10px] font-medium capitalize sm:text-xs ${log.actor_role ===
                                                                     "admin"
                                                                     ? "border-danger/20 bg-danger/10 text-danger"
                                                                     : log.actor_role ===
@@ -193,7 +189,8 @@ export default function AdminLogsPage() {
                                                         </span>
 
                                                         <span className="max-w-37.5 truncate text-muted">
-                                                            {log.actor_id?.username ||
+                                                            {log.actor_id
+                                                                ?.username ||
                                                                 "System"}
                                                         </span>
                                                     </div>
@@ -204,7 +201,7 @@ export default function AdminLogsPage() {
                                                         onClick={() =>
                                                             setSelectedLog(log)
                                                         }
-                                                        className="inline-flex items-center justify-center rounded-lg bg-surface-secondary p-2 text-muted transition hover:bg-accent hover:text-primary"
+                                                        className="inline-flex items-center justify-center rounded-xl bg-surface-secondary p-2 text-muted transition hover:bg-accent hover:text-primary"
                                                         title="View Details"
                                                     >
                                                         <Eye className="h-4 w-4" />
@@ -236,7 +233,7 @@ export default function AdminLogsPage() {
                                         disabled={
                                             currentPage === 1 || loading
                                         }
-                                        className="flex items-center gap-1 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="flex items-center gap-1 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         <ChevronLeft className="h-4 w-4" />
                                         Prev
@@ -249,7 +246,7 @@ export default function AdminLogsPage() {
                                             pagination.totalPages ||
                                             loading
                                         }
-                                        className="flex items-center gap-1 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="flex items-center gap-1 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         Next
                                         <ChevronRight className="h-4 w-4" />

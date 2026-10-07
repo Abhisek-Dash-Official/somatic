@@ -2,7 +2,16 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { Plus, Search, Edit, Trash2, ChevronLeft, ChevronRight, Loader2, Building2 } from "lucide-react";
+import {
+    Building2,
+    ChevronLeft,
+    ChevronRight,
+    Edit,
+    Loader2,
+    Plus,
+    Search,
+    Trash2,
+} from "lucide-react";
 import BloodBankLightbox from "@/components/shop/bloodbanks/BloodBankLightbox";
 import BloodBankFormModal from "@/components/shop/bloodbanks/BloodBankFormModal";
 
@@ -39,7 +48,9 @@ export default function AdminBloodBanksPage() {
                 ...(status !== "all" && { status }),
             });
 
-            const res = await fetch(`/api/admin/shop/bloodbanks?${params.toString()}`);
+            const res = await fetch(
+                `/api/admin/shop/bloodbanks?${params.toString()}`,
+            );
             const json = await res.json();
 
             if (json.success) {
@@ -66,7 +77,9 @@ export default function AdminBloodBanksPage() {
         if (!confirm("Deactivate this blood bank?")) return;
 
         try {
-            const res = await fetch(`/api/admin/shop/bloodbanks/${id}`, { method: "DELETE" });
+            const res = await fetch(`/api/admin/shop/bloodbanks/${id}`, {
+                method: "DELETE",
+            });
             const json = await res.json();
 
             if (json.success) fetchBloodBanks();
@@ -82,6 +95,7 @@ export default function AdminBloodBanksPage() {
                     <h1 className="text-2xl font-bold tracking-tight text-foreground">
                         Blood Banks Management
                     </h1>
+
                     <p className="mt-0.5 text-sm text-muted">
                         Manage regional blood banks and emergency stock levels
                     </p>
@@ -90,22 +104,23 @@ export default function AdminBloodBanksPage() {
                 <button
                     type="button"
                     onClick={() => openFormModal()}
-                    className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover active:scale-[0.98]"
+                    className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover active:scale-[0.98]"
                 >
                     <Plus className="h-4 w-4" />
                     Add Blood Bank
                 </button>
             </div>
 
-            <div className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-3.5 md:flex-row">
+            <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4 shadow-sm md:flex-row">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
                     <input
                         type="text"
                         placeholder="Search by name, license..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full rounded-lg border border-border bg-background py-2 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/20"
+                        className="w-full rounded-xl border border-border bg-surface-secondary py-2.5 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
                     />
                 </div>
 
@@ -114,16 +129,20 @@ export default function AdminBloodBanksPage() {
                     placeholder="Filter by city..."
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className="rounded-lg border border-border bg-background px-3.5 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    className="rounded-xl border border-border bg-surface-secondary px-3.5 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
                 />
 
                 <select
                     value={bloodGroup}
                     onChange={(e) => setBloodGroup(e.target.value)}
-                    className="rounded-lg border border-border bg-background px-3.5 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    className="rounded-xl border border-border bg-surface-secondary px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
                 >
                     {BLOOD_GROUPS.map((bg) => (
-                        <option key={bg} value={bg} className="bg-surface text-foreground">
+                        <option
+                            key={bg}
+                            value={bg}
+                            className="bg-surface text-foreground"
+                        >
                             {bg === "all" ? "All Blood Groups" : bg}
                         </option>
                     ))}
@@ -132,15 +151,21 @@ export default function AdminBloodBanksPage() {
                 <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="rounded-lg border border-border bg-background px-3.5 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    className="rounded-xl border border-border bg-surface-secondary px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
                 >
-                    <option value="all" className="bg-surface text-foreground">All Status</option>
-                    <option value="active" className="bg-surface text-foreground">Active</option>
-                    <option value="inactive" className="bg-surface text-foreground">Inactive</option>
+                    <option value="all" className="bg-surface text-foreground">
+                        All Status
+                    </option>
+                    <option value="active" className="bg-surface text-foreground">
+                        Active
+                    </option>
+                    <option value="inactive" className="bg-surface text-foreground">
+                        Inactive
+                    </option>
                 </select>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-border bg-surface">
+            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                 {loading ? (
                     <div className="flex items-center justify-center gap-3 p-16 text-muted">
                         <Loader2 className="h-5 w-5 animate-spin text-primary" />
@@ -169,10 +194,15 @@ export default function AdminBloodBanksPage() {
                                 {bloodBanks.map((bank) => {
                                     const hasImages = bank.images && bank.images.length > 0;
                                     const firstImg = hasImages ? bank.images[0] : null;
-                                    const isImgFailed = firstImg ? failedImages[`${bank._id}-0`] : true;
+                                    const isImgFailed = firstImg
+                                        ? failedImages[`${bank._id}-0`]
+                                        : true;
 
                                     return (
-                                        <tr key={bank._id} className="transition-colors hover:bg-surface-secondary">
+                                        <tr
+                                            key={bank._id}
+                                            className="transition-colors hover:bg-surface-secondary"
+                                        >
                                             <td className="p-4">
                                                 <div className="flex items-center gap-3">
                                                     <div
@@ -182,7 +212,9 @@ export default function AdminBloodBanksPage() {
                                                                 setLightboxIndex(0);
                                                             }
                                                         }}
-                                                        className={`relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-background ${hasImages ? "cursor-pointer hover:border-primary/50" : ""
+                                                        className={`relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-background ${hasImages
+                                                                ? "cursor-pointer hover:border-primary/50"
+                                                                : ""
                                                             }`}
                                                     >
                                                         {firstImg && !isImgFailed ? (
@@ -208,6 +240,7 @@ export default function AdminBloodBanksPage() {
                                                         <div className="font-semibold text-foreground">
                                                             {bank.name}
                                                         </div>
+
                                                         {bank.hospital_affiliation && (
                                                             <div className="mt-0.5 text-xs text-muted">
                                                                 {bank.hospital_affiliation}
@@ -231,7 +264,10 @@ export default function AdminBloodBanksPage() {
                                             </td>
 
                                             <td className="p-4">
-                                                <div className="text-foreground">{bank.contact_no}</div>
+                                                <div className="text-foreground">
+                                                    {bank.contact_no}
+                                                </div>
+
                                                 {bank.email && (
                                                     <div className="text-xs text-muted-foreground">
                                                         {bank.email}
@@ -241,11 +277,11 @@ export default function AdminBloodBanksPage() {
 
                                             <td className="p-4">
                                                 {bank.is_delivery_available ? (
-                                                    <span className="rounded-lg border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
+                                                    <span className="rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
                                                         Available
                                                     </span>
                                                 ) : (
-                                                    <span className="rounded-lg border border-border bg-surface-secondary px-2.5 py-1 text-xs font-medium text-muted">
+                                                    <span className="rounded-full border border-border bg-surface-secondary px-2.5 py-1 text-xs font-medium text-muted">
                                                         No
                                                     </span>
                                                 )}
@@ -253,11 +289,11 @@ export default function AdminBloodBanksPage() {
 
                                             <td className="p-4">
                                                 {bank.is_active ? (
-                                                    <span className="rounded-lg border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
+                                                    <span className="rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
                                                         Active
                                                     </span>
                                                 ) : (
-                                                    <span className="rounded-lg border border-danger/20 bg-danger/10 px-2.5 py-1 text-xs font-medium text-danger">
+                                                    <span className="rounded-full border border-danger/20 bg-danger/10 px-2.5 py-1 text-xs font-medium text-danger">
                                                         Inactive
                                                     </span>
                                                 )}
@@ -268,7 +304,7 @@ export default function AdminBloodBanksPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => openFormModal(bank)}
-                                                        className="rounded-lg p-2 text-muted transition hover:bg-accent hover:text-primary"
+                                                        className="rounded-xl p-2 text-muted transition hover:bg-accent hover:text-primary"
                                                     >
                                                         <Edit className="h-4 w-4" />
                                                     </button>
@@ -276,7 +312,7 @@ export default function AdminBloodBanksPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => handleDelete(bank._id)}
-                                                        className="rounded-lg p-2 text-muted transition hover:bg-danger/10 hover:text-danger"
+                                                        className="rounded-xl p-2 text-muted transition hover:bg-danger/10 hover:text-danger"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </button>
@@ -291,14 +327,16 @@ export default function AdminBloodBanksPage() {
                 )}
 
                 <div className="flex items-center justify-between border-t border-border bg-surface-secondary p-4 text-xs text-muted">
-                    <span>Page {page} of {totalPages}</span>
+                    <span>
+                        Page {page} of {totalPages}
+                    </span>
 
                     <div className="flex items-center gap-2">
                         <button
                             type="button"
                             disabled={page <= 1}
                             onClick={() => setPage((p) => p - 1)}
-                            className="rounded-lg border border-border bg-surface p-1.5 text-foreground transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
+                            className="rounded-xl border border-border bg-surface p-2 text-foreground transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             <ChevronLeft className="h-4 w-4" />
                         </button>
@@ -307,7 +345,7 @@ export default function AdminBloodBanksPage() {
                             type="button"
                             disabled={page >= totalPages}
                             onClick={() => setPage((p) => p + 1)}
-                            className="rounded-lg border border-border bg-surface p-1.5 text-foreground transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
+                            className="rounded-xl border border-border bg-surface p-2 text-foreground transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             <ChevronRight className="h-4 w-4" />
                         </button>

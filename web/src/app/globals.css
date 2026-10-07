@@ -1,61 +1,61 @@
 @import "tailwindcss";
 
 :root {
-  --background: #071116;
-  --foreground: #e8f1f3;
+  --background: #f8fafc;
+  --foreground: #0f172a;
 
-  --surface: #0d1a20;
-  --surface-secondary: #12242b;
+  --surface: #ffffff;
+  --surface-secondary: #f1f5f9;
 
-  --border: #1d343c;
+  --border: #e2e8f0;
 
-  --muted: #91a5aa;
-  --muted-foreground: #687d83;
+  --muted: #475569;
+  --muted-foreground: #64748b;
 
-  --primary: #08a9b5;
-  --primary-hover: #12c4c4;
-  --primary-foreground: #041014;
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --primary-foreground: #ffffff;
 
-  --accent: #10353b;
-  --accent-foreground: #62d8d8;
+  --accent: #e0f2fe;
+  --accent-foreground: #0369a1;
+
+  --success: #15803d;
+  --warning: #b45309;
+  --danger: #dc2626;
+  --info: #0284c7;
+
+  --hero-overlay: rgba(248, 250, 252, 0.75);
+
+  color-scheme: light;
+}
+
+.dark {
+  --background: #0b1320;
+  --foreground: #f1f5f9;
+
+  --surface: #111c2e;
+  --surface-secondary: #1a293e;
+
+  --border: #23354d;
+
+  --muted: #94a3b8;
+  --muted-foreground: #64748b;
+
+  --primary: #38bdf8;
+  --primary-hover: #0284c7;
+  --primary-foreground: #021224;
+
+  --accent: #112940;
+  --accent-foreground: #38bdf8;
 
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
   --info: #38bdf8;
 
-  --hero-overlay: rgba(7, 17, 22, 0.45);
+  --hero-overlay: rgba(11, 19, 32, 0.65);
 
   color-scheme: dark;
-}
-
-.light {
-  --background: #f4f9fa;
-  --foreground: #102025;
-
-  --surface: #ffffff;
-  --surface-secondary: #eaf3f5;
-
-  --border: #d4e2e5;
-
-  --muted: #5f7379;
-  --muted-foreground: #829398;
-
-  --primary: #078f9d;
-  --primary-hover: #067783;
-  --primary-foreground: #ffffff;
-
-  --accent: #dff4f5;
-  --accent-foreground: #08717a;
-
-  --success: #16a34a;
-  --warning: #d97706;
-  --danger: #dc2626;
-  --info: #2563eb;
-
-  --hero-overlay: rgba(244, 249, 250, 0.68);
-
-  color-scheme: light;
 }
 
 @theme inline {
@@ -98,7 +98,7 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--border) #071116;
+  scrollbar-color: var(--border) var(--background);
 }
 
 *::-webkit-scrollbar {
@@ -107,7 +107,7 @@ body {
 }
 
 *::-webkit-scrollbar-track {
-  background: #071116;
+  background: var(--background);
 }
 
 *::-webkit-scrollbar-thumb {

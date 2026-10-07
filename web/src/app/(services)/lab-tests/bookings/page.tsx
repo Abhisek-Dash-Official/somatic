@@ -57,37 +57,70 @@ export default function LabBookingsPage() {
 
                 <div className="mt-5 flex gap-1 overflow-x-auto border-b border-border">
                     {statuses.map((item) => (
-                        <button key={item.value} onClick={() => setStatus(item.value)} className={`shrink-0 border-b-2 px-4 py-3 text-sm ${status === item.value ? "border-primary text-primary" : "border-transparent text-muted hover:text-foreground"}`}>
+                        <button
+                            key={item.value}
+                            onClick={() => setStatus(item.value)}
+                            className={`shrink-0 border-b-2 px-4 py-3 text-sm transition-colors ${status === item.value
+                                    ? "border-primary text-primary"
+                                    : "border-transparent text-muted hover:text-foreground"
+                                }`}
+                        >
                             {item.label}
                         </button>
                     ))}
                 </div>
 
-                {error && <div className="mt-5 border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>}
+                {error && (
+                    <div className="mt-5 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+                        {error}
+                    </div>
+                )}
 
                 {loading ? (
                     <div className="py-16 text-center text-sm text-muted">Loading bookings...</div>
                 ) : bookings.length === 0 ? (
-                    <div className="py-16 text-center">
+                    <div className="mt-5 rounded-2xl border border-border bg-surface p-12 text-center">
                         <FlaskConical className="mx-auto h-8 w-8 text-muted-foreground" />
                         <p className="mt-4 text-sm text-muted">No lab bookings found.</p>
-                        <Link href="/lab-tests" className="mt-4 inline-block text-sm text-primary hover:underline">Browse lab tests</Link>
+                        <Link
+                            href="/lab-tests"
+                            className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
+                        >
+                            Browse lab tests
+                        </Link>
                     </div>
                 ) : (
-                    <div className="mt-4">
+                    <div className="mt-5 space-y-3">
                         {bookings.map((booking) => (
-                            <Link key={String(booking._id)} href={`/lab-tests/bookings/${booking._id}`} className="group block border-b border-border py-6 hover:bg-surface-secondary/30">
+                            <Link
+                                key={String(booking._id)}
+                                href={`/lab-tests/bookings/${booking._id}`}
+                                className="group block rounded-2xl border border-border bg-surface p-5 transition-colors hover:bg-surface-secondary/50"
+                            >
                                 <div className="grid gap-5 md:grid-cols-[1fr_220px_160px] md:items-center">
                                     <div>
-                                        <p className="text-xs text-primary">{booking.booking_number}</p>
-                                        <h2 className="mt-2 text-base font-semibold">{booking.tests.length} {booking.tests.length === 1 ? "test" : "tests"}</h2>
-                                        <p className="mt-1 text-sm text-muted">{booking.tests.map((test) => test.name).join(", ")}</p>
+                                        <p className="text-xs font-medium text-primary">{booking.booking_number}</p>
+                                        <h2 className="mt-2 text-base font-semibold">
+                                            {booking.tests.length} {booking.tests.length === 1 ? "test" : "tests"}
+                                        </h2>
+                                        <p className="mt-1 text-sm text-muted">
+                                            {booking.tests.map((test) => test.name).join(", ")}
+                                        </p>
                                     </div>
 
                                     <div className="space-y-2 text-xs text-muted">
-                                        <p className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-primary" />{new Date(booking.scheduled_date).toLocaleDateString("en-IN")}</p>
-                                        <p className="flex items-center gap-2"><Home className="h-4 w-4 text-primary" />{booking.scheduled_slot}</p>
-                                        <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" />{booking.collection_address.city}</p>
+                                        <p className="flex items-center gap-2">
+                                            <CalendarDays className="h-4 w-4 text-primary" />
+                                            {new Date(booking.scheduled_date).toLocaleDateString("en-IN")}
+                                        </p>
+                                        <p className="flex items-center gap-2">
+                                            <Home className="h-4 w-4 text-primary" />
+                                            {booking.scheduled_slot}
+                                        </p>
+                                        <p className="flex items-center gap-2">
+                                            <MapPin className="h-4 w-4 text-primary" />
+                                            {booking.collection_address.city}
+                                        </p>
                                     </div>
 
                                     <div className="md:text-right">
@@ -95,7 +128,10 @@ export default function LabBookingsPage() {
                                         <p className={`mt-1 text-xs ${booking.payment_status === "paid" ? "text-success" : "text-warning"}`}>
                                             {booking.payment_status === "paid" ? "Paid" : "Payment pending"}
                                         </p>
-                                        <p className="mt-2 text-xs text-muted group-hover:text-primary">{booking.status.replaceAll("_", " ")} <ChevronRight className="inline h-3.5 w-3.5" /></p>
+                                        <p className="mt-2 text-xs text-muted transition-colors group-hover:text-primary">
+                                            {booking.status.replaceAll("_", " ")}{" "}
+                                            <ChevronRight className="inline h-3.5 w-3.5" />
+                                        </p>
                                     </div>
                                 </div>
                             </Link>

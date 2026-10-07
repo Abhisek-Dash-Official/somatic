@@ -2,7 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, FlaskConical, Loader2, Plus, Save, Trash2 } from "lucide-react";
+import {
+    ArrowLeft,
+    FlaskConical,
+    Loader2,
+    Plus,
+    Save,
+    Trash2,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import type { ILabTestDocument } from "@/models/LabTest";
 
@@ -53,7 +60,9 @@ export default function AdminLabTestEditPage({
                 const result = await response.json();
 
                 if (!response.ok || !result.success) {
-                    throw new Error(result.message || "Failed to fetch lab test");
+                    throw new Error(
+                        result.message || "Failed to fetch lab test"
+                    );
                 }
 
                 const data = result.data as ILabTestDocument;
@@ -79,7 +88,7 @@ export default function AdminLabTestEditPage({
                         name: parameter.name || "",
                         unit: parameter.unit || "",
                         reference_range: parameter.reference_range || "",
-                    })),
+                    }))
                 );
             } catch (error: any) {
                 toast.error(error.message || "Failed to fetch lab test");
@@ -94,14 +103,14 @@ export default function AdminLabTestEditPage({
     const updateParameter = (
         index: number,
         field: keyof Parameter,
-        value: string,
+        value: string
     ) => {
         setParameters((current) =>
             current.map((parameter, parameterIndex) =>
                 parameterIndex === index
                     ? { ...parameter, [field]: value }
-                    : parameter,
-            ),
+                    : parameter
+            )
         );
     };
 
@@ -118,7 +127,7 @@ export default function AdminLabTestEditPage({
 
     const removeParameter = (index: number) => {
         setParameters((current) =>
-            current.filter((_, parameterIndex) => parameterIndex !== index),
+            current.filter((_, parameterIndex) => parameterIndex !== index)
         );
     };
 
@@ -170,7 +179,9 @@ export default function AdminLabTestEditPage({
             const result = await response.json();
 
             if (!response.ok || !result.success) {
-                throw new Error(result.message || "Failed to update lab test");
+                throw new Error(
+                    result.message || "Failed to update lab test"
+                );
             }
 
             setLabTest(result.data);
@@ -218,16 +229,19 @@ export default function AdminLabTestEditPage({
                             Lab Tests
                         </Link>
 
-                        <h1 className="text-2xl font-semibold">Edit Lab Test</h1>
+                        <h1 className="text-2xl font-semibold">
+                            Edit Lab Test
+                        </h1>
                         <p className="mt-1 text-sm text-muted">
-                            Update catalogue information and default parameters.
+                            Update catalogue information and default
+                            parameters.
                         </p>
                     </div>
 
                     <div
-                        className={`px-3 py-2 text-xs font-medium ${form.is_active
-                            ? "bg-accent text-accent-foreground"
-                            : "bg-surface-secondary text-muted"
+                        className={`rounded-full px-3 py-2 text-xs font-medium ${form.is_active
+                                ? "bg-success/10 text-success"
+                                : "bg-surface-secondary text-muted"
                             }`}
                     >
                         {form.is_active ? "Active" : "Inactive"}
@@ -235,8 +249,10 @@ export default function AdminLabTestEditPage({
                 </div>
 
                 <div className="space-y-5">
-                    <section className="border border-border bg-surface p-5">
-                        <h2 className="mb-4 text-sm font-semibold">Basic Information</h2>
+                    <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+                        <h2 className="mb-4 text-sm font-semibold">
+                            Basic Information
+                        </h2>
 
                         <div className="grid gap-4 md:grid-cols-2">
                             <div>
@@ -246,9 +262,12 @@ export default function AdminLabTestEditPage({
                                 <input
                                     value={form.name}
                                     onChange={(event) =>
-                                        setForm({ ...form, name: event.target.value })
+                                        setForm({
+                                            ...form,
+                                            name: event.target.value,
+                                        })
                                     }
-                                    className="h-10 w-full border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+                                    className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                     placeholder="Complete Blood Count"
                                 />
                             </div>
@@ -260,9 +279,12 @@ export default function AdminLabTestEditPage({
                                 <input
                                     value={form.code}
                                     onChange={(event) =>
-                                        setForm({ ...form, code: event.target.value })
+                                        setForm({
+                                            ...form,
+                                            code: event.target.value,
+                                        })
                                     }
-                                    className="h-10 w-full border border-border bg-background px-3 text-sm uppercase outline-none focus:border-primary"
+                                    className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm uppercase outline-none focus:border-primary"
                                     placeholder="CBC001"
                                 />
                             </div>
@@ -274,9 +296,12 @@ export default function AdminLabTestEditPage({
                                 <input
                                     value={form.category}
                                     onChange={(event) =>
-                                        setForm({ ...form, category: event.target.value })
+                                        setForm({
+                                            ...form,
+                                            category: event.target.value,
+                                        })
                                     }
-                                    className="h-10 w-full border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+                                    className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                     placeholder="Hematology"
                                 />
                             </div>
@@ -288,9 +313,12 @@ export default function AdminLabTestEditPage({
                                 <select
                                     value={form.type}
                                     onChange={(event) =>
-                                        setForm({ ...form, type: event.target.value })
+                                        setForm({
+                                            ...form,
+                                            type: event.target.value,
+                                        })
                                     }
-                                    className="h-10 w-full border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+                                    className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                 >
                                     <option value="test">Test</option>
                                     <option value="package">Package</option>
@@ -306,9 +334,12 @@ export default function AdminLabTestEditPage({
                                     min="0"
                                     value={form.price}
                                     onChange={(event) =>
-                                        setForm({ ...form, price: event.target.value })
+                                        setForm({
+                                            ...form,
+                                            price: event.target.value,
+                                        })
                                     }
-                                    className="h-10 w-full border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+                                    className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                     placeholder="500"
                                 />
                             </div>
@@ -320,9 +351,12 @@ export default function AdminLabTestEditPage({
                                 <input
                                     value={form.report_time}
                                     onChange={(event) =>
-                                        setForm({ ...form, report_time: event.target.value })
+                                        setForm({
+                                            ...form,
+                                            report_time: event.target.value,
+                                        })
                                     }
-                                    className="h-10 w-full border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+                                    className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                     placeholder="24 hours"
                                 />
                             </div>
@@ -335,26 +369,32 @@ export default function AdminLabTestEditPage({
                             <textarea
                                 value={form.description}
                                 onChange={(event) =>
-                                    setForm({ ...form, description: event.target.value })
+                                    setForm({
+                                        ...form,
+                                        description: event.target.value,
+                                    })
                                 }
                                 rows={4}
-                                className="w-full resize-none border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
+                                className="w-full resize-none rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
                                 placeholder="Describe this laboratory test..."
                             />
                         </div>
                     </section>
 
-                    <section className="border border-border bg-surface p-5">
-                        <h2 className="mb-4 text-sm font-semibold">Collection Details</h2>
+                    <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+                        <h2 className="mb-4 text-sm font-semibold">
+                            Collection Details
+                        </h2>
 
-                        <label className="flex cursor-pointer items-center gap-3 text-sm">
+                        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface-secondary p-3 text-sm">
                             <input
                                 type="checkbox"
                                 checked={form.home_collection}
                                 onChange={(event) =>
                                     setForm({
                                         ...form,
-                                        home_collection: event.target.checked,
+                                        home_collection:
+                                            event.target.checked,
                                     })
                                 }
                                 className="h-4 w-4 accent-primary"
@@ -370,9 +410,12 @@ export default function AdminLabTestEditPage({
                                 <input
                                     value={form.sample_type}
                                     onChange={(event) =>
-                                        setForm({ ...form, sample_type: event.target.value })
+                                        setForm({
+                                            ...form,
+                                            sample_type: event.target.value,
+                                        })
                                     }
-                                    className="h-10 w-full border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+                                    className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                     placeholder="Blood"
                                 />
                             </div>
@@ -384,29 +427,35 @@ export default function AdminLabTestEditPage({
                                 <input
                                     value={form.preparation}
                                     onChange={(event) =>
-                                        setForm({ ...form, preparation: event.target.value })
+                                        setForm({
+                                            ...form,
+                                            preparation: event.target.value,
+                                        })
                                     }
-                                    className="h-10 w-full border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+                                    className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary"
                                     placeholder="8-10 hours fasting"
                                 />
                             </div>
                         </div>
                     </section>
 
-                    <section className="border border-border bg-surface p-5">
+                    <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
                         <div className="mb-4 flex items-center justify-between gap-3">
                             <div>
-                                <h2 className="text-sm font-semibold">Default Parameters</h2>
+                                <h2 className="text-sm font-semibold">
+                                    Default Parameters
+                                </h2>
                                 <p className="mt-1 text-xs text-muted">
-                                    These are catalogue defaults. Actual patient results are
-                                    entered separately by the dispatcher.
+                                    These are catalogue defaults. Actual patient
+                                    results are entered separately by the
+                                    dispatcher.
                                 </p>
                             </div>
 
                             <button
                                 type="button"
                                 onClick={addParameter}
-                                className="flex h-9 items-center gap-2 border border-border px-3 text-xs font-medium hover:border-primary hover:text-primary"
+                                className="flex h-9 items-center gap-2 rounded-xl border border-border px-3 text-xs font-medium transition hover:border-primary hover:text-primary"
                             >
                                 <Plus className="h-3.5 w-3.5" />
                                 Add Parameter
@@ -414,7 +463,7 @@ export default function AdminLabTestEditPage({
                         </div>
 
                         {parameters.length === 0 ? (
-                            <div className="border border-dashed border-border px-4 py-8 text-center">
+                            <div className="rounded-xl border border-dashed border-border px-4 py-8 text-center">
                                 <p className="text-sm text-muted">
                                     No default parameters added.
                                 </p>
@@ -424,23 +473,31 @@ export default function AdminLabTestEditPage({
                                 {parameters.map((parameter, index) => (
                                     <div
                                         key={index}
-                                        className="grid gap-3 border border-border bg-background p-3 md:grid-cols-[1.2fr_0.7fr_1.2fr_auto]"
+                                        className="grid gap-3 rounded-xl border border-border bg-surface-secondary p-3 md:grid-cols-[1.2fr_0.7fr_1.2fr_auto]"
                                     >
                                         <input
                                             value={parameter.name}
                                             onChange={(event) =>
-                                                updateParameter(index, "name", event.target.value)
+                                                updateParameter(
+                                                    index,
+                                                    "name",
+                                                    event.target.value
+                                                )
                                             }
-                                            className="h-9 border border-border bg-surface px-3 text-sm outline-none focus:border-primary"
+                                            className="h-9 rounded-xl border border-border bg-surface px-3 text-sm outline-none focus:border-primary"
                                             placeholder="Parameter name"
                                         />
 
                                         <input
                                             value={parameter.unit}
                                             onChange={(event) =>
-                                                updateParameter(index, "unit", event.target.value)
+                                                updateParameter(
+                                                    index,
+                                                    "unit",
+                                                    event.target.value
+                                                )
                                             }
-                                            className="h-9 border border-border bg-surface px-3 text-sm outline-none focus:border-primary"
+                                            className="h-9 rounded-xl border border-border bg-surface px-3 text-sm outline-none focus:border-primary"
                                             placeholder="Unit"
                                         />
 
@@ -450,17 +507,19 @@ export default function AdminLabTestEditPage({
                                                 updateParameter(
                                                     index,
                                                     "reference_range",
-                                                    event.target.value,
+                                                    event.target.value
                                                 )
                                             }
-                                            className="h-9 border border-border bg-surface px-3 text-sm outline-none focus:border-primary"
+                                            className="h-9 rounded-xl border border-border bg-surface px-3 text-sm outline-none focus:border-primary"
                                             placeholder="Reference range"
                                         />
 
                                         <button
                                             type="button"
-                                            onClick={() => removeParameter(index)}
-                                            className="flex h-9 items-center justify-center border border-border px-3 text-muted hover:border-danger hover:text-danger"
+                                            onClick={() =>
+                                                removeParameter(index)
+                                            }
+                                            className="flex h-9 items-center justify-center rounded-xl border border-border px-3 text-muted transition hover:border-danger hover:text-danger"
                                         >
                                             <Trash2 className="h-4 w-4" />
                                         </button>
@@ -470,10 +529,12 @@ export default function AdminLabTestEditPage({
                         )}
                     </section>
 
-                    <section className="border border-border bg-surface p-5">
-                        <h2 className="mb-4 text-sm font-semibold">Availability</h2>
+                    <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+                        <h2 className="mb-4 text-sm font-semibold">
+                            Availability
+                        </h2>
 
-                        <label className="flex cursor-pointer items-center gap-3 text-sm">
+                        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface-secondary p-3 text-sm">
                             <input
                                 type="checkbox"
                                 checked={form.is_active}
@@ -492,7 +553,7 @@ export default function AdminLabTestEditPage({
                     <div className="flex justify-end gap-3 pb-6">
                         <Link
                             href="/admin/lab-tests"
-                            className="flex h-10 items-center border border-border px-4 text-sm font-medium hover:border-primary hover:text-primary"
+                            className="flex h-10 items-center rounded-xl border border-border px-4 text-sm font-medium transition hover:border-primary hover:text-primary"
                         >
                             Cancel
                         </Link>
@@ -501,7 +562,7 @@ export default function AdminLabTestEditPage({
                             type="button"
                             onClick={handleSave}
                             disabled={saving}
-                            className="flex h-10 items-center gap-2 bg-primary px-5 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex h-10 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {saving ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />

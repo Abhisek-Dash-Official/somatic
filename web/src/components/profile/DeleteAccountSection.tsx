@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, AlertTriangle } from "lucide-react";
+import { AlertTriangle, Trash2 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import ConfirmModal from "@/components/ui/ConfirmModal";
 import { toast } from "react-toastify";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 export default function DeleteAccountSection() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,15 +14,10 @@ export default function DeleteAccountSection() {
         setLoading(true);
 
         try {
-            const res = await fetch("/api/users/me", {
-                method: "DELETE",
-            });
-
+            const res = await fetch("/api/users/me", { method: "DELETE" });
             const data = await res.json();
 
-            if (!res.ok) {
-                throw new Error(data.error || "Failed to delete account");
-            }
+            if (!res.ok) throw new Error(data.error || "Failed to delete account");
 
             toast.success("Account deleted successfully. Logging out...");
             setIsModalOpen(false);
@@ -30,8 +25,8 @@ export default function DeleteAccountSection() {
             setTimeout(() => {
                 signOut({ callbackUrl: "/login" });
             }, 1500);
-        } catch (error: any) {
-            toast.error(error.message || "Failed to delete account");
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Failed to delete account");
             setIsModalOpen(false);
         } finally {
             setLoading(false);
@@ -39,22 +34,26 @@ export default function DeleteAccountSection() {
     };
 
     return (
-        <div className="mt-6 rounded-xl border border-danger/20 bg-surface p-6 sm:p-8">
-            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-                <div>
-                    <h2 className="mb-1 flex items-center gap-2 text-lg font-bold text-danger">
+        <section className="rounded-xl border border-danger/20 bg-surface p-5 sm:p-6">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                <div className="flex gap-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-danger/10 text-danger">
                         <AlertTriangle className="h-5 w-5" />
-                        Delete Account
-                    </h2>
+                    </div>
 
-                    <p className="text-sm text-muted">
-                        Permanently remove your account and all associated data. This action cannot be undone.
-                    </p>
+                    <div>
+                        <h2 className="text-base font-semibold text-danger">Delete Account</h2>
+                        <p className="mt-1 max-w-2xl text-sm leading-6 text-muted">
+                            Permanently remove your account and all associated data. This action cannot be undone.
+                        </p>
+                    </div>
                 </div>
 
                 <button
+                    type="button"
                     onClick={() => setIsModalOpen(true)}
-                    className="flex shrink-0 items-center gap-2 rounded-lg border border-danger/50 px-5 py-2.5 text-sm font-semibold text-danger transition hover:bg-danger hover:text-white"
+                    disabled={loading}
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-danger/40 px-4 py-2.5 text-sm font-medium text-danger transition hover:bg-danger hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     <Trash2 className="h-4 w-4" />
                     Delete My Account
@@ -69,6 +68,6 @@ export default function DeleteAccountSection() {
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={handleDeleteAccount}
             />
-        </div>
+        </section>
     );
 }

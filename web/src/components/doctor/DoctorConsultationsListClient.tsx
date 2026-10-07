@@ -4,16 +4,16 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import {
-    Loader2,
+    AlertTriangle,
+    CalendarDays,
     ChevronLeft,
     ChevronRight,
-    AlertTriangle,
     Download,
-    X,
+    Loader2,
+    RotateCcw,
     Search,
     SlidersHorizontal,
-    RotateCcw,
-    CalendarDays,
+    X,
 } from "lucide-react";
 import { exportConsultationsToCSV } from "@/lib/exportUtils";
 
@@ -84,10 +84,9 @@ export default function DoctorConsultationsListClient() {
             const params = buildQueryParams();
             params.set("page", p.toString());
 
-            const res = await fetch(
-                `/api/doctor/consultations?${params.toString()}`,
-                { cache: "no-store" },
-            );
+            const res = await fetch(`/api/doctor/consultations?${params.toString()}`, {
+                cache: "no-store",
+            });
 
             const json = await res.json();
 
@@ -134,8 +133,7 @@ export default function DoctorConsultationsListClient() {
         setDownloading(true);
 
         const toastId = toast.loading(
-            `Fetching ${exportLimit === "all" ? "all" : `last ${exportLimit}`
-            } matching records...`,
+            `Fetching ${exportLimit === "all" ? "all" : `last ${exportLimit}`} matching records...`,
         );
 
         try {
@@ -191,39 +189,40 @@ export default function DoctorConsultationsListClient() {
     };
 
     const inputClass =
-        "w-full bg-surface-secondary border border-border text-foreground placeholder:text-muted-foreground rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10";
+        "w-full rounded-xl border border-border bg-surface-secondary px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition focus:border-primary/50 focus:ring-4 focus:ring-primary/10";
 
     return (
-        <div className="min-h-screen bg-background text-foreground py-10">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div className="min-h-screen bg-background py-8 text-foreground sm:py-10">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6">
+                <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
                     <div>
-                        <h1 className="text-3xl font-bold text-foreground mb-2">
+                        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                             All Consultations
                         </h1>
-                        <p className="text-muted">
+                        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
                             Your complete case history, prioritized by emergency and unresolved status.
                         </p>
                     </div>
 
                     <button
+                        type="button"
                         onClick={() => setShowExportModal(true)}
                         disabled={downloading}
-                        className="flex items-center justify-center gap-2 bg-surface-secondary hover:bg-accent border border-border text-muted hover:text-foreground px-4 py-2.5 rounded-lg font-medium transition disabled:opacity-50"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-muted transition hover:bg-accent hover:text-foreground disabled:opacity-50"
                     >
                         {downloading ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
-                            <Download className="w-4 h-4" />
+                            <Download className="h-4 w-4" />
                         )}
                         Export CSV
                     </button>
                 </div>
 
-                <div className="bg-surface border border-border rounded-xl mb-6">
-                    <div className="p-4 flex flex-col lg:flex-row gap-3">
+                <div className="mb-6 overflow-hidden rounded-2xl border border-border bg-surface">
+                    <div className="flex flex-col gap-3 p-4 lg:flex-row">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <input
                                 type="text"
                                 value={search}
@@ -234,25 +233,25 @@ export default function DoctorConsultationsListClient() {
                         </div>
 
                         <button
+                            type="button"
                             onClick={() => setShowFilters(!showFilters)}
-                            className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition ${showFilters || hasFilters
-                                    ? "bg-accent border-primary/30 text-primary"
-                                    : "bg-surface-secondary border-border text-muted hover:bg-accent hover:text-foreground"
+                            className={`inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${showFilters || hasFilters
+                                    ? "border-primary/30 bg-accent text-primary"
+                                    : "border-border bg-surface-secondary text-muted hover:bg-accent hover:text-foreground"
                                 }`}
                         >
-                            <SlidersHorizontal className="w-4 h-4" />
+                            <SlidersHorizontal className="h-4 w-4" />
                             Filters
-                            {hasFilters && (
-                                <span className="w-2 h-2 rounded-full bg-primary" />
-                            )}
+                            {hasFilters && <span className="h-2 w-2 rounded-full bg-primary" />}
                         </button>
 
                         {hasFilters && (
                             <button
+                                type="button"
                                 onClick={resetFilters}
-                                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-muted hover:text-foreground hover:bg-accent text-sm transition"
+                                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm text-muted transition hover:bg-accent hover:text-foreground"
                             >
-                                <RotateCcw className="w-4 h-4" />
+                                <RotateCcw className="h-4 w-4" />
                                 Reset
                             </button>
                         )}
@@ -260,144 +259,96 @@ export default function DoctorConsultationsListClient() {
 
                     {showFilters && (
                         <div className="border-t border-border p-4">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <div>
-                                    <label className="block text-xs font-medium text-muted mb-2">
-                                        Status
-                                    </label>
-                                    <select
-                                        value={status}
-                                        onChange={(e) =>
-                                            updateFilter(setStatus, e.target.value)
-                                        }
-                                        className={inputClass}
-                                    >
-                                        <option value="all">All Statuses</option>
-                                        <option value="pending_review">
-                                            Pending Review
-                                        </option>
-                                        <option value="in_review">In Review</option>
-                                    </select>
-                                </div>
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                                <FilterSelect
+                                    label="Status"
+                                    value={status}
+                                    onChange={(value) => updateFilter(setStatus, value)}
+                                    options={[
+                                        ["all", "All Statuses"],
+                                        ["pending_review", "Pending Review"],
+                                        ["in_review", "In Review"],
+                                    ]}
+                                    inputClass={inputClass}
+                                />
 
-                                <div>
-                                    <label className="block text-xs font-medium text-muted mb-2">
-                                        Emergency
-                                    </label>
-                                    <select
-                                        value={emergency}
-                                        onChange={(e) =>
-                                            updateFilter(setEmergency, e.target.value)
-                                        }
-                                        className={inputClass}
-                                    >
-                                        <option value="all">All Cases</option>
-                                        <option value="emergency">
-                                            Emergency Only
-                                        </option>
-                                        <option value="normal">Non-Emergency</option>
-                                    </select>
-                                </div>
+                                <FilterSelect
+                                    label="Emergency"
+                                    value={emergency}
+                                    onChange={(value) => updateFilter(setEmergency, value)}
+                                    options={[
+                                        ["all", "All Cases"],
+                                        ["emergency", "Emergency Only"],
+                                        ["normal", "Non-Emergency"],
+                                    ]}
+                                    inputClass={inputClass}
+                                />
 
-                                <div>
-                                    <label className="block text-xs font-medium text-muted mb-2">
-                                        Date
-                                    </label>
-                                    <select
-                                        value={dateRange}
-                                        onChange={(e) =>
-                                            updateFilter(setDateRange, e.target.value)
-                                        }
-                                        className={inputClass}
-                                    >
-                                        <option value="all">All Time</option>
-                                        <option value="today">Today</option>
-                                        <option value="7days">Last 7 Days</option>
-                                        <option value="30days">Last 30 Days</option>
-                                    </select>
-                                </div>
+                                <FilterSelect
+                                    label="Date"
+                                    value={dateRange}
+                                    onChange={(value) => updateFilter(setDateRange, value)}
+                                    options={[
+                                        ["all", "All Time"],
+                                        ["today", "Today"],
+                                        ["7days", "Last 7 Days"],
+                                        ["30days", "Last 30 Days"],
+                                    ]}
+                                    inputClass={inputClass}
+                                />
 
-                                <div>
-                                    <label className="block text-xs font-medium text-muted mb-2">
-                                        Sort By
-                                    </label>
-                                    <select
-                                        value={sort}
-                                        onChange={(e) =>
-                                            updateFilter(setSort, e.target.value)
-                                        }
-                                        className={inputClass}
-                                    >
-                                        <option value="priority">
-                                            Emergency + Newest
-                                        </option>
-                                        <option value="newest">Newest First</option>
-                                        <option value="oldest">Oldest First</option>
-                                    </select>
-                                </div>
+                                <FilterSelect
+                                    label="Sort By"
+                                    value={sort}
+                                    onChange={(value) => updateFilter(setSort, value)}
+                                    options={[
+                                        ["priority", "Emergency + Newest"],
+                                        ["newest", "Newest First"],
+                                        ["oldest", "Oldest First"],
+                                    ]}
+                                    inputClass={inputClass}
+                                />
 
-                                <div>
-                                    <label className="block text-xs font-medium text-muted mb-2">
-                                        Minimum Age
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="120"
-                                        value={ageMin}
-                                        onChange={(e) =>
-                                            updateFilter(setAgeMin, e.target.value)
-                                        }
-                                        placeholder="e.g. 18"
-                                        className={inputClass}
-                                    />
-                                </div>
+                                <FilterInput
+                                    label="Minimum Age"
+                                    value={ageMin}
+                                    onChange={(value) => updateFilter(setAgeMin, value)}
+                                    placeholder="e.g. 18"
+                                    inputClass={inputClass}
+                                />
 
-                                <div>
-                                    <label className="block text-xs font-medium text-muted mb-2">
-                                        Maximum Age
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="120"
-                                        value={ageMax}
-                                        onChange={(e) =>
-                                            updateFilter(setAgeMax, e.target.value)
-                                        }
-                                        placeholder="e.g. 60"
-                                        className={inputClass}
-                                    />
-                                </div>
+                                <FilterInput
+                                    label="Maximum Age"
+                                    value={ageMax}
+                                    onChange={(value) => updateFilter(setAgeMax, value)}
+                                    placeholder="e.g. 60"
+                                    inputClass={inputClass}
+                                />
                             </div>
                         </div>
                     )}
                 </div>
 
-                <div className="flex items-center justify-between mb-3 px-1">
-                    <p className="text-sm text-muted-foreground">
+                <div className="mb-3 flex items-center justify-between px-1">
+                    <p className="text-sm text-muted">
                         {total} {total === 1 ? "case" : "cases"} found
                     </p>
 
-                    {hasFilters && (
-                        <p className="text-xs text-primary">Filters applied</p>
-                    )}
+                    {hasFilters && <p className="text-xs font-medium text-primary">Filters applied</p>}
                 </div>
 
                 {loading ? (
                     <div className="flex justify-center py-20">
-                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     </div>
                 ) : (
-                    <div className="bg-surface rounded-xl border border-border overflow-hidden">
+                    <div className="overflow-hidden rounded-2xl border border-border bg-surface">
                         <div className="divide-y divide-border">
                             {data.length === 0 ? (
                                 <div className="p-12 text-center">
-                                    <Search className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-                                    <p className="text-muted font-medium">
-                                        No cases found
-                                    </p>
-                                    <p className="text-muted-foreground text-sm mt-1">
+                                    <Search className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
+                                    <p className="font-medium text-muted">No cases found</p>
+                                    <p className="mt-1 text-sm text-muted-foreground">
                                         Try changing or clearing your filters.
                                     </p>
                                 </div>
@@ -406,60 +357,50 @@ export default function DoctorConsultationsListClient() {
                                     <Link
                                         href={`/doctor/consultations/${item._id}`}
                                         key={item._id}
-                                        className="block p-6 hover:bg-surface-secondary/70 transition"
+                                        className="block p-5 transition hover:bg-surface-secondary/70 sm:p-6"
                                     >
-                                        <div className="flex justify-between items-center gap-4">
+                                        <div className="flex items-center justify-between gap-4">
                                             <div className="min-w-0">
-                                                <div className="flex items-center flex-wrap gap-3 mb-2">
+                                                <div className="mb-2 flex flex-wrap items-center gap-2 sm:gap-3">
                                                     {item.ai_draft?.is_emergency && (
-                                                        <span className="flex items-center gap-1 bg-danger/10 text-danger text-xs px-2 py-1 rounded border border-danger/20 font-bold uppercase tracking-wider">
-                                                            <AlertTriangle className="w-3 h-3" />
+                                                        <span className="inline-flex items-center gap-1 rounded-lg border border-danger/20 bg-danger/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-danger">
+                                                            <AlertTriangle className="h-3 w-3" />
                                                             SOS
                                                         </span>
                                                     )}
 
                                                     <span
-                                                        className={`px-2 py-1 text-xs font-semibold rounded border ${item.status === "in_review"
-                                                                ? "bg-info/10 text-info border-info/20"
-                                                                : "bg-primary/10 text-primary border-primary/20"
+                                                        className={`rounded-lg border px-2 py-1 text-[10px] font-semibold uppercase tracking-wide ${item.status === "in_review"
+                                                                ? "border-info/20 bg-info/10 text-info"
+                                                                : "border-primary/20 bg-primary/10 text-primary"
                                                             }`}
                                                     >
-                                                        {item.status
-                                                            ?.replace("_", " ")
-                                                            .toUpperCase()}
+                                                        {item.status?.replace("_", " ").toUpperCase()}
                                                     </span>
 
-                                                    <span className="text-muted-foreground text-xs font-medium bg-surface-secondary px-2 py-1 rounded">
-                                                        Age:{" "}
-                                                        {item.patient_input?.age ?? "N/A"}
+                                                    <span className="rounded-lg bg-surface-secondary px-2 py-1 text-xs font-medium text-muted">
+                                                        Age: {item.patient_input?.age ?? "N/A"}
                                                     </span>
 
-                                                    <span className="flex items-center gap-1 text-muted-foreground text-xs">
-                                                        <CalendarDays className="w-3 h-3" />
-                                                        {new Date(
-                                                            item.created_at,
-                                                        ).toLocaleDateString()}
+                                                    <span className="inline-flex items-center gap-1 text-xs text-muted">
+                                                        <CalendarDays className="h-3 w-3" />
+                                                        {new Date(item.created_at).toLocaleDateString()}
                                                     </span>
                                                 </div>
 
-                                                <h3 className="text-foreground font-semibold truncate">
-                                                    {item.ai_draft?.chief_complaints?.join(
-                                                        ", ",
-                                                    ) || "No complaints listed"}
+                                                <h3 className="truncate font-semibold text-foreground">
+                                                    {item.ai_draft?.chief_complaints?.join(", ") ||
+                                                        "No complaints listed"}
                                                 </h3>
 
-                                                {item.patient_input
-                                                    ?.symptoms_raw_text && (
-                                                        <p className="text-muted-foreground text-sm mt-1 truncate max-w-2xl">
-                                                            {
-                                                                item.patient_input
-                                                                    .symptoms_raw_text
-                                                            }
-                                                        </p>
-                                                    )}
+                                                {item.patient_input?.symptoms_raw_text && (
+                                                    <p className="mt-1 max-w-2xl truncate text-sm text-muted">
+                                                        {item.patient_input.symptoms_raw_text}
+                                                    </p>
+                                                )}
                                             </div>
 
-                                            <span className="text-muted hover:text-primary transition shrink-0 text-xl">
+                                            <span className="shrink-0 text-xl text-muted transition group-hover:text-primary">
                                                 →
                                             </span>
                                         </div>
@@ -468,13 +409,14 @@ export default function DoctorConsultationsListClient() {
                             )}
                         </div>
 
-                        <div className="p-4 border-t border-border flex justify-between items-center bg-surface-secondary">
+                        <div className="flex items-center justify-between border-t border-border bg-surface-secondary p-4">
                             <button
+                                type="button"
                                 disabled={page === 1}
                                 onClick={() => setPage(page - 1)}
-                                className="flex items-center gap-1 px-4 py-2 bg-surface border border-border text-muted text-sm rounded-lg hover:bg-accent hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+                                className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-4 py-2 text-sm text-muted transition hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
                             >
-                                <ChevronLeft className="w-4 h-4" />
+                                <ChevronLeft className="h-4 w-4" />
                                 Prev
                             </button>
 
@@ -483,12 +425,13 @@ export default function DoctorConsultationsListClient() {
                             </span>
 
                             <button
+                                type="button"
                                 disabled={page >= totalPages}
                                 onClick={() => setPage(page + 1)}
-                                className="flex items-center gap-1 px-4 py-2 bg-surface border border-border text-muted text-sm rounded-lg hover:bg-accent hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+                                className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface px-4 py-2 text-sm text-muted transition hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
                             >
                                 Next
-                                <ChevronRight className="w-4 h-4" />
+                                <ChevronRight className="h-4 w-4" />
                             </button>
                         </div>
                     </div>
@@ -497,21 +440,20 @@ export default function DoctorConsultationsListClient() {
 
             {showExportModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-                    <div className="w-full max-w-md bg-surface border border-border rounded-xl shadow-xl p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold text-foreground">
-                                Export Options
-                            </h2>
+                    <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-xl">
+                        <div className="mb-4 flex items-center justify-between">
+                            <h2 className="text-xl font-semibold text-foreground">Export Options</h2>
 
                             <button
+                                type="button"
                                 onClick={() => setShowExportModal(false)}
-                                className="text-muted hover:text-foreground hover:bg-accent p-1 rounded-lg"
+                                className="rounded-lg p-1 text-muted transition hover:bg-accent hover:text-foreground"
                             >
-                                <X className="w-5 h-5" />
+                                <X className="h-5 w-5" />
                             </button>
                         </div>
 
-                        <p className="text-sm text-muted mb-4">
+                        <p className="mb-4 text-sm text-muted">
                             Export records using your currently applied filters.
                         </p>
 
@@ -528,23 +470,85 @@ export default function DoctorConsultationsListClient() {
 
                         <div className="flex justify-end gap-3">
                             <button
+                                type="button"
                                 onClick={() => setShowExportModal(false)}
-                                className="px-4 py-2 rounded-lg text-muted hover:text-foreground hover:bg-accent transition"
+                                className="rounded-xl px-4 py-2 text-sm text-muted transition hover:bg-accent hover:text-foreground"
                             >
                                 Cancel
                             </button>
 
                             <button
+                                type="button"
                                 onClick={handleDownloadCSV}
-                                className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover text-primary-foreground font-medium transition flex items-center gap-2"
+                                className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
                             >
-                                <Download className="w-4 h-4" />
+                                <Download className="h-4 w-4" />
                                 Download
                             </button>
                         </div>
                     </div>
                 </div>
             )}
+        </div>
+    );
+}
+
+function FilterSelect({
+    label,
+    value,
+    onChange,
+    options,
+    inputClass,
+}: {
+    label: string;
+    value: string;
+    onChange: (value: string) => void;
+    options: [string, string][];
+    inputClass: string;
+}) {
+    return (
+        <div>
+            <label className="mb-2 block text-xs font-medium text-muted">{label}</label>
+            <select
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                className={inputClass}
+            >
+                {options.map(([optionValue, optionLabel]) => (
+                    <option key={optionValue} value={optionValue}>
+                        {optionLabel}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+}
+
+function FilterInput({
+    label,
+    value,
+    onChange,
+    placeholder,
+    inputClass,
+}: {
+    label: string;
+    value: string;
+    onChange: (value: string) => void;
+    placeholder: string;
+    inputClass: string;
+}) {
+    return (
+        <div>
+            <label className="mb-2 block text-xs font-medium text-muted">{label}</label>
+            <input
+                type="number"
+                min="0"
+                max="120"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                className={inputClass}
+            />
         </div>
     );
 }

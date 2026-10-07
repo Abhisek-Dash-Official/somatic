@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 import PatientDashboardClient from "@/components/patient/PatientDashboardClient";
-import { siteConfig } from "@/config/site";
 import QRScannerBtn from "@/components/patient/QRScannerBtn";
+import { siteConfig } from "@/config/site";
+import { QrCode } from "lucide-react"
 
 export const metadata: Metadata = {
     title: `Patient Dashboard | ${siteConfig.name}`,
@@ -10,22 +11,27 @@ export const metadata: Metadata = {
 
 export default function PatientDashboardPage() {
     return (
-        <>
+        <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
             <PatientDashboardClient />
 
-            <div className="mt-8 flex flex-col items-center justify-between gap-4 border border-border bg-surface p-5 sm:flex-row">
-                <div>
-                    <h3 className="font-semibold text-foreground">
-                        Visiting a Hospital?
-                    </h3>
+            <section className="mt-6 flex flex-col items-start justify-between gap-5 rounded-2xl border border-border bg-surface p-5 shadow-sm sm:flex-row sm:items-center sm:p-6">
+                <div className="flex min-w-0 items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-primary">
+                        <QrCode />
+                    </div>
 
-                    <p className="mt-1 text-sm text-muted">
-                        Scan the hospital QR code to prefill your available information.
-                    </p>
+                    <div className="min-w-0">
+                        <h2 className="text-sm font-semibold text-foreground sm:text-base">
+                            Visiting a hospital?
+                        </h2>
+                        <p className="mt-1 max-w-xl text-xs leading-5 text-muted sm:text-sm">
+                            Scan the hospital QR code to securely prefill your available information.
+                        </p>
+                    </div>
                 </div>
 
-                <QRScannerBtn className="w-full sm:w-auto" />
-            </div>
-        </>
+                <QRScannerBtn className="w-full shrink-0 sm:w-auto" />
+            </section>
+        </div>
     );
 }

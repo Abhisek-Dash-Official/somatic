@@ -13,7 +13,10 @@ export default async function MaintenanceGuard({ children }: MaintenanceGuardPro
     try {
         await connectToDatabase();
 
-        const settings = await SystemSetting.findOne().select("maintenance_mode").lean();
+        const settings = await SystemSetting.findOne()
+            .select("maintenance_mode")
+            .lean();
+
         isMaintenance = settings?.maintenance_mode === true;
     } catch (error) {
         console.error("Maintenance check failed:", error);
@@ -35,7 +38,8 @@ export default async function MaintenanceGuard({ children }: MaintenanceGuardPro
                 </h1>
 
                 <p className="mt-6 max-w-md text-lg leading-relaxed text-muted">
-                    We are optimizing the systems to improve your experience. Services will be restored shortly.
+                    We are optimizing the systems to improve your experience. Services
+                    will be restored shortly.
                 </p>
 
                 <div className="mt-10 rounded-full border border-border bg-surface-secondary px-6 py-2">

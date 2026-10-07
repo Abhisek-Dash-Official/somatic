@@ -1,7 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronDown, CreditCard, Loader2, Search, X, ArrowUpRight } from "lucide-react";
+import {
+    ArrowUpRight,
+    ChevronDown,
+    CreditCard,
+    Loader2,
+    Search,
+    X,
+} from "lucide-react";
 import Link from "next/link";
 import { ITransaction, IUser } from "@/types/models";
 
@@ -166,8 +173,9 @@ export default function AdminTransactionsPage() {
         setSort("newest");
     };
 
-    const hasFilters =
-        Boolean(search || type || status || from || to || sort !== "newest");
+    const hasFilters = Boolean(
+        search || type || status || from || to || sort !== "newest",
+    );
 
     return (
         <main className="min-h-screen bg-background px-4 py-5 text-foreground sm:px-6 sm:py-6 lg:px-8">
@@ -179,23 +187,20 @@ export default function AdminTransactionsPage() {
                         </div>
 
                         <div className="min-w-0">
-                            <p className="text-sm font-medium text-primary">
-                                Finance
-                            </p>
+                            <p className="text-sm font-medium text-primary">Finance</p>
 
                             <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
                                 Transactions
                             </h1>
 
                             <p className="mt-1 max-w-2xl text-sm text-muted">
-                                View platform payment transactions and their
-                                current payment status.
+                                View platform payment transactions and their current payment status.
                             </p>
                         </div>
                     </div>
                 </header>
 
-                <section className="mb-5 rounded-2xl border border-border bg-surface p-4 sm:p-5">
+                <section className="mb-5 rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-5">
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                         <div className="sm:col-span-2 lg:col-span-2">
                             <label className="mb-1.5 block text-xs font-medium text-muted">
@@ -225,12 +230,8 @@ export default function AdminTransactionsPage() {
                                 className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none focus:border-primary"
                             >
                                 <option value="">All Types</option>
-
                                 {transactionTypes.map((item) => (
-                                    <option
-                                        key={item.value}
-                                        value={item.value}
-                                    >
+                                    <option key={item.value} value={item.value}>
                                         {item.label}
                                     </option>
                                 ))}
@@ -248,12 +249,8 @@ export default function AdminTransactionsPage() {
                                 className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none focus:border-primary"
                             >
                                 <option value="">All Statuses</option>
-
                                 {statuses.map((item) => (
-                                    <option
-                                        key={item.value}
-                                        value={item.value}
-                                    >
+                                    <option key={item.value} value={item.value}>
                                         {item.label}
                                     </option>
                                 ))}
@@ -324,12 +321,10 @@ export default function AdminTransactionsPage() {
                     </div>
                 )}
 
-                <section className="overflow-hidden rounded-2xl border border-border bg-surface">
+                <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                     <div className="flex flex-col gap-1 border-b border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
                         <div>
-                            <h2 className="font-semibold text-foreground">
-                                All Transactions
-                            </h2>
+                            <h2 className="font-semibold text-foreground">All Transactions</h2>
 
                             <p className="mt-0.5 text-xs text-muted">
                                 {transactions.length} transaction
@@ -369,30 +364,14 @@ export default function AdminTransactionsPage() {
                                 <table className="min-w-275 w-full text-left text-sm">
                                     <thead className="border-b border-border bg-surface-secondary/60 text-xs uppercase tracking-wide text-muted">
                                         <tr>
-                                            <th className="whitespace-nowrap px-5 py-3 font-medium">
-                                                Transaction
-                                            </th>
-                                            <th className="whitespace-nowrap px-5 py-3 font-medium">
-                                                User
-                                            </th>
-                                            <th className="whitespace-nowrap px-5 py-3 font-medium">
-                                                Type
-                                            </th>
-                                            <th className="whitespace-nowrap px-5 py-3 font-medium">
-                                                Amount
-                                            </th>
-                                            <th className="whitespace-nowrap px-5 py-3 font-medium">
-                                                Status
-                                            </th>
-                                            <th className="whitespace-nowrap px-5 py-3 font-medium">
-                                                Gateway
-                                            </th>
-                                            <th className="whitespace-nowrap px-5 py-3 font-medium">
-                                                Created
-                                            </th>
-                                            <th className="whitespace-nowrap px-5 py-3 font-medium">
-                                                Paid
-                                            </th>
+                                            <th className="whitespace-nowrap px-5 py-3 font-medium">Transaction</th>
+                                            <th className="whitespace-nowrap px-5 py-3 font-medium">User</th>
+                                            <th className="whitespace-nowrap px-5 py-3 font-medium">Type</th>
+                                            <th className="whitespace-nowrap px-5 py-3 font-medium">Amount</th>
+                                            <th className="whitespace-nowrap px-5 py-3 font-medium">Status</th>
+                                            <th className="whitespace-nowrap px-5 py-3 font-medium">Gateway</th>
+                                            <th className="whitespace-nowrap px-5 py-3 font-medium">Created</th>
+                                            <th className="whitespace-nowrap px-5 py-3 font-medium">Paid</th>
                                         </tr>
                                     </thead>
 
@@ -468,12 +447,7 @@ export default function AdminTransactionsPage() {
                                     <button
                                         type="button"
                                         disabled={loadingMore}
-                                        onClick={() =>
-                                            fetchTransactions(
-                                                nextCursor,
-                                                true,
-                                            )
-                                        }
+                                        onClick={() => fetchTransactions(nextCursor, true)}
                                         className="flex w-full max-w-48 items-center justify-center gap-2 rounded-xl border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                                     >
                                         {loadingMore ? (

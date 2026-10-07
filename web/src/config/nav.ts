@@ -237,6 +237,7 @@ export const navLinks = {
         icon: "ClipboardList",
       },
       { title: "Insurance", href: "/patient/insurance", icon: "ShieldCheck" },
+      { title: "Medical Reports", href: "/reports", icon: "FileSearch" },
       { title: "Tickets", href: "/tickets", icon: "Ticket" },
       { title: "Profile", href: "/patient/profile", icon: "User" },
     ],

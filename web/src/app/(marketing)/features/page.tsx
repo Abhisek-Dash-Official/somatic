@@ -1,6 +1,18 @@
 import { pageContent } from "@/config/content";
 import {
-    Cpu, Activity, FileText, ShieldCheck, Database, Zap, Layers, Mic, Network, AlertTriangle, ListChecks, DownloadCloud, Languages, Paperclip, Lock, ShoppingCart, Ambulance, QrCode, Volume2
+    Layers,
+    BrainCircuit,
+    HeartPulse,
+    Stethoscope,
+    Ambulance,
+    FileSearch,
+    Microscope,
+    ShoppingBag,
+    ShieldCheck,
+    QrCode,
+    Languages,
+    BookOpen,
+    LayoutDashboard
 } from "lucide-react";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
@@ -11,22 +23,35 @@ export const metadata: Metadata = {
 };
 
 const IconMap: Record<string, any> = {
-    Cpu, Activity, FileText, ShieldCheck, Database, Zap, Layers, Mic, Network, AlertTriangle, ListChecks, DownloadCloud, Languages, Paperclip, Lock, ShoppingCart, Ambulance, QrCode, Volume2
+    Layers,
+    BrainCircuit,
+    HeartPulse,
+    Stethoscope,
+    Ambulance,
+    FileSearch,
+    Microscope,
+    ShoppingBag,
+    ShieldCheck,
+    QrCode,
+    Languages,
+    BookOpen,
+    LayoutDashboard
 };
 
 export default function FeaturesPage() {
     return (
-        <div className="container mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-20">
-            <div className="mb-14 flex flex-col items-center text-center">
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/30 bg-accent text-primary">
-                    <Layers className="h-8 w-8" />
+        <div className="container mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+            <div className="mb-12 text-center sm:mb-14">
+                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted">
+                    <Layers className="h-3.5 w-3.5 text-primary" />
+                    Platform
                 </div>
 
-                <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+                <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
                     Platform <span className="text-primary">Features</span>
                 </h1>
 
-                <p className="max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+                <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
                     The core technical capabilities that power the Somatic healthcare engine.
                 </p>
             </div>
@@ -38,18 +63,18 @@ export default function FeaturesPage() {
                     return (
                         <div
                             key={index}
-                            className="flex flex-col gap-6 rounded-2xl border border-border bg-surface p-7 transition-colors hover:border-primary/50 hover:bg-surface-secondary sm:flex-row"
+                            className="group flex flex-col gap-6 rounded-2xl border border-border bg-surface p-7 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-surface-secondary hover:shadow-lg hover:shadow-primary/5 sm:flex-row"
                         >
-                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-primary/30 bg-accent text-primary">
-                                {Icon && <Icon className="h-7 w-7" />}
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent text-primary transition-transform duration-300 group-hover:scale-105">
+                                {Icon && <Icon className="h-6 w-6" />}
                             </div>
 
                             <div>
-                                <h3 className="mb-3 text-xl font-bold text-foreground">
+                                <h3 className="mb-3 text-xl font-bold tracking-tight text-foreground">
                                     {feature.title}
                                 </h3>
 
-                                <p className="text-base leading-relaxed text-muted">
+                                <p className="text-sm leading-7 text-muted sm:text-base">
                                     {feature.description}
                                 </p>
                             </div>

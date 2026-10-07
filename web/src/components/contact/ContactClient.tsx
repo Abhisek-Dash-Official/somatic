@@ -53,56 +53,68 @@ export default function ContactClient() {
 
     return (
         <main className="bg-background text-foreground">
-            <div className="mx-auto max-w-5xl px-5 py-14 sm:px-6 sm:py-20 lg:py-24">
-                {/* HEADER */}
-                <section className="border-b border-border pb-12 sm:pb-16">
-                    <div className="flex items-start gap-4">
-                        <div className="mt-1 hidden h-9 w-9 items-center justify-center bg-accent text-accent-foreground sm:flex">
-                            <MessageSquare className="h-4 w-4" />
-                        </div>
-
-                        <div>
-                            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-primary">
-                                Support
-                            </p>
-
-                            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-                                Contact & support.
-                            </h1>
-
-                            <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg">
-                                {pageContent.contact.description}
-                            </p>
-                        </div>
+            <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+                <section className="mb-12 text-center sm:mb-14">
+                    <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted">
+                        <MessageSquare className="h-3.5 w-3.5 text-primary" />
+                        Support
                     </div>
+
+                    <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+                        Contact & Support
+                    </h1>
+
+                    <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+                        {pageContent.contact.description}
+                    </p>
                 </section>
 
-                <section className="grid gap-8 pt-10 sm:pt-14 md:grid-cols-[0.75fr_1.25fr]">
-                    {/* CONTACT INFORMATION */}
-                    <div>
-                        <h2 className="mb-6 text-lg font-bold">Get in touch</h2>
+                <section className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-8">
+                    <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
+                        <div className="mb-7">
+                            <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">
+                                Get in touch
+                            </p>
 
-                        <div className="divide-y divide-border border-y border-border">
-                            <div className="flex items-start gap-4 py-5">
-                                <Mail className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                            <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground">
+                                We&apos;re here to help.
+                            </h2>
 
-                                <div>
-                                    <p className="text-sm font-semibold">Email us</p>
+                            <p className="mt-3 text-sm leading-6 text-muted">
+                                Reach out to our support team whenever you need assistance
+                                with the Somatic platform.
+                            </p>
+                        </div>
+
+                        <div className="divide-y divide-border rounded-xl border border-border bg-surface-secondary">
+                            <div className="flex items-start gap-4 p-5">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
+                                    <Mail className="h-5 w-5" />
+                                </div>
+
+                                <div className="min-w-0">
+                                    <p className="text-sm font-semibold text-foreground">
+                                        Email us
+                                    </p>
 
                                     <a
                                         href={`mailto:${pageContent.contact.email}`}
-                                        className="mt-1 block text-sm text-muted transition-colors hover:text-primary"
+                                        className="mt-1 block break-all text-sm text-muted transition-colors hover:text-primary"
                                     >
                                         {pageContent.contact.email}
                                     </a>
                                 </div>
                             </div>
 
-                            <div className="flex items-start gap-4 py-5">
-                                <Phone className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                            <div className="flex items-start gap-4 p-5">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
+                                    <Phone className="h-5 w-5" />
+                                </div>
 
                                 <div>
-                                    <p className="text-sm font-semibold">24/7 Helpline</p>
+                                    <p className="text-sm font-semibold text-foreground">
+                                        24/7 Helpline
+                                    </p>
 
                                     <a
                                         href={`tel:${pageContent.contact.helpline}`}
@@ -114,7 +126,7 @@ export default function ContactClient() {
                             </div>
                         </div>
 
-                        <div className="mt-6 border-l-2 border-primary bg-surface-secondary px-4 py-4">
+                        <div className="mt-6 rounded-xl border border-primary/20 bg-accent p-4">
                             <p className="text-xs leading-5 text-muted">
                                 <strong className="mb-1 block text-sm text-foreground">
                                     Response time
@@ -124,7 +136,7 @@ export default function ContactClient() {
                         </div>
 
                         {pageContent.contact.emergencyNotice && (
-                            <div className="mt-4 border-l-2 border-danger bg-surface-secondary px-4 py-4">
+                            <div className="mt-4 rounded-xl border border-danger/20 bg-danger/10 p-4">
                                 <div className="flex items-start gap-3">
                                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
 
@@ -136,25 +148,29 @@ export default function ContactClient() {
                         )}
                     </div>
 
-                    {/* FORM */}
-                    <div className="border border-border bg-surface">
+                    <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                         {isFetched && !user ? (
                             <div className="flex min-h-105 flex-col items-center justify-center p-8 text-center sm:p-12">
-                                <div className="mb-5 flex h-10 w-10 items-center justify-center bg-accent text-accent-foreground">
-                                    <AlertCircle className="h-5 w-5" />
+                                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-primary">
+                                    <AlertCircle className="h-6 w-6" />
                                 </div>
 
-                                <h2 className="text-2xl font-bold">
+                                <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">
+                                    Account required
+                                </p>
+
+                                <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground">
                                     Login required
                                 </h2>
 
                                 <p className="mt-3 max-w-md text-sm leading-6 text-muted">
-                                    Our feedback and ticketing system is linked to user accounts so we can track and resolve issues effectively.
+                                    Our feedback and ticketing system is linked to user
+                                    accounts so we can track and resolve issues effectively.
                                 </p>
 
                                 <Link
                                     href="/login"
-                                    className="mt-7 inline-flex items-center justify-center bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary-hover"
+                                    className="mt-7 inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition hover:bg-primary-hover"
                                 >
                                     Sign in to continue
                                 </Link>
@@ -166,36 +182,52 @@ export default function ContactClient() {
                                         Feedback
                                     </p>
 
-                                    <h2 className="mt-2 text-2xl font-bold">
+                                    <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground">
                                         Submit a ticket
                                     </h2>
+
+                                    <p className="mt-2 text-sm text-muted">
+                                        Tell us how we can help and our team will get back to you.
+                                    </p>
                                 </div>
 
                                 {success && (
-                                    <div className="mb-6 flex items-center gap-3 border-l-2 border-success bg-surface-secondary p-4 text-sm text-muted">
-                                        <CheckCircle2 className="h-5 w-5 shrink-0 text-success" />
-                                        <p>Your feedback has been submitted.</p>
+                                    <div className="mb-6 flex items-start gap-3 rounded-xl border border-success/20 bg-success/10 p-4 text-sm text-muted">
+                                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-success" />
+                                        <div>
+                                            <p className="font-semibold text-foreground">
+                                                Ticket submitted successfully
+                                            </p>
+                                            <p className="mt-1">
+                                                Our support team will review your request.
+                                            </p>
+                                        </div>
                                     </div>
                                 )}
 
                                 {error && (
-                                    <div className="mb-6 flex items-center gap-3 border-l-2 border-danger bg-surface-secondary p-4 text-sm text-muted">
-                                        <AlertCircle className="h-5 w-5 shrink-0 text-danger" />
+                                    <div className="mb-6 flex items-start gap-3 rounded-xl border border-danger/20 bg-danger/10 p-4 text-sm text-muted">
+                                        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-danger" />
                                         <p>{error}</p>
                                     </div>
                                 )}
 
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div>
-                                        <label className="mb-2 block text-sm font-medium">
+                                        <label className="mb-2 block text-sm font-semibold text-foreground">
                                             Ticket type
                                         </label>
 
                                         <select
                                             value={formData.ticket_type}
-                                            onChange={(e) => setFormData({ ...formData, ticket_type: e.target.value })}
+                                            onChange={(e) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    ticket_type: e.target.value,
+                                                })
+                                            }
                                             disabled={!user}
-                                            className="w-full appearance-none border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+                                            className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 disabled:cursor-not-allowed disabled:opacity-50"
                                         >
                                             <option value="General Support">General Support</option>
                                             <option value="Bug Report">Bug Report</option>
@@ -205,25 +237,30 @@ export default function ContactClient() {
                                     </div>
 
                                     <div>
-                                        <label className="mb-2 block text-sm font-medium">
+                                        <label className="mb-2 block text-sm font-semibold text-foreground">
                                             Describe the issue
                                         </label>
 
                                         <textarea
                                             required
-                                            rows={6}
+                                            rows={7}
                                             value={formData.message}
-                                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                            onChange={(e) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    message: e.target.value,
+                                                })
+                                            }
                                             disabled={!user}
                                             placeholder="Please provide as much detail as possible..."
-                                            className="w-full resize-none border border-border bg-background px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground transition-colors focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+                                            className="w-full resize-none rounded-xl border border-border bg-background px-4 py-3 text-sm leading-6 text-foreground outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/10 disabled:cursor-not-allowed disabled:opacity-50"
                                         />
                                     </div>
 
                                     <button
                                         type="submit"
                                         disabled={loading || !user}
-                                        className="flex w-full items-center justify-center gap-2 bg-primary py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         {loading ? (
                                             <Loader2 className="h-5 w-5 animate-spin" />

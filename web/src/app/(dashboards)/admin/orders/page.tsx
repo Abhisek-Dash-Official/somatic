@@ -16,7 +16,9 @@ type Order = {
 };
 
 const formatINR = (n: number) => `₹${n.toLocaleString("en-IN")}`;
-const formatStatus = (status: string) => status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+
+const formatStatus = (status: string) =>
+    status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
 const statusStyles: Record<string, string> = {
     placed: "bg-info/10 text-info",
@@ -38,29 +40,43 @@ export default function AdminOrdersPage() {
     const [hasMore, setHasMore] = useState(false);
     const [error, setError] = useState("");
 
-    const fetchOrders = useCallback(async (nextCursor: string | null = null, reset = false) => {
-        try {
-            reset ? setIsLoading(true) : setIsLoadingMore(true);
+    const fetchOrders = useCallback(
+        async (nextCursor: string | null = null, reset = false) => {
+            try {
+                reset ? setIsLoading(true) : setIsLoadingMore(true);
 
-            const params = new URLSearchParams({ limit: "20", status, payment_status: paymentStatus });
-            if (nextCursor) params.set("cursor", nextCursor);
+                const params = new URLSearchParams({
+                    limit: "20",
+                    status,
+                    payment_status: paymentStatus,
+                });
 
-            const response = await fetch(`/api/admin/orders?${params.toString()}`);
-            const data = await response.json();
+                if (nextCursor) params.set("cursor", nextCursor);
 
-            if (!response.ok) throw new Error(data.error || "Unable to fetch orders");
+                const response = await fetch(
+                    `/api/admin/orders?${params.toString()}`
+                );
+                const data = await response.json();
 
-            setOrders((current) => reset ? data.orders : [...current, ...data.orders]);
-            setCursor(data.next_cursor);
-            setHasMore(data.has_more);
-            setError("");
-        } catch (error: any) {
-            setError(error.message || "Unable to fetch orders");
-        } finally {
-            setIsLoading(false);
-            setIsLoadingMore(false);
-        }
-    }, [status, paymentStatus]);
+                if (!response.ok) {
+                    throw new Error(data.error || "Unable to fetch orders");
+                }
+
+                setOrders((current) =>
+                    reset ? data.orders : [...current, ...data.orders]
+                );
+                setCursor(data.next_cursor);
+                setHasMore(data.has_more);
+                setError("");
+            } catch (error: any) {
+                setError(error.message || "Unable to fetch orders");
+            } finally {
+                setIsLoading(false);
+                setIsLoadingMore(false);
+            }
+        },
+        [status, paymentStatus]
+    );
 
     useEffect(() => {
         setOrders([]);
@@ -72,7 +88,11 @@ export default function AdminOrdersPage() {
         const query = search.toLowerCase().trim();
         if (!query) return true;
 
-        return order._id.toLowerCase().includes(query) || order.user_id?.username?.toLowerCase().includes(query) || order.user_id?.email?.toLowerCase().includes(query);
+        return (
+            order._id.toLowerCase().includes(query) ||
+            order.user_id?.username?.toLowerCase().includes(query) ||
+            order.user_id?.email?.toLowerCase().includes(query)
+        );
     });
 
     return (
@@ -80,23 +100,46 @@ export default function AdminOrdersPage() {
             <div className="mx-auto max-w-7xl">
                 <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-                        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">Shop orders</h1>
-                        <p className="mt-1 text-sm text-muted">Monitor and review all customer shop orders.</p>
+                        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+                            Shop orders
+                        </h1>
+                        <p className="mt-1 text-sm text-muted">
+                            Monitor and review all customer shop orders.
+                        </p>
                     </div>
 
-                    <button onClick={() => fetchOrders(null, true)} disabled={isLoading} className="flex w-fit items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-surface-secondary disabled:opacity-50">
-                        <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
+                    <button
+                        onClick={() => fetchOrders(null, true)}
+                        disabled={isLoading}
+                        className="flex w-fit items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-surface-secondary disabled:opacity-50"
+                    >
+                        <RefreshCw
+                            size={16}
+                            className={isLoading ? "animate-spin" : ""}
+                        />
                         Refresh
                     </button>
                 </div>
 
-                <div className="mb-6 grid gap-3 rounded-xl border border-border bg-surface p-4 md:grid-cols-[1fr_auto_auto]">
+                <div className="mb-6 grid gap-3 rounded-2xl border border-border bg-surface p-4 shadow-sm md:grid-cols-[1fr_auto_auto]">
                     <div className="relative">
-                        <Search size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search order, customer or email" className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary" />
+                        <Search
+                            size={17}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                        />
+                        <input
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Search order, customer or email"
+                            className="w-full rounded-xl border border-border bg-background py-2.5 pl-10 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
+                        />
                     </div>
 
-                    <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary">
+                    <select
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className="rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+                    >
                         <option value="all">All order statuses</option>
                         <option value="placed">Placed</option>
                         <option value="confirmed">Confirmed</option>
@@ -106,7 +149,11 @@ export default function AdminOrdersPage() {
                         <option value="cancelled">Cancelled</option>
                     </select>
 
-                    <select value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)} className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary">
+                    <select
+                        value={paymentStatus}
+                        onChange={(e) => setPaymentStatus(e.target.value)}
+                        className="rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+                    >
                         <option value="all">All payment statuses</option>
                         <option value="pending">Pending</option>
                         <option value="paid">Paid</option>
@@ -115,21 +162,37 @@ export default function AdminOrdersPage() {
                     </select>
                 </div>
 
-                {error && <div className="mb-5 rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>}
+                {error && (
+                    <div className="mb-5 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+                        {error}
+                    </div>
+                )}
 
                 {isLoading ? (
                     <div className="space-y-3">
-                        {[1, 2, 3, 4, 5].map((item) => <div key={item} className="h-24 animate-pulse rounded-xl border border-border bg-surface" />)}
+                        {[1, 2, 3, 4, 5].map((item) => (
+                            <div
+                                key={item}
+                                className="h-24 animate-pulse rounded-2xl border border-border bg-surface"
+                            />
+                        ))}
                     </div>
                 ) : filteredOrders.length === 0 ? (
-                    <div className="flex min-h-[40vh] flex-col items-center justify-center rounded-xl border border-border bg-surface p-8 text-center">
-                        <Package size={40} className="text-muted-foreground" />
-                        <h2 className="mt-4 text-lg font-bold">No orders found</h2>
-                        <p className="mt-1 text-sm text-muted">There are no orders matching the selected filters.</p>
+                    <div className="flex min-h-[40vh] flex-col items-center justify-center rounded-2xl border border-border bg-surface p-8 text-center shadow-sm">
+                        <Package
+                            size={40}
+                            className="text-muted-foreground"
+                        />
+                        <h2 className="mt-4 text-lg font-bold">
+                            No orders found
+                        </h2>
+                        <p className="mt-1 text-sm text-muted">
+                            There are no orders matching the selected filters.
+                        </p>
                     </div>
                 ) : (
                     <>
-                        <div className="overflow-hidden rounded-xl border border-border bg-surface">
+                        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                             <div className="hidden grid-cols-[1.2fr_1.3fr_0.8fr_0.8fr_32px] gap-4 border-b border-border bg-surface-secondary px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted md:grid">
                                 <span>Order</span>
                                 <span>Customer</span>
@@ -139,35 +202,79 @@ export default function AdminOrdersPage() {
                             </div>
 
                             {filteredOrders.map((order) => (
-                                <Link key={order._id} href={`/admin/orders/${order._id}`} className="grid gap-3 border-b border-border p-5 transition last:border-b-0 hover:bg-surface-secondary md:grid-cols-[1.2fr_1.3fr_0.8fr_0.8fr_32px] md:items-center md:gap-4">
+                                <Link
+                                    key={order._id}
+                                    href={`/admin/orders/${order._id}`}
+                                    className="grid gap-3 border-b border-border p-5 transition last:border-b-0 hover:bg-surface-secondary md:grid-cols-[1.2fr_1.3fr_0.8fr_0.8fr_32px] md:items-center md:gap-4"
+                                >
                                     <div>
-                                        <p className="font-bold text-foreground">#{order._id.slice(-8).toUpperCase()}</p>
-                                        <p className="mt-1 text-xs text-muted">{new Date(order.placed_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</p>
+                                        <p className="font-bold text-foreground">
+                                            #{order._id.slice(-8).toUpperCase()}
+                                        </p>
+                                        <p className="mt-1 text-xs text-muted">
+                                            {new Date(
+                                                order.placed_at
+                                            ).toLocaleDateString("en-IN", {
+                                                day: "numeric",
+                                                month: "short",
+                                                year: "numeric",
+                                            })}
+                                        </p>
                                     </div>
 
                                     <div className="min-w-0">
-                                        <p className="truncate text-sm font-semibold text-foreground">{order.user_id?.username || "Unknown customer"}</p>
-                                        <p className="truncate text-xs text-muted">{order.user_id?.email || "No email"}</p>
+                                        <p className="truncate text-sm font-semibold text-foreground">
+                                            {order.user_id?.username ||
+                                                "Unknown customer"}
+                                        </p>
+                                        <p className="truncate text-xs text-muted">
+                                            {order.user_id?.email || "No email"}
+                                        </p>
                                     </div>
 
-                                    <span className={`w-fit rounded-md px-2.5 py-1 text-xs font-semibold ${statusStyles[order.order_status] || "bg-surface-secondary text-muted"}`}>
+                                    <span
+                                        className={`w-fit rounded-full px-2.5 py-1 text-xs font-semibold ${statusStyles[order.order_status] ||
+                                            "bg-surface-secondary text-muted"
+                                            }`}
+                                    >
                                         {formatStatus(order.order_status)}
                                     </span>
 
                                     <div>
-                                        <p className="font-bold tabular-nums text-foreground">{formatINR(order.total_amount)}</p>
-                                        <p className={`mt-1 text-xs font-medium ${order.payment_status === "paid" ? "text-success" : order.payment_status === "failed" ? "text-danger" : "text-warning"}`}>{formatStatus(order.payment_status)}</p>
+                                        <p className="font-bold tabular-nums text-foreground">
+                                            {formatINR(order.total_amount)}
+                                        </p>
+                                        <p
+                                            className={`mt-1 text-xs font-medium ${order.payment_status === "paid"
+                                                    ? "text-success"
+                                                    : order.payment_status ===
+                                                        "failed"
+                                                        ? "text-danger"
+                                                        : "text-warning"
+                                                }`}
+                                        >
+                                            {formatStatus(order.payment_status)}
+                                        </p>
                                     </div>
 
-                                    <ChevronRight size={18} className="hidden text-muted-foreground md:block" />
+                                    <ChevronRight
+                                        size={18}
+                                        className="hidden text-muted-foreground md:block"
+                                    />
                                 </Link>
                             ))}
                         </div>
 
                         {hasMore && (
                             <div className="mt-6 flex justify-center">
-                                <button onClick={() => fetchOrders(cursor)} disabled={isLoadingMore} className="rounded-lg border border-border bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-surface-secondary disabled:opacity-50">
-                                    {isLoadingMore ? "Loading..." : "Load more orders"}
+                                <button
+                                    onClick={() => fetchOrders(cursor)}
+                                    disabled={isLoadingMore}
+                                    className="rounded-xl border border-border bg-surface px-6 py-3 text-sm font-semibold text-foreground shadow-sm transition hover:bg-surface-secondary disabled:opacity-50"
+                                >
+                                    {isLoadingMore
+                                        ? "Loading..."
+                                        : "Load more orders"}
                                 </button>
                             </div>
                         )}

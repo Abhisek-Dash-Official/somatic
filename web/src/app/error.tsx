@@ -11,51 +11,61 @@ export default function GlobalError({
     reset: () => void;
 }) {
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
-            <div className="flex w-full max-w-2xl flex-col items-center text-center">
-                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-xl border border-danger/30 bg-danger/10 text-danger">
-                    <ServerCrash className="h-10 w-10" />
-                </div>
+        <main className="flex min-h-screen items-center justify-center bg-background px-4 py-10 sm:px-6">
+            <div className="w-full max-w-2xl">
+                <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+                    <div className="flex flex-col items-center px-5 py-9 text-center sm:px-10 sm:py-12">
+                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-danger/30 bg-danger/10 text-danger sm:h-20 sm:w-20">
+                            <ServerCrash className="h-8 w-8 sm:h-10 sm:w-10" />
+                        </div>
 
-                <h1 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
-                    System Exception Detected
-                </h1>
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-danger">
+                            System error
+                        </p>
 
-                <p className="mb-8 max-w-md text-base leading-relaxed text-muted">
-                    An unexpected error occurred within the Somatic platform. Our automated monitors have logged this exception.
-                    <span className="mt-2 block text-foreground">
-                        Patient health records and session data remain securely encrypted and unaffected.
-                    </span>
-                </p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                            Something went wrong
+                        </h1>
 
-                <div className="flex w-full flex-col items-center justify-center gap-4 sm:flex-row">
-                    <button
-                        onClick={() => reset()}
-                        className="flex w-full items-center justify-center gap-2 rounded-lg bg-danger px-8 py-3.5 font-bold text-white transition hover:opacity-90 sm:w-auto"
-                    >
-                        <RotateCcw className="h-5 w-5" />
-                        Attempt Recovery
-                    </button>
+                        <p className="mt-4 max-w-lg text-sm leading-6 text-muted sm:text-base">
+                            An unexpected error occurred within the Somatic platform. The issue has been detected and can be retried safely.
+                        </p>
 
-                    <Link
-                        href="/"
-                        className="flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-6 py-3.5 font-semibold text-foreground transition hover:bg-accent sm:w-auto"
-                    >
-                        <Home className="h-5 w-5" />
-                        Back to Home
-                    </Link>
-                </div>
+                        <p className="mt-3 text-sm font-medium text-foreground">
+                            Your account and health data remain protected.
+                        </p>
 
-                <div className="mt-12 flex w-full justify-center border-t border-border pt-8">
-                    <Link
-                        href="/contact"
-                        className="flex items-center gap-2 text-sm text-muted transition hover:text-danger"
-                    >
-                        <MessageSquareWarning className="h-4 w-4" />
-                        Report this issue to Admin Support
-                    </Link>
+                        <div className="mt-8 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row">
+                            <button
+                                type="button"
+                                onClick={() => reset()}
+                                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-7 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover sm:w-auto"
+                            >
+                                <RotateCcw className="h-4 w-4" />
+                                Try Again
+                            </button>
+
+                            <Link
+                                href="/"
+                                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface px-7 text-sm font-medium text-foreground transition hover:bg-surface-secondary sm:w-auto"
+                            >
+                                <Home className="h-4 w-4" />
+                                Back to Home
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="border-t border-border px-5 py-5 text-center sm:px-8">
+                        <Link
+                            href="/contact"
+                            className="inline-flex items-center gap-2 text-sm font-medium text-muted transition hover:text-primary"
+                        >
+                            <MessageSquareWarning className="h-4 w-4" />
+                            Report this issue to Support
+                        </Link>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
     );
 }

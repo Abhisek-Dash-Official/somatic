@@ -2,7 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, CheckCircle2, Package, User, XCircle } from "lucide-react";
+import {
+    ArrowLeft,
+    Check,
+    CheckCircle2,
+    Package,
+    User,
+    XCircle,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import type { IOrder, ITransaction, IUser } from "@/types/models";
 
@@ -36,7 +43,8 @@ export default function DispatcherOrderDetailsPage({
     params: Promise<{ id: string }>;
 }) {
     const [order, setOrder] = useState<PopulatedOrder | null>(null);
-    const [transaction, setTransaction] = useState<OrderTransaction | null>(null);
+    const [transaction, setTransaction] =
+        useState<OrderTransaction | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [error, setError] = useState("");
@@ -69,7 +77,9 @@ export default function DispatcherOrderDetailsPage({
         if (!order || isUpdating) return;
 
         if (status === "delivered" && order.payment_status !== "paid") {
-            toast.error("Payment must be confirmed before marking the order as delivered.");
+            toast.error(
+                "Payment must be confirmed before marking the order as delivered.",
+            );
             return;
         }
 
@@ -77,16 +87,21 @@ export default function DispatcherOrderDetailsPage({
         setUpdateError("");
 
         try {
-            const response = await fetch(`/api/dispatcher/orders/${order._id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ order_status: status }),
-            });
+            const response = await fetch(
+                `/api/dispatcher/orders/${order._id}`,
+                {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ order_status: status }),
+                },
+            );
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || "Unable to update order status");
+                throw new Error(
+                    data.error || "Unable to update order status",
+                );
             }
 
             setOrder(data.order || { ...order, order_status: status });
@@ -97,7 +112,8 @@ export default function DispatcherOrderDetailsPage({
 
             toast.success(`Order marked as ${formatStatus(status)}.`);
         } catch (error: any) {
-            const message = error.message || "Unable to update order status";
+            const message =
+                error.message || "Unable to update order status";
             setUpdateError(message);
             toast.error(message);
         } finally {
@@ -112,11 +128,14 @@ export default function DispatcherOrderDetailsPage({
         setUpdateError("");
 
         try {
-            const response = await fetch(`/api/dispatcher/orders/${order._id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ payment_status: "paid" }),
-            });
+            const response = await fetch(
+                `/api/dispatcher/orders/${order._id}`,
+                {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ payment_status: "paid" }),
+                },
+            );
 
             const data = await response.json();
 
@@ -143,11 +162,11 @@ export default function DispatcherOrderDetailsPage({
 
     if (isLoading) {
         return (
-            <main className="min-h-screen bg-background px-4 py-10 sm:px-6 lg:px-8">
+            <main className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-5xl animate-pulse space-y-5">
-                    <div className="h-8 w-56 rounded-lg bg-surface-secondary" />
-                    <div className="h-40 rounded-xl border border-border bg-surface" />
-                    <div className="h-64 rounded-xl border border-border bg-surface" />
+                    <div className="h-8 w-56 rounded-xl bg-surface-secondary" />
+                    <div className="h-40 rounded-2xl border border-border bg-surface" />
+                    <div className="h-64 rounded-2xl border border-border bg-surface" />
                 </div>
             </main>
         );
@@ -156,20 +175,22 @@ export default function DispatcherOrderDetailsPage({
     if (error || !order) {
         return (
             <main className="flex min-h-[80vh] items-center justify-center bg-background px-6 py-12">
-                <div className="w-full max-w-md rounded-xl border border-border bg-surface p-8 text-center">
-                    <XCircle size={44} className="mx-auto text-danger" />
+                <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-8 text-center shadow-sm">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-danger/10 text-danger">
+                        <XCircle size={30} />
+                    </div>
 
                     <h1 className="mt-5 text-2xl font-bold text-foreground">
                         Order not found
                     </h1>
 
-                    <p className="mt-2 text-sm text-muted">
+                    <p className="mt-2 text-sm leading-6 text-muted">
                         {error || "The requested order could not be found."}
                     </p>
 
                     <Link
                         href="/dispatcher/orders"
-                        className="mt-6 inline-flex rounded-lg bg-primary px-5 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover"
+                        className="mt-6 inline-flex rounded-xl bg-primary px-5 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover"
                     >
                         Back to orders
                     </Link>
@@ -179,7 +200,6 @@ export default function DispatcherOrderDetailsPage({
     }
 
     const canDeliver = order.payment_status === "paid";
-
     const currentIndex = statuses.indexOf(order.order_status);
 
     const nextStatus =
@@ -191,30 +211,45 @@ export default function DispatcherOrderDetailsPage({
         nextStatus === "delivered" && !canDeliver;
 
     return (
-        <main className="min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8">
+        <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6 lg:px-8">
             <div className="mx-auto max-w-5xl">
-                <div className="mb-8 flex items-center gap-3">
+                <div className="mb-6">
                     <Link
                         href="/dispatcher/orders"
-                        className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-muted transition hover:bg-surface-secondary hover:text-foreground"
-                        aria-label="Back to orders"
+                        className="inline-flex items-center gap-2 text-sm font-medium text-muted transition hover:text-foreground"
                     >
-                        <ArrowLeft size={18} />
+                        <ArrowLeft size={17} />
+                        Back to orders
                     </Link>
+                </div>
 
-                    <div>
-                        <p className="text-xs uppercase tracking-wider text-muted-foreground">
-                            Order details
-                        </p>
+                <div className="mb-6 rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-muted">
+                                Order details
+                            </p>
 
-                        <h1 className="text-xl font-extrabold sm:text-2xl">
-                            #{order._id.slice(-8).toUpperCase()}
-                        </h1>
+                            <h1 className="mt-1 text-2xl font-extrabold tracking-tight">
+                                #{order._id.slice(-8).toUpperCase()}
+                            </h1>
+                        </div>
+
+                        <span
+                            className={`w-fit rounded-full px-3 py-1.5 text-sm font-semibold ${order.order_status === "cancelled"
+                                    ? "bg-danger/10 text-danger"
+                                    : order.order_status === "delivered"
+                                        ? "bg-success/10 text-success"
+                                        : "bg-primary/10 text-primary"
+                                }`}
+                        >
+                            {formatStatus(order.order_status)}
+                        </span>
                     </div>
                 </div>
 
                 <div className="space-y-5">
-                    <section className="rounded-xl border border-border bg-surface p-5 sm:p-6">
+                    <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
                         <div className="flex flex-wrap items-start justify-between gap-4">
                             <div>
                                 <h2 className="text-lg font-bold">
@@ -228,27 +263,16 @@ export default function DispatcherOrderDetailsPage({
                                     ).toLocaleString("en-IN")}
                                 </p>
                             </div>
-
-                            <span
-                                className={`rounded-md px-3 py-1.5 text-sm font-semibold ${order.order_status === "cancelled"
-                                        ? "bg-danger/10 text-danger"
-                                        : order.order_status === "delivered"
-                                            ? "bg-success/10 text-success"
-                                            : "bg-primary/10 text-primary"
-                                    }`}
-                            >
-                                {formatStatus(order.order_status)}
-                            </span>
                         </div>
 
                         <div className="mt-7">
                             {order.order_status === "cancelled" ? (
-                                <div className="rounded-lg border border-danger/20 bg-danger/10 p-4 text-sm text-danger">
+                                <div className="rounded-xl border border-danger/20 bg-danger/10 p-4 text-sm text-danger">
                                     This order has been cancelled.
                                 </div>
                             ) : (
                                 <div className="space-y-4">
-                                    <div className="grid gap-2 sm:grid-cols-5">
+                                    <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-5">
                                         {statuses.map((status, index) => {
                                             const completed =
                                                 currentIndex >= index;
@@ -256,13 +280,13 @@ export default function DispatcherOrderDetailsPage({
                                             return (
                                                 <div
                                                     key={status}
-                                                    className={`flex min-h-16 items-center gap-2 rounded-lg border px-3 py-3 ${completed
+                                                    className={`flex min-h-16 items-center gap-3 rounded-xl border px-3 py-3 ${completed
                                                             ? "border-primary/30 bg-primary/10"
                                                             : "border-border bg-surface-secondary"
                                                         }`}
                                                 >
                                                     <div
-                                                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${completed
+                                                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${completed
                                                                 ? "bg-primary text-primary-foreground"
                                                                 : "bg-surface text-muted"
                                                             }`}
@@ -290,7 +314,7 @@ export default function DispatcherOrderDetailsPage({
                                     </div>
 
                                     {nextStatus && (
-                                        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface-secondary p-4">
+                                        <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface-secondary p-4 sm:flex-row sm:items-center sm:justify-between">
                                             <div>
                                                 <p className="text-sm font-semibold text-foreground">
                                                     Next status
@@ -299,14 +323,17 @@ export default function DispatcherOrderDetailsPage({
                                                 <p className="mt-1 text-sm text-muted">
                                                     Move this order to{" "}
                                                     <span className="font-semibold text-foreground">
-                                                        {formatStatus(nextStatus)}
+                                                        {formatStatus(
+                                                            nextStatus,
+                                                        )}
                                                     </span>
                                                 </p>
 
                                                 {blockedNextStatus && (
                                                     <p className="mt-2 text-sm font-medium text-warning">
-                                                        Payment must be confirmed
-                                                        before delivery.
+                                                        Payment must be
+                                                        confirmed before
+                                                        delivery.
                                                     </p>
                                                 )}
                                             </div>
@@ -320,7 +347,7 @@ export default function DispatcherOrderDetailsPage({
                                                     isUpdating ||
                                                     blockedNextStatus
                                                 }
-                                                className="rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                                                className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
                                             >
                                                 {isUpdating
                                                     ? "Updating..."
@@ -339,7 +366,7 @@ export default function DispatcherOrderDetailsPage({
                                             updateStatus("cancelled")
                                         }
                                         disabled={isUpdating}
-                                        className="rounded-lg border border-danger/30 px-4 py-2.5 text-sm font-semibold text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60"
+                                        className="rounded-xl border border-danger/30 px-4 py-2.5 text-sm font-semibold text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
                                         Cancel Order
                                     </button>
@@ -354,43 +381,33 @@ export default function DispatcherOrderDetailsPage({
                         </div>
                     </section>
 
-                    <section className="rounded-xl border border-border bg-surface p-5 sm:p-6">
+                    <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
                         <div className="flex items-center gap-2">
-                            <User size={19} className="text-primary" />
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-primary">
+                                <User size={18} />
+                            </div>
 
-                            <h2 className="text-lg font-bold">
-                                Customer
-                            </h2>
+                            <h2 className="text-lg font-bold">Customer</h2>
                         </div>
 
-                        <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                        <div className="mt-5 grid gap-5 sm:grid-cols-3">
                             <div>
-                                <p className="text-xs text-muted">
-                                    Username
-                                </p>
-
-                                <p className="mt-1 font-semibold text-foreground">
+                                <p className="text-xs text-muted">Username</p>
+                                <p className="mt-1 font-semibold">
                                     {order.user_id?.username || "Unknown"}
                                 </p>
                             </div>
 
                             <div>
-                                <p className="text-xs text-muted">
-                                    Email
-                                </p>
-
-                                <p className="mt-1 break-all font-semibold text-foreground">
-                                    {order.user_id?.email ||
-                                        "Not available"}
+                                <p className="text-xs text-muted">Email</p>
+                                <p className="mt-1 break-all font-semibold">
+                                    {order.user_id?.email || "Not available"}
                                 </p>
                             </div>
 
                             <div>
-                                <p className="text-xs text-muted">
-                                    Phone
-                                </p>
-
-                                <p className="mt-1 font-semibold text-foreground">
+                                <p className="text-xs text-muted">Phone</p>
+                                <p className="mt-1 font-semibold">
                                     {order.user_id?.contact_no ||
                                         "Not available"}
                                 </p>
@@ -398,13 +415,13 @@ export default function DispatcherOrderDetailsPage({
                         </div>
                     </section>
 
-                    <section className="rounded-xl border border-border bg-surface p-5 sm:p-6">
+                    <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
                         <div className="flex items-center gap-2">
-                            <Package size={19} className="text-primary" />
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-primary">
+                                <Package size={18} />
+                            </div>
 
-                            <h2 className="text-lg font-bold">
-                                Items
-                            </h2>
+                            <h2 className="text-lg font-bold">Items</h2>
                         </div>
 
                         <div className="mt-5 divide-y divide-border">
@@ -414,85 +431,112 @@ export default function DispatcherOrderDetailsPage({
                                     className="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0"
                                 >
                                     <div className="min-w-0">
-                                        <div className="flex flex-wrap items-center gap-2">
-                                            <h3 className="font-semibold text-foreground">
-                                                {item.name}
-                                            </h3>
+                                        <h3 className="font-semibold text-foreground">
+                                            {item.name}
+                                        </h3>
 
-                                            <span className="rounded bg-surface-secondary px-2 py-0.5 text-xs text-muted">
-                                                {item.item_type}
+                                        {"item_type" in item && (
+                                            <span className="mt-2 inline-flex rounded-full bg-surface-secondary px-2.5 py-1 text-xs text-muted">
+                                                {
+                                                    (
+                                                        item as {
+                                                            item_type?: string;
+                                                        }
+                                                    ).item_type
+                                                }
                                             </span>
-                                        </div>
-
-                                        {item.manufacturer && (
-                                            <p className="mt-1 text-sm text-muted">
-                                                {item.manufacturer}
-                                            </p>
                                         )}
 
-                                        {item.blood_group && (
-                                            <p className="mt-1 text-sm text-muted">
-                                                Blood group:{" "}
-                                                {item.blood_group}
+                                        {"manufacturer" in item &&
+                                            (item as { manufacturer?: string })
+                                                .manufacturer && (
+                                                <p className="mt-1 text-sm text-muted">
+                                                    {
+                                                        (
+                                                            item as {
+                                                                manufacturer?: string;
+                                                            }
+                                                        ).manufacturer
+                                                    }
+                                                </p>
+                                            )}
+
+                                        {"blood_group" in item &&
+                                            (item as { blood_group?: string })
+                                                .blood_group && (
+                                                <p className="mt-1 text-sm text-muted">
+                                                    Blood group:{" "}
+                                                    {
+                                                        (
+                                                            item as {
+                                                                blood_group?: string;
+                                                            }
+                                                        ).blood_group
+                                                    }
+                                                </p>
+                                            )}
+
+                                        {"unit_price" in item && (
+                                            <p className="mt-1 text-sm text-muted-foreground">
+                                                {formatINR(
+                                                    (
+                                                        item as {
+                                                            unit_price: number;
+                                                        }
+                                                    ).unit_price,
+                                                )}{" "}
+                                                × {item.quantity}
                                             </p>
                                         )}
-
-                                        <p className="mt-1 text-sm text-muted-foreground">
-                                            {formatINR(item.unit_price)} ×{" "}
-                                            {item.quantity}
-                                        </p>
                                     </div>
 
-                                    <p className="shrink-0 font-bold tabular-nums text-foreground">
-                                        {formatINR(
-                                            item.unit_price * item.quantity,
-                                        )}
-                                    </p>
+                                    {"unit_price" in item && (
+                                        <p className="shrink-0 font-bold tabular-nums">
+                                            {formatINR(
+                                                (
+                                                    item as {
+                                                        unit_price: number;
+                                                    }
+                                                ).unit_price * item.quantity,
+                                            )}
+                                        </p>
+                                    )}
                                 </div>
                             ))}
                         </div>
 
-                        <div className="mt-5 flex justify-between border-t border-border pt-5">
-                            <span className="font-bold text-foreground">
-                                Total
-                            </span>
+                        <div className="mt-5 flex items-center justify-between border-t border-border pt-5">
+                            <span className="font-bold">Total</span>
 
-                            <span className="text-2xl font-extrabold tabular-nums text-foreground">
+                            <span className="text-2xl font-extrabold tabular-nums">
                                 {formatINR(order.total_amount)}
                             </span>
                         </div>
                     </section>
 
                     <div className="grid gap-5 md:grid-cols-2">
-                        <section className="rounded-xl border border-border bg-surface p-5 sm:p-6">
+                        <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
                             <h2 className="text-lg font-bold">
                                 Shipping address
                             </h2>
 
                             <div className="mt-4 text-sm leading-6 text-muted">
                                 <p>{order.shipping_address.street}</p>
-
                                 <p>
                                     {order.shipping_address.city},{" "}
                                     {order.shipping_address.state}
                                 </p>
-
                                 <p>{order.shipping_address.pincode}</p>
                             </div>
                         </section>
 
-                        <section className="rounded-xl border border-border bg-surface p-5 sm:p-6">
-                            <h2 className="text-lg font-bold">
-                                Payment
-                            </h2>
+                        <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
+                            <h2 className="text-lg font-bold">Payment</h2>
 
                             <div className="mt-4 space-y-3 text-sm">
                                 <div className="flex justify-between gap-4">
-                                    <span className="text-muted">
-                                        Method
-                                    </span>
-
-                                    <span className="font-semibold text-foreground">
+                                    <span className="text-muted">Method</span>
+                                    <span className="font-semibold">
                                         {order.payment_method}
                                     </span>
                                 </div>
@@ -511,9 +555,7 @@ export default function DispatcherOrderDetailsPage({
                                                     : "text-warning"
                                             }`}
                                     >
-                                        {formatStatus(
-                                            order.payment_status,
-                                        )}
+                                        {formatStatus(order.payment_status)}
                                     </span>
                                 </div>
 
@@ -523,7 +565,7 @@ export default function DispatcherOrderDetailsPage({
                                             Transaction
                                         </span>
 
-                                        <span className="font-semibold text-foreground">
+                                        <span className="font-semibold">
                                             {formatStatus(
                                                 transaction.status,
                                             )}
@@ -537,10 +579,8 @@ export default function DispatcherOrderDetailsPage({
                                             Razorpay order
                                         </span>
 
-                                        <span className="max-w-55 truncate font-mono text-xs text-foreground">
-                                            {
-                                                transaction.gateway_order_id
-                                            }
+                                        <span className="max-w-55 truncate font-mono text-xs">
+                                            {transaction.gateway_order_id}
                                         </span>
                                     </div>
                                 )}
@@ -551,10 +591,8 @@ export default function DispatcherOrderDetailsPage({
                                             Payment ID
                                         </span>
 
-                                        <span className="max-w-55 truncate font-mono text-xs text-foreground">
-                                            {
-                                                transaction.gateway_payment_id
-                                            }
+                                        <span className="max-w-55 truncate font-mono text-xs">
+                                            {transaction.gateway_payment_id}
                                         </span>
                                     </div>
                                 )}
@@ -565,7 +603,7 @@ export default function DispatcherOrderDetailsPage({
                                             Paid at
                                         </span>
 
-                                        <span className="text-right text-foreground">
+                                        <span className="text-right">
                                             {new Date(
                                                 transaction.paid_at,
                                             ).toLocaleString("en-IN")}
@@ -580,7 +618,7 @@ export default function DispatcherOrderDetailsPage({
                                                 type="button"
                                                 onClick={markCODPaid}
                                                 disabled={isUpdating}
-                                                className="w-full rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                                                className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
                                             >
                                                 {isUpdating
                                                     ? "Marking payment..."
@@ -593,16 +631,14 @@ export default function DispatcherOrderDetailsPage({
                     </div>
 
                     {transaction?.failure_reason && (
-                        <div className="rounded-lg border border-danger/30 bg-danger/10 p-4 text-sm text-danger">
-                            Payment failure:{" "}
-                            {transaction.failure_reason}
+                        <div className="rounded-xl border border-danger/30 bg-danger/10 p-4 text-sm text-danger">
+                            Payment failure: {transaction.failure_reason}
                         </div>
                     )}
 
                     {order.payment_status === "paid" && (
-                        <div className="flex items-center gap-3 rounded-lg border border-success/20 bg-success/10 p-4 text-sm text-success">
+                        <div className="flex items-center gap-3 rounded-xl border border-success/20 bg-success/10 p-4 text-sm text-success">
                             <CheckCircle2 size={18} />
-
                             <span>
                                 Payment has been successfully verified.
                             </span>
@@ -611,9 +647,8 @@ export default function DispatcherOrderDetailsPage({
 
                     {order.payment_status !== "paid" &&
                         order.order_status !== "cancelled" && (
-                            <div className="flex items-center gap-3 rounded-lg border border-warning/20 bg-warning/10 p-4 text-sm text-warning">
+                            <div className="flex items-center gap-3 rounded-xl border border-warning/20 bg-warning/10 p-4 text-sm text-warning">
                                 <XCircle size={18} />
-
                                 <span>
                                     This order cannot be marked as delivered
                                     until the payment is confirmed.
