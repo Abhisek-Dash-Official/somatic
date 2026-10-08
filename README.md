@@ -67,6 +67,40 @@ healthcare services.
 
 ---
 
+# Complete Healthcare Journey
+
+The following visual represents the broader SOMATIC healthcare ecosystem,
+from emergency situations and first-aid assistance to hospital coordination,
+insurance, medicines, laboratory services, healthcare education, and SOMA AI.
+
+<div align="center">
+  <img
+    src="./docs/somatic-healthcare-journey.png"
+    alt="SOMATIC Complete Healthcare Journey"
+    width="1100"
+  />
+</div>
+
+<br/>
+
+The platform connects these services into a continuous healthcare workflow:
+
+```text
+Patient Need
+    ↓
+Digital Patient Input
+    ↓
+AI-Assisted Processing
+    ↓
+Human Medical Review
+    ↓
+Healthcare Service Coordination
+    ↓
+Treatment / Support / Follow-up
+```
+
+---
+
 ## Problem Statement
 
 Healthcare delivery can become difficult when several barriers occur at
@@ -358,40 +392,6 @@ SOMATIC also provides educational healthcare resources through:
 
 The objective is to make reliable healthcare information easier to access
 and understand.
-
----
-
-# Complete Healthcare Journey
-
-The following visual represents the broader SOMATIC healthcare ecosystem,
-from emergency situations and first-aid assistance to hospital coordination,
-insurance, medicines, laboratory services, healthcare education, and SOMA AI.
-
-<div align="center">
-  <img
-    src="./docs/somatic-healthcare-journey.png"
-    alt="SOMATIC Complete Healthcare Journey"
-    width="1100"
-  />
-</div>
-
-<br/>
-
-The platform connects these services into a continuous healthcare workflow:
-
-```text
-Patient Need
-    ↓
-Digital Patient Input
-    ↓
-AI-Assisted Processing
-    ↓
-Human Medical Review
-    ↓
-Healthcare Service Coordination
-    ↓
-Treatment / Support / Follow-up
-```
 
 ---
 
@@ -726,29 +726,6 @@ facility.
 
 AI-generated content should not be used as the sole basis for diagnosis,
 treatment, medication changes, or other critical medical decisions.
-
----
-
-# Documentation
-
-Additional project documentation is maintained inside the repository.
-
-### Architecture
-
-- [Database Architecture & Mind Map](./docs/assets/db-mindmap.pdf)
-- [Application Flowchart](./docs/assets/flowchart.pdf)
-- [ER Diagram](./docs/assets/er-diagram.pdf)
-
-### API Documentation
-
-- [API Endpoints & Payloads](./docs/api-endpoints.md)
-
-### Screenshots
-
-- [Application Screenshots](./docs/screenshots.md)
-
-These documents provide additional information about the database,
-application workflows, APIs, and major user interfaces.
 
 ---
 

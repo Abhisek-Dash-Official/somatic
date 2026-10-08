@@ -104,7 +104,7 @@ export default function DoctorDashboardClient() {
 
     if (user?.role !== "doctor" && user?.role !== "assistant_doctor") {
         return (
-            <div className="border border-danger/20 bg-danger/10 px-5 py-10 text-center text-danger">
+            <div className="rounded-2xl border border-danger/20 bg-danger/10 px-5 py-10 text-center text-danger">
                 <AlertTriangle className="mx-auto mb-3 h-9 w-9" />
                 <p className="font-semibold">Access Denied</p>
                 <p className="mt-1 text-sm">Doctor privileges are required.</p>
@@ -114,7 +114,7 @@ export default function DoctorDashboardClient() {
 
     if (!data?.stats) {
         return (
-            <div className="border border-warning/20 bg-warning/10 px-5 py-10 text-center">
+            <div className="rounded-2xl border border-warning/20 bg-warning/10 px-5 py-10 text-center">
                 <AlertTriangle className="mx-auto mb-3 h-9 w-9 text-warning" />
                 <p className="font-medium text-foreground">Failed to load dashboard data.</p>
             </div>
@@ -158,7 +158,7 @@ export default function DoctorDashboardClient() {
                     type="button"
                     onClick={toggleAvailability}
                     disabled={toggling}
-                    className={`flex items-center justify-center gap-2 border px-5 py-2.5 text-sm font-semibold transition sm:w-auto ${data.isAcceptingCases
+                    className={`flex items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition sm:w-auto ${data.isAcceptingCases
                             ? "border-success/30 bg-success/10 text-success hover:bg-success/15"
                             : "border-border bg-surface-secondary text-muted hover:border-primary/30 hover:text-foreground"
                         }`}
@@ -173,7 +173,7 @@ export default function DoctorDashboardClient() {
                 </button>
             </header>
 
-            <section className="grid grid-cols-2 gap-px border border-border bg-border lg:grid-cols-4">
+            <section className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border lg:grid-cols-4">
                 <MetricCard
                     title="My Cases"
                     value={stats.total}
@@ -201,7 +201,7 @@ export default function DoctorDashboardClient() {
             </section>
 
             <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <div className="border border-border bg-surface lg:col-span-2">
+                <div className="overflow-hidden rounded-2xl border border-border bg-surface lg:col-span-2">
                     <div className="flex items-center justify-between border-b border-border p-5">
                         <div>
                             <h2 className="font-semibold text-foreground">Clinical Overview</h2>
@@ -229,7 +229,7 @@ export default function DoctorDashboardClient() {
                     </div>
                 </div>
 
-                <div className="border border-border bg-surface">
+                <div className="overflow-hidden rounded-2xl border border-border bg-surface">
                     <div className="border-b border-border p-5">
                         <h2 className="font-semibold text-foreground">Availability</h2>
                         <p className="mt-1 text-xs text-muted">
@@ -239,13 +239,13 @@ export default function DoctorDashboardClient() {
 
                     <div className="p-5">
                         <div
-                            className={`flex items-center gap-3 border p-4 ${data.isAcceptingCases
+                            className={`flex items-center gap-3 rounded-xl border p-4 ${data.isAcceptingCases
                                     ? "border-success/20 bg-success/10"
                                     : "border-border bg-surface-secondary"
                                 }`}
                         >
                             <div
-                                className={`h-2.5 w-2.5 ${data.isAcceptingCases ? "bg-success" : "bg-muted-foreground"
+                                className={`h-2.5 w-2.5 shrink-0 rounded-full ${data.isAcceptingCases ? "bg-success" : "bg-muted-foreground"
                                     }`}
                             />
 
@@ -273,7 +273,7 @@ export default function DoctorDashboardClient() {
                             type="button"
                             onClick={toggleAvailability}
                             disabled={toggling}
-                            className="mt-4 flex w-full items-center justify-center gap-2 border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-foreground transition hover:border-primary/30 hover:text-primary"
+                            className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface-secondary px-4 py-2.5 text-sm font-medium text-foreground transition hover:border-primary/30 hover:text-primary"
                         >
                             <Power className="h-4 w-4" />
                             Change Availability
@@ -282,7 +282,7 @@ export default function DoctorDashboardClient() {
                 </div>
             </section>
 
-            <section className="border border-border bg-surface">
+            <section className="overflow-hidden rounded-2xl border border-border bg-surface">
                 <div className="flex flex-col justify-between gap-3 border-b border-border p-5 sm:flex-row sm:items-center">
                     <div>
                         <h2 className="font-semibold text-foreground">Action Required</h2>
@@ -291,7 +291,7 @@ export default function DoctorDashboardClient() {
                         </p>
                     </div>
 
-                    <span className="border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
+                    <span className="w-fit rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
                         {data.activeCases?.length || 0} Active
                     </span>
                 </div>
@@ -322,14 +322,14 @@ export default function DoctorDashboardClient() {
                                     <div className="min-w-0 flex-1">
                                         <div className="mb-2 flex flex-wrap items-center gap-2">
                                             {isEmergency && (
-                                                <span className="flex items-center gap-1 border border-danger/20 bg-danger/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-danger">
+                                                <span className="flex items-center gap-1 rounded-full border border-danger/20 bg-danger/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-danger">
                                                     <AlertTriangle className="h-3 w-3" />
                                                     Emergency
                                                 </span>
                                             )}
 
                                             <span
-                                                className={`border px-2 py-1 text-[10px] font-semibold uppercase tracking-wide ${isUnclaimed
+                                                className={`rounded-full border px-2 py-1 text-[10px] font-semibold uppercase tracking-wide ${isUnclaimed
                                                         ? "border-warning/20 bg-warning/10 text-warning"
                                                         : caseItem.status === "in_review"
                                                             ? "border-info/20 bg-info/10 text-info"
@@ -340,7 +340,7 @@ export default function DoctorDashboardClient() {
                                             </span>
 
                                             {caseItem.patient_input?.age !== undefined && (
-                                                <span className="border border-border bg-surface-secondary px-2 py-1 text-[10px] text-muted">
+                                                <span className="rounded-full border border-border bg-surface-secondary px-2 py-1 text-[10px] text-muted">
                                                     Age {caseItem.patient_input.age}
                                                 </span>
                                             )}
@@ -365,7 +365,7 @@ export default function DoctorDashboardClient() {
 
                                     <Link
                                         href={`/doctor/consultations/${caseItem._id}`}
-                                        className={`flex w-full shrink-0 items-center justify-center gap-2 border px-5 py-2.5 text-sm font-semibold transition lg:w-auto ${isUnclaimed
+                                        className={`flex w-full shrink-0 items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition lg:w-auto ${isUnclaimed
                                                 ? "border-primary bg-primary text-primary-foreground hover:bg-primary-hover"
                                                 : "border-border bg-surface-secondary text-foreground hover:border-primary/30 hover:text-primary"
                                             }`}
@@ -396,7 +396,7 @@ function MetricCard({
 }) {
     return (
         <div className="bg-surface p-5 sm:p-6">
-            <div className={`mb-4 flex h-9 w-9 items-center justify-center border border-border ${iconClass}`}>
+            <div className={`mb-4 flex h-9 w-9 items-center justify-center rounded-xl border border-border ${iconClass}`}>
                 <Icon className="h-4 w-4" />
             </div>
 

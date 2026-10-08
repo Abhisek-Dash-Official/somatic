@@ -8,6 +8,7 @@ import { useUserStore } from "@/store/useUserStore";
 import QRScannerBtn from "@/components/patient/QRScannerBtn";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import UserInitializer from "@/components/UserInitializer";
 
 const iconMap = { LayoutDashboard, ShieldCheck, Microscope, HeartPulse, ShoppingBag, BookOpen, FileSearch, Sparkles, Crown };
 
@@ -25,7 +26,7 @@ export default function PortalPage() {
     const portalItems: any = navLinks.portalNav;
 
     return (
-        <>
+        <UserInitializer>
             <Header />
             <main className="min-h-[calc(100vh-5rem)] bg-background px-4 py-8 text-foreground sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-6xl">
@@ -230,7 +231,7 @@ export default function PortalPage() {
                 </div>
             </main>
             <Footer />
-        </>
+        </UserInitializer>
     );
 }
 

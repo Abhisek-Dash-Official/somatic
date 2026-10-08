@@ -159,7 +159,7 @@ export default function Header() {
                         className="h-9 w-9 object-contain transition-transform duration-300 group-hover:scale-105 lg:h-10 lg:w-10"
                     />
 
-                    <div className="hidden sm:block">
+                    <div>
                         <span className="block text-lg font-bold tracking-tight text-foreground">
                             {siteConfig.name}
                         </span>
@@ -245,7 +245,7 @@ export default function Header() {
                             onClick={() => setIsAccountMenuOpen((prev) => !prev)}
                             aria-label="Account menu"
                             aria-expanded={isAccountMenuOpen}
-                            className={`relative h-10 w-10 overflow-hidden rounded-full border bg-surface transition-all duration-200 ${isAccountMenuOpen ? "border-primary ring-2 ring-primary/15" : "border-border hover:border-primary/50"
+                            className={`relative h-10 w-10 rounded-full border bg-surface transition-all duration-200 ${isAccountMenuOpen ? "border-primary ring-2 ring-primary/15" : "border-border hover:border-primary/50"
                                 }`}
                         >
                             <Image
@@ -257,7 +257,7 @@ export default function Header() {
                             />
 
                             {unreadCount > 0 && (
-                                <span className="absolute right-0.5 top-0.5 h-2.5 w-2.5 rounded-full border-2 border-background bg-destructive" />
+                                <span className="absolute -right-0.5 -top-0.5 z-50 block h-3 w-3 rounded-full border-2 border-background bg-red-500" />
                             )}
                         </button>
 
@@ -280,7 +280,7 @@ export default function Header() {
                             onClick={() => setIsAccountMenuOpen((prev) => !prev)}
                             aria-label="Account menu"
                             aria-expanded={isAccountMenuOpen}
-                            className={`h-10 w-10 overflow-hidden rounded-full border bg-surface ${isAccountMenuOpen ? "border-primary ring-2 ring-primary/15" : "border-border"
+                            className={`h-10 w-10 rounded-full border bg-surface ${isAccountMenuOpen ? "border-primary ring-2 ring-primary/15" : "border-border"
                                 }`}
                         >
                             <Image
@@ -290,6 +290,9 @@ export default function Header() {
                                 height={40}
                                 className="h-full w-full object-cover"
                             />
+                            {unreadCount > 0 && (
+                                <span className="absolute -right-0.5 -top-0.5 z-50 block h-3 w-3 rounded-full border-2 border-background bg-red-500" />
+                            )}
                         </button>
 
                         {isAccountMenuOpen && (

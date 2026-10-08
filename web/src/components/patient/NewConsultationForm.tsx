@@ -169,11 +169,6 @@ export default function NewConsultationForm() {
                 </div>
 
                 <textarea required rows={7} className={`${inputClass} resize-y`} value={formData.symptoms_raw_text} onChange={(e) => updateField("symptoms_raw_text", e.target.value)} placeholder="Example: I have had a headache since yesterday..." />
-
-                <div className="mt-3 flex items-start gap-2 rounded-xl border border-warning/20 bg-warning/5 p-3 text-xs leading-5 text-muted">
-                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
-                    <span>Do not use this consultation for emergencies. If symptoms are severe or life-threatening, seek immediate medical care.</span>
-                </div>
             </div>
 
             <div className="border-t border-border pt-7">
